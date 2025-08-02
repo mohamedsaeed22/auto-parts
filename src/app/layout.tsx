@@ -29,7 +29,6 @@ export default function RootLayout({
     <html lang="ar" dir="rtl">
       <body className={`${cairo.variable} antialiased`}>{children}
       <Footer />
-
       </body>
     </html>
   );
