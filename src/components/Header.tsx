@@ -4,10 +4,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import { CarFront, User } from "lucide-react";
+import { CarFront, User, ChevronDown, Globe } from "lucide-react";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
 
   const navLinks = [
     { href: "/", label: "الرئيسية" },
@@ -18,9 +19,14 @@ export default function Header() {
     { href: "/", label: "اخر العروض" },
   ];
 
+  const languages = [
+    { code: "ar", name: " - العربية", flag: "🇸🇦" },
+    { code: "en", name: " - English", flag: "🇺🇸" },
+  ];
+
   return (
     <header className="bg-white shadow-sm">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-0">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center p-2 rounded-full bg-yellow-100">
@@ -44,6 +50,39 @@ export default function Header() {
 
           {/* Right side buttons */}
           <div className="hidden md:flex items-center space-x-reverse space-x-4">
+            {/* Language Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setIsLanguageOpen(!isLanguageOpen)}
+                className="flex items-center space-x-2 space-x-reverse px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+              >
+                <Globe size={16} />
+                <span>العربية</span>
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform ${
+                    isLanguageOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              {isLanguageOpen && (
+                <div className="absolute top-full right-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                  <div className="py-1">
+                    {languages.map((language) => (
+                      <button
+                        key={language.code}
+                        className="w-full text-right px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2 space-x-reverse"
+                      >
+                        <span className="text-lg">{language.flag}</span>
+                        <span>{language.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <Button variant="outline">
               <User />
               {/* تسجيل الدخول */}
@@ -51,7 +90,40 @@ export default function Header() {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center space-x-reverse space-x-2">
+            {/* Mobile Language Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setIsLanguageOpen(!isLanguageOpen)}
+                className="flex items-center space-x-2 space-x-reverse px-2 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+              >
+                <Globe size={16} />
+                <span className="text-xs">العربية</span>
+                <ChevronDown
+                  size={12}
+                  className={`transition-transform ${
+                    isLanguageOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              {isLanguageOpen && (
+                <div className="absolute top-full right-0 mt-1 w-40 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                  <div className="py-1">
+                    {languages.map((language) => (
+                      <button
+                        key={language.code}
+                        className="w-full text-right px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2 space-x-reverse"
+                      >
+                        <span className="text-base">{language.flag}</span>
+                        <span className="text-xs">{language.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
