@@ -1,14 +1,17 @@
 import Header from "@/components/Header";
 import SwiperCarousel from "@/components/Swiper";
+import Brands from "@/components/Brands";
 
 export default function Home() {
   return (
     <div>
-      <Header />
-      <div className="container mx-auto mt-8">
-        <SwiperCarousel />
+      <div>
+        <Header />
       </div>
-      {/* <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center"></footer> */}
+      <main className="min-h-screen container mx-auto mt-5">
+        <SwiperCarousel />
+        <Brands />
+      </main>
     </div>
   );
 }
