@@ -15,7 +15,6 @@ export default function Home() {
           <PackagesOffers />
         </div>
       </main>
-      <Footer />
-    </div>
+     </div>
   );
 }
