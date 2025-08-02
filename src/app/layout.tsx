@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import { Cairo } from "next/font/google";
 import "./globals.css";
+ 
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+import "swiper/css/effect-fade";
 
 const cairo = Cairo({
   variable: "--font-cairo",
@@ -20,11 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl">
-      <body
-        className={`${cairo.variable} antialiased`}
-      >
-        {children}
-      </body>
+      <body className={`${cairo.variable} antialiased`}>{children}</body>
     </html>
   );
 }
