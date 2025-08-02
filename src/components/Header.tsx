@@ -31,7 +31,6 @@ export default function Header() {
   const handleCartClick = () => {
     dispatch(toggleCart());
   };
-
   return (
     <header className="bg-white shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-0">
@@ -107,7 +106,6 @@ export default function Header() {
                 </motion.span>
               )}
             </button>
-
             <Button variant="outline">
               <User />
               {/* تسجيل الدخول */}
