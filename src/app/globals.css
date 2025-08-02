@@ -149,31 +149,36 @@ body {
 }
 /* Add these styles after your existing Swiper styles */
 
-/* .swiper-button-prev,
-.swiper-button-next {
-  background-color: white;
-  padding: 30px;
-  border-radius: 50%;
-  color: #000 !important;   
-  width: 40px !important; 
-  height: 40px !important; 
-  opacity: 0.8;
-  transition: opacity 0.3s ease;
-} */
+/* Custom styles for PackagesOffers Swiper */
+.packages-swiper {
+  padding-bottom: 50px; /* Space for pagination */
+}
 
-/* .swiper-button-prev:hover,
-.swiper-button-next:hover {
+.packages-swiper .swiper-slide {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  cursor: grab;
+}
+
+.packages-swiper .swiper-slide:hover {
+  border-color: #3b82f6;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.packages-swiper .swiper-pagination {
+  bottom: 0;
+}
+
+.packages-swiper .swiper-pagination-bullet {
+  background: #3b82f6;
+  opacity: 0.5;
+}
+
+.packages-swiper .swiper-pagination-bullet-active {
   opacity: 1;
-} */
-
-/* Make the arrows smaller */
-/* .swiper-button-prev:after,
-.swiper-button-next:after {
-  font-size: 20px !important;
-} */
-
-/* Optional: Add shadow for better visibility */
-/* .swiper-button-prev,
-.swiper-button-next {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-} */
+}
