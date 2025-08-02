@@ -101,7 +101,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
             <h3 className="text-base font-semibold text-gray-900 line-clamp-2 min-h-[3rem]">
               {product.title}
             </h3>
-            <p className="text-xs text-gray-600 mb-2 capitalize">
+            {/* put it at badge */}
+            <p className="text-xs text-gray-600 mb-2 capitalize bg-gray-100 rounded-full px-2 py-1 w-fit">
               {product.category}
             </p>
 

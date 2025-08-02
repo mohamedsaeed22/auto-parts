@@ -15,16 +15,16 @@ const product = {
     count: 128,
   },
   images: [
-    "/offers/offer1.jpg",
-    "/offers/offer2.jpg",
-    "/offers/offer3.jpg",
-    "/offers/offer4.jpg",
+    "/products/product1.jpg",
+    "/products/product1.jpg",
+    "/products/product1.jpg",
+    "/products/product1.jpg",
   ],
 };
 
 export default function ProductDetails() {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" >
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Breadcrumb */}
       <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-8  ">
         <button className="flex items-center space-x-1 hover:text-gray-700 transition-colors flex-row-reverse space-x-reverse">
@@ -83,24 +83,6 @@ export default function ProductDetails() {
           </div>
 
           {/* Rating */}
-          <div className="flex items-center space-x-4 flex-row-reverse space-x-reverse">
-            <div className="flex items-center">
-              {[...Array(5)].map((_, index) => (
-                <Star
-                  key={index}
-                  size={20}
-                  className={`${
-                    index < Math.floor(product.rating.rate)
-                      ? "text-yellow-400 fill-current"
-                      : "text-gray-300"
-                  }`}
-                />
-              ))}
-            </div>
-            <span className="text-sm text-gray-600">
-              {product.rating.rate} ({product.rating.count} تقييم)
-            </span>
-          </div>
 
           {/* Description */}
           <div>

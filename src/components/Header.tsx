@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import { User } from "lucide-react";
+import { CarFront, User } from "lucide-react";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,19 +19,13 @@ export default function Header() {
   ];
 
   return (
-    <header className="bg-white shadow-sm" >
+    <header className="bg-white shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex-shrink-0 flex items-center">
+          <div className="flex-shrink-0 flex items-center p-2 rounded-full bg-yellow-100">
             <Link href="/">
-              <Image
-                src="/logo.svg"
-                alt="الشعار"
-                width={40}
-                height={40}
-                className="h-8 w-auto"
-              />
+              <CarFront />
             </Link>
           </div>
 
