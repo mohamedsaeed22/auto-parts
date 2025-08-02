@@ -9,9 +9,9 @@ const Footer = () => {
           {/* Column 1 - اطلبها */}
           <div>
             <h3 className="font-bold text-lg mb-6 text-blue-400">
-              اقسام اطلبها
+              اقسام الموقع
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-3 list-disc list-inside">
               <li>
                 <a
                   href="#"
@@ -52,7 +52,7 @@ const Footer = () => {
             <h3 className="font-bold text-lg mb-6 text-blue-400">
               أقسام المتجر
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-3 list-disc list-inside">
               <li>
                 <a
                   href="#"
@@ -101,7 +101,7 @@ const Footer = () => {
             <h3 className="font-bold text-lg mb-6 text-blue-400">
               أقسام الخدمات
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-3 list-disc list-inside">
               <li>
                 <a
                   href="#"
@@ -132,7 +132,7 @@ const Footer = () => {
           {/* Column 4 - الخدمات (duplicate section) */}
           <div>
             <h3 className="font-bold text-lg mb-6 text-blue-400">الخدمات</h3>
-            <ul className="space-y-3">
+            <ul className="space-y-3 list-disc list-inside">
               <li>
                 <a
                   href="#"

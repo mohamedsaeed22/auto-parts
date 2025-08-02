@@ -85,9 +85,9 @@ const PackagesOffers = () => {
             onBeforeInit={(swiper) => {
               swiperRef.current = swiper;
             }}
-            slidesPerView={4}
-            centeredSlides={true}
-            spaceBetween={30}
+            slidesPerView={5}
+            // centeredSlides={true}
+            spaceBetween={20}
             grabCursor={true}
             loop={true}
             pagination={{
@@ -98,7 +98,7 @@ const PackagesOffers = () => {
           >
             {slides.map((slide) => (
               <SwiperSlide key={slide.id}>
-                <Image src={slide.src} alt={slide.alt} fill />
+                <Image src={slide.src} alt={slide.alt} fill className="rounded-3xl" />
               </SwiperSlide>
             ))}
 

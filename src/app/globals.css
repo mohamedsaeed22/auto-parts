@@ -147,15 +147,13 @@ body {
   height: 100%;
   object-fit: cover;
 }
+
 /* Add these styles after your existing Swiper styles */
 
 /* Custom styles for PackagesOffers Swiper */
-.packages-swiper {
-  padding-bottom: 50px; /* Space for pagination */
-}
 
 .packages-swiper .swiper-slide {
-  background: #f8f9fa;
+  background: transparent;
   border-radius: 12px;
   padding: 20px;
   text-align: center;
@@ -165,20 +163,22 @@ body {
 }
 
 .packages-swiper .swiper-slide:hover {
-  border-color: #3b82f6;
+  /* border-color: #3b82f6; */
   transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-.packages-swiper .swiper-pagination {
-  bottom: 0;
+.packages-swiper .swiper-pagination,
+.mySwiper .swiper-pagination {
+  bottom: 0; /* Position it 40px below the swiper */
 }
 
-.packages-swiper .swiper-pagination-bullet {
-  background: #3b82f6;
+.packages-swiper .swiper-pagination-bullet,
+.mySwiper .swiper-pagination-bullet {
+  background: #fff;
   opacity: 0.5;
 }
 
-.packages-swiper .swiper-pagination-bullet-active {
+.packages-swiper .swiper-pagination-bullet-active,
+.mySwiper .swiper-pagination-bullet-active {
   opacity: 1;
 }

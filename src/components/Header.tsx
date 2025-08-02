@@ -11,8 +11,11 @@ export default function Header() {
 
   const navLinks = [
     { href: "/", label: "الرئيسية" },
-    { href: "/about", label: "من نحن" },
-    { href: "/contact", label: "اتصل بنا" },
+    { href: "/", label: "من نحن" },
+    { href: "/", label: "اتصل بنا" },
+    { href: "/", label: "البراندات" },
+    { href: "/", label: "المنتجات" },
+    { href: "/", label: "اخر العروض" },
   ];
 
   return (

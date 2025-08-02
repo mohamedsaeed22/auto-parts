@@ -7,10 +7,8 @@ import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <div>
-      <div>
-        <Header />
-      </div>
-      <main className="min-h-screen">
+      <Header />
+      <main className="min-h-screen mt-10">
         <div className="container mx-auto">
           <SwiperCarousel />
           <Brands />
