@@ -3,10 +3,14 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import Image from "next/image";
-import { CarFront, User, ChevronDown, Globe } from "lucide-react";
+import { CarFront, User, ChevronDown, Globe, ShoppingCart } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { toggleCart } from "@/store/slices/cartSlice";
+import { motion } from "framer-motion";
 
 export default function Header() {
+  const dispatch = useAppDispatch();
+  const { totalItems } = useAppSelector((state) => state.cart);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
 
@@ -23,6 +27,10 @@ export default function Header() {
     { code: "ar", name: " - العربية", flag: "🇸🇦" },
     { code: "en", name: " - English", flag: "🇺🇸" },
   ];
+
+  const handleCartClick = () => {
+    dispatch(toggleCart());
+  };
 
   return (
     <header className="bg-white shadow-sm">
@@ -82,6 +90,23 @@ export default function Header() {
                 </div>
               )}
             </div>
+
+            {/* Cart button */}
+            <button
+              onClick={handleCartClick}
+              className="relative p-2 hover:bg-gray-100 rounded-full transition-colors ml-4"
+            >
+              <ShoppingCart size={24} />
+              {totalItems > 0 && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+                >
+                  {totalItems}
+                </motion.span>
+              )}
+            </button>
 
             <Button variant="outline">
               <User />

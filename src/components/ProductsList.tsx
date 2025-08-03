@@ -1,8 +1,12 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Star, ShoppingCart, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { addToCart, updateQuantity } from "@/store/slices/cartSlice";
 
 // Mock products data
 const products = [
@@ -84,6 +88,48 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
+  const dispatch = useAppDispatch();
+  const cartItems = useAppSelector((state) => state.cart.items);
+
+  // Check if product is in cart
+  const cartItem = cartItems.find((item) => item.id === product.id);
+  const isInCart = !!cartItem;
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dispatch(
+      addToCart({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        image: product.image,
+      })
+    );
+  };
+
+  const handleIncreaseQuantity = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (cartItem) {
+      dispatch(
+        updateQuantity({ id: product.id, quantity: cartItem.quantity + 1 })
+      );
+    }
+  };
+
+  const handleDecreaseQuantity = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (cartItem && cartItem.quantity > 1) {
+      dispatch(
+        updateQuantity({ id: product.id, quantity: cartItem.quantity - 1 })
+      );
+    } else if (cartItem && cartItem.quantity === 1) {
+      dispatch(updateQuantity({ id: product.id, quantity: 0 }));
+    }
+  };
+
   return (
     <div className="group">
       <Link href={`/product/${product.id}`}>
@@ -101,7 +147,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
             <h3 className="text-base font-semibold text-gray-900 line-clamp-2 min-h-[3rem]">
               {product.title}
             </h3>
-            {/* put it at badge */}
+            
             <p className="text-xs text-gray-600 mb-2 capitalize bg-gray-100 rounded-full px-2 py-1 w-fit">
               {product.category}
             </p>
@@ -111,14 +157,41 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
                 {product.price} ر.س
               </span>
 
-              {/* Static "Add to Cart" button */}
-              <Button
-                size="sm"
-                className="flex items-center space-x-1 flex-row-reverse space-x-reverse"
-              >
-                <ShoppingCart size={14} />
-                {/* <span>أضف للسلة</span> */}
-              </Button>
+              {!isInCart ? (
+                <Button
+                  size="sm"
+                  className="bg-black hover:bg-gray-800 text-white rounded-lg px-3 py-2 flex items-center gap-1 transition-all duration-200 hover:scale-105"
+                  onClick={handleAddToCart}
+                >
+                  <ShoppingCart size={16} />
+                </Button>
+              ) : (
+                <div className="flex items-center bg-white border-2 border-gray-400 rounded-lg overflow-hidden">
+                  <Button
+                    onClick={handleDecreaseQuantity}
+                    size="sm"
+                    variant="ghost"
+                    className="h-8 w-8 p-0 hover:bg-gray-100 text-gray-700 rounded-none border-r border-gray-300"
+                  >
+                    <Minus size={14} />
+                  </Button>
+                  
+                  <div className="h-8 px-3 flex items-center justify-center bg-gray-100 min-w-[40px]">
+                    <span className="text-sm font-semibold text-gray-800">
+                      {cartItem?.quantity}
+                    </span>
+                  </div>
+                  
+                  <Button
+                    onClick={handleIncreaseQuantity}
+                    size="sm"
+                    variant="ghost"
+                    className="h-8 w-8 p-0 hover:bg-gray-100 text-gray-700 rounded-none border-l border-gray-300"
+                  >
+                    <Plus size={14} />
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>

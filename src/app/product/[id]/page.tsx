@@ -1,6 +1,16 @@
+"use client";
+
 import Image from "next/image";
-import { Star, ArrowRight, ShoppingCart } from "lucide-react";
+import { Star, ArrowRight, ShoppingCart, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  addToCart,
+  removeFromCart,
+  updateQuantity,
+} from "@/store/slices/cartSlice";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const product = {
   id: 1,
@@ -23,11 +33,50 @@ const product = {
 };
 
 export default function ProductDetails() {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const cartItems = useAppSelector((state) => state.cart.items);
+  const [selectedImage, setSelectedImage] = useState(0);
+
+  // Check if product is in cart
+  const cartItem = cartItems.find((item) => item.id === product.id);
+  const currentQuantity = cartItem?.quantity || 0;
+
+  const handleAddToCart = () => {
+    dispatch(
+      addToCart({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        image: product.image,
+      })
+    );
+  };
+
+  const handleRemoveFromCart = () => {
+    dispatch(removeFromCart(product.id));
+  };
+
+  const handleQuantityChange = (newQuantity: number) => {
+    if (newQuantity <= 0) {
+      dispatch(removeFromCart(product.id));
+    } else {
+      dispatch(updateQuantity({ id: product.id, quantity: newQuantity }));
+    }
+  };
+
+  const handleGoBack = () => {
+    router.back();
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Breadcrumb */}
-      <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-8  ">
-        <button className="flex items-center space-x-1 hover:text-gray-700 transition-colors flex-row-reverse space-x-reverse">
+      <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+        <button
+          onClick={handleGoBack}
+          className="flex items-center space-x-1 hover:text-gray-700 transition-colors flex-row-reverse space-x-reverse"
+        >
           <span>رجوع</span>
           <ArrowRight size={16} />
         </button>
@@ -42,7 +91,7 @@ export default function ProductDetails() {
         <div className="space-y-4">
           <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
             <Image
-              src={product.images[0]}
+              src={product.images[selectedImage]}
               alt={product.title}
               width={600}
               height={600}
@@ -55,8 +104,11 @@ export default function ProductDetails() {
             {product.images.map((image, index) => (
               <button
                 key={index}
+                onClick={() => setSelectedImage(index)}
                 className={`aspect-square bg-gray-100 rounded-md overflow-hidden border-2 transition-colors ${
-                  index === 0 ? "border-gray-900" : "border-transparent"
+                  index === selectedImage
+                    ? "border-gray-900"
+                    : "border-transparent"
                 }`}
               >
                 <Image
@@ -83,6 +135,7 @@ export default function ProductDetails() {
           </div>
 
           {/* Rating */}
+          
 
           {/* Description */}
           <div>
@@ -99,55 +152,53 @@ export default function ProductDetails() {
             </span>
           </div>
 
-          {/* Quantity Selector (static) */}
+          {/* Quantity Selector */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               الكمية
             </label>
             <div className="flex items-center space-x-3 flex-row-reverse space-x-reverse">
-              <button className="p-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M20 12H4"
-                  />
-                </svg>
+              <button
+                onClick={() => handleQuantityChange(currentQuantity - 1)}
+                disabled={currentQuantity <= 0}
+                className="p-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Minus size={16} />
               </button>
-              <span className="text-xl font-semibold w-12 text-center">1</span>
-              <button className="p-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
+              <span className="text-xl font-semibold w-12 text-center">
+                {currentQuantity}
+              </span>
+              <button
+                onClick={() => handleQuantityChange(currentQuantity + 1)}
+                className="p-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+              >
+                <Plus size={16} />
               </button>
             </div>
           </div>
 
           {/* Action Buttons */}
           <div className="space-y-4">
-            <Button
-              className="w-full flex items-center justify-center space-x-2 flex-row-reverse space-x-reverse"
-              size="lg"
-            >
-              <ShoppingCart size={20} />
-              <span>أضف إلى السلة</span>
-            </Button>
+            {currentQuantity === 0 ? (
+              <Button
+                onClick={handleAddToCart}
+                className="w-full flex items-center justify-center space-x-2 flex-row-reverse space-x-reverse"
+                size="lg"
+              >
+                <ShoppingCart size={20} />
+                <span>أضف إلى السلة</span>
+              </Button>
+            ) : (
+              <Button
+                onClick={handleRemoveFromCart}
+                variant="destructive"
+                className="w-full flex items-center justify-center space-x-2 flex-row-reverse space-x-reverse"
+                size="lg"
+              >
+                <ShoppingCart size={20} />
+                <span>إزالة من السلة</span>
+              </Button>
+            )}
 
             <Button
               variant="outline"
