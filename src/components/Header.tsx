@@ -27,7 +27,7 @@ export default function Header() {
   ];
 
   const handleCartClick = () => {
-    setCartOpen(true);  
+    setCartOpen(true);
   };
 
   const closeMobileMenu = () => {
@@ -59,17 +59,17 @@ export default function Header() {
           </nav>
 
           {/* Right side buttons - Desktop */}
-          <div className="hidden lg:flex items-center space-x-reverse space-x-4">
+          <div className="hidden lg:flex items-center space-x-4">
             {/* Language Dropdown */}
             <div className="relative">
               <button
                 onClick={() => setIsLanguageOpen(!isLanguageOpen)}
-                className="flex items-center space-x-2 space-x-reverse px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+                className="flex items-center space-x-2  px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
               >
                 <Globe size={16} />
                 <span>العربية</span>
                 <ChevronDown
-                  size={14}
+                  size={10}
                   className={`transition-transform ${
                     isLanguageOpen ? "rotate-180" : ""
                   }`}
@@ -237,9 +237,9 @@ export default function Header() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={closeMobileMenu}
-              className="fixed inset-0 bg-gray-900/75 backdrop-blur-sm z-40 lg:hidden"
+              // className="fixed inset-0 bg-black/50 z-1 backdrop-blur-sm  md:hidden"
             />
-            
+
             {/* Mobile menu panel */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -265,7 +265,7 @@ export default function Header() {
                     </Link>
                   </motion.div>
                 ))}
-                
+
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}

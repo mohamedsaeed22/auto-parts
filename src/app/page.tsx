@@ -2,8 +2,7 @@
 import Brands from "@/components/Brands";
 import PackagesOffers from "@/components/PackagesOffers";
 import ProductsList from "@/components/ProductsList";
-import ProductCardWithQuantity from "@/components/ProductCardWithQuantity";
- 
+  
 export default function Home() {
   return (
     <div>
@@ -13,8 +12,7 @@ export default function Home() {
           <Brands />
           <PackagesOffers />
           <ProductsList />
-          {/* <ProductCardWithQuantity /> */}
-        </div>
+         </div>
       </main>
     </div>
   );
