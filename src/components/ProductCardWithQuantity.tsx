@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Star, ShoppingCart, Plus, Minus } from "lucide-react";
+import { Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ProductCardProps {
@@ -21,7 +21,6 @@ interface ProductCardProps {
 
 const ProductCardWithQuantity: React.FC<ProductCardProps> = ({
   product,
-  index,
 }) => {
   return (
     <div className="group">

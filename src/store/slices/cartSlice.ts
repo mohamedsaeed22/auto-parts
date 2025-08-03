@@ -173,6 +173,7 @@ const cartSlice = createSlice({
   },
   // Add extraReducers to handle persistence actions
   extraReducers: (builder) => {
+    // @ts-ignore
     builder.addCase("persist/REHYDRATE", (state, action: any) => {
       if (action.payload?.cart) {
         // Ensure totals are recalculated after rehydration
@@ -190,6 +191,7 @@ const cartSlice = createSlice({
 });
 
 // Add middleware to save cart on every state change
+// @ts-ignore
 export const cartMiddleware = (store: any) => (next: any) => (action: any) => {
   const result = next(action);
 

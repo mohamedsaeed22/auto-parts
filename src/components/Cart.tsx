@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { X, Plus, Minus, ShoppingBag, Trash2, ArrowRight, ArrowLeft } from "lucide-react";
+import { X, Plus, Minus, ShoppingBag, Trash2, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   removeFromCart,
   updateQuantity,
   clearCart,
-  toggleCart,
   setCartOpen,
 } from "@/store/slices/cartSlice";
 import { Button } from "@/components/ui/button";
