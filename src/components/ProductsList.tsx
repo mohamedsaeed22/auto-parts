@@ -3,12 +3,10 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Star, ShoppingCart, Plus, Minus } from "lucide-react";
+import { ShoppingCart, Plus, Minus, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { addToCart, updateQuantity } from "@/store/slices/cartSlice";
+import { useCartStore } from "@/store/cartStore";
 
-// Mock products data
 const products = [
   {
     id: 1,
@@ -88,33 +86,27 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
-  const dispatch = useAppDispatch();
-  const cartItems = useAppSelector((state) => state.cart.items);
-
-  // Check if product is in cart
-  const cartItem = cartItems.find((item) => item.id === product.id);
+  const { items, addToCart, updateQuantity } = useCartStore();
+  const cartItem = items.find((item) => item.id === product.id);
   const isInCart = !!cartItem;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    dispatch(
-      addToCart({
-        id: product.id,
-        title: product.title,
-        price: product.price,
-        image: product.image,
-      })
-    );
+    addToCart({
+      id: product.id,
+      title: product.title,
+      price: product.price,
+      image: product.image,
+      category: product.category,
+    });
   };
 
   const handleIncreaseQuantity = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (cartItem) {
-      dispatch(
-        updateQuantity({ id: product.id, quantity: cartItem.quantity + 1 })
-      );
+      updateQuantity(product.id, cartItem.quantity + 1);
     }
   };
 
@@ -122,11 +114,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
     e.preventDefault();
     e.stopPropagation();
     if (cartItem && cartItem.quantity > 1) {
-      dispatch(
-        updateQuantity({ id: product.id, quantity: cartItem.quantity - 1 })
-      );
+      updateQuantity(product.id, cartItem.quantity - 1);
     } else if (cartItem && cartItem.quantity === 1) {
-      dispatch(updateQuantity({ id: product.id, quantity: 0 }));
+      updateQuantity(product.id, 0);
     }
   };
 
@@ -147,7 +137,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
             <h3 className="text-base font-semibold text-gray-900 line-clamp-2 min-h-[3rem]">
               {product.title}
             </h3>
-            
+
             <p className="text-xs text-gray-600 mb-2 capitalize bg-gray-100 rounded-full px-2 py-1 w-fit">
               {product.category}
             </p>
@@ -173,15 +163,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
                     variant="ghost"
                     className="h-8 w-8 p-0 hover:bg-gray-100 text-gray-700 rounded-none border-r border-gray-300"
                   >
-                    <Minus size={14} />
+                    {cartItem?.quantity === 1 ? (
+                      <Trash size={16} />
+                    ) : (
+                      <Minus size={16} />
+                    )}
                   </Button>
-                  
+
                   <div className="h-8 px-3 flex items-center justify-center bg-gray-100 min-w-[40px]">
                     <span className="text-sm font-semibold text-gray-800">
                       {cartItem?.quantity}
                     </span>
                   </div>
-                  
+
                   <Button
                     onClick={handleIncreaseQuantity}
                     size="sm"
@@ -204,7 +198,6 @@ const ProductsList = () => {
   return (
     <section className="py-16 bg-gray-50 rounded-3xl">
       <div className="container mx-auto px-4">
-        {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
             منتجاتنا المميزة

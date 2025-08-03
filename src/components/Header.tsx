@@ -4,13 +4,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CarFront, User, ChevronDown, Globe, ShoppingCart } from "lucide-react";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { toggleCart } from "@/store/slices/cartSlice";
 import { motion } from "framer-motion";
+import { useCartStore } from "@/store/cartStore";
 
 export default function Header() {
-  const dispatch = useAppDispatch();
-  const { totalItems } = useAppSelector((state) => state.cart);
+  const { totalItems, setCartOpen } = useCartStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
 
@@ -29,7 +27,7 @@ export default function Header() {
   ];
 
   const handleCartClick = () => {
-    dispatch(toggleCart());
+    setCartOpen(true);  
   };
 
   return (

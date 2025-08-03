@@ -1,16 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { Star, ArrowRight, ShoppingCart, Minus, Plus } from "lucide-react";
+import { ArrowRight, ShoppingCart, Minus, Plus, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import {
-  addToCart,
-  removeFromCart,
-  updateQuantity,
-} from "@/store/slices/cartSlice";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useCartStore } from "@/store/cartStore";
 
 const product = {
   id: 1,
@@ -33,35 +29,35 @@ const product = {
 };
 
 export default function ProductDetails() {
-  const dispatch = useAppDispatch();
   const router = useRouter();
-  const cartItems = useAppSelector((state) => state.cart.items);
+  const cartItems = useCartStore((state) => state.items);
+  const addToCart = useCartStore((state) => state.addToCart);
+  const removeFromCart = useCartStore((state) => state.removeFromCart);
+  const updateQuantity = useCartStore((state) => state.updateQuantity);
   const [selectedImage, setSelectedImage] = useState(0);
 
-  // Check if product is in cart
   const cartItem = cartItems.find((item) => item.id === product.id);
   const currentQuantity = cartItem?.quantity || 0;
+  const isInCart = currentQuantity > 0;
 
   const handleAddToCart = () => {
-    dispatch(
-      addToCart({
-        id: product.id,
-        title: product.title,
-        price: product.price,
-        image: product.image,
-      })
-    );
+    addToCart({
+      id: product.id,
+      title: product.title,
+      price: product.price,
+      image: product.image,
+    });
   };
 
   const handleRemoveFromCart = () => {
-    dispatch(removeFromCart(product.id));
+    removeFromCart(product.id);
   };
 
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity <= 0) {
-      dispatch(removeFromCart(product.id));
+      removeFromCart(product.id);
     } else {
-      dispatch(updateQuantity({ id: product.id, quantity: newQuantity }));
+      updateQuantity(product.id, newQuantity);
     }
   };
 
@@ -135,7 +131,6 @@ export default function ProductDetails() {
           </div>
 
           {/* Rating */}
-          
 
           {/* Description */}
           <div>
@@ -152,34 +147,37 @@ export default function ProductDetails() {
             </span>
           </div>
 
-          {/* Quantity Selector */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              الكمية
-            </label>
-            <div className="flex items-center space-x-3 flex-row-reverse space-x-reverse">
-              <button
-                onClick={() => handleQuantityChange(currentQuantity - 1)}
-                disabled={currentQuantity <= 0}
-                className="p-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Minus size={16} />
-              </button>
-              <span className="text-xl font-semibold w-12 text-center">
-                {currentQuantity}
-              </span>
-              <button
-                onClick={() => handleQuantityChange(currentQuantity + 1)}
-                className="p-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-              >
-                <Plus size={16} />
-              </button>
+          {/* Quantity Selector - Only show if product is in cart */}
+          {isInCart && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                الكمية
+              </label>
+              <div className="flex items-center space-x-3 flex-row-reverse space-x-reverse">
+                <button
+                  onClick={() => handleQuantityChange(currentQuantity - 1)}
+                  className="p-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                >
+                  {/* if lenght 0 show trash */}
+                  {currentQuantity ===1 ? <Trash size={16} /> : <Minus size={16} />}
+                </button>
+                <span className="text-xl font-semibold w-12 text-center">
+                  {currentQuantity}
+                </span>
+                <button
+                  onClick={() => handleQuantityChange(currentQuantity + 1)}
+                  className="p-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                >
+                  <Plus size={16} />
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Action Buttons */}
           <div className="space-y-4">
-            {currentQuantity === 0 ? (
+            {!isInCart && (
+              // Show Add to Cart button when product is not in cart
               <Button
                 onClick={handleAddToCart}
                 className="w-full flex items-center justify-center space-x-2 flex-row-reverse space-x-reverse"
@@ -188,25 +186,15 @@ export default function ProductDetails() {
                 <ShoppingCart size={20} />
                 <span>أضف إلى السلة</span>
               </Button>
-            ) : (
-              <Button
-                onClick={handleRemoveFromCart}
-                variant="destructive"
-                className="w-full flex items-center justify-center space-x-2 flex-row-reverse space-x-reverse"
-                size="lg"
-              >
-                <ShoppingCart size={20} />
-                <span>إزالة من السلة</span>
-              </Button>
             )}
 
-            <Button
+            {/* <Button
               variant="outline"
               className="w-full flex items-center justify-center space-x-2 flex-row-reverse space-x-reverse"
               size="lg"
             >
               <span>أضف إلى المفضلة</span>
-            </Button>
+            </Button> */}
           </div>
 
           {/* Additional Info */}
