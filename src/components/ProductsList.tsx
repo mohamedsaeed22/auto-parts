@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Star, ShoppingCart, Plus, Minus } from "lucide-react";
+import {ShoppingCart, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { addToCart, updateQuantity } from "@/store/slices/cartSlice";
@@ -87,7 +87,7 @@ interface ProductCardProps {
   index: number;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const dispatch = useAppDispatch();
   const cartItems = useAppSelector((state) => state.cart.items);
 
