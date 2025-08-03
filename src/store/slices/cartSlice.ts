@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, Middleware } from "@reduxjs/toolkit";
 
 export interface CartItem {
   id: number;
@@ -17,6 +17,20 @@ interface CartState {
   isOpen: boolean;
   loading: boolean;
   error: string | null;
+}
+
+// Define types for Redux store
+interface RootState {
+  cart: CartState;
+  // Add other slices here as needed
+}
+
+// Define the rehydrate action type
+interface RehydrateAction {
+  type: 'persist/REHYDRATE';
+  payload?: {
+    cart?: CartState;
+  };
 }
 
 const initialState: CartState = {
@@ -77,7 +91,7 @@ const saveCartToStorage = (cart: CartState) => {
 
 const cartSlice = createSlice({
   name: "cart",
-  initialState: initializeCartFromStorage(), // Use the renamed function
+  initialState: initializeCartFromStorage(),
   reducers: {
     addToCart: (state, action: PayloadAction<Omit<CartItem, "quantity">>) => {
       const existingItem = state.items.find(
@@ -163,7 +177,6 @@ const cartSlice = createSlice({
       state.totalItems = totalItems;
     },
 
-    // Keep the action name as is
     loadCartFromStorage: (state, action: PayloadAction<CartItem[]>) => {
       state.items = action.payload;
       const { total, totalItems } = calculateTotals(state.items);
@@ -171,35 +184,38 @@ const cartSlice = createSlice({
       state.totalItems = totalItems;
     },
   },
-  // Add extraReducers to handle persistence actions
+  // Add extraReducers to handle persistence actions with proper typing
   extraReducers: (builder) => {
-    // ignore eslint
-    // @ts-expect-error
-    builder.addCase("persist/REHYDRATE", (state, action: any) => {
-      if (action.payload?.cart) {
-        // Ensure totals are recalculated after rehydration
-        const { total, totalItems } = calculateTotals(
-          action.payload.cart.items || []
-        );
-        state.items = action.payload.cart.items || [];
-        state.total = total;
-        state.totalItems = totalItems;
-        // Don't override isOpen state from persistence
-        state.isOpen = action.payload.cart.isOpen || false;
+    builder.addCase(
+      'persist/REHYDRATE',
+      (state, action: RehydrateAction) => {
+        if (action.payload?.cart) {
+          // Ensure totals are recalculated after rehydration
+          const { total, totalItems } = calculateTotals(
+            action.payload.cart.items || []
+          );
+          state.items = action.payload.cart.items || [];
+          state.total = total;
+          state.totalItems = totalItems;
+          // Don't override isOpen state from persistence
+          state.isOpen = action.payload.cart.isOpen || false;
+        }
       }
-    });
+    );
   },
 });
 
-// Add middleware to save cart on every state change
-// ignore eslint
-  // @ts-expect-error
-export const cartMiddleware = (store: any) => (next: any) => (action: any) => {
+// Properly typed middleware
+export const cartMiddleware: Middleware<object, RootState> = (store) => (next) => (action) => {
   const result = next(action);
 
-  if (action.type?.startsWith("cart/")) {
-    const cartState = store.getState().cart;
-    saveCartToStorage(cartState);
+  // Type guard to ensure action has type property
+  if (typeof action === 'object' && action !== null && 'type' in action) {
+    const typedAction = action as { type: string };
+    if (typedAction.type?.startsWith("cart/")) {
+      const cartState = store.getState().cart;
+      saveCartToStorage(cartState);
+    }
   }
 
   return result;
