@@ -60,14 +60,14 @@ const Brands = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 md:gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4  gap-6 md:gap-8">
           {brands.map((brand) => (
             <div
               key={brand.id}
               className="group relative flex flex-col items-center"
             >
               {/* Background circle with brand-bg.png */}
-              <div className="relative w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-full overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+              <div className="relative w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-full overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
                 <Image
                   src="/brands/brand-bg.png"
                   alt={`خلفية ${brand.name}`}
@@ -77,7 +77,7 @@ const Brands = () => {
 
                 {/* Brand logo overlay */}
                 <div className="absolute inset-0 flex items-center justify-center  duration-300">
-                  <div className="w-12 h-12 md:w-14 md:h-14 lg:w-18 lg:h-18 relative">
+                  <div className="w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 relative">
                     <Image
                       src={brand.logo}
                       alt={brand.name}
@@ -89,7 +89,7 @@ const Brands = () => {
               </div>
 
               {/* Brand name */}
-              <p className="mt-3 text-sm md:text-base font-medium text-gray-700 text-center group-hover:text-gray-900 transition-colors duration-300">
+              <p className="mt-4 text-base md:text-lg font-medium text-gray-700 text-center group-hover:text-gray-900 transition-colors duration-300">
                 {brand.name}
               </p>
             </div>
