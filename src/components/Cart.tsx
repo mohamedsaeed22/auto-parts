@@ -1,16 +1,9 @@
 "use client";
 
 import React, { useEffect } from "react";
-import {
-  X,
-  Plus,
-  Minus,
-  ShoppingBag,
-  Trash2,
-  ArrowLeft,
-} from "lucide-react";
+import { X, Plus, Minus, ShoppingBag, Trash2, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCartStore } from "@/store/cartStore"; // Update this path to your store location
+import { useCart } from "@/hooks/useCart"; // Use Redux hook
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -18,7 +11,7 @@ import Image from "next/image";
 const Cart: React.FC = () => {
   const router = useRouter();
 
-  // Destructure all needed state and actions from Zustand store
+  // Use Redux hook
   const {
     isOpen,
     items,
@@ -29,7 +22,7 @@ const Cart: React.FC = () => {
     updateQuantity,
     clearCart,
     setCartOpen,
-  } = useCartStore();
+  } = useCart();
 
   // Close cart on escape key
   useEffect(() => {
@@ -93,7 +86,9 @@ const Cart: React.FC = () => {
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
               <div className="flex items-center space-x-3 space-x-reverse">
                 <ShoppingBag size={24} className="text-gray-700" />
-                <h2 className="text-xl font-bold text-gray-900 ms-2">عربة التسوق</h2>
+                <h2 className="text-xl font-bold text-gray-900 ms-2">
+                  عربة التسوق
+                </h2>
               </div>
               <button
                 onClick={() => setCartOpen(false)}

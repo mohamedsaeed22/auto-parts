@@ -15,7 +15,7 @@ import {
 import Link from "next/link";
 import { CarFront, User, ChevronDown, Globe, ShoppingCart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCartStore } from "@/store/cartStore";
+import { useCart } from "@/hooks/useCart"; // Use Redux hook
 
 // Zod schema for login form validation
 const loginSchema = z.object({
@@ -28,7 +28,7 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function Header() {
-  const { totalItems, setCartOpen } = useCartStore();
+  const { totalItems, setCartOpen } = useCart(); // Use Redux hook
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -39,7 +39,6 @@ export default function Header() {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-    // setValue,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -70,7 +69,7 @@ export default function Header() {
   };
 
   const onSubmit = async (data: LoginFormData) => {
-     console.log(data)
+    console.log(data);
   };
 
   const handleDialogChange = (open: boolean) => {
@@ -326,7 +325,6 @@ export default function Header() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={closeMobileMenu}
-              // className="fixed inset-0 bg-black/50 z-1 backdrop-blur-sm  md:hidden"
             />
 
             {/* Mobile menu panel */}

@@ -1,4 +1,4 @@
-import { useCartStore } from "@/store/cartStore";
+import { useCart } from "@/hooks/useCart"; // Use Redux hook
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
@@ -10,7 +10,7 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const { items, addToCart, updateQuantity } = useCartStore();
+  const { items, addToCart, updateQuantity } = useCart(); // Use Redux hook
   const cartItem = items.find((item) => item.id === product.id);
   const isInCart = !!cartItem;
 

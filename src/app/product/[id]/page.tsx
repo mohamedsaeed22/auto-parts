@@ -3,10 +3,9 @@
 import Image from "next/image";
 import { ArrowRight, ShoppingCart, Minus, Plus, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useCartStore } from "@/store/cartStore";
+import { useCart } from "@/hooks/useCart"; // Use Redux hook
 
 const product = {
   id: 1,
@@ -30,13 +29,12 @@ const product = {
 
 export default function ProductDetails() {
   const router = useRouter();
-  const cartItems = useCartStore((state) => state.items);
-  const addToCart = useCartStore((state) => state.addToCart);
-  const removeFromCart = useCartStore((state) => state.removeFromCart);
-  const updateQuantity = useCartStore((state) => state.updateQuantity);
   const [selectedImage, setSelectedImage] = useState(0);
 
-  const cartItem = cartItems.find((item) => item.id === product.id);
+  // Use Redux hook
+  const { items, addToCart, removeFromCart, updateQuantity } = useCart();
+
+  const cartItem = items.find((item) => item.id === product.id);
   const currentQuantity = cartItem?.quantity || 0;
   const isInCart = currentQuantity > 0;
 
@@ -46,12 +44,10 @@ export default function ProductDetails() {
       title: product.title,
       price: product.price,
       image: product.image,
+      category: product.category,
+      description: product.description,
     });
   };
-
-  // const handleRemoveFromCart = () => {
-  //   removeFromCart(product.id);
-  // };
 
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity <= 0) {
@@ -130,8 +126,6 @@ export default function ProductDetails() {
             </p>
           </div>
 
-          {/* Rating */}
-
           {/* Description */}
           <div>
             <h3 className="text-lg font-semibold mb-2">الوصف</h3>
@@ -146,13 +140,14 @@ export default function ProductDetails() {
               {product.category}
             </span>
           </div>
+
           <label className="block text-sm font-medium text-black mb-4">
             الكمية
           </label>
 
           <div className="bg-black rounded-lg p-2 min-h-[44px] flex items-center justify-center">
             {!isInCart ? (
-               <Button
+              <Button
                 onClick={handleAddToCart}
                 className="w-full max-w-[200px] h-9 flex items-center justify-center space-x-2 flex-row-reverse space-x-reverse text-sm font-medium"
                 size="sm"
