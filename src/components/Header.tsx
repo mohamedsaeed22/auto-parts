@@ -1,16 +1,51 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import Link from "next/link";
 import { CarFront, User, ChevronDown, Globe, ShoppingCart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCartStore } from "@/store/cartStore";
 
+// Zod schema for login form validation
+const loginSchema = z.object({
+  email: z
+    .string()
+    .min(1, "البريد الإلكتروني مطلوب")
+    .email("يرجى إدخال بريد إلكتروني صحيح"),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
+
 export default function Header() {
   const { totalItems, setCartOpen } = useCartStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+
+  // React Hook Form setup
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    // setValue,
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
 
   const navLinks = [
     { href: "/", label: "الرئيسية" },
@@ -33,6 +68,18 @@ export default function Header() {
   const closeMobileMenu = () => {
     setIsMenuOpen(false);
   };
+
+  const onSubmit = async (data: LoginFormData) => {
+     console.log(data)
+  };
+
+  const handleDialogChange = (open: boolean) => {
+    setIsLoginOpen(open);
+    if (!open) {
+      reset(); // Reset form when dialog closes
+    }
+  };
+
   return (
     <header className="bg-white shadow-sm relative">
       <div className="container mx-auto px-4 sm:px-6 lg:px-0">
@@ -117,9 +164,53 @@ export default function Header() {
                 </motion.span>
               )}
             </button>
-            <Button variant="outline">
-              <User />
-            </Button>
+
+            {/* Login Dialog - Desktop */}
+            <Dialog open={isLoginOpen} onOpenChange={handleDialogChange}>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <User />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="text-center">
+                    تسجيل الدخول
+                  </DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                  <div>
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      البريد الإلكتروني
+                    </label>
+                    <input
+                      {...register("email")}
+                      type="email"
+                      id="email"
+                      className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                        errors.email ? "border-red-500" : "border-gray-300"
+                      }`}
+                      placeholder="أدخل بريدك الإلكتروني"
+                    />
+                    {errors.email && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.email.message}
+                      </p>
+                    )}
+                  </div>
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "جاري التسجيل..." : "تسجيل الدخول"}
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
 
           {/* Mobile/Tablet right side */}
@@ -270,10 +361,61 @@ export default function Header() {
                   transition={{ delay: navLinks.length * 0.1 }}
                   className="pt-4 border-t border-gray-200"
                 >
-                  <Button variant="outline" className="w-full justify-center">
-                    <User className="ml-2" />
-                    تسجيل الدخول
-                  </Button>
+                  {/* Login Dialog - Mobile */}
+                  <Dialog open={isLoginOpen} onOpenChange={handleDialogChange}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-center"
+                      >
+                        <User className="ml-2" />
+                        تسجيل الدخول
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle className="text-center">
+                          تسجيل الدخول
+                        </DialogTitle>
+                      </DialogHeader>
+                      <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="space-y-4"
+                      >
+                        <div>
+                          <label
+                            htmlFor="email-mobile"
+                            className="block text-sm font-medium text-gray-700 mb-2"
+                          >
+                            البريد الإلكتروني
+                          </label>
+                          <input
+                            {...register("email")}
+                            type="email"
+                            id="email-mobile"
+                            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                              errors.email
+                                ? "border-red-500"
+                                : "border-gray-300"
+                            }`}
+                            placeholder="أدخل بريدك الإلكتروني"
+                          />
+                          {errors.email && (
+                            <p className="mt-1 text-sm text-red-600">
+                              {errors.email.message}
+                            </p>
+                          )}
+                        </div>
+                        <Button
+                          type="submit"
+                          className="w-full"
+                          disabled={isSubmitting}
+                        >
+                          {isSubmitting ? "جاري التسجيل..." : "تسجيل الدخول"}
+                        </Button>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
                 </motion.div>
               </div>
             </motion.div>
