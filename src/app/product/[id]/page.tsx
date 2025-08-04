@@ -149,7 +149,7 @@ export default function ProductDetails() {
             {!isInCart ? (
               <Button
                 onClick={handleAddToCart}
-                className="w-full max-w-[200px] h-9 flex items-center justify-center space-x-2 flex-row-reverse space-x-reverse text-sm font-medium"
+                className="w-full   h-9 flex items-center justify-center space-x-2 flex-row-reverse space-x-reverse text-sm font-medium"
                 size="sm"
               >
                 <ShoppingCart size={16} />
