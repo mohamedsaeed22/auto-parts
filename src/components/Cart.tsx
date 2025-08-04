@@ -7,7 +7,6 @@ import {
   Minus,
   ShoppingBag,
   Trash2,
-  ArrowRight,
   ArrowLeft,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";

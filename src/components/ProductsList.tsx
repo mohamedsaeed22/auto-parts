@@ -82,9 +82,10 @@ const products = [
 
 interface ProductCardProps {
   product: (typeof products)[0];
+  index?: number;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product  }) => {
   const { items, addToCart, updateQuantity } = useCartStore();
   const cartItem = items.find((item) => item.id === product.id);
   const isInCart = !!cartItem;
@@ -209,7 +210,7 @@ const ProductsList = () => {
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
           {products.map((product, index) => (
-            <ProductCard key={product.id} product={product} index={index} />
+            <ProductCard key={product.id} product={product} index={index}  />
           ))}
         </div>
 

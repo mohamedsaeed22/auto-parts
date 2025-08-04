@@ -2,8 +2,7 @@
 
 import Image from "next/image";
 import { ArrowRight, ShoppingCart, Minus, Plus, Trash } from "lucide-react";
-import { ArrowRight, ShoppingCart, Minus, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+ import { Button } from "@/components/ui/button";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -50,9 +49,9 @@ export default function ProductDetails() {
     });
   };
 
-  const handleRemoveFromCart = () => {
-    removeFromCart(product.id);
-  };
+  // const handleRemoveFromCart = () => {
+  //   removeFromCart(product.id);
+  // };
 
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity <= 0) {
