@@ -93,7 +93,7 @@ const Cart: React.FC = () => {
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
               <div className="flex items-center space-x-3 space-x-reverse">
                 <ShoppingBag size={24} className="text-gray-700" />
-                <h2 className="text-xl font-bold text-gray-900">عربة التسوق</h2>
+                <h2 className="text-xl font-bold text-gray-900 ms-2">عربة التسوق</h2>
               </div>
               <button
                 onClick={() => setCartOpen(false)}

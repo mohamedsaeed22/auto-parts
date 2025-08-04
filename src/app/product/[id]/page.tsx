@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { ArrowRight, ShoppingCart, Minus, Plus, Trash } from "lucide-react";
- import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -146,59 +146,46 @@ export default function ProductDetails() {
               {product.category}
             </span>
           </div>
+          <label className="block text-sm font-medium text-black mb-4">
+            الكمية
+          </label>
 
-          {/* Quantity Selector - Only show if product is in cart */}
-          {isInCart && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                الكمية
-              </label>
-              <div className="flex items-center space-x-3 flex-row-reverse space-x-reverse">
-                <button
-                  onClick={() => handleQuantityChange(currentQuantity - 1)}
-                  className="p-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-                >
-                  {/* if lenght 0 show trash */}
-                  {currentQuantity === 1 ? (
-                    <Trash size={16} />
-                  ) : (
-                    <Minus size={16} />
-                  )}
-                </button>
-                <span className="text-xl font-semibold w-12 text-center">
-                  {currentQuantity}
-                </span>
-                <button
-                  onClick={() => handleQuantityChange(currentQuantity + 1)}
-                  className="p-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-                >
-                  <Plus size={16} />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Action Buttons */}
-          <div className="space-y-4">
-            {!isInCart && (
-              // Show Add to Cart button when product is not in cart
-              <Button
+          <div className="bg-black rounded-lg p-2 min-h-[44px] flex items-center justify-center">
+            {!isInCart ? (
+               <Button
                 onClick={handleAddToCart}
-                className="w-full flex items-center justify-center space-x-2 flex-row-reverse space-x-reverse"
-                size="lg"
+                className="w-full max-w-[200px] h-9 flex items-center justify-center space-x-2 flex-row-reverse space-x-reverse text-sm font-medium"
+                size="sm"
               >
-                <ShoppingCart size={20} />
+                <ShoppingCart size={16} />
                 <span>أضف إلى السلة</span>
               </Button>
+            ) : (
+              // Quantity Selector with matching compact dimensions
+              <div className="w-full max-w-[200px] h-9 flex items-center justify-center">
+                <div className="flex items-center space-x-2 flex-row-reverse space-x-reverse">
+                  <button
+                    onClick={() => handleQuantityChange(currentQuantity + 1)}
+                    className="w-8 h-8 border border-gray-500 rounded-md hover:bg-gray-800 transition-colors text-white flex items-center justify-center"
+                  >
+                    <Plus size={14} />
+                  </button>
+                  <span className="text-lg font-semibold w-8 text-center text-white">
+                    {currentQuantity}
+                  </span>
+                  <button
+                    onClick={() => handleQuantityChange(currentQuantity - 1)}
+                    className="w-8 h-8 border border-gray-500 rounded-md hover:bg-gray-800 transition-colors text-white flex items-center justify-center"
+                  >
+                    {currentQuantity === 1 ? (
+                      <Trash size={14} />
+                    ) : (
+                      <Minus size={14} />
+                    )}
+                  </button>
+                </div>
+              </div>
             )}
-
-            {/* <Button
-              variant="outline"
-              className="w-full flex items-center justify-center space-x-2 flex-row-reverse space-x-reverse"
-              size="lg"
-            >
-              <span>أضف إلى المفضلة</span>
-            </Button> */}
           </div>
 
           {/* Additional Info */}
