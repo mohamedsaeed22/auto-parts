@@ -1,7 +1,7 @@
  import SwiperCarousel from "@/components/Swiper";
 import Brands from "@/components/Brands";
 import PackagesOffers from "@/components/PackagesOffers";
-import ProductsList from "@/components/ProductsList";
+import ProductsList from "@/components/product/ProductsList";
   
 export default function Home() {
   return (
