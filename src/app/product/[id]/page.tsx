@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { ArrowRight, ShoppingCart, Minus, Plus, Trash } from "lucide-react";
-import {  ArrowRight, ShoppingCart, Minus, Plus } from "lucide-react";
+import { ArrowRight, ShoppingCart, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import { useState } from "react";
@@ -160,7 +160,11 @@ export default function ProductDetails() {
                   className="p-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
                 >
                   {/* if lenght 0 show trash */}
-                  {currentQuantity ===1 ? <Trash size={16} /> : <Minus size={16} />}
+                  {currentQuantity === 1 ? (
+                    <Trash size={16} />
+                  ) : (
+                    <Minus size={16} />
+                  )}
                 </button>
                 <span className="text-xl font-semibold w-12 text-center">
                   {currentQuantity}
