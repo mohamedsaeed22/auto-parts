@@ -2,7 +2,7 @@
 import Brands from "@/components/Brands";
 import PackagesOffers from "@/components/PackagesOffers";
 import ProductsList from "@/components/ProductsList";
- 
+  
 export default function Home() {
   return (
     <div>
@@ -12,7 +12,7 @@ export default function Home() {
           <Brands />
           <PackagesOffers />
           <ProductsList />
-        </div>
+         </div>
       </main>
     </div>
   );

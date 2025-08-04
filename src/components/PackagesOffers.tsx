@@ -85,9 +85,25 @@ const PackagesOffers = () => {
             onBeforeInit={(swiper) => {
               swiperRef.current = swiper;
             }}
-            slidesPerView={5}
-            // centeredSlides={true}
-            spaceBetween={20}
+            // slidesPerView={2} // 3 small items on mobile
+            breakpoints={{
+              640: {
+                // sm
+                slidesPerView: 2,
+                spaceBetween: 15,
+              },
+              768: {
+                // md - bigger items
+                slidesPerView: 3,
+                spaceBetween: 20,
+              },
+              1024: {
+                // lg - even bigger
+                slidesPerView: 5,
+                spaceBetween: 24,
+              },
+            }}
+            // spaceBetween={8} // Very small spacing on mobile
             grabCursor={true}
             loop={true}
             pagination={{

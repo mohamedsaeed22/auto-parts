@@ -1,60 +1,71 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { X, Plus, Minus, ShoppingBag, Trash2, ArrowLeft } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
-  removeFromCart,
-  updateQuantity,
-  clearCart,
-  setCartOpen,
-} from "@/store/slices/cartSlice";
+  X,
+  Plus,
+  Minus,
+  ShoppingBag,
+  Trash2,
+  ArrowRight,
+  ArrowLeft,
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useCartStore } from "@/store/cartStore"; // Update this path to your store location
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 const Cart: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const { isOpen, items, total, totalItems, loading } = useAppSelector(
-    (state) => state.cart
-  );
   const router = useRouter();
+
+  // Destructure all needed state and actions from Zustand store
+  const {
+    isOpen,
+    items,
+    total,
+    totalItems,
+    loading,
+    removeFromCart,
+    updateQuantity,
+    clearCart,
+    setCartOpen,
+  } = useCartStore();
 
   // Close cart on escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
-        dispatch(setCartOpen(false));
+        setCartOpen(false);
       }
     };
 
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
-  }, [isOpen, dispatch]);
+  }, [isOpen, setCartOpen]);
 
   const handleRemoveItem = (id: number) => {
-    dispatch(removeFromCart(id));
+    removeFromCart(id);
   };
 
   const handleUpdateQuantity = (id: number, quantity: number) => {
     if (quantity < 1) return;
-    dispatch(updateQuantity({ id, quantity }));
+    updateQuantity(id, quantity);
   };
 
   const handleClearCart = () => {
     if (confirm("هل أنت متأكد من تفريغ عربة التسوق؟")) {
-      dispatch(clearCart());
+      clearCart();
     }
   };
 
   const handleCheckout = () => {
-    dispatch(setCartOpen(false));
+    setCartOpen(false);
     router.push("/checkout");
   };
 
   const handleContinueShopping = () => {
-    dispatch(setCartOpen(false));
+    setCartOpen(false);
     router.push("/");
   };
 
@@ -68,7 +79,7 @@ const Cart: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/50 z-50 backdrop-blur-sm"
-            onClick={() => dispatch(setCartOpen(false))}
+            onClick={() => setCartOpen(false)}
           />
 
           {/* Cart Panel */}
@@ -86,7 +97,7 @@ const Cart: React.FC = () => {
                 <h2 className="text-xl font-bold text-gray-900">عربة التسوق</h2>
               </div>
               <button
-                onClick={() => dispatch(setCartOpen(false))}
+                onClick={() => setCartOpen(false)}
                 className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                 aria-label="إغلاق عربة التسوق"
               >
