@@ -1,14 +1,23 @@
-import { User, MapPin, ShoppingBag, Heart, Settings, Bell } from "lucide-react";
+import {
+  User,
+  MapPin,
+  ShoppingBag,
+  Heart,
+  Settings,
+  Bell,
+  Gift,
+} from "lucide-react";
 import React from "react";
 import { ProfilePage } from "@/app/userprofile/page";
 
 const menu = [
   { key: "overview", label: "الملف الشخصي", icon: <User size={20} /> },
-  { key: "addresses", label: "العناوين", icon: <MapPin size={20} /> },
-  { key: "orders", label: "الطلبات", icon: <ShoppingBag size={20} /> },
-  { key: "wishlist", label: "المفضلة", icon: <Heart size={20} /> },
-  { key: "settings", label: "الإعدادات", icon: <Settings size={20} /> },
+  { key: "points", label: "نقاطي", icon: <Gift size={20} /> },
   { key: "notifications", label: "الإشعارات", icon: <Bell size={20} /> },
+  { key: "orders", label: "الطلبات", icon: <ShoppingBag size={20} /> },
+  { key: "addresses", label: "العناوين", icon: <MapPin size={20} /> },
+  // { key: "wishlist", label: "المفضلة", icon: <Heart size={20} /> },
+  { key: "settings", label: "الإعدادات", icon: <Settings size={20} /> },
 ];
 
 export default function UserProfileSidebar({

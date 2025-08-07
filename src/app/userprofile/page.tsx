@@ -8,12 +8,14 @@ import OrdersPage from "@/components/userprofile/OrdersPage";
 import WishlistPage from "@/components/userprofile/WishlistPage";
 import SettingsPage from "@/components/userprofile/SettingsPage";
 import NotificationsPage from "@/components/userprofile/NotificationsPage";
+import PointsPage from "@/components/userprofile/PointsPage";
 
 export type ProfilePage =
   | "overview"
   | "addresses"
   | "orders"
   | "wishlist"
+  | "points"
   | "settings"
   | "notifications";
 
@@ -30,6 +32,8 @@ export default function UserProfilePage() {
         return <OrdersPage />;
       case "wishlist":
         return <WishlistPage />;
+      case "points":
+        return <PointsPage />;
       case "settings":
         return <SettingsPage />;
       case "notifications":
