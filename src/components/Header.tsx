@@ -4,14 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import Link from "next/link";
-import {
-  CarFront,
-  User,
-  ChevronDown,
-  Globe,
-  ShoppingCart,
-  Bell,
-} from "lucide-react";
+import {User, ChevronDown, Globe, ShoppingCart, Bell } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/hooks/useCart"; // Use Redux hook
 import LoginDialog from "./LoginDialog";

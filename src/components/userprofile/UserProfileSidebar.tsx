@@ -2,7 +2,6 @@ import {
   User,
   MapPin,
   ShoppingBag,
-  Heart,
   Settings,
   Bell,
   Gift,

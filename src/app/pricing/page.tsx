@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Filter, CarFront, Package, Clock, Star } from "lucide-react";
+import { Search, Filter, CarFront, Package, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
