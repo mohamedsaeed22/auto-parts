@@ -68,7 +68,8 @@ const Brands = () => {
             >
               {/* Background circle with brand-bg.png */}
               <div className="relative w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-full overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                <Image
+                {/* use this color #b9974d instead of brand-bg.png */}
+                 <Image
                   src="/brands/brand-bg.png"
                   alt={`خلفية ${brand.name}`}
                   fill

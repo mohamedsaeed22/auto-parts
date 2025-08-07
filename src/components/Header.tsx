@@ -2,24 +2,27 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
- 
+
 import Link from "next/link";
 import { CarFront, User, ChevronDown, Globe, ShoppingCart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/hooks/useCart"; // Use Redux hook
 import LoginDialog from "./LoginDialog";
+import Image from "next/image";
 
 export default function Header() {
   const { totalItems, setCartOpen } = useCart(); // Use Redux hook
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
- 
+
   const navLinks = [
     { href: "/", label: "الرئيسية" },
     { href: "/", label: "من نحن" },
     { href: "/", label: "اتصل بنا" },
     { href: "/", label: "البراندات" },
     { href: "/", label: "المنتجات" },
+    { href: "/pricing", label: "تسعير القطع" },
+    { href: "/userPricing", label: "طلب تسعير" },
     { href: "/", label: "اخر العروض" },
   ];
 
@@ -41,11 +44,9 @@ export default function Header() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-0">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex-shrink-0 flex items-center p-2 rounded-full bg-yellow-100">
-            <Link href="/">
-              <CarFront />
-            </Link>
-          </div>
+          <Link href="/">
+            <Image src="/fal-logo.png" alt="logo" width={50} height={50} />
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex space-x-reverse">

@@ -2,13 +2,14 @@
 import React from "react";
 
 const Footer = () => {
+  // use this color #b9974d
   return (
     <footer className="bg-gray-900 text-white py-16">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Column 1 - اطلبها */}
           <div>
-            <h3 className="font-bold text-lg mb-6 text-blue-400">
+            <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
               اقسام الموقع
             </h3>
             <ul className="space-y-3 list-disc list-inside">
@@ -49,7 +50,7 @@ const Footer = () => {
 
           {/* Column 2 - المتجر */}
           <div>
-            <h3 className="font-bold text-lg mb-6 text-blue-400">
+            <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
               أقسام المتجر
             </h3>
             <ul className="space-y-3 list-disc list-inside">
@@ -98,7 +99,7 @@ const Footer = () => {
 
           {/* Column 3 - الخدمات */}
           <div>
-            <h3 className="font-bold text-lg mb-6 text-blue-400">
+            <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
               أقسام الخدمات
             </h3>
             <ul className="space-y-3 list-disc list-inside">
@@ -131,7 +132,7 @@ const Footer = () => {
 
           {/* Column 4 - الخدمات (duplicate section) */}
           <div>
-            <h3 className="font-bold text-lg mb-6 text-blue-400">الخدمات</h3>
+            <h3 className="font-bold text-lg mb-6 text-[#b9974d]">الخدمات</h3>
             <ul className="space-y-3 list-disc list-inside">
               <li>
                 <a
@@ -162,7 +163,7 @@ const Footer = () => {
 
           {/* Column 5 - مركز المساعدة */}
           <div>
-            <h3 className="font-bold text-lg mb-6 text-blue-400">
+            <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
               مركز المساعدة
             </h3>
             <div className="space-y-4">
@@ -173,7 +174,7 @@ const Footer = () => {
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="w-5 h-5 text-blue-400 ml-2"
+                  className="w-5 h-5 text-[#b9974d] ml-2"
                 >
                   <path
                     strokeLinecap="round"
@@ -185,7 +186,7 @@ const Footer = () => {
                   href="mailto:info@atlobha.com"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  info@test.com
+                  info@falfuture.com
                 </a>
               </div>
               <div className="flex items-center space-x-3 space-x-reverse">
@@ -195,7 +196,7 @@ const Footer = () => {
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="w-5 h-5 text-blue-400 ml-2"
+                  className="w-5 h-5 text-[#b9974d] ml-2"
                 >
                   <path
                     strokeLinecap="round"
@@ -207,7 +208,7 @@ const Footer = () => {
                   href="tel:+966502670094"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  +966 50 267 0094
+                  0543777568
                 </a>
               </div>
             </div>
