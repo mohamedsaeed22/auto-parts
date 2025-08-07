@@ -4,7 +4,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import Link from "next/link";
-import { CarFront, User, ChevronDown, Globe, ShoppingCart } from "lucide-react";
+import {
+  CarFront,
+  User,
+  ChevronDown,
+  Globe,
+  ShoppingCart,
+  Bell,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/hooks/useCart"; // Use Redux hook
 import LoginDialog from "./LoginDialog";
@@ -105,6 +112,22 @@ export default function Header() {
               </AnimatePresence>
             </div>
 
+            {/* Notification button */}
+            <Link
+              href="/userprofile"
+              className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <Bell size={24} />
+              {/* Optional: Add notification badge */}
+              {/* <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+              >
+                3
+              </motion.span> */}
+            </Link>
+
             {/* Cart button */}
             <button
               onClick={handleCartClick}
@@ -128,6 +151,22 @@ export default function Header() {
 
           {/* Mobile/Tablet right side */}
           <div className="lg:hidden flex items-center space-x-reverse space-x-2">
+            {/* Notification button - Mobile/Tablet */}
+            <Link
+              href="/userprofile"
+              className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <Bell size={20} />
+              {/* Optional: Add notification badge */}
+              {/* <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]"
+              >
+                3
+              </motion.span> */}
+            </Link>
+
             {/* Cart button - Mobile/Tablet */}
             <button
               onClick={handleCartClick}
