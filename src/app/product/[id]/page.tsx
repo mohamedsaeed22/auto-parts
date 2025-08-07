@@ -122,7 +122,7 @@ export default function ProductDetails() {
               {product.title}
             </h1>
             <p className="text-2xl font-bold text-gray-900">
-              {product.price} ر.س
+              {product.price} جنيه
             </p>
           </div>
 

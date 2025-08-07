@@ -251,7 +251,7 @@ export default function SettingsPage() {
               }
               className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
             >
-              <option value="SAR">ريال سعودي (SAR)</option>
+              <option value="SAR">جنيه سعودي (SAR)</option>
               <option value="USD">دولار أمريكي (USD)</option>
               <option value="EUR">يورو (EUR)</option>
             </select>

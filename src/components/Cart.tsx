@@ -142,7 +142,7 @@ const Cart: React.FC = () => {
                           {item.title}
                         </h3>
                         <p className="text-blue-600 font-semibold text-xs mb-1">
-                          {item.price.toFixed(2)} ر.س
+                          {item.price.toFixed(2)} جنيه
                         </p>
 
                         <div className="flex items-center justify-between">
@@ -179,7 +179,8 @@ const Cart: React.FC = () => {
                         </div>
 
                         <p className="text-xs text-gray-500 mt-1">
-                          المجموع: {(item.price * item.quantity).toFixed(2)} ر.س
+                          المجموع: {(item.price * item.quantity).toFixed(2)}{" "}
+                          جنيه
                         </p>
                       </div>
                     </motion.div>
@@ -203,7 +204,7 @@ const Cart: React.FC = () => {
                   <div className="flex justify-between items-center text-lg font-bold">
                     <span>المجموع الكلي:</span>
                     <span className="text-blue-600">
-                      {total.toFixed(2)} ر.س
+                      {total.toFixed(2)} جنيه
                     </span>
                   </div>
                 </div>

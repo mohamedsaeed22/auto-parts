@@ -36,7 +36,6 @@ export default function PricingPage() {
       category: "محرك",
       price: 45,
       originalPrice: 60,
-      rating: 4.5,
       reviews: 128,
       image: "/products/product1.jpg",
       availability: "متوفر",
@@ -49,7 +48,6 @@ export default function PricingPage() {
       category: "فرامل",
       price: 85,
       originalPrice: 120,
-      rating: 4.2,
       reviews: 89,
       image: "/products/product2.jpg",
       availability: "متوفر",
@@ -62,7 +60,6 @@ export default function PricingPage() {
       category: "محرك",
       price: 35,
       originalPrice: 50,
-      rating: 4.7,
       reviews: 156,
       image: "/products/product3.png",
       availability: "متوفر",
@@ -75,7 +72,6 @@ export default function PricingPage() {
       category: "محرك",
       price: 120,
       originalPrice: 180,
-      rating: 4.3,
       reviews: 67,
       image: "/products/product4.png",
       availability: "متوفر",
@@ -88,7 +84,6 @@ export default function PricingPage() {
       category: "كهرباء",
       price: 95,
       originalPrice: 140,
-      rating: 4.1,
       reviews: 43,
       image: "/products/product5.png",
       availability: "متوفر",
@@ -101,7 +96,6 @@ export default function PricingPage() {
       category: "داخلي",
       price: 250,
       originalPrice: 350,
-      rating: 4.6,
       reviews: 78,
       image: "/products/product6.png",
       availability: "متوفر",
@@ -126,19 +120,19 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+      <div className="bg-gradient-to-r from-[#b9974d] to-[#b9974d] text-white">
         <div className="container mx-auto px-4 py-16">
           <div className="text-center">
-            <h1 className="text-4xl font-bold mb-4">تسعير القطع</h1>
+            <h1 className="text-4xl font-bold mb-4">جميع القطع</h1>
             <p className="text-xl text-blue-100 mb-8">
               ابحث عن قطع السيارات واحصل على أفضل الأسعار
             </p>
 
             {/* Search Bar */}
             <div className="max-w-2xl mx-auto">
-              <div className="relative">
+              <div className="relative border border-white rounded-lg">
                 <Search
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white "
                   size={20}
                 />
                 <input
@@ -146,7 +140,7 @@ export default function PricingPage() {
                   placeholder="ابحث عن قطع السيارات..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full px-12 py-4 rounded-lg text-gray-900 text-right"
+                  className="w-full px-12 py-4 rounded-lg text-white text-right placeholder:text-white"
                 />
               </div>
             </div>
@@ -204,19 +198,19 @@ export default function PricingPage() {
                 <div className="space-y-2">
                   <label className="flex items-center">
                     <input type="checkbox" className="ml-2" />
-                    <span className="text-sm">أقل من 50 ريال</span>
+                    <span className="text-sm">أقل من 50 جنيه</span>
                   </label>
                   <label className="flex items-center">
                     <input type="checkbox" className="ml-2" />
-                    <span className="text-sm">50 - 100 ريال</span>
+                    <span className="text-sm">50 - 100 جنيه</span>
                   </label>
                   <label className="flex items-center">
                     <input type="checkbox" className="ml-2" />
-                    <span className="text-sm">100 - 200 ريال</span>
+                    <span className="text-sm">100 - 200 جنيه</span>
                   </label>
                   <label className="flex items-center">
                     <input type="checkbox" className="ml-2" />
-                    <span className="text-sm">أكثر من 200 ريال</span>
+                    <span className="text-sm">أكثر من 200 جنيه</span>
                   </label>
                 </div>
               </div>
@@ -239,7 +233,6 @@ export default function PricingPage() {
                 <option>ترتيب حسب: الأحدث</option>
                 <option>ترتيب حسب: السعر (من الأقل)</option>
                 <option>ترتيب حسب: السعر (من الأعلى)</option>
-                <option>ترتيب حسب: التقييم</option>
               </select>
             </div>
 
@@ -282,32 +275,13 @@ export default function PricingPage() {
                       {part.name}
                     </h3>
 
-                    <div className="flex items-center mb-2">
-                      <div className="flex items-center">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            size={14}
-                            className={
-                              i < Math.floor(part.rating)
-                                ? "text-yellow-400 fill-current"
-                                : "text-gray-300"
-                            }
-                          />
-                        ))}
-                      </div>
-                      <span className="text-sm text-gray-500 mr-2">
-                        ({part.reviews})
-                      </span>
-                    </div>
-
                     <div className="flex items-center justify-between mb-3">
                       <div className="text-right">
                         <span className="text-lg font-bold text-green-600">
-                          {part.price} ريال
+                          {part.price} جنيه
                         </span>
                         <span className="text-sm text-gray-400 line-through mr-2">
-                          {part.originalPrice} ريال
+                          {part.originalPrice} جنيه
                         </span>
                       </div>
                     </div>
