@@ -133,7 +133,7 @@ body {
 .swiper-slide {
   text-align: center;
   font-size: 18px;
-  background: #444;
+  /* background: #444; */
 
   /* Center slide text vertically */
   display: flex;
@@ -181,4 +181,27 @@ body {
 .packages-swiper .swiper-pagination-bullet-active,
 .mySwiper .swiper-pagination-bullet-active {
   opacity: 1;
+}
+
+/* Category Swiper Styles */
+.category-swiper {
+  padding: 20px 0;
+  height: 400px;
+}
+
+.category-swiper .swiper-pagination {
+  bottom: -10px;
+}
+
+.category-swiper .swiper-pagination-bullet {
+  background: #b9974d;
+  opacity: 1;
+}
+
+.category-swiper .swiper-pagination-bullet-active {
+  background: white;
+}
+
+.category-swiper .swiper-slide {
+  height: auto;
 }

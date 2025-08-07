@@ -20,10 +20,10 @@ export default function Header() {
     { href: "/", label: "من نحن" },
     { href: "/", label: "اتصل بنا" },
     { href: "/", label: "البراندات" },
+    { href: "/", label: "اخر العروض" },
     { href: "/pricing", label: "المنتجات" },
     // { href: "/pricing", label: "تسعير القطع" },
     { href: "/userPricing", label: "طلب تسعير" },
-    { href: "/", label: "اخر العروض" },
   ];
 
   const languages = [
