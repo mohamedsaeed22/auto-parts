@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MapPin, Plus, Edit, Trash2, Home, Building } from "lucide-react";
+import { Plus, Edit, Trash2, Home, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface Address {

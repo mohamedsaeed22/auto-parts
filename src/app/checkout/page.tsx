@@ -4,27 +4,18 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import {
-  ArrowRight,
   ArrowLeft,
   CreditCard,
   Truck,
   Shield,
   CheckCircle,
   MapPin,
-  Phone,
-  Mail,
-  User,
   ShoppingBag,
   RefreshCw,
-  Lock,
-  Star,
   Plus,
   Minus,
   X,
-  Edit,
-  Gift,
   Clock,
-  ChevronRight,
   Package,
   Loader2,
   Trash,
@@ -33,23 +24,8 @@ import { useCart } from "@/hooks/useCart";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
-interface ShippingInfo {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  address: string;
-  city: string;
-  postalCode: string;
-  country: string;
-}
-
-interface PaymentInfo {
-  cardNumber: string;
-  cardHolder: string;
-  expiryDate: string;
-  cvv: string;
-}
+ 
+ 
 
 const CheckoutPage = () => {
   const router = useRouter();
@@ -62,22 +38,7 @@ const CheckoutPage = () => {
     removeFromCart,
   } = useCart();
   const [currentStep, setCurrentStep] = useState(1);
-  const [shippingInfo, setShippingInfo] = useState<ShippingInfo>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    postalCode: "",
-    country: "السعودية",
-  });
-  const [paymentInfo, setPaymentInfo] = useState<PaymentInfo>({
-    cardNumber: "",
-    cardHolder: "",
-    expiryDate: "",
-    cvv: "",
-  });
+ 
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
@@ -166,8 +127,10 @@ const CheckoutPage = () => {
         FREESHIP: 15,
       };
 
-      if (validCoupons[couponCode.toUpperCase()]) {
-        setCouponDiscount(validCoupons[couponCode.toUpperCase()]);
+      if (validCoupons[couponCode.toUpperCase() as keyof typeof validCoupons]) {
+        setCouponDiscount(
+          validCoupons[couponCode.toUpperCase() as keyof typeof validCoupons]
+        );
         setCouponError("");
       } else {
         setCouponError("كوبون غير صحيح");
@@ -327,7 +290,6 @@ const CheckoutPage = () => {
                                 {item.title}
                               </h3>
                               <div className="flex items-center space-x-4 space-x-reverse mb-3">
-                               
                                 <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">
                                   في المخزون
                                 </span>

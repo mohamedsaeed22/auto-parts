@@ -28,7 +28,7 @@ interface Order {
 }
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([
+  const [orders] = useState<Order[]>([
     {
       id: "ORD-2024-001",
       date: "2024-01-15",

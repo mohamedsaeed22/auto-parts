@@ -85,9 +85,7 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
     formState: { errors, isSubmitting },
     reset,
     setValue,
-    watch,
     clearErrors,
-    getValues,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -189,15 +187,15 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
       setCurrentStep("otp");
 
       // Simulate sending OTP (replace with actual API call)
-      console.log(
-        "Sending OTP to:",
-        isEmailMode ? data.email : data.phoneNumber
-      );
+      //   console.log(
+      //     "Sending OTP to:",
+      //     isEmailMode ? data.email : data.phoneNumber
+      //   );
 
       // Show success message
-      alert(
-        `تم إرسال رمز التحقق إلى ${isEmailMode ? data.email : data.phoneNumber}`
-      );
+      //   alert(
+      //     `تم إرسال رمز التحقق إلى ${isEmailMode ? data.email : data.phoneNumber}`
+      //   );
     } catch (error) {
       console.error("Error submitting form:", error);
       alert("حدث خطأ أثناء إرسال النموذج");
@@ -273,13 +271,13 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
 
     try {
       setIsLoading(true);
-      const contactInfo = isEmailMode ? formData.email : formData.phoneNumber;
-      console.log("Resending OTP to:", contactInfo);
+      //   const contactInfo = isEmailMode ? formData?.email : formData?.phoneNumber;
+      //   console.log("Resending OTP to:", contactInfo);
 
       // Simulate API call delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      alert(`تم إعادة إرسال رمز التحقق إلى ${contactInfo}`);
+      //   alert(`تم إعادة إرسال رمز التحقق إلى ${contactInfo}`);
     } catch (error) {
       console.error("Error resending OTP:", error);
       alert("حدث خطأ أثناء إعادة إرسال رمز التحقق");
@@ -352,7 +350,7 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
                   id="email"
                   dir="rtl"
                   className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.email ? "border-red-500" : "border-gray-300"
+                    "email" in errors ? "border-red-500" : "border-gray-300"
                   }`}
                   placeholder="أدخل البريد الإلكتروني"
                 />
@@ -363,21 +361,30 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
                   id="phoneNumber"
                   dir="rtl"
                   className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                    errors.phoneNumber ? "border-red-500" : "border-gray-300"
+                    "phoneNumber" in errors
+                      ? "border-red-500"
+                      : "border-gray-300"
                   }`}
                   placeholder="أدخل رقم الهاتف"
                 />
               )}
-              {isEmailMode && errors.email && (
+              {isEmailMode && "email" in errors && errors.email && (
                 <p className="mt-1 text-sm text-red-600">
-                  {errors.email.message}
+                  {typeof errors.email === "object" && "message" in errors.email
+                    ? errors.email.message
+                    : String(errors.email)}
                 </p>
               )}
-              {!isEmailMode && errors.phoneNumber && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.phoneNumber.message}
-                </p>
-              )}
+              {!isEmailMode &&
+                "phoneNumber" in errors &&
+                errors.phoneNumber && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {typeof errors.phoneNumber === "object" &&
+                    "message" in errors.phoneNumber
+                      ? errors.phoneNumber.message
+                      : String(errors.phoneNumber)}
+                  </p>
+                )}
             </div>
 
             <div>
@@ -433,9 +440,12 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
                     </button>
                   </div>
                 )}
-                {errors.documentImage && (
+                {"documentImage" in errors && errors.documentImage && (
                   <p className="mt-1 text-sm text-red-600">
-                    {errors.documentImage.message}
+                    {typeof errors.documentImage === "object" &&
+                    "message" in errors.documentImage
+                      ? (errors.documentImage as { message: string }).message
+                      : String(errors.documentImage)}
                   </p>
                 )}
               </div>
@@ -456,7 +466,13 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
             <div className="text-center">
               <p className="text-sm text-gray-600 mb-4">
                 تم إرسال رمز التحقق إلى{" "}
-                {isEmailMode ? formData?.email : formData?.phoneNumber}
+                {isEmailMode
+                  ? formData && "email" in formData
+                    ? formData.email
+                    : ""
+                  : formData && "phoneNumber" in formData
+                  ? formData.phoneNumber
+                  : ""}
               </p>
             </div>
 
