@@ -68,7 +68,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
             <div className="flex items-center justify-between mt-auto">
               <span className="text-lg font-bold text-gray-900">
-                {product.price} جنيه
+                {product.price} ريال
               </span>
 
               {!isInCart ? (

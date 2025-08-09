@@ -198,19 +198,19 @@ export default function PricingPage() {
                 <div className="space-y-2">
                   <label className="flex items-center">
                     <input type="checkbox" className="ml-2" />
-                    <span className="text-sm">أقل من 50 جنيه</span>
+                    <span className="text-sm">أقل من 50 ريال</span>
                   </label>
                   <label className="flex items-center">
                     <input type="checkbox" className="ml-2" />
-                    <span className="text-sm">50 - 100 جنيه</span>
+                    <span className="text-sm">50 - 100 ريال</span>
                   </label>
                   <label className="flex items-center">
                     <input type="checkbox" className="ml-2" />
-                    <span className="text-sm">100 - 200 جنيه</span>
+                    <span className="text-sm">100 - 200 ريال</span>
                   </label>
                   <label className="flex items-center">
                     <input type="checkbox" className="ml-2" />
-                    <span className="text-sm">أكثر من 200 جنيه</span>
+                    <span className="text-sm">أكثر من 200 ريال</span>
                   </label>
                 </div>
               </div>
@@ -278,10 +278,10 @@ export default function PricingPage() {
                     <div className="flex items-center justify-between mb-3">
                       <div className="text-right">
                         <span className="text-lg font-bold text-green-600">
-                          {part.price} جنيه
+                          {part.price} ريال
                         </span>
                         <span className="text-sm text-gray-400 line-through mr-2">
-                          {part.originalPrice} جنيه
+                          {part.originalPrice} ريال
                         </span>
                       </div>
                     </div>

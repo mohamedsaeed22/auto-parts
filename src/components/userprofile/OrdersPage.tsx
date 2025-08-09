@@ -222,7 +222,7 @@ export default function OrdersPage() {
                 </div>
                 <div>
                   <div className="text-sm text-gray-600 mb-1">إجمالي الطلب</div>
-                  <div className="font-medium">{order.total} جنيه</div>
+                  <div className="font-medium">{order.total} ريال</div>
                 </div>
                 <div>
                   <div className="text-sm text-gray-600 mb-1">عدد المنتجات</div>
@@ -247,11 +247,11 @@ export default function OrdersPage() {
                     <div className="flex-1 text-right">
                       <div className="font-medium">{item.name}</div>
                       <div className="text-sm text-gray-600">
-                        الكمية: {item.quantity} × {item.price} جنيه
+                        الكمية: {item.quantity} × {item.price} ريال
                       </div>
                     </div>
                     <div className="font-medium">
-                      {(item.quantity * item.price).toFixed(2)} جنيه
+                      {(item.quantity * item.price).toFixed(2)} ريال
                     </div>
                   </div>
                 ))}

@@ -336,11 +336,11 @@ const CheckoutPage = () => {
 
                             <div className="text-right flex-shrink-0">
                               <p className="text-2xl font-bold text-gray-900 mb-1">
-                                {(item.price * item.quantity).toFixed(2)} جنيه
+                                {(item.price * item.quantity).toFixed(2)} ريال
                               </p>
                               {item.quantity > 1 && (
                                 <p className="text-sm text-gray-600">
-                                  {item.price.toFixed(2)} جنيه / قطعة
+                                  {item.price.toFixed(2)} ريال / قطعة
                                 </p>
                               )}
                             </div>
@@ -638,7 +638,7 @@ const CheckoutPage = () => {
                                 </p>
                               </div>
                               <p className="text-sm font-medium">
-                                {(item.price * item.quantity).toFixed(2)} جنيه
+                                {(item.price * item.quantity).toFixed(2)} ريال
                               </p>
                             </div>
                           ))}
@@ -772,7 +772,7 @@ const CheckoutPage = () => {
                         <div className="flex items-center justify-between text-sm text-green-800">
                           <span>تم تطبيق الخصم</span>
                           <span className="font-medium">
-                            -{couponDiscount.toFixed(2)} جنيه
+                            -{couponDiscount.toFixed(2)} ريال
                           </span>
                         </div>
                       </div>
@@ -784,7 +784,7 @@ const CheckoutPage = () => {
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">المجموع الفرعي</span>
-                    <span className="font-medium">{total.toFixed(2)} جنيه</span>
+                    <span className="font-medium">{total.toFixed(2)} ريال</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">الشحن</span>
@@ -793,14 +793,14 @@ const CheckoutPage = () => {
                   <div className="flex justify-between">
                     <span className="text-gray-600">الضريبة المضافة</span>
                     <span className="font-medium">
-                      {(total * 0.15).toFixed(2)} جنيه
+                      {(total * 0.15).toFixed(2)} ريال
                     </span>
                   </div>
                   {couponDiscount > 0 && (
                     <div className="flex justify-between text-green-600">
                       <span>الخصم</span>
                       <span className="font-medium">
-                        -{couponDiscount.toFixed(2)} جنيه
+                        -{couponDiscount.toFixed(2)} ريال
                       </span>
                     </div>
                   )}
@@ -810,7 +810,7 @@ const CheckoutPage = () => {
                   <div className="flex justify-between text-xl font-bold">
                     <span>المجموع الكلي</span>
                     <span className="text-orange-600">
-                      {finalTotal.toFixed(2)} جنيه
+                      {finalTotal.toFixed(2)} ريال
                     </span>
                   </div>
                 </div>
