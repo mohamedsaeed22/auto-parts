@@ -23,7 +23,11 @@ interface SavedFormData {
   userCode: string;
   partName: string;
   partImage: File | null;
-  imagePreview: string | null;
+  partImagePreview: string | null;
+  requestImage: File | null;
+  requestImagePreview: string | null;
+  formImage: File | null;
+  formImagePreview: string | null;
   quantity: string;
   chassisNumber: string;
   submittedAt: Date;
@@ -37,14 +41,22 @@ export default function UserPricingPage() {
     userCode: "",
     partName: "",
     partImage: null as File | null,
+    requestImage: null as File | null,
+    formImage: null as File | null,
     quantity: "",
     chassisNumber: "",
   });
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [partImagePreview, setPartImagePreview] = useState<string | null>(null);
+  const [requestImagePreview, setRequestImagePreview] = useState<string | null>(
+    null
+  );
+  const [formImagePreview, setFormImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [savedForms, setSavedForms] = useState<SavedFormData[]>([]);
   const [isSendingToBackend, setIsSendingToBackend] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const partImageInputRef = useRef<HTMLInputElement>(null);
+  const requestImageInputRef = useRef<HTMLInputElement>(null);
+  const formImageInputRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -54,7 +66,7 @@ export default function UserPricingPage() {
     }));
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePartImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setFormData((prev) => ({
@@ -65,7 +77,41 @@ export default function UserPricingPage() {
       // Create preview URL
       const reader = new FileReader();
       reader.onload = (e) => {
-        setImagePreview(e.target?.result as string);
+        setPartImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRequestImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        requestImage: file,
+      }));
+
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setRequestImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleFormImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        formImage: file,
+      }));
+
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setFormImagePreview(e.target?.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -85,7 +131,11 @@ export default function UserPricingPage() {
       userCode: formData.userCode,
       partName: formData.partName,
       partImage: formData.partImage,
-      imagePreview: imagePreview,
+      partImagePreview: partImagePreview,
+      requestImage: formData.requestImage,
+      requestImagePreview: requestImagePreview,
+      formImage: formData.formImage,
+      formImagePreview: formImagePreview,
       quantity: formData.quantity,
       chassisNumber: formData.chassisNumber,
       submittedAt: new Date(),
@@ -98,15 +148,25 @@ export default function UserPricingPage() {
       userCode: "",
       partName: "",
       partImage: null,
+      requestImage: null,
+      formImage: null,
       quantity: "",
       chassisNumber: "",
     });
-    setImagePreview(null);
+    setPartImagePreview(null);
+    setRequestImagePreview(null);
+    setFormImagePreview(null);
     setIsSubmitting(false);
 
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+    // Reset file inputs
+    if (partImageInputRef.current) {
+      partImageInputRef.current.value = "";
+    }
+    if (requestImageInputRef.current) {
+      requestImageInputRef.current.value = "";
+    }
+    if (formImageInputRef.current) {
+      formImageInputRef.current.value = "";
     }
 
     // Show success message
@@ -132,8 +192,12 @@ export default function UserPricingPage() {
         userType: form.userType,
         userCode: form.userCode,
         partName: form.partName,
-        hasImage: form.partImage !== null,
-        imageName: form.partImage?.name || null,
+        hasPartImage: form.partImage !== null,
+        partImageName: form.partImage?.name || null,
+        hasRequestImage: form.requestImage !== null,
+        requestImageName: form.requestImage?.name || null,
+        hasFormImage: form.formImage !== null,
+        formImageName: form.formImage?.name || null,
         quantity: form.quantity,
         chassisNumber: form.chassisNumber,
         submittedAt: form.submittedAt.toISOString(),
@@ -158,11 +222,27 @@ export default function UserPricingPage() {
     }
   };
 
-  const removeImage = () => {
+  const removePartImage = () => {
     setFormData((prev) => ({ ...prev, partImage: null }));
-    setImagePreview(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+    setPartImagePreview(null);
+    if (partImageInputRef.current) {
+      partImageInputRef.current.value = "";
+    }
+  };
+
+  const removeRequestImage = () => {
+    setFormData((prev) => ({ ...prev, requestImage: null }));
+    setRequestImagePreview(null);
+    if (requestImageInputRef.current) {
+      requestImageInputRef.current.value = "";
+    }
+  };
+
+  const removeFormImage = () => {
+    setFormData((prev) => ({ ...prev, formImage: null }));
+    setFormImagePreview(null);
+    if (formImageInputRef.current) {
+      formImageInputRef.current.value = "";
     }
   };
 
@@ -186,7 +266,7 @@ export default function UserPricingPage() {
       {/* Main Content Section - Split Layout */}
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
-        {/* Right Side - Form */}
+          {/* Right Side - Form */}
           <div className="order-1 lg:order-1">
             <div className="bg-white rounded-lg shadow-lg p-8">
               <div className="text-center mb-8">
@@ -274,62 +354,170 @@ export default function UserPricingPage() {
                   />
                 </div>
 
-                {/* Part Image Upload - Only for Workshop */}
-                {userType === "workshop" && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-                      <ImageIcon className="inline ml-2" size={16} />
-                      صورة القطعة
+                {/* Part Image Upload */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
+                    <ImageIcon className="inline ml-2" size={16} />
+                    صورة القطعة
+                  </label>
+                  <div className="space-y-4">
+                    <input
+                      ref={partImageInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePartImageChange}
+                      className="hidden"
+                      id="partImage"
+                    />
+                    <label
+                      htmlFor="partImage"
+                      className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors"
+                    >
+                      <div className="text-center">
+                        <Upload
+                          className="mx-auto text-gray-400 mb-2"
+                          size={24}
+                        />
+                        <p className="text-sm text-gray-500">
+                          اضغط لاختيار صورة القطعة
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          JPG, PNG, GIF حتى 5MB
+                        </p>
+                      </div>
                     </label>
-                    <div className="space-y-4">
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="hidden"
-                        id="partImage"
-                      />
-                      <label
-                        htmlFor="partImage"
-                        className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors"
-                      >
-                        <div className="text-center">
-                          <Upload
-                            className="mx-auto text-gray-400 mb-2"
-                            size={24}
-                          />
-                          <p className="text-sm text-gray-500">
-                            اضغط لاختيار صورة القطعة
-                          </p>
-                          <p className="text-xs text-gray-400">
-                            JPG, PNG, GIF حتى 5MB
-                          </p>
-                        </div>
-                      </label>
 
-                      {/* Image Preview */}
-                      {imagePreview && (
-                        <div className="relative">
-                          <Image
-                            src={imagePreview}
-                            alt="معاينة الصورة"
-                            className="w-full h-48 object-cover rounded-lg border border-gray-300"
-                            width={100}
-                            height={100}
-                          />
-                          <button
-                            type="button"
-                            onClick={removeImage}
-                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                          >
-                            <X size={16} />
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                    {/* Part Image Preview */}
+                    {partImagePreview && (
+                      <div className="relative">
+                        <Image
+                          src={partImagePreview}
+                          alt="معاينة صورة القطعة"
+                          className="w-full h-48 object-cover rounded-lg border border-gray-300"
+                          width={100}
+                          height={100}
+                        />
+                        <button
+                          type="button"
+                          onClick={removePartImage}
+                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
+
+                {/* Request Image Upload */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
+                    <ImageIcon className="inline ml-2" size={16} />
+                    صورة الطلب
+                  </label>
+                  <div className="space-y-4">
+                    <input
+                      ref={requestImageInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleRequestImageChange}
+                      className="hidden"
+                      id="requestImage"
+                    />
+                    <label
+                      htmlFor="requestImage"
+                      className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors"
+                    >
+                      <div className="text-center">
+                        <Upload
+                          className="mx-auto text-gray-400 mb-2"
+                          size={24}
+                        />
+                        <p className="text-sm text-gray-500">
+                          اضغط لاختيار صورة الطلب
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          JPG, PNG, GIF حتى 5MB
+                        </p>
+                      </div>
+                    </label>
+
+                    {/* Request Image Preview */}
+                    {requestImagePreview && (
+                      <div className="relative">
+                        <Image
+                          src={requestImagePreview}
+                          alt="معاينة صورة الطلب"
+                          className="w-full h-48 object-cover rounded-lg border border-gray-300"
+                          width={100}
+                          height={100}
+                        />
+                        <button
+                          type="button"
+                          onClick={removeRequestImage}
+                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Form Image Upload */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
+                    <ImageIcon className="inline ml-2" size={16} />
+                    صورة الاستمارة
+                  </label>
+                  <div className="space-y-4">
+                    <input
+                      ref={formImageInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFormImageChange}
+                      className="hidden"
+                      id="formImage"
+                    />
+                    <label
+                      htmlFor="formImage"
+                      className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors"
+                    >
+                      <div className="text-center">
+                        <Upload
+                          className="mx-auto text-gray-400 mb-2"
+                          size={24}
+                        />
+                        <p className="text-sm text-gray-500">
+                          اضغط لاختيار صورة الاستمارة
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          JPG, PNG, GIF حتى 5MB
+                        </p>
+                      </div>
+                    </label>
+
+                    {/* Form Image Preview */}
+                    {formImagePreview && (
+                      <div className="relative">
+                        <Image
+                          src={formImagePreview}
+                          alt="معاينة صورة الاستمارة"
+                          className="w-full h-48 object-cover rounded-lg border border-gray-300"
+                          width={100}
+                          height={100}
+                        />
+                        <button
+                          type="button"
+                          onClick={removeFormImage}
+                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
                 {/* Quantity Input */}
                 <div>
@@ -404,9 +592,9 @@ export default function UserPricingPage() {
                     • يمكنك إضافة عدة قطع ثم إرسالها جميعاً من الجانب الأيسر
                   </li>
                   <li>• سيتم الرد على طلبك خلال 24 ساعة عمل</li>
+                  <li>• تأكد من إرفاق صور واضحة للقطعة والطلب والاستمارة</li>
                   {userType === "workshop" && (
                     <>
-                      <li>• تأكد من إرفاق صورة واضحة للقطعة</li>
                       <li>• رقم الهيكل يساعد في تحديد القطعة المناسبة</li>
                       <li>• يمكنك تتبع طلبك من خلال رمز المستخدم</li>
                     </>
@@ -418,6 +606,7 @@ export default function UserPricingPage() {
               </div>
             </div>
           </div>
+
           {/* Left Side - Saved Data */}
           <div className="order-2 lg:order-2">
             <div className="bg-white rounded-lg shadow-lg p-6 h-fit sticky top-4">
@@ -456,7 +645,7 @@ export default function UserPricingPage() {
                         </div>
                       ) : (
                         <div className="flex items-center justify-center">
-                          إرسال جميع البيانات 
+                          إرسال جميع البيانات
                           <Send className="mr-2" size={18} />
                         </div>
                       )}
@@ -537,17 +726,51 @@ export default function UserPricingPage() {
                               </div>
                             )}
 
-                          {form.imagePreview && (
-                            <div className="mt-3">
-                              <Image
-                                src={form.imagePreview}
-                                alt="صورة القطعة"
-                                className="w-full h-24 object-cover rounded border border-gray-300"
-                                width={200}
-                                height={96}
-                              />
-                            </div>
-                          )}
+                          {/* Images Display */}
+                          <div className="grid grid-cols-3 gap-2 mt-3">
+                            {form.partImagePreview && (
+                              <div>
+                                <span className="text-xs text-gray-600 block mb-1">
+                                  صورة القطعة:
+                                </span>
+                                <Image
+                                  src={form.partImagePreview}
+                                  alt="صورة القطعة"
+                                  className="w-full h-16 object-cover rounded border border-gray-300"
+                                  width={80}
+                                  height={64}
+                                />
+                              </div>
+                            )}
+                            {form.requestImagePreview && (
+                              <div>
+                                <span className="text-xs text-gray-600 block mb-1">
+                                  صورة الطلب:
+                                </span>
+                                <Image
+                                  src={form.requestImagePreview}
+                                  alt="صورة الطلب"
+                                  className="w-full h-16 object-cover rounded border border-gray-300"
+                                  width={80}
+                                  height={64}
+                                />
+                              </div>
+                            )}
+                            {form.formImagePreview && (
+                              <div>
+                                <span className="text-xs text-gray-600 block mb-1">
+                                  صورة الاستمارة:
+                                </span>
+                                <Image
+                                  src={form.formImagePreview}
+                                  alt="صورة الاستمارة"
+                                  className="w-full h-16 object-cover rounded border border-gray-300"
+                                  width={80}
+                                  height={64}
+                                />
+                              </div>
+                            )}
+                          </div>
 
                           <div className="text-xs text-gray-400 mt-2">
                             تم الحفظ: {form.submittedAt.toLocaleString("ar-EG")}
@@ -560,8 +783,6 @@ export default function UserPricingPage() {
               )}
             </div>
           </div>
-
-          
         </div>
       </div>
     </div>

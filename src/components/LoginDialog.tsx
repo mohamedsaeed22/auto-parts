@@ -12,43 +12,42 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { User, X, Upload, ArrowLeft } from "lucide-react";
+import { User, X, Upload, ArrowLeft, Phone, Mail, ArrowRight } from "lucide-react";
 import Image from "next/image";
 
-// Dynamic schema based on input mode
-const createLoginSchema = (isEmailMode: boolean) => {
-  const baseSchema = {
-    shopName: z
-      .string()
-      .min(1, "اسم المحل أو الورشة مطلوب")
-      .min(2, "اسم المحل أو الورشة يجب أن يكون على الأقل حرفين"),
-    commercialRecord: z.string().min(1, "السجل التجاري/البطاقة الضريبية مطلوب"),
-    documentImage: z
-      .any()
-      .refine(
-        (file) => file instanceof File,
-        "صورة السجل التجاري/البطاقة الضريبية مطلوبة"
-      ),
-  };
+// Login schema (phone number only)
+const loginSchema = z.object({
+  phoneNumber: z
+    .string()
+    .min(1, "رقم الهاتف مطلوب")
+    .regex(/^[0-9+\-\s()]+$/, "يرجى إدخال رقم هاتف صحيح"),
+});
 
-  if (isEmailMode) {
-    return z.object({
-      ...baseSchema,
-      email: z
-        .string()
-        .min(1, "البريد الإلكتروني مطلوب")
-        .email("يرجى إدخال بريد إلكتروني صحيح"),
-    });
-  } else {
-    return z.object({
-      ...baseSchema,
-      phoneNumber: z
-        .string()
-        .min(1, "رقم الهاتف مطلوب")
-        .regex(/^[0-9+\-\s()]+$/, "يرجى إدخال رقم هاتف صحيح"),
-    });
-  }
-};
+// Registration schema
+const registrationSchema = z.object({
+  shopName: z
+    .string()
+    .min(1, "اسم المحل أو الورشة مطلوب")
+    .min(2, "اسم المحل أو الورشة يجب أن يكون على الأقل حرفين"),
+  managerName: z
+    .string()
+    .min(1, "اسم المدير المسؤول مطلوب")
+    .min(2, "اسم المدير المسؤول يجب أن يكون على الأقل حرفين"),
+  taxCardNumber: z
+    .string()
+    .min(1, "رقم البطاقة الضريبية مطلوب")
+    .regex(/^[0-9]+$/, "رقم البطاقة الضريبية يجب أن يحتوي على أرقام فقط"),
+  phoneNumber: z
+    .string()
+    .min(1, "رقم الهاتف مطلوب")
+    .regex(/^[0-9+\-\s()]+$/, "يرجى إدخال رقم هاتف صحيح"),
+  documentImage: z
+    .any()
+    .refine(
+      (file) => file instanceof File,
+      "صورة السجل التجاري مطلوبة"
+    ),
+});
 
 // OTP validation schema
 const otpSchema = z.object({
@@ -59,7 +58,8 @@ const otpSchema = z.object({
     .regex(/^[0-9]{6}$/, "يجب إدخال 6 أرقام فقط"),
 });
 
-type LoginFormData = z.infer<ReturnType<typeof createLoginSchema>>;
+type LoginFormData = z.infer<typeof loginSchema>;
+type RegistrationFormData = z.infer<typeof registrationSchema>;
 type OtpFormData = z.infer<typeof otpSchema>;
 
 interface LoginDialogProps {
@@ -70,27 +70,38 @@ interface LoginDialogProps {
 export default function LoginDialog({ trigger, className }: LoginDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [isEmailMode, setIsEmailMode] = useState(false);
-  const [currentStep, setCurrentStep] = useState<"form" | "otp">("form");
-  const [formData, setFormData] = useState<LoginFormData | null>(null);
+  const [currentStep, setCurrentStep] = useState<"login" | "register" | "otp">("login");
+  const [formData, setFormData] = useState<LoginFormData | RegistrationFormData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Create dynamic schema
-  const loginSchema = createLoginSchema(isEmailMode);
-
-  // React Hook Form setup for main form
+  // React Hook Form setup for login
   const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-    setValue,
-    clearErrors,
+    register: registerLogin,
+    handleSubmit: handleSubmitLogin,
+    formState: { errors: loginErrors, isSubmitting: isLoginSubmitting },
+    reset: resetLogin,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
+      phoneNumber: "",
+    },
+  });
+
+  // React Hook Form setup for registration
+  const {
+    register: registerRegister,
+    handleSubmit: handleSubmitRegister,
+    formState: { errors: registerErrors, isSubmitting: isRegisterSubmitting },
+    reset: resetRegister,
+    setValue,
+    clearErrors,
+  } = useForm<RegistrationFormData>({
+    resolver: zodResolver(registrationSchema),
+    defaultValues: {
       shopName: "",
-      commercialRecord: "",
+      managerName: "",
+      taxCardNumber: "",
+      phoneNumber: "",
     },
   });
 
@@ -115,20 +126,17 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
   };
 
   const handleFileUpload = (file: File) => {
-    // Validate file type
     if (!file.type.startsWith("image/")) {
       alert("يرجى اختيار ملف صورة صحيح");
       return;
     }
 
-    // Create preview URL
     const reader = new FileReader();
     reader.onload = (e) => {
       setImagePreview(e.target?.result as string);
     };
     reader.readAsDataURL(file);
 
-    // Set the file in the form
     setValue("documentImage", file);
   };
 
@@ -150,55 +158,41 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
   const removeImage = () => {
     setImagePreview(null);
     setValue("documentImage", undefined);
-    // Reset the file input
-    const fileInput = document.getElementById(
-      "documentImage"
-    ) as HTMLInputElement;
+    const fileInput = document.getElementById("documentImage") as HTMLInputElement;
     if (fileInput) {
       fileInput.value = "";
     }
   };
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onLoginSubmit = async (data: LoginFormData) => {
     try {
       setIsLoading(true);
-      console.log("Form data:", data);
+      console.log("Login data:", data);
 
-      // Remove these validation checks since they're redundant with schema validation
-      // The schema already validates these fields, so if we reach here, they're valid
-      // if (!data.shopName || !data.documentImage) {
-      //   alert("يرجى ملء جميع الحقول المطلوبة");
-      //   return;
-      // }
-      // if (isEmailMode && !data.email) {
-      //   alert("يرجى إدخال البريد الإلكتروني");
-      //   return;
-      // }
-      // if (!isEmailMode && !data.phoneNumber) {
-      //   alert("يرجى إدخال رقم الهاتف");
-      //   return;
-      // }
-
-      // Simulate API call delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Store form data and move to OTP step
       setFormData(data);
       setCurrentStep("otp");
-
-      // Simulate sending OTP (replace with actual API call)
-      //   console.log(
-      //     "Sending OTP to:",
-      //     isEmailMode ? data.email : data.phoneNumber
-      //   );
-
-      // Show success message
-      //   alert(
-      //     `تم إرسال رمز التحقق إلى ${isEmailMode ? data.email : data.phoneNumber}`
-      //   );
     } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("حدث خطأ أثناء إرسال النموذج");
+      console.error("Error submitting login:", error);
+      alert("حدث خطأ أثناء إرسال رمز التحقق");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onRegisterSubmit = async (data: RegistrationFormData) => {
+    try {
+      setIsLoading(true);
+      console.log("Registration data:", data);
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      setFormData(data);
+      setCurrentStep("otp");
+    } catch (error) {
+      console.error("Error submitting registration:", error);
+      alert("حدث خطأ أثناء إرسال رمز التحقق");
     } finally {
       setIsLoading(false);
     }
@@ -208,23 +202,15 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
     try {
       setIsLoading(true);
       console.log("OTP data:", data);
-      console.log("Complete form data:", formData);
 
-      // Here you would verify the OTP with your backend
-      // For demo purposes, we'll just check if it's 6 digits
       if (data.otp.length !== 6) {
         alert("يرجى إدخال رمز التحقق المكون من 6 أرقام");
         return;
       }
 
-      // Simulate API call delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Simulate OTP verification
-      console.log("Verifying OTP:", data.otp);
-
-      // Success - complete registration
-      alert("تم التسجيل بنجاح!");
+      alert(currentStep === "login" ? "تم تسجيل الدخول بنجاح!" : "تم التسجيل بنجاح!");
       handleDialogChange(false);
     } catch (error) {
       console.error("Error verifying OTP:", error);
@@ -237,30 +223,35 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
   const handleDialogChange = (open: boolean) => {
     setIsOpen(open);
     if (!open) {
-      reset(); // Reset main form
-      resetOtp(); // Reset OTP form
-      setImagePreview(null); // Reset image preview
-      setCurrentStep("form"); // Reset to first step
-      setFormData(null); // Clear stored form data
-      setIsLoading(false); // Reset loading state
+      resetLogin();
+      resetRegister();
+      resetOtp();
+      setImagePreview(null);
+      setCurrentStep("login");
+      setFormData(null);
+      setIsLoading(false);
     }
   };
 
-  const goBackToForm = () => {
-    setCurrentStep("form");
+  const goBackToLogin = () => {
+    setCurrentStep("login");
     resetOtp();
   };
 
-  const toggleInputType = () => {
-    setIsEmailMode(!isEmailMode);
-    // Clear the current input value and errors when switching modes
-    if (isEmailMode) {
-      setValue("email", "");
-      clearErrors("email");
-    } else {
-      setValue("phoneNumber", "");
-      clearErrors("phoneNumber");
-    }
+  const goBackToRegister = () => {
+    setCurrentStep("register");
+    resetOtp();
+  };
+
+  const switchToRegister = () => {
+    setCurrentStep("register");
+    resetLogin();
+  };
+
+  const switchToLogin = () => {
+    setCurrentStep("login");
+    resetRegister();
+    setImagePreview(null);
   };
 
   const resendOtp = async () => {
@@ -271,18 +262,26 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
 
     try {
       setIsLoading(true);
-      //   const contactInfo = isEmailMode ? formData?.email : formData?.phoneNumber;
-      //   console.log("Resending OTP to:", contactInfo);
-
-      // Simulate API call delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      //   alert(`تم إعادة إرسال رمز التحقق إلى ${contactInfo}`);
+      alert("تم إعادة إرسال رمز التحقق");
     } catch (error) {
       console.error("Error resending OTP:", error);
       alert("حدث خطأ أثناء إعادة إرسال رمز التحقق");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const getDialogTitle = () => {
+    switch (currentStep) {
+      case "login":
+        return "تسجيل الدخول";
+      case "register":
+        return "إنشاء حساب جديد";
+      case "otp":
+        return "إدخال رمز التحقق";
+      default:
+        return "تسجيل الدخول";
     }
   };
 
@@ -298,181 +297,280 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-center">
-            {currentStep === "form" ? "تسجيل الدخول" : "إدخال رمز التحقق"}
+            {getDialogTitle()}
           </DialogTitle>
         </DialogHeader>
 
-        {currentStep === "form" ? (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div>
-              <label
-                htmlFor="shopName"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                اسم المحل أو الورشة
-              </label>
-              <input
-                {...register("shopName")}
-                type="text"
-                id="shopName"
-                className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                  errors.shopName ? "border-red-500" : "border-gray-300"
-                }`}
-                placeholder="أدخل اسم المحل أو الورشة"
-              />
-              {errors.shopName && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.shopName.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <div className="flex justify-between items-center mb-2">
+        {currentStep === "login" && (
+          <div className="space-y-6">
+            <form onSubmit={handleSubmitLogin(onLoginSubmit)} className="space-y-4">
+              <div>
                 <label
-                  htmlFor={isEmailMode ? "email" : "phoneNumber"}
-                  className="block text-sm font-medium text-gray-700"
+                  htmlFor="phoneNumber"
+                  className="block text-sm font-medium text-gray-700 mb-2 text-right"
                 >
-                  {isEmailMode ? "البريد الإلكتروني" : "رقم الهاتف"}
+                  رقم الهاتف
                 </label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    {...registerLogin("phoneNumber")}
+                    type="tel"
+                    id="phoneNumber"
+                    dir="ltr"
+                    className={`w-full pl-10 pr-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right ${
+                      loginErrors.phoneNumber ? "border-red-500" : "border-gray-300"
+                    }`}
+                    placeholder="+966 50 123 4567"
+                  />
+                </div>
+                {loginErrors.phoneNumber && (
+                  <p className="mt-1 text-sm text-red-600 text-right">
+                    {loginErrors.phoneNumber.message}
+                  </p>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg"
+                disabled={isLoginSubmitting || isLoading}
+              >
+                {isLoginSubmitting || isLoading ? "جاري الإرسال..." : "إرسال رمز التحقق"}
+              </Button>
+            </form>
+
+            <div className="text-center">
+              <p className="text-sm text-gray-600">
+                ليس لديك حساب؟{" "}
                 <button
                   type="button"
-                  onClick={toggleInputType}
-                  className="text-xs text-blue-600 hover:text-blue-800 cursor-pointer"
+                  onClick={switchToRegister}
+                  className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
                 >
-                  {isEmailMode ? "استخدام الهاتف" : "استخدام الايميل"}
+                  إنشاء حساب
                 </button>
-              </div>
-              {isEmailMode ? (
-                <input
-                  {...register("email")}
-                  type="email"
-                  id="email"
-                  dir="rtl"
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                    "email" in errors ? "border-red-500" : "border-gray-300"
-                  }`}
-                  placeholder="أدخل البريد الإلكتروني"
-                />
-              ) : (
-                <input
-                  {...register("phoneNumber")}
-                  type="tel"
-                  id="phoneNumber"
-                  dir="rtl"
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                    "phoneNumber" in errors
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  }`}
-                  placeholder="أدخل رقم الهاتف"
-                />
-              )}
-              {isEmailMode && "email" in errors && errors.email && (
-                <p className="mt-1 text-sm text-red-600">
-                  {typeof errors.email === "object" && "message" in errors.email
-                    ? errors.email.message
-                    : String(errors.email)}
-                </p>
-              )}
-              {!isEmailMode &&
-                "phoneNumber" in errors &&
-                errors.phoneNumber && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {typeof errors.phoneNumber === "object" &&
-                    "message" in errors.phoneNumber
-                      ? errors.phoneNumber.message
-                      : String(errors.phoneNumber)}
-                  </p>
-                )}
+              </p>
             </div>
 
-            <div>
-              <label
-                htmlFor="documentImage"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                صورة السجل التجاري/البطاقة الضريبية
-              </label>
-              <div className="space-y-2">
-                {!imagePreview ? (
-                  <div
-                    className={`border-2 border-dashed rounded-md p-4 text-center hover:border-blue-500 transition-colors ${
-                      errors.documentImage
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    }`}
-                    onDragOver={handleDragOver}
-                    onDrop={handleDrop}
-                  >
-                    <input
-                      type="file"
-                      id="documentImage"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      className="hidden"
-                    />
-                    <label
-                      htmlFor="documentImage"
-                      className="cursor-pointer flex flex-col items-center"
-                    >
-                      <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-600">
-                        انقر لاختيار صورة أو اسحب الصورة هنا
-                      </span>
-                    </label>
-                  </div>
-                ) : (
-                  <div className="relative">
-                    <Image
-                      src={imagePreview}
-                      alt="Document preview"
-                      className="w-full h-48 object-cover rounded-md border"
-                      width={100}
-                      height={100}
-                    />
-                    <button
-                      type="button"
-                      onClick={removeImage}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
-                {"documentImage" in errors && errors.documentImage && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {typeof errors.documentImage === "object" &&
-                    "message" in errors.documentImage
-                      ? (errors.documentImage as { message: string }).message
-                      : String(errors.documentImage)}
-                  </p>
-                )}
+            {/* Separator */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">أو</span>
               </div>
             </div>
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isSubmitting || isLoading}
+            {/* Google Login Button */}
+            <button
+              type="button"
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-black text-white hover:bg-gray-900 transition"
             >
-              {isSubmitting || isLoading
-                ? "جاري إرسال رمز التحقق..."
-                : "إرسال رمز التحقق"}
-            </Button>
-          </form>
-        ) : (
-          <div className="space-y-4">
+              <Image
+                src="/icons8-google.svg"
+                alt="Google"
+                className="w-5 h-5"
+                width={20}
+                height={20}
+              />
+              تسجيل الدخول باستخدام جوجل
+            </button>
+          </div>
+        )}
+
+        {currentStep === "register" && (
+          <div className="space-y-6">
+            <form onSubmit={handleSubmitRegister(onRegisterSubmit)} className="space-y-4">
+              <div>
+                <label
+                  htmlFor="shopName"
+                  className="block text-sm font-medium text-gray-700 mb-2 text-right"
+                >
+                  اسم المحل أو الورشة
+                </label>
+                <input
+                  {...registerRegister("shopName")}
+                  type="text"
+                  id="shopName"
+                  className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right ${
+                    registerErrors.shopName ? "border-red-500" : "border-gray-300"
+                  }`}
+                  placeholder="أدخل اسم المحل أو الورشة"
+                />
+                {registerErrors.shopName && (
+                  <p className="mt-1 text-sm text-red-600 text-right">
+                    {registerErrors.shopName.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="managerName"
+                  className="block text-sm font-medium text-gray-700 mb-2 text-right"
+                >
+                  اسم المدير المسؤول
+                </label>
+                <input
+                  {...registerRegister("managerName")}
+                  type="text"
+                  id="managerName"
+                  className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right ${
+                    registerErrors.managerName ? "border-red-500" : "border-gray-300"
+                  }`}
+                  placeholder="أدخل اسم المدير المسؤول"
+                />
+                {registerErrors.managerName && (
+                  <p className="mt-1 text-sm text-red-600 text-right">
+                    {registerErrors.managerName.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="taxCardNumber"
+                  className="block text-sm font-medium text-gray-700 mb-2 text-right"
+                >
+                  رقم البطاقة الضريبية
+                </label>
+                <input
+                  {...registerRegister("taxCardNumber")}
+                  type="text"
+                  id="taxCardNumber"
+                  className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right ${
+                    registerErrors.taxCardNumber ? "border-red-500" : "border-gray-300"
+                  }`}
+                  placeholder="أدخل رقم البطاقة الضريبية"
+                />
+                {registerErrors.taxCardNumber && (
+                  <p className="mt-1 text-sm text-red-600 text-right">
+                    {registerErrors.taxCardNumber.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="registerPhoneNumber"
+                  className="block text-sm font-medium text-gray-700 mb-2 text-right"
+                >
+                  رقم الهاتف
+                </label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    {...registerRegister("phoneNumber")}
+                    type="tel"
+                    id="registerPhoneNumber"
+                    dir="ltr"
+                    className={`w-full pl-10 pr-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right ${
+                      registerErrors.phoneNumber ? "border-red-500" : "border-gray-300"
+                    }`}
+                    placeholder="+966 50 123 4567"
+                  />
+                </div>
+                {registerErrors.phoneNumber && (
+                  <p className="mt-1 text-sm text-red-600 text-right">
+                    {registerErrors.phoneNumber.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="documentImage"
+                  className="block text-sm font-medium text-gray-700 mb-2 text-right"
+                >
+                  صورة السجل التجاري
+                </label>
+                <div className="space-y-2">
+                  {!imagePreview ? (
+                    <div
+                      className={`border-2 border-dashed rounded-lg p-4 text-center hover:border-blue-500 transition-colors ${
+                        registerErrors.documentImage ? "border-red-500" : "border-gray-300"
+                      }`}
+                      onDragOver={handleDragOver}
+                      onDrop={handleDrop}
+                    >
+                      <input
+                        type="file"
+                        id="documentImage"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
+                      />
+                      <label
+                        htmlFor="documentImage"
+                        className="cursor-pointer flex flex-col items-center"
+                      >
+                        <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                        <span className="text-sm text-gray-600">
+                          انقر لاختيار صورة أو اسحب الصورة هنا
+                        </span>
+                      </label>
+                    </div>
+                  ) : (
+                    <div className="relative">
+                      <Image
+                        src={imagePreview}
+                        alt="Document preview"
+                        className="w-full h-48 object-cover rounded-lg border"
+                        width={100}
+                        height={100}
+                      />
+                      <button
+                        type="button"
+                        onClick={removeImage}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+                  {registerErrors.documentImage && (
+                    <p className="mt-1 text-sm text-red-600 text-right">
+                      {typeof registerErrors.documentImage === "object" &&
+                      "message" in registerErrors.documentImage
+                        ? (registerErrors.documentImage as { message: string }).message
+                        : String(registerErrors.documentImage)}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg"
+                disabled={isRegisterSubmitting || isLoading}
+              >
+                {isRegisterSubmitting || isLoading ? "جاري الإرسال..." : "إنشاء الحساب"}
+              </Button>
+            </form>
+
+            <div className="text-center">
+              <p className="text-sm text-gray-600">
+                لديك حساب بالفعل؟{" "}
+                <button
+                  type="button"
+                  onClick={switchToLogin}
+                  className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
+                >
+                  تسجيل الدخول
+                </button>
+              </p>
+            </div>
+          </div>
+        )}
+
+        {currentStep === "otp" && (
+          <div className="space-y-6">
             <div className="text-center">
               <p className="text-sm text-gray-600 mb-4">
                 تم إرسال رمز التحقق إلى{" "}
-                {isEmailMode
-                  ? formData && "email" in formData
-                    ? formData.email
-                    : ""
-                  : formData && "phoneNumber" in formData
-                  ? formData.phoneNumber
-                  : ""}
+                {formData && "phoneNumber" in formData ? formData.phoneNumber : ""}
               </p>
             </div>
 
@@ -480,7 +578,7 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
               <div>
                 <label
                   htmlFor="otp"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-gray-700 mb-2 text-center"
                 >
                   رمز التحقق
                 </label>
@@ -490,13 +588,13 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
                   id="otp"
                   maxLength={6}
                   dir="ltr"
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center text-lg tracking-widest ${
+                  className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center text-lg tracking-widest ${
                     otpErrors.otp ? "border-red-500" : "border-gray-300"
                   }`}
                   placeholder="000000"
                 />
                 {otpErrors.otp && (
-                  <p className="mt-1 text-sm text-red-600">
+                  <p className="mt-1 text-sm text-red-600 text-center">
                     {otpErrors.otp.message}
                   </p>
                 )}
@@ -506,16 +604,16 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={goBackToForm}
-                  className="flex-1"
+                  onClick={formData && "shopName" in formData ? goBackToRegister : goBackToLogin}
+                  className="flex-1 py-3"
                   disabled={isLoading}
                 >
-                  <ArrowLeft className="w-4 h-4 ml-2" />
+                  <ArrowRight className="w-4 h-4 ml-2" />
                   رجوع
                 </Button>
                 <Button
                   type="submit"
-                  className="flex-1"
+                  className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium"
                   disabled={isOtpSubmitting || isLoading}
                 >
                   {isOtpSubmitting || isLoading ? "جاري التحقق..." : "تأكيد"}
@@ -534,36 +632,6 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
               </button>
             </div>
           </div>
-        )}
-
-        {/* Only show separator and Google login on first step */}
-        {currentStep === "form" && (
-          <>
-            {/* Separator */}
-            <div className="relative my-1">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">أو</span>
-              </div>
-            </div>
-
-            {/* Google Login Button */}
-            <button
-              type="button"
-              className="w-full flex items-center justify-center gap-2 py-2 rounded-md bg-black text-white hover:bg-gray-900 transition"
-            >
-              <Image
-                src="/icons8-google.svg"
-                alt="Google"
-                className="w-5 h-5"
-                width={20}
-                height={20}
-              />
-              تسجيل الدخول باستخدام جوجل
-            </button>
-          </>
         )}
       </DialogContent>
     </Dialog>

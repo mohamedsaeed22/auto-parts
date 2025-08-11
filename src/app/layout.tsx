@@ -4,6 +4,7 @@ import "./globals.css";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Cart from "@/components/Cart";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import { Providers } from "@/store/providers";
 
 // Import Swiper styles
@@ -36,6 +37,7 @@ export default function RootLayout({
           {children}
           <Footer />
           <Cart />
+          <WhatsAppButton />
         </Providers>
       </body>
     </html>
