@@ -314,29 +314,6 @@ export default function UserPricingPage() {
                     </button>
                   </div>
                 </div>
-
-                {/* User Code Input - Only for Workshop */}
-                {userType === "workshop" && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-                      <User className="inline ml-2" size={16} />
-                      كود الورشة
-                    </label>
-                    <input
-                      type="text"
-                      name="userCode"
-                      value={formData.userCode}
-                      onChange={handleInputChange}
-                      placeholder="أدخل كود الورشة الخاص بك"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      required
-                    />
-                    <p className="text-sm text-gray-500 mt-1 text-right">
-                      يمكنك تغيير الكود للحصول على نقاط إضافية
-                    </p>
-                  </div>
-                )}
-
                 {/* Part Name Input */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
@@ -353,171 +330,191 @@ export default function UserPricingPage() {
                     required
                   />
                 </div>
-
-                {/* Part Image Upload */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-                    <ImageIcon className="inline ml-2" size={16} />
-                    صورة القطعة
-                  </label>
-                  <div className="space-y-4">
-                    <input
-                      ref={partImageInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handlePartImageChange}
-                      className="hidden"
-                      id="partImage"
-                    />
-                    <label
-                      htmlFor="partImage"
-                      className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors"
-                    >
-                      <div className="text-center">
-                        <Upload
-                          className="mx-auto text-gray-400 mb-2"
-                          size={24}
+                {/* User Code Input - Only for Workshop */}
+                {userType === "workshop" && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
+                        <User className="inline ml-2" size={16} />
+                        كود الورشة
+                      </label>
+                      <input
+                        type="text"
+                        name="userCode"
+                        value={formData.userCode}
+                        onChange={handleInputChange}
+                        placeholder="أدخل كود الورشة الخاص بك"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        required
+                      />
+                      <p className="text-sm text-gray-500 mt-1 text-right">
+                        يمكنك تغيير الكود للحصول على نقاط إضافية
+                      </p>
+                    </div>
+                    {/* Part Image Upload */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
+                        <ImageIcon className="inline ml-2" size={16} />
+                        صورة القطعة
+                      </label>
+                      <div className="space-y-4">
+                        <input
+                          ref={partImageInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={handlePartImageChange}
+                          className="hidden"
+                          id="partImage"
                         />
-                        <p className="text-sm text-gray-500">
-                          اضغط لاختيار صورة القطعة
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          JPG, PNG, GIF حتى 5MB
-                        </p>
-                      </div>
-                    </label>
-
-                    {/* Part Image Preview */}
-                    {partImagePreview && (
-                      <div className="relative">
-                        <Image
-                          src={partImagePreview}
-                          alt="معاينة صورة القطعة"
-                          className="w-full h-48 object-cover rounded-lg border border-gray-300"
-                          width={100}
-                          height={100}
-                        />
-                        <button
-                          type="button"
-                          onClick={removePartImage}
-                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        <label
+                          htmlFor="partImage"
+                          className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors"
                         >
-                          <X size={16} />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                          <div className="text-center">
+                            <Upload
+                              className="mx-auto text-gray-400 mb-2"
+                              size={24}
+                            />
+                            <p className="text-sm text-gray-500">
+                              اضغط لاختيار صورة القطعة
+                            </p>
+                            <p className="text-xs text-gray-400">
+                              JPG, PNG, GIF حتى 5MB
+                            </p>
+                          </div>
+                        </label>
 
-                {/* Request Image Upload */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-                    <ImageIcon className="inline ml-2" size={16} />
-                    صورة الطلب
-                  </label>
-                  <div className="space-y-4">
-                    <input
-                      ref={requestImageInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleRequestImageChange}
-                      className="hidden"
-                      id="requestImage"
-                    />
-                    <label
-                      htmlFor="requestImage"
-                      className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors"
-                    >
-                      <div className="text-center">
-                        <Upload
-                          className="mx-auto text-gray-400 mb-2"
-                          size={24}
-                        />
-                        <p className="text-sm text-gray-500">
-                          اضغط لاختيار صورة الطلب
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          JPG, PNG, GIF حتى 5MB
-                        </p>
+                        {/* Part Image Preview */}
+                        {partImagePreview && (
+                          <div className="relative">
+                            <Image
+                              src={partImagePreview}
+                              alt="معاينة صورة القطعة"
+                              className="w-full h-48 object-cover rounded-lg border border-gray-300"
+                              width={100}
+                              height={100}
+                            />
+                            <button
+                              type="button"
+                              onClick={removePartImage}
+                              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                            >
+                              <X size={16} />
+                            </button>
+                          </div>
+                        )}
                       </div>
-                    </label>
-
-                    {/* Request Image Preview */}
-                    {requestImagePreview && (
-                      <div className="relative">
-                        <Image
-                          src={requestImagePreview}
-                          alt="معاينة صورة الطلب"
-                          className="w-full h-48 object-cover rounded-lg border border-gray-300"
-                          width={100}
-                          height={100}
+                    </div>
+                    {/* Request Image Upload */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
+                        <ImageIcon className="inline ml-2" size={16} />
+                        صورة الطلب
+                      </label>
+                      <div className="space-y-4">
+                        <input
+                          ref={requestImageInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={handleRequestImageChange}
+                          className="hidden"
+                          id="requestImage"
                         />
-                        <button
-                          type="button"
-                          onClick={removeRequestImage}
-                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        <label
+                          htmlFor="requestImage"
+                          className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors"
                         >
-                          <X size={16} />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                          <div className="text-center">
+                            <Upload
+                              className="mx-auto text-gray-400 mb-2"
+                              size={24}
+                            />
+                            <p className="text-sm text-gray-500">
+                              اضغط لاختيار صورة الطلب
+                            </p>
+                            <p className="text-xs text-gray-400">
+                              JPG, PNG, GIF حتى 5MB
+                            </p>
+                          </div>
+                        </label>
 
-                {/* Form Image Upload */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-                    <ImageIcon className="inline ml-2" size={16} />
-                    صورة الاستمارة
-                  </label>
-                  <div className="space-y-4">
-                    <input
-                      ref={formImageInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFormImageChange}
-                      className="hidden"
-                      id="formImage"
-                    />
-                    <label
-                      htmlFor="formImage"
-                      className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors"
-                    >
-                      <div className="text-center">
-                        <Upload
-                          className="mx-auto text-gray-400 mb-2"
-                          size={24}
-                        />
-                        <p className="text-sm text-gray-500">
-                          اضغط لاختيار صورة الاستمارة
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          JPG, PNG, GIF حتى 5MB
-                        </p>
+                        {/* Request Image Preview */}
+                        {requestImagePreview && (
+                          <div className="relative">
+                            <Image
+                              src={requestImagePreview}
+                              alt="معاينة صورة الطلب"
+                              className="w-full h-48 object-cover rounded-lg border border-gray-300"
+                              width={100}
+                              height={100}
+                            />
+                            <button
+                              type="button"
+                              onClick={removeRequestImage}
+                              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                            >
+                              <X size={16} />
+                            </button>
+                          </div>
+                        )}
                       </div>
-                    </label>
-
-                    {/* Form Image Preview */}
-                    {formImagePreview && (
-                      <div className="relative">
-                        <Image
-                          src={formImagePreview}
-                          alt="معاينة صورة الاستمارة"
-                          className="w-full h-48 object-cover rounded-lg border border-gray-300"
-                          width={100}
-                          height={100}
+                    </div>
+                    {/* Form Image Upload */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
+                        <ImageIcon className="inline ml-2" size={16} />
+                        صورة الاستمارة
+                      </label>
+                      <div className="space-y-4">
+                        <input
+                          ref={formImageInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFormImageChange}
+                          className="hidden"
+                          id="formImage"
                         />
-                        <button
-                          type="button"
-                          onClick={removeFormImage}
-                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        <label
+                          htmlFor="formImage"
+                          className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors"
                         >
-                          <X size={16} />
-                        </button>
+                          <div className="text-center">
+                            <Upload
+                              className="mx-auto text-gray-400 mb-2"
+                              size={24}
+                            />
+                            <p className="text-sm text-gray-500">
+                              اضغط لاختيار صورة الاستمارة
+                            </p>
+                            <p className="text-xs text-gray-400">
+                              JPG, PNG, GIF حتى 5MB
+                            </p>
+                          </div>
+                        </label>
+
+                        {/* Form Image Preview */}
+                        {formImagePreview && (
+                          <div className="relative">
+                            <Image
+                              src={formImagePreview}
+                              alt="معاينة صورة الاستمارة"
+                              className="w-full h-48 object-cover rounded-lg border border-gray-300"
+                              width={100}
+                              height={100}
+                            />
+                            <button
+                              type="button"
+                              onClick={removeFormImage}
+                              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                            >
+                              <X size={16} />
+                            </button>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                </div>
+                    </div>{" "}
+                  </>
+                )}
 
                 {/* Quantity Input */}
                 <div>
