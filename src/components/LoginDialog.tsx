@@ -329,7 +329,11 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogContent
+        className={`${
+          currentStep === "register" ? "sm:max-w-2xl" : "sm:max-w-md"
+        } max-h-[90vh] overflow-y-auto`}
+      >
         <DialogHeader>
           <DialogTitle className="text-center">{getDialogTitle()}</DialogTitle>
         </DialogHeader>
@@ -464,109 +468,115 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
                 )}
               </div>
 
-              <div>
-                <label
-                  htmlFor="shopName"
-                  className="block text-sm font-medium text-gray-700 mb-2 text-right"
-                >
-                  {userType === "workshop" ? "اسم الورشة" : "اسم المحل"}
-                </label>
-                <input
-                  {...registerRegister("shopName")}
-                  type="text"
-                  id="shopName"
-                  className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right ${
-                    registerErrors.shopName
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  }`}
-                  placeholder={
-                    userType === "workshop"
-                      ? "أدخل اسم الورشة"
-                      : "أدخل اسم المحل"
-                  }
-                />
-                {registerErrors.shopName && (
-                  <p className="mt-1 text-sm text-red-600 text-right">
-                    {registerErrors.shopName.message}
-                  </p>
-                )}
+              {/* Two-column grid for form inputs */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label
+                    htmlFor="shopName"
+                    className="block text-sm font-medium text-gray-700 mb-2 text-right"
+                  >
+                    {userType === "workshop" ? "اسم الورشة" : "اسم المحل"}
+                  </label>
+                  <input
+                    {...registerRegister("shopName")}
+                    type="text"
+                    id="shopName"
+                    className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right ${
+                      registerErrors.shopName
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
+                    placeholder={
+                      userType === "workshop"
+                        ? "أدخل اسم الورشة"
+                        : "أدخل اسم المحل"
+                    }
+                  />
+                  {registerErrors.shopName && (
+                    <p className="mt-1 text-sm text-red-600 text-right">
+                      {registerErrors.shopName.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="managerName"
+                    className="block text-sm font-medium text-gray-700 mb-2 text-right"
+                  >
+                    اسم المسؤول
+                  </label>
+                  <input
+                    {...registerRegister("managerName")}
+                    type="text"
+                    id="managerName"
+                    className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right ${
+                      registerErrors.managerName
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
+                    placeholder="أدخل اسم المسؤول"
+                  />
+                  {registerErrors.managerName && (
+                    <p className="mt-1 text-sm text-red-600 text-right">
+                      {registerErrors.managerName.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-gray-700 mb-2 text-right"
+                  >
+                    البريد الإلكتروني (اختياري)
+                  </label>
+                  <input
+                    {...registerRegister("email")}
+                    type="email"
+                    id="email"
+                    dir="ltr"
+                    className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right ${
+                      registerErrors.email
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
+                    placeholder="example@email.com"
+                  />
+                  {registerErrors.email && (
+                    <p className="mt-1 text-sm text-red-600 text-right">
+                      {registerErrors.email.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="taxCardNumber"
+                    className="block text-sm font-medium text-gray-700 mb-2 text-right"
+                  >
+                    الرقم الضريبى
+                  </label>
+                  <input
+                    {...registerRegister("taxCardNumber")}
+                    type="text"
+                    id="taxCardNumber"
+                    className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right ${
+                      registerErrors.taxCardNumber
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
+                    placeholder="أدخل الرقم الضريبى"
+                  />
+                  {registerErrors.taxCardNumber && (
+                    <p className="mt-1 text-sm text-red-600 text-right">
+                      {registerErrors.taxCardNumber.message}
+                    </p>
+                  )}
+                </div>
               </div>
 
-              <div>
-                <label
-                  htmlFor="managerName"
-                  className="block text-sm font-medium text-gray-700 mb-2 text-right"
-                >
-                  اسم المسؤول
-                </label>
-                <input
-                  {...registerRegister("managerName")}
-                  type="text"
-                  id="managerName"
-                  className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right ${
-                    registerErrors.managerName
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  }`}
-                  placeholder="أدخل اسم المسؤول"
-                />
-                {registerErrors.managerName && (
-                  <p className="mt-1 text-sm text-red-600 text-right">
-                    {registerErrors.managerName.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-2 text-right"
-                >
-                  البريد الإلكتروني (اختياري)
-                </label>
-                <input
-                  {...registerRegister("email")}
-                  type="email"
-                  id="email"
-                  dir="ltr"
-                  className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right ${
-                    registerErrors.email ? "border-red-500" : "border-gray-300"
-                  }`}
-                  placeholder="example@email.com"
-                />
-                {registerErrors.email && (
-                  <p className="mt-1 text-sm text-red-600 text-right">
-                    {registerErrors.email.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="taxCardNumber"
-                  className="block text-sm font-medium text-gray-700 mb-2 text-right"
-                >
-                  الرقم الضريبى
-                </label>
-                <input
-                  {...registerRegister("taxCardNumber")}
-                  type="text"
-                  id="taxCardNumber"
-                  className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right ${
-                    registerErrors.taxCardNumber
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  }`}
-                  placeholder="أدخل الرقم الضريبى"
-                />
-                {registerErrors.taxCardNumber && (
-                  <p className="mt-1 text-sm text-red-600 text-right">
-                    {registerErrors.taxCardNumber.message}
-                  </p>
-                )}
-              </div>
-
+              {/* Phone number - full width */}
               <div>
                 <label
                   htmlFor="registerPhoneNumber"
@@ -596,6 +606,7 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
                 )}
               </div>
 
+              {/* Document image - full width */}
               <div>
                 <label
                   htmlFor="documentImage"
