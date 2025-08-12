@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,57 +22,24 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
-// Login schema (phone number only)
-const loginSchema = z.object({
-  phoneNumber: z
-    .string()
-    .min(1, "رقم الجوال مطلوب")
-    .regex(/^[0-9+\-\s()]+$/, "يرجى إدخال رقم هاتف صحيح"),
-});
+// Import validation schemas and types
+import {
+  loginSchema,
+  registrationSchema,
+  otpSchema,
+  type LoginFormData,
+  type RegistrationFormData,
+  type OtpFormData,
+  type LocationData,
+  loginDefaultValues,
+  registrationDefaultValues,
+  otpDefaultValues,
+  validateImageFile,
+  isImageFile,
+} from "@/lib/validations/authSchema";
 
-// Registration schema
-const registrationSchema = z.object({
-  userType: z.enum(["workshop", "store"], {
-    required_error: "يرجى اختيار نوع المستخدم",
-  }),
-  shopName: z
-    .string()
-    .min(1, "اسم المحل أو الورشة مطلوب")
-    .min(2, "اسم المحل أو الورشة يجب أن يكون على الأقل حرفين"),
-  managerName: z
-    .string()
-    .min(1, "اسم المدير المسؤول مطلوب")
-    .min(2, "اسم المدير المسؤول يجب أن يكون على الأقل حرفين"),
-  email: z
-    .string()
-    .email("يرجى إدخال بريد إلكتروني صحيح")
-    .optional()
-    .or(z.literal("")),
-  taxCardNumber: z
-    .string()
-    .min(1, "رقم البطاقة الضريبية مطلوب")
-    .regex(/^[0-9]+$/, "رقم البطاقة الضريبية يجب أن يحتوي على أرقام فقط"),
-  phoneNumber: z
-    .string()
-    .min(1, "رقم الجوال مطلوب")
-    .regex(/^[0-9+\-\s()]+$/, "يرجى إدخال رقم هاتف صحيح"),
-  documentImage: z
-    .any()
-    .refine((file) => file instanceof File, "صورة السجل التجاري مطلوبة"),
-});
-
-// OTP validation schema
-const otpSchema = z.object({
-  otp: z
-    .string()
-    .min(6, "يجب إدخال 6 أرقام")
-    .max(6, "يجب إدخال 6 أرقام")
-    .regex(/^[0-9]{6}$/, "يجب إدخال 6 أرقام فقط"),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
-type RegistrationFormData = z.infer<typeof registrationSchema>;
-type OtpFormData = z.infer<typeof otpSchema>;
+// Import LocationPicker component
+import LocationPicker from "./LocationPicker";
 
 interface LoginDialogProps {
   trigger?: React.ReactNode;
@@ -102,9 +68,7 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
     reset: resetLogin,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      phoneNumber: "",
-    },
+    defaultValues: loginDefaultValues,
   });
 
   // React Hook Form setup for registration
@@ -118,14 +82,7 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
     watch,
   } = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
-    defaultValues: {
-      userType: "workshop",
-      shopName: "",
-      managerName: "",
-      email: "",
-      taxCardNumber: "",
-      phoneNumber: "",
-    },
+    defaultValues: registrationDefaultValues,
   });
 
   // React Hook Form setup for OTP
@@ -136,15 +93,19 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
     reset: resetOtp,
   } = useForm<OtpFormData>({
     resolver: zodResolver(otpSchema),
-    defaultValues: {
-      otp: "",
-    },
+    defaultValues: otpDefaultValues,
   });
 
   const handleUserTypeChange = (type: "workshop" | "store") => {
     setUserType(type);
     setValue("userType", type);
     clearErrors("userType");
+  };
+
+  // Handle location selection from LocationPicker
+  const handleLocationSelect = (location: LocationData) => {
+    setValue("location", location);
+    clearErrors("location");
   };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,8 +116,15 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
   };
 
   const handleFileUpload = (file: File) => {
-    if (!file.type.startsWith("image/")) {
+    // Use validation utilities from the schema
+    if (!isImageFile(file)) {
       alert("يرجى اختيار ملف صورة صحيح");
+      return;
+    }
+
+    const validation = validateImageFile(file);
+    if (!validation.isValid) {
+      alert(validation.error || "يرجى اختيار ملف صورة صحيح");
       return;
     }
 
@@ -331,7 +299,7 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
       </DialogTrigger>
       <DialogContent
         className={`${
-          currentStep === "register" ? "sm:max-w-2xl" : "sm:max-w-md"
+          currentStep === "register" ? "sm:max-w-4xl" : "sm:max-w-md"
         } max-h-[90vh] overflow-y-auto`}
       >
         <DialogHeader>
@@ -428,7 +396,7 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
           <div className="space-y-6">
             <form
               onSubmit={handleSubmitRegister(onRegisterSubmit)}
-              className="space-y-4"
+              className="space-y-6"
             >
               {/* User Type Selection */}
               <div>
@@ -575,6 +543,13 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
                   )}
                 </div>
               </div>
+
+              {/* Google Maps Location Picker */}
+              <LocationPicker
+                onLocationSelect={handleLocationSelect}
+                initialLocation={registrationDefaultValues.location}
+                error={registerErrors.location?.message}
+              />
 
               {/* Phone number - full width */}
               <div>
