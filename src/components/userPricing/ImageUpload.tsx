@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import { Upload, X } from "lucide-react";
 import Image from "next/image";
-
+import { Image as ImageIcon } from "lucide-react";
 interface ImageUploadProps {
   id: string;
   label: string;
@@ -20,7 +20,9 @@ export const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
 
     return (
       <div>
-        <label className="block text-sm font-medium text-logo-black mb-2 text-right">
+        {/* put icon before label from lucide icon */}
+        <label className="text-sm font-medium text-logo-black mb-2 text-right flex items-center gap-2">
+          <ImageIcon   size={16} color="gray" />
           {label}
         </label>
         <div className="space-y-4">

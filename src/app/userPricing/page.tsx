@@ -159,6 +159,7 @@ export default function UserPricingPage() {
                 <FormInput
                   label="الكمية"
                   type="number"
+                  icon={Hash}
                   placeholder="أدخل الكمية المطلوبة"
                   min="1"
                   error={errors.quantity?.message}
