@@ -12,7 +12,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { User, X, Upload, ArrowLeft, Phone, Mail, ArrowRight } from "lucide-react";
+import {
+  User,
+  X,
+  Upload,
+  Phone,
+  ArrowRight,
+  Building,
+  Store,
+} from "lucide-react";
 import Image from "next/image";
 
 // Login schema (phone number only)
@@ -25,6 +33,9 @@ const loginSchema = z.object({
 
 // Registration schema
 const registrationSchema = z.object({
+  userType: z.enum(["workshop", "store"], {
+    required_error: "يرجى اختيار نوع المستخدم",
+  }),
   shopName: z
     .string()
     .min(1, "اسم المحل أو الورشة مطلوب")
@@ -33,6 +44,11 @@ const registrationSchema = z.object({
     .string()
     .min(1, "اسم المدير المسؤول مطلوب")
     .min(2, "اسم المدير المسؤول يجب أن يكون على الأقل حرفين"),
+  email: z
+    .string()
+    .email("يرجى إدخال بريد إلكتروني صحيح")
+    .optional()
+    .or(z.literal("")),
   taxCardNumber: z
     .string()
     .min(1, "رقم البطاقة الضريبية مطلوب")
@@ -43,10 +59,7 @@ const registrationSchema = z.object({
     .regex(/^[0-9+\-\s()]+$/, "يرجى إدخال رقم هاتف صحيح"),
   documentImage: z
     .any()
-    .refine(
-      (file) => file instanceof File,
-      "صورة السجل التجاري مطلوبة"
-    ),
+    .refine((file) => file instanceof File, "صورة السجل التجاري مطلوبة"),
 });
 
 // OTP validation schema
@@ -70,9 +83,16 @@ interface LoginDialogProps {
 export default function LoginDialog({ trigger, className }: LoginDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [currentStep, setCurrentStep] = useState<"login" | "register" | "otp">("login");
-  const [formData, setFormData] = useState<LoginFormData | RegistrationFormData | null>(null);
+  const [currentStep, setCurrentStep] = useState<"login" | "register" | "otp">(
+    "login"
+  );
+  const [formData, setFormData] = useState<
+    LoginFormData | RegistrationFormData | null
+  >(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [userType, setUserType] = useState<"workshop" | "store" | "">(
+    "workshop"
+  );
 
   // React Hook Form setup for login
   const {
@@ -95,11 +115,14 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
     reset: resetRegister,
     setValue,
     clearErrors,
+    watch,
   } = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
     defaultValues: {
+      userType: "workshop",
       shopName: "",
       managerName: "",
+      email: "",
       taxCardNumber: "",
       phoneNumber: "",
     },
@@ -117,6 +140,12 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
       otp: "",
     },
   });
+
+  const handleUserTypeChange = (type: "workshop" | "store") => {
+    setUserType(type);
+    setValue("userType", type);
+    clearErrors("userType");
+  };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -158,7 +187,9 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
   const removeImage = () => {
     setImagePreview(null);
     setValue("documentImage", undefined);
-    const fileInput = document.getElementById("documentImage") as HTMLInputElement;
+    const fileInput = document.getElementById(
+      "documentImage"
+    ) as HTMLInputElement;
     if (fileInput) {
       fileInput.value = "";
     }
@@ -210,7 +241,9 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      alert(currentStep === "login" ? "تم تسجيل الدخول بنجاح!" : "تم التسجيل بنجاح!");
+      alert(
+        currentStep === "login" ? "تم تسجيل الدخول بنجاح!" : "تم التسجيل بنجاح!"
+      );
       handleDialogChange(false);
     } catch (error) {
       console.error("Error verifying OTP:", error);
@@ -230,6 +263,7 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
       setCurrentStep("login");
       setFormData(null);
       setIsLoading(false);
+      setUserType("workshop");
     }
   };
 
@@ -252,6 +286,7 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
     setCurrentStep("login");
     resetRegister();
     setImagePreview(null);
+    setUserType("workshop");
   };
 
   const resendOtp = async () => {
@@ -296,14 +331,15 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-center">
-            {getDialogTitle()}
-          </DialogTitle>
+          <DialogTitle className="text-center">{getDialogTitle()}</DialogTitle>
         </DialogHeader>
 
         {currentStep === "login" && (
           <div className="space-y-6">
-            <form onSubmit={handleSubmitLogin(onLoginSubmit)} className="space-y-4">
+            <form
+              onSubmit={handleSubmitLogin(onLoginSubmit)}
+              className="space-y-4"
+            >
               <div>
                 <label
                   htmlFor="phoneNumber"
@@ -319,7 +355,9 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
                     id="phoneNumber"
                     dir="ltr"
                     className={`w-full pl-10 pr-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right ${
-                      loginErrors.phoneNumber ? "border-red-500" : "border-gray-300"
+                      loginErrors.phoneNumber
+                        ? "border-red-500"
+                        : "border-gray-300"
                     }`}
                     placeholder="+966 50 123 4567"
                   />
@@ -336,7 +374,9 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
                 className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg"
                 disabled={isLoginSubmitting || isLoading}
               >
-                {isLoginSubmitting || isLoading ? "جاري الإرسال..." : "إرسال رمز التحقق"}
+                {isLoginSubmitting || isLoading
+                  ? "جاري الإرسال..."
+                  : "إرسال رمز التحقق"}
               </Button>
             </form>
 
@@ -382,22 +422,69 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
 
         {currentStep === "register" && (
           <div className="space-y-6">
-            <form onSubmit={handleSubmitRegister(onRegisterSubmit)} className="space-y-4">
+            <form
+              onSubmit={handleSubmitRegister(onRegisterSubmit)}
+              className="space-y-4"
+            >
+              {/* User Type Selection */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3 text-right">
+                  نوع المستخدم
+                </label>
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    type="button"
+                    onClick={() => handleUserTypeChange("workshop")}
+                    className={`p-4 border-2 rounded-lg text-center transition-colors ${
+                      userType === "workshop"
+                        ? "border-blue-500 bg-blue-50 text-blue-700"
+                        : "border-gray-300 hover:border-gray-400"
+                    }`}
+                  >
+                    <Building className="mx-auto mb-2" size={24} />
+                    <span className="font-medium">ورشة</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleUserTypeChange("store")}
+                    className={`p-4 border-2 rounded-lg text-center transition-colors ${
+                      userType === "store"
+                        ? "border-blue-500 bg-blue-50 text-blue-700"
+                        : "border-gray-300 hover:border-gray-400"
+                    }`}
+                  >
+                    <Store className="mx-auto mb-2" size={24} />
+                    <span className="font-medium">محل</span>
+                  </button>
+                </div>
+                {registerErrors.userType && (
+                  <p className="mt-1 text-sm text-red-600 text-right">
+                    {registerErrors.userType.message}
+                  </p>
+                )}
+              </div>
+
               <div>
                 <label
                   htmlFor="shopName"
                   className="block text-sm font-medium text-gray-700 mb-2 text-right"
                 >
-                  اسم المحل أو الورشة
+                  {userType === "workshop" ? "اسم الورشة" : "اسم المحل"}
                 </label>
                 <input
                   {...registerRegister("shopName")}
                   type="text"
                   id="shopName"
                   className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right ${
-                    registerErrors.shopName ? "border-red-500" : "border-gray-300"
+                    registerErrors.shopName
+                      ? "border-red-500"
+                      : "border-gray-300"
                   }`}
-                  placeholder="أدخل اسم المحل أو الورشة"
+                  placeholder={
+                    userType === "workshop"
+                      ? "أدخل اسم الورشة"
+                      : "أدخل اسم المحل"
+                  }
                 />
                 {registerErrors.shopName && (
                   <p className="mt-1 text-sm text-red-600 text-right">
@@ -411,16 +498,18 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
                   htmlFor="managerName"
                   className="block text-sm font-medium text-gray-700 mb-2 text-right"
                 >
-                  اسم المدير المسؤول
+                  اسم المسؤول
                 </label>
                 <input
                   {...registerRegister("managerName")}
                   type="text"
                   id="managerName"
                   className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right ${
-                    registerErrors.managerName ? "border-red-500" : "border-gray-300"
+                    registerErrors.managerName
+                      ? "border-red-500"
+                      : "border-gray-300"
                   }`}
-                  placeholder="أدخل اسم المدير المسؤول"
+                  placeholder="أدخل اسم المسؤول"
                 />
                 {registerErrors.managerName && (
                   <p className="mt-1 text-sm text-red-600 text-right">
@@ -431,19 +520,45 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
 
               <div>
                 <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-2 text-right"
+                >
+                  البريد الإلكتروني (اختياري)
+                </label>
+                <input
+                  {...registerRegister("email")}
+                  type="email"
+                  id="email"
+                  dir="ltr"
+                  className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right ${
+                    registerErrors.email ? "border-red-500" : "border-gray-300"
+                  }`}
+                  placeholder="example@email.com"
+                />
+                {registerErrors.email && (
+                  <p className="mt-1 text-sm text-red-600 text-right">
+                    {registerErrors.email.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label
                   htmlFor="taxCardNumber"
                   className="block text-sm font-medium text-gray-700 mb-2 text-right"
                 >
-                  رقم البطاقة الضريبية
+                  الرقم الضريبى
                 </label>
                 <input
                   {...registerRegister("taxCardNumber")}
                   type="text"
                   id="taxCardNumber"
                   className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right ${
-                    registerErrors.taxCardNumber ? "border-red-500" : "border-gray-300"
+                    registerErrors.taxCardNumber
+                      ? "border-red-500"
+                      : "border-gray-300"
                   }`}
-                  placeholder="أدخل رقم البطاقة الضريبية"
+                  placeholder="أدخل الرقم الضريبى"
                 />
                 {registerErrors.taxCardNumber && (
                   <p className="mt-1 text-sm text-red-600 text-right">
@@ -467,7 +582,9 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
                     id="registerPhoneNumber"
                     dir="ltr"
                     className={`w-full pl-10 pr-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right ${
-                      registerErrors.phoneNumber ? "border-red-500" : "border-gray-300"
+                      registerErrors.phoneNumber
+                        ? "border-red-500"
+                        : "border-gray-300"
                     }`}
                     placeholder="+966 50 123 4567"
                   />
@@ -490,7 +607,9 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
                   {!imagePreview ? (
                     <div
                       className={`border-2 border-dashed rounded-lg p-4 text-center hover:border-blue-500 transition-colors ${
-                        registerErrors.documentImage ? "border-red-500" : "border-gray-300"
+                        registerErrors.documentImage
+                          ? "border-red-500"
+                          : "border-gray-300"
                       }`}
                       onDragOver={handleDragOver}
                       onDrop={handleDrop}
@@ -534,7 +653,8 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
                     <p className="mt-1 text-sm text-red-600 text-right">
                       {typeof registerErrors.documentImage === "object" &&
                       "message" in registerErrors.documentImage
-                        ? (registerErrors.documentImage as { message: string }).message
+                        ? (registerErrors.documentImage as { message: string })
+                            .message
                         : String(registerErrors.documentImage)}
                     </p>
                   )}
@@ -546,7 +666,9 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
                 className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg"
                 disabled={isRegisterSubmitting || isLoading}
               >
-                {isRegisterSubmitting || isLoading ? "جاري الإرسال..." : "إنشاء الحساب"}
+                {isRegisterSubmitting || isLoading
+                  ? "جاري الإرسال..."
+                  : "إنشاء الحساب"}
               </Button>
             </form>
 
@@ -570,7 +692,9 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
             <div className="text-center">
               <p className="text-sm text-gray-600 mb-4">
                 تم إرسال رمز التحقق إلى{" "}
-                {formData && "phoneNumber" in formData ? formData.phoneNumber : ""}
+                {formData && "phoneNumber" in formData
+                  ? formData.phoneNumber
+                  : ""}
               </p>
             </div>
 
@@ -604,7 +728,11 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={formData && "shopName" in formData ? goBackToRegister : goBackToLogin}
+                  onClick={
+                    formData && "shopName" in formData
+                      ? goBackToRegister
+                      : goBackToLogin
+                  }
                   className="flex-1 py-3"
                   disabled={isLoading}
                 >
