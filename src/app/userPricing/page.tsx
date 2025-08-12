@@ -1,249 +1,53 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Upload,
-  Send,
-  User,
-  Package,
-  Hash,
-  Image as ImageIcon,
-  Building,
-  Store,
-  X,
-  Trash2,
-} from "lucide-react";
+import { Send, User, Package, Hash, X } from "lucide-react";
 import Image from "next/image";
-
-// Define the type for saved form data
-interface SavedFormData {
-  id: string;
-  userType: "workshop" | "store";
-  userCode: string;
-  partName: string;
-  partImage: File | null;
-  partImagePreview: string | null;
-  requestImage: File | null;
-  requestImagePreview: string | null;
-  formImage: File | null;
-  formImagePreview: string | null;
-  quantity: string;
-  chassisNumber: string;
-  submittedAt: Date;
-}
+import { useUserPricingForm } from "@/hooks/useUserPricingForm";
+import { UserTypeSelector } from "@/components/userPricing/UserTypeSelector";
+import { ImageUpload } from "@/components/userPricing/ImageUpload";
+import { FormInput } from "@/components/userPricing/FormInput";
 
 export default function UserPricingPage() {
-  const [userType, setUserType] = useState<"workshop" | "store" | "">(
-    "workshop"
-  );
-  const [formData, setFormData] = useState({
-    userCode: "",
-    partName: "",
-    partImage: null as File | null,
-    requestImage: null as File | null,
-    formImage: null as File | null,
-    quantity: "",
-    chassisNumber: "",
-  });
-  const [partImagePreview, setPartImagePreview] = useState<string | null>(null);
-  const [requestImagePreview, setRequestImagePreview] = useState<string | null>(
-    null
-  );
-  const [formImagePreview, setFormImagePreview] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [savedForms, setSavedForms] = useState<SavedFormData[]>([]);
-  const [isSendingToBackend, setIsSendingToBackend] = useState(false);
+  const {
+    form,
+    savedForms,
+    partImagePreview,
+    requestImagePreview,
+    formImagePreview,
+    isSubmitting,
+    isSendingToBackend,
+    handleImageChange,
+    removeImage,
+    onSubmit,
+    deleteSavedForm,
+    sendAllToBackend,
+  } = useUserPricingForm();
+
   const partImageInputRef = useRef<HTMLInputElement>(null);
   const requestImageInputRef = useRef<HTMLInputElement>(null);
   const formImageInputRef = useRef<HTMLInputElement>(null);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    formState: { errors },
+  } = form;
+
+  const userType = watch("userType");
+
+  const resetImageInputs = () => {
+    if (partImageInputRef.current) partImageInputRef.current.value = "";
+    if (requestImageInputRef.current) requestImageInputRef.current.value = "";
+    if (formImageInputRef.current) formImageInputRef.current.value = "";
   };
 
-  const handlePartImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFormData((prev) => ({
-        ...prev,
-        partImage: file,
-      }));
-
-      // Create preview URL
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setPartImagePreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleRequestImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFormData((prev) => ({
-        ...prev,
-        requestImage: file,
-      }));
-
-      // Create preview URL
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setRequestImagePreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleFormImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFormData((prev) => ({
-        ...prev,
-        formImage: file,
-      }));
-
-      // Create preview URL
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setFormImagePreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    // Simulate API call
-    // await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Save the current form data to the saved forms array
-    const newSavedForm: SavedFormData = {
-      id: Date.now().toString(),
-      userType: userType as "workshop" | "store",
-      userCode: formData.userCode,
-      partName: formData.partName,
-      partImage: formData.partImage,
-      partImagePreview: partImagePreview,
-      requestImage: formData.requestImage,
-      requestImagePreview: requestImagePreview,
-      formImage: formData.formImage,
-      formImagePreview: formImagePreview,
-      quantity: formData.quantity,
-      chassisNumber: formData.chassisNumber,
-      submittedAt: new Date(),
-    };
-
-    setSavedForms((prev) => [...prev, newSavedForm]);
-
-    // Reset form
-    setFormData({
-      userCode: "",
-      partName: "",
-      partImage: null,
-      requestImage: null,
-      formImage: null,
-      quantity: "",
-      chassisNumber: "",
-    });
-    setPartImagePreview(null);
-    setRequestImagePreview(null);
-    setFormImagePreview(null);
-    setIsSubmitting(false);
-
-    // Reset file inputs
-    if (partImageInputRef.current) {
-      partImageInputRef.current.value = "";
-    }
-    if (requestImageInputRef.current) {
-      requestImageInputRef.current.value = "";
-    }
-    if (formImageInputRef.current) {
-      formImageInputRef.current.value = "";
-    }
-
-    // Show success message
-    // alert("تم حفظ البيانات! يمكنك إضافة المزيد أو إرسال الكل إلى الخادم.");
-  };
-
-  const deleteSavedForm = (id: string) => {
-    setSavedForms((prev) => prev.filter((form) => form.id !== id));
-  };
-
-  const sendAllToBackend = async () => {
-    if (savedForms.length === 0) {
-      alert("لا توجد بيانات لإرسالها!");
-      return;
-    }
-
-    setIsSendingToBackend(true);
-
-    try {
-      // Prepare data for backend (convert to a format suitable for API)
-      const dataToSend = savedForms.map((form) => ({
-        id: form.id,
-        userType: form.userType,
-        userCode: form.userCode,
-        partName: form.partName,
-        hasPartImage: form.partImage !== null,
-        partImageName: form.partImage?.name || null,
-        hasRequestImage: form.requestImage !== null,
-        requestImageName: form.requestImage?.name || null,
-        hasFormImage: form.formImage !== null,
-        formImageName: form.formImage?.name || null,
-        quantity: form.quantity,
-        chassisNumber: form.chassisNumber,
-        submittedAt: form.submittedAt.toISOString(),
-      }));
-
-      // For development - log to console
-      console.log("Sending data to backend:", dataToSend);
-      console.log("Full saved forms with images:", savedForms);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Clear saved forms after successful submission
-      setSavedForms([]);
-
-      alert("تم إرسال جميع البيانات بنجاح!");
-    } catch (error) {
-      console.error("Error sending data:", error);
-      alert("حدث خطأ أثناء الإرسال. حاول مرة أخرى.");
-    } finally {
-      setIsSendingToBackend(false);
-    }
-  };
-
-  const removePartImage = () => {
-    setFormData((prev) => ({ ...prev, partImage: null }));
-    setPartImagePreview(null);
-    if (partImageInputRef.current) {
-      partImageInputRef.current.value = "";
-    }
-  };
-
-  const removeRequestImage = () => {
-    setFormData((prev) => ({ ...prev, requestImage: null }));
-    setRequestImagePreview(null);
-    if (requestImageInputRef.current) {
-      requestImageInputRef.current.value = "";
-    }
-  };
-
-  const removeFormImage = () => {
-    setFormData((prev) => ({ ...prev, formImage: null }));
-    setFormImagePreview(null);
-    if (formImageInputRef.current) {
-      formImageInputRef.current.value = "";
-    }
+  const handleFormSubmit = async (data: any) => {
+    await onSubmit(data);
+    resetImageInputs();
   };
 
   return (
@@ -281,285 +85,102 @@ export default function UserPricingPage() {
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form
+                onSubmit={handleSubmit(handleFormSubmit)}
+                className="space-y-6"
+              >
                 {/* User Type Selection */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3 text-right">
-                    نوع المستخدم
-                  </label>
-                  <div className="grid grid-cols-2 gap-4">
-                    <button
-                      type="button"
-                      onClick={() => setUserType("workshop")}
-                      className={`p-4 border-2 rounded-lg text-center transition-colors ${
-                        userType === "workshop"
-                          ? "border-green-500 bg-green-50 text-green-700"
-                          : "border-gray-300 hover:border-gray-400"
-                      }`}
-                    >
-                      <Building className="mx-auto mb-2" size={24} />
-                      <span className="font-medium">ورشة</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setUserType("store")}
-                      className={`p-4 border-2 rounded-lg text-center transition-colors ${
-                        userType === "store"
-                          ? "border-green-500 bg-green-50 text-green-700"
-                          : "border-gray-300 hover:border-gray-400"
-                      }`}
-                    >
-                      <Store className="mx-auto mb-2" size={24} />
-                      <span className="font-medium">محل</span>
-                    </button>
-                  </div>
-                </div>
+                <UserTypeSelector control={control} />
+
                 {/* Part Name Input */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-                    <Package className="inline ml-2" size={16} />
-                    اسم القطعة
-                  </label>
-                  <input
-                    type="text"
-                    name="partName"
-                    value={formData.partName}
-                    onChange={handleInputChange}
-                    placeholder="أدخل اسم القطعة المطلوبة"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    required
-                  />
-                </div>
+                <FormInput
+                  label="اسم القطعة"
+                  icon={Package}
+                  placeholder="أدخل اسم القطعة المطلوبة"
+                  error={errors.partName?.message}
+                  {...register("partName")}
+                />
+
                 {/* User Code Input - Only for Workshop */}
                 {userType === "workshop" && (
                   <>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-                        <User className="inline ml-2" size={16} />
-                        كود الورشة
-                      </label>
-                      <input
-                        type="text"
-                        name="userCode"
-                        value={formData.userCode}
-                        onChange={handleInputChange}
-                        placeholder="أدخل كود الورشة الخاص بك"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                        required
-                      />
-                      <p className="text-sm text-gray-500 mt-1 text-right">
-                        يمكنك تغيير الكود للحصول على نقاط إضافية
-                      </p>
-                    </div>
+                    <FormInput
+                      label="كود الورشة"
+                      icon={User}
+                      placeholder="أدخل كود الورشة الخاص بك"
+                      helpText="يمكنك تغيير الكود للحصول على نقاط إضافية"
+                      error={errors.userCode?.message}
+                      {...register("userCode")}
+                    />
+
                     {/* Part Image Upload */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-                        <ImageIcon className="inline ml-2" size={16} />
-                        صورة القطعة
-                      </label>
-                      <div className="space-y-4">
-                        <input
-                          ref={partImageInputRef}
-                          type="file"
-                          accept="image/*"
-                          onChange={handlePartImageChange}
-                          className="hidden"
-                          id="partImage"
-                        />
-                        <label
-                          htmlFor="partImage"
-                          className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors"
-                        >
-                          <div className="text-center">
-                            <Upload
-                              className="mx-auto text-gray-400 mb-2"
-                              size={24}
-                            />
-                            <p className="text-sm text-gray-500">
-                              اضغط لاختيار صورة القطعة
-                            </p>
-                            <p className="text-xs text-gray-400">
-                              JPG, PNG, GIF حتى 5MB
-                            </p>
-                          </div>
-                        </label>
+                    <ImageUpload
+                      ref={partImageInputRef}
+                      id="partImage"
+                      label="صورة القطعة"
+                      preview={partImagePreview}
+                      onImageChange={(file) =>
+                        handleImageChange(file, "partImage")
+                      }
+                      onRemoveImage={() => removeImage("partImage")}
+                      error={errors.partImage?.message}
+                    />
 
-                        {/* Part Image Preview */}
-                        {partImagePreview && (
-                          <div className="relative">
-                            <Image
-                              src={partImagePreview}
-                              alt="معاينة صورة القطعة"
-                              className="w-full h-48 object-cover rounded-lg border border-gray-300"
-                              width={100}
-                              height={100}
-                            />
-                            <button
-                              type="button"
-                              onClick={removePartImage}
-                              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                            >
-                              <X size={16} />
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
                     {/* Request Image Upload */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-                        <ImageIcon className="inline ml-2" size={16} />
-                        صورة الطلب
-                      </label>
-                      <div className="space-y-4">
-                        <input
-                          ref={requestImageInputRef}
-                          type="file"
-                          accept="image/*"
-                          onChange={handleRequestImageChange}
-                          className="hidden"
-                          id="requestImage"
-                        />
-                        <label
-                          htmlFor="requestImage"
-                          className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors"
-                        >
-                          <div className="text-center">
-                            <Upload
-                              className="mx-auto text-gray-400 mb-2"
-                              size={24}
-                            />
-                            <p className="text-sm text-gray-500">
-                              اضغط لاختيار صورة الطلب
-                            </p>
-                            <p className="text-xs text-gray-400">
-                              JPG, PNG, GIF حتى 5MB
-                            </p>
-                          </div>
-                        </label>
+                    <ImageUpload
+                      ref={requestImageInputRef}
+                      id="requestImage"
+                      label="صورة الطلب"
+                      preview={requestImagePreview}
+                      onImageChange={(file) =>
+                        handleImageChange(file, "requestImage")
+                      }
+                      onRemoveImage={() => removeImage("requestImage")}
+                      error={errors.requestImage?.message}
+                    />
 
-                        {/* Request Image Preview */}
-                        {requestImagePreview && (
-                          <div className="relative">
-                            <Image
-                              src={requestImagePreview}
-                              alt="معاينة صورة الطلب"
-                              className="w-full h-48 object-cover rounded-lg border border-gray-300"
-                              width={100}
-                              height={100}
-                            />
-                            <button
-                              type="button"
-                              onClick={removeRequestImage}
-                              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                            >
-                              <X size={16} />
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
                     {/* Form Image Upload */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-                        <ImageIcon className="inline ml-2" size={16} />
-                        صورة الاستمارة
-                      </label>
-                      <div className="space-y-4">
-                        <input
-                          ref={formImageInputRef}
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFormImageChange}
-                          className="hidden"
-                          id="formImage"
-                        />
-                        <label
-                          htmlFor="formImage"
-                          className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors"
-                        >
-                          <div className="text-center">
-                            <Upload
-                              className="mx-auto text-gray-400 mb-2"
-                              size={24}
-                            />
-                            <p className="text-sm text-gray-500">
-                              اضغط لاختيار صورة الاستمارة
-                            </p>
-                            <p className="text-xs text-gray-400">
-                              JPG, PNG, GIF حتى 5MB
-                            </p>
-                          </div>
-                        </label>
-
-                        {/* Form Image Preview */}
-                        {formImagePreview && (
-                          <div className="relative">
-                            <Image
-                              src={formImagePreview}
-                              alt="معاينة صورة الاستمارة"
-                              className="w-full h-48 object-cover rounded-lg border border-gray-300"
-                              width={100}
-                              height={100}
-                            />
-                            <button
-                              type="button"
-                              onClick={removeFormImage}
-                              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                            >
-                              <X size={16} />
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>{" "}
+                    <ImageUpload
+                      ref={formImageInputRef}
+                      id="formImage"
+                      label="صورة الاستمارة"
+                      preview={formImagePreview}
+                      onImageChange={(file) =>
+                        handleImageChange(file, "formImage")
+                      }
+                      onRemoveImage={() => removeImage("formImage")}
+                      error={errors.formImage?.message}
+                    />
                   </>
                 )}
 
                 {/* Quantity Input */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-                    الكمية
-                  </label>
-                  <input
-                    type="number"
-                    name="quantity"
-                    value={formData.quantity}
-                    onChange={handleInputChange}
-                    placeholder="أدخل الكمية المطلوبة"
-                    min="1"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    required
-                  />
-                </div>
+                <FormInput
+                  label="الكمية"
+                  type="number"
+                  placeholder="أدخل الكمية المطلوبة"
+                  min="1"
+                  error={errors.quantity?.message}
+                  {...register("quantity")}
+                />
 
                 {/* Chassis Number Input - Only for Workshop */}
                 {userType === "workshop" && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-                      <Hash className="inline ml-2" size={16} />
-                      رقم الهيكل
-                    </label>
-                    <input
-                      type="text"
-                      name="chassisNumber"
-                      value={formData.chassisNumber}
-                      onChange={handleInputChange}
-                      placeholder="أدخل رقم الهيكل"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      // required
-                    />
-                    <p className="text-sm text-gray-500 mt-1 text-right">
-                      رقم الهيكل يساعد في تحديد القطعة المناسبة لسيارتك
-                    </p>
-                  </div>
+                  <FormInput
+                    label="رقم الهيكل"
+                    icon={Hash}
+                    placeholder="أدخل رقم الهيكل"
+                    helpText="رقم الهيكل يساعد في تحديد القطعة المناسبة لسيارتك"
+                    error={errors.chassisNumber?.message}
+                    {...register("chassisNumber")}
+                  />
                 )}
 
                 {/* Submit Button */}
                 <div className="pt-4">
                   <Button
                     type="submit"
-                    disabled={isSubmitting || !userType}
+                    disabled={isSubmitting}
                     className="w-full py-3 bg-black hover:bg-black text-white font-medium rounded-lg transition-colors disabled:opacity-50"
                   >
                     {isSubmitting ? (
