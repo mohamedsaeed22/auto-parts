@@ -37,7 +37,7 @@ const locationSchema = z.object({
   formattedAddress: z.string().min(1, "العنوان المنسق مطلوب"),
 });
 
-// Login schema (phone number only)
+// Login schema (phone number only) 
 export const loginSchema = z.object({
   phoneNumber: z
     .string()
@@ -47,7 +47,10 @@ export const loginSchema = z.object({
 
 // Registration schema
 export const registrationSchema = z.object({
-  userType: z.enum(["workshop", "store"]),
+  userType: z.enum(["workshop", "store"], {
+    message: "يرجى اختيار نوع المستخدم",
+  }),
+
   shopName: z
     .string()
     .min(1, "اسم المحل أو الورشة مطلوب")

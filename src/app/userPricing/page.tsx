@@ -46,8 +46,10 @@ export default function UserPricingPage() {
     if (formImageInputRef.current) formImageInputRef.current.value = "";
   };
 
-  const handleFormSubmit = async (data: UserPricingFormData) => {
-    await onSubmit(data);
+ 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFormSubmit = async (data: any) => {
+     await onSubmit(data);
     resetImageInputs();
   };
 

@@ -79,6 +79,7 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
     reset: resetRegister,
     setValue,
     clearErrors,
+    // watch,
   } = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
     defaultValues: registrationDefaultValues,
