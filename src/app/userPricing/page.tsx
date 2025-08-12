@@ -547,7 +547,7 @@ export default function UserPricingPage() {
                       onChange={handleInputChange}
                       placeholder="أدخل رقم الهيكل"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      required
+                      // required
                     />
                     <p className="text-sm text-gray-500 mt-1 text-right">
                       رقم الهيكل يساعد في تحديد القطعة المناسبة لسيارتك

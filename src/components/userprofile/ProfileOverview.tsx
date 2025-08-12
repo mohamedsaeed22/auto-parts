@@ -13,7 +13,7 @@ export default function ProfileOverview() {
     birthDate: "1990-05-15",
     gender: "ذكر",
     city: "الرياض",
-    joinDate: "2023-01-15"
+    joinDate: "2023-01-15",
   });
 
   const [formData, setFormData] = useState(profile);
@@ -33,7 +33,10 @@ export default function ProfileOverview() {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-right">الملف الشخصي</h2>
         {!isEditing ? (
-          <Button onClick={() => setIsEditing(true)} className="flex items-center gap-2">
+          <Button
+            onClick={() => setIsEditing(true)}
+            className="flex items-center gap-2"
+          >
             <Edit size={16} />
             تعديل
           </Button>
@@ -43,7 +46,11 @@ export default function ProfileOverview() {
               <Save size={16} />
               حفظ
             </Button>
-            <Button variant="outline" onClick={handleCancel} className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={handleCancel}
+              className="flex items-center gap-2"
+            >
               <X size={16} />
               إلغاء
             </Button>
@@ -59,7 +66,10 @@ export default function ProfileOverview() {
               <User size={48} className="text-gray-400" />
             </div>
             {isEditing && (
-              <Button size="sm" className="absolute bottom-0 right-0 rounded-full w-8 h-8 p-0">
+              <Button
+                size="sm"
+                className="absolute bottom-0 right-0 rounded-full w-8 h-8 p-0"
+              >
                 <Edit size={12} />
               </Button>
             )}
@@ -69,26 +79,36 @@ export default function ProfileOverview() {
         {/* Personal Information */}
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">الاسم الكامل</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
+              الاسم الكامل
+            </label>
             {isEditing ? (
               <input
                 type="text"
                 value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
               />
             ) : (
-              <div className="px-3 py-2 bg-gray-50 rounded-md text-right">{profile.name}</div>
+              <div className="px-3 py-2 bg-gray-50 rounded-md text-right">
+                {profile.name}
+              </div>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">البريد الإلكتروني</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
+              البريد الإلكتروني
+            </label>
             {isEditing ? (
               <input
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
               />
             ) : (
@@ -100,12 +120,16 @@ export default function ProfileOverview() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">رقم الهاتف</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
+              رقم الجوال
+            </label>
             {isEditing ? (
               <input
                 type="tel"
                 value={formData.phone}
-                onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
               />
             ) : (
@@ -120,12 +144,16 @@ export default function ProfileOverview() {
         {/* Additional Information */}
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">تاريخ الميلاد</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
+              تاريخ الميلاد
+            </label>
             {isEditing ? (
               <input
                 type="date"
                 value={formData.birthDate}
-                onChange={(e) => setFormData({...formData, birthDate: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, birthDate: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
               />
             ) : (
@@ -137,32 +165,44 @@ export default function ProfileOverview() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">الجنس</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
+              الجنس
+            </label>
             {isEditing ? (
               <select
                 value={formData.gender}
-                onChange={(e) => setFormData({...formData, gender: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, gender: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
               >
                 <option value="ذكر">ذكر</option>
                 <option value="أنثى">أنثى</option>
               </select>
             ) : (
-              <div className="px-3 py-2 bg-gray-50 rounded-md text-right">{profile.gender}</div>
+              <div className="px-3 py-2 bg-gray-50 rounded-md text-right">
+                {profile.gender}
+              </div>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">المدينة</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
+              المدينة
+            </label>
             {isEditing ? (
               <input
                 type="text"
                 value={formData.city}
-                onChange={(e) => setFormData({...formData, city: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, city: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
               />
             ) : (
-              <div className="px-3 py-2 bg-gray-50 rounded-md text-right">{profile.city}</div>
+              <div className="px-3 py-2 bg-gray-50 rounded-md text-right">
+                {profile.city}
+              </div>
             )}
           </div>
         </div>

@@ -27,7 +27,7 @@ import Image from "next/image";
 const loginSchema = z.object({
   phoneNumber: z
     .string()
-    .min(1, "رقم الهاتف مطلوب")
+    .min(1, "رقم الجوال مطلوب")
     .regex(/^[0-9+\-\s()]+$/, "يرجى إدخال رقم هاتف صحيح"),
 });
 
@@ -55,7 +55,7 @@ const registrationSchema = z.object({
     .regex(/^[0-9]+$/, "رقم البطاقة الضريبية يجب أن يحتوي على أرقام فقط"),
   phoneNumber: z
     .string()
-    .min(1, "رقم الهاتف مطلوب")
+    .min(1, "رقم الجوال مطلوب")
     .regex(/^[0-9+\-\s()]+$/, "يرجى إدخال رقم هاتف صحيح"),
   documentImage: z
     .any()
@@ -349,7 +349,7 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
                   htmlFor="phoneNumber"
                   className="block text-sm font-medium text-gray-700 mb-2 text-right"
                 >
-                  رقم الهاتف
+                  رقم الجوال
                 </label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -582,7 +582,7 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
                   htmlFor="registerPhoneNumber"
                   className="block text-sm font-medium text-gray-700 mb-2 text-right"
                 >
-                  رقم الهاتف
+                  رقم الجوال
                 </label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />

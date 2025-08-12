@@ -137,7 +137,7 @@ export default function SettingsPage() {
                 <div className="text-right">
                   <div className="font-medium">
                     {key === "showEmail" && "إظهار البريد الإلكتروني"}
-                    {key === "showPhone" && "إظهار رقم الهاتف"}
+                    {key === "showPhone" && "إظهار رقم الجوال"}
                     {key === "allowSearch" && "السماح بالبحث"}
                   </div>
                 </div>
