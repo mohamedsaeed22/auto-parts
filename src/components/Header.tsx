@@ -18,7 +18,7 @@ export default function Header() {
   const pathname = usePathname();
 
   const navLinks = [
-    { href: "/", label: "الرئيسية" },
+    // { href: "/", label: "الرئيسية" },
     { href: "/about", label: "من نحن" },
     { href: "/contact", label: "اتصل بنا" },
     { href: "/brands", label: "البراندات" },
@@ -66,7 +66,7 @@ export default function Header() {
                 href={link.href}
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors relative ${
                   isActiveLink(link.href)
-                    ? "text-blue-600 after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600"
+                    ? "text-logo-gold after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-logo-gold"
                     : "text-gray-700 hover:text-gray-900"
                 }`}
               >
@@ -313,7 +313,7 @@ export default function Header() {
                       href={link.href}
                       className={`block px-3 py-3 rounded-md text-base font-medium transition-colors relative ${
                         isActiveLink(link.href)
-                          ? "text-blue-600 after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600"
+                          ? "text-logo-gold after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-logo-gold"
                           : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
                       }`}
                       onClick={closeMobileMenu}
