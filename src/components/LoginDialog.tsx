@@ -79,7 +79,6 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
     reset: resetRegister,
     setValue,
     clearErrors,
-    watch,
   } = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
     defaultValues: registrationDefaultValues,
@@ -154,7 +153,7 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
 
   const removeImage = () => {
     setImagePreview(null);
-    setValue("documentImage", undefined);
+    setValue("documentImage", null as unknown as File);
     const fileInput = document.getElementById(
       "documentImage"
     ) as HTMLInputElement;

@@ -8,6 +8,7 @@ import { useUserPricingForm } from "@/hooks/useUserPricingForm";
 import { UserTypeSelector } from "@/components/userPricing/UserTypeSelector";
 import { ImageUpload } from "@/components/userPricing/ImageUpload";
 import { FormInput } from "@/components/userPricing/FormInput";
+import { UserPricingFormData } from "@/lib/validations/userPricingSchema";
 
 export default function UserPricingPage() {
   const {
@@ -45,7 +46,7 @@ export default function UserPricingPage() {
     if (formImageInputRef.current) formImageInputRef.current.value = "";
   };
 
-  const handleFormSubmit = async (data: any) => {
+  const handleFormSubmit = async (data: UserPricingFormData) => {
     await onSubmit(data);
     resetImageInputs();
   };
