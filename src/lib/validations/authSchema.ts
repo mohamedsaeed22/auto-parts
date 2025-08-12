@@ -48,7 +48,7 @@ export const loginSchema = z.object({
 // Registration schema
 export const registrationSchema = z.object({
   userType: z.enum(["workshop", "store"], {
-    required_error: "يرجى اختيار نوع المستخدم",
+    message: "يرجى اختيار نوع المستخدم",
   }),
   shopName: z
     .string()

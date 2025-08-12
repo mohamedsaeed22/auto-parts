@@ -35,6 +35,7 @@ const MapClickHandler = dynamic(
         onLocationSelect: (lat: number, lng: number) => void;
       }) {
         useMapEvents({
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           click: (e: any) => {
             onLocationSelect(e.latlng.lat, e.latlng.lng);
           },
@@ -56,6 +57,7 @@ interface SearchResult {
   lat: string;
   lon: string;
   place_id: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   address: any;
 }
 
@@ -74,6 +76,7 @@ export default function LocationPicker({
   const [currentLocation, setCurrentLocation] = useState<LocationData | null>(
     null
   );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [mapInstance, setMapInstance] = useState<any>(null);
   const [isClient, setIsClient] = useState(false);
   const [zoom, setZoom] = useState(10);
@@ -322,7 +325,8 @@ export default function LocationPicker({
   // Custom icon for marker with better visibility
   const createCustomIcon = () => {
     if (typeof window !== "undefined") {
-      const L = require("leaflet");
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const L = require("leaflet");
       return new L.Icon({
         iconUrl:
           "data:image/svg+xml;base64," +
@@ -466,8 +470,8 @@ export default function LocationPicker({
           center={position}
           zoom={zoom}
           style={{ height: "350px", width: "100%" }}
-          whenCreated={setMapInstance}
-          onZoomEnd={(e) => setZoom(e.target.getZoom())}
+           // whenReady={setMapInstance}
+           // onZoomEnd={(e: any) => setZoom(e.target.getZoom())}
           zoomControl={false}
         >
           <TileLayer
@@ -571,7 +575,7 @@ export default function LocationPicker({
         </div>
       )}
 
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+      {/* <div className="bg-green-50 border border-green-200 rounded-lg p-4">
         <p className="text-xs text-green-700 text-right mb-2">
           💡 <strong>كيفية استخدام أداة تحديد الموقع:</strong>
         </p>
@@ -582,7 +586,7 @@ export default function LocationPicker({
           <li>📱 استخدم "موقعي الحالي" للحصول على موقعك بدقة GPS</li>
           <li>🔍 استخدم أزرار التكبير والتصغير للبحث بدقة أكبر</li>
         </ul>
-      </div>
+      </div> */}
     </div>
   );
 }
