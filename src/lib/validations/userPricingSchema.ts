@@ -61,13 +61,8 @@ const workshopSchema = baseSchema.extend({
     .min(1, "كود الورشة مطلوب")
     .min(3, "كود الورشة يجب أن يكون أكثر من 3 أحرف")
     .max(20, "كود الورشة طويل جداً"),
-  chassisNumber: z
-    .string()
-    .optional()
-    .refine((val) => {
-      if (!val) return true;
-      return val.length >= 5;
-    }, "رقم الهيكل يجب أن يكون أكثر من 5 أحرف"),
+  chassisNumber: z.string().optional(),
+
   partImage: requiredFileSchema,
   requestImage: requiredFileSchema,
   formImage: requiredFileSchema,
@@ -104,7 +99,7 @@ export type SavedFormData = UserPricingFormData & {
 // Default values
 export const defaultValues: Partial<UserPricingFormData> = {
   userType: "workshop",
-  userCode: "",
+  userCode: "workshop-125521",
   partName: "",
   quantity: "",
   chassisNumber: "",

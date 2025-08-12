@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Send, User, Package, Hash, X, Plus, Save } from "lucide-react";
+import { Send, User, Package, Hash, X, Plus, Save, Car } from "lucide-react";
 import Image from "next/image";
 import { useUserPricingForm } from "@/hooks/useUserPricingForm";
 import { UserTypeSelector } from "@/components/userPricing/UserTypeSelector";
@@ -170,7 +170,7 @@ export default function UserPricingPage() {
                 {userType === "workshop" && (
                   <FormInput
                     label="رقم الهيكل"
-                    icon={Hash}
+                    icon={Car}
                     placeholder="أدخل رقم الهيكل"
                     helpText="رقم الهيكل يساعد في تحديد القطعة المناسبة لسيارتك"
                     error={errors.chassisNumber?.message}
