@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Send, User, Package, Hash, X } from "lucide-react";
+import { Send, User, Package, Hash, X, Plus, Save, Car } from "lucide-react";
 import Image from "next/image";
 import { useUserPricingForm } from "@/hooks/useUserPricingForm";
 import { UserTypeSelector } from "@/components/userPricing/UserTypeSelector";
@@ -56,14 +56,14 @@ export default function UserPricingPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-[#b9974d] to-[#b9974d] text-white">
+      <div className="bg-gradient-to-r from-logo-gold to-logo-gold text-white">
         <div className="container mx-auto px-4 py-16">
           <div className="text-center">
             <h1 className="text-4xl font-bold mb-4">طلب تسعير القطع</h1>
-            <p className="text-xl text-green-100 mb-4">
+            <p className="text-xl text-white/90 mb-4">
               أرسل لنا تفاصيل القطعة التي تحتاجها وسنقوم بتسعيرها لك
             </p>
-            <p className="text-lg text-green-200">
+            <p className="text-lg text-white/80">
               احصل على أفضل الأسعار وأسرع الخدمات من خبرائنا
             </p>
           </div>
@@ -77,10 +77,10 @@ export default function UserPricingPage() {
           <div className="order-1 lg:order-1">
             <div className="bg-white rounded-lg shadow-lg p-8">
               <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Package className="text-green-600" size={32} />
+                <div className="w-16 h-16 bg-logo-gold/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Package className="text-logo-gold" size={32} />
                 </div>
-                <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+                <h2 className="text-2xl font-semibold text-logo-black mb-2">
                   نموذج طلب التسعير
                 </h2>
                 <p className="text-gray-600">
@@ -161,6 +161,7 @@ export default function UserPricingPage() {
                 <FormInput
                   label="الكمية"
                   type="number"
+                  icon={Hash}
                   placeholder="أدخل الكمية المطلوبة"
                   min="1"
                   error={errors.quantity?.message}
@@ -171,7 +172,7 @@ export default function UserPricingPage() {
                 {userType === "workshop" && (
                   <FormInput
                     label="رقم الهيكل"
-                    icon={Hash}
+                    icon={Car}
                     placeholder="أدخل رقم الهيكل"
                     helpText="رقم الهيكل يساعد في تحديد القطعة المناسبة لسيارتك"
                     error={errors.chassisNumber?.message}
@@ -184,7 +185,7 @@ export default function UserPricingPage() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-3 bg-black hover:bg-black text-white font-medium rounded-lg transition-colors disabled:opacity-50"
+                    className="w-full py-3 bg-logo-black hover:bg-logo-black/90 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       <div className="flex items-center justify-center">
@@ -193,10 +194,11 @@ export default function UserPricingPage() {
                       </div>
                     ) : (
                       <div className="flex items-center justify-center">
-                        {savedForms.length > 0
-                          ? "إضافة قطعة أخرى"
-                          : "حفظ البيانات"}
-                        <Send className="mr-2" size={16} />
+                        {/* {savedForms.length > 0
+                           ? "إضافة قطعة أخرى"
+                          : "حفظ البيانات"} */}
+                        اضافة للقائمه
+                        <Plus className="mr-2" size={16} />
                       </div>
                     )}
                   </Button>
@@ -204,11 +206,11 @@ export default function UserPricingPage() {
               </form>
 
               {/* Additional Information */}
-              <div className="mt-8 p-4 bg-blue-50 rounded-lg">
-                <h3 className="font-semibold text-blue-800 mb-2 text-right">
+              <div className="mt-8 p-4 bg-logo-gold/10 rounded-lg border border-logo-gold/20">
+                <h3 className="font-semibold text-logo-black mb-2 text-right">
                   معلومات مهمة:
                 </h3>
-                <ul className="text-sm text-blue-700 space-y-1 text-right">
+                <ul className="text-sm text-logo-black/80 space-y-1 text-right">
                   <li>
                     • يمكنك إضافة عدة قطع ثم إرسالها جميعاً من الجانب الأيسر
                   </li>
@@ -230,13 +232,13 @@ export default function UserPricingPage() {
 
           {/* Left Side - Saved Data */}
           <div className="order-2 lg:order-2">
-            <div className="bg-white rounded-lg shadow-lg p-6 h-fit sticky top-4">
+            <div className="bg-white rounded-lg shadow-lg p-6 h-fit sticky top-16">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-semibold text-gray-800">
+                <h3 className="text-xl font-semibold text-logo-black">
                   البيانات المحفوظة
                 </h3>
-                <span className="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
-                  {savedForms.length} عنصر
+                <span className="bg-logo-gold/20 text-logo-black text-sm px-3 py-1 rounded-full">
+                  {savedForms.length} نموذج
                 </span>
               </div>
 
@@ -257,7 +259,7 @@ export default function UserPricingPage() {
                     <Button
                       onClick={sendAllToBackend}
                       disabled={isSendingToBackend}
-                      className="w-full bg-green-600 hover:bg-green-700 text-white py-3"
+                      className="w-full bg-logo-gold hover:bg-logo-gold/90 text-white py-3"
                     >
                       {isSendingToBackend ? (
                         <div className="flex items-center justify-center">
@@ -274,129 +276,114 @@ export default function UserPricingPage() {
                   </div>
 
                   {/* Saved Forms List */}
-                  <div className="space-y-4 max-h-96 overflow-y-auto">
+                  <div className="space-y-3 max-h-96 overflow-y-auto">
                     {savedForms.map((form, index) => (
                       <div
                         key={form.id}
-                        className="border border-gray-200 rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition-colors"
+                        className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 p-4"
                       >
-                        <div className="flex justify-between items-start mb-3">
+                        {/* Header */}
+                        <div className="flex justify-between items-center mb-3">
                           <div className="flex items-center gap-2">
                             <span
-                              className={`text-xs px-2 py-1 rounded ${
-                                form.userType === "workshop"
-                                  ? "bg-blue-100 text-blue-800"
-                                  : "bg-purple-100 text-purple-800"
-                              }`}
+                              className={`text-xs px-3 py-1 rounded-full font-medium bg-gray-100`}
                             >
                               {form.userType === "workshop" ? "ورشة" : "محل"}
                             </span>
-                            <span className="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded">
+                            <span className="text-xs text-gray-500">
                               #{index + 1}
                             </span>
                           </div>
                           <button
                             onClick={() => deleteSavedForm(form.id)}
-                            className="bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                            className="p-1.5 rounded-full bg-red-500 text-white hover:bg-red-600 transition-colors"
                             title="حذف"
                           >
                             <X size={14} />
                           </button>
                         </div>
 
-                        <div className="space-y-2">
-                          <div>
-                            <span className="text-sm font-medium text-gray-600">
-                              اسم القطعة:
+                        {/* Part Name */}
+                        <div className="w-full mt-3">
+                          <div className="bg-gray-50 rounded p-2 w-full">
+                            <span className="text-sm text-gray-500">
+                              اسم القطعة:{" "}
                             </span>
-                            <p className="text-gray-800 font-medium">
+                            <span className="text-lg font-semibold text-gray-900">
                               {form.partName}
-                            </p>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-2">
-                            <div>
-                              <span className="text-xs text-gray-600">
-                                الكمية:
-                              </span>
-                              <p className="text-gray-800 text-sm">
-                                {form.quantity}
-                              </p>
-                            </div>
-                            {form.userType === "workshop" && form.userCode && (
-                              <div>
-                                <span className="text-xs text-gray-600">
-                                  كود الورشة:
-                                </span>
-                                <p className="text-gray-800 text-sm">
-                                  {form.userCode}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-
-                          {form.userType === "workshop" &&
-                            form.chassisNumber && (
-                              <div>
-                                <span className="text-xs text-gray-600">
-                                  رقم الهيكل:
-                                </span>
-                                <p className="text-gray-800 text-sm">
-                                  {form.chassisNumber}
-                                </p>
-                              </div>
-                            )}
-
-                          {/* Images Display */}
-                          <div className="grid grid-cols-3 gap-2 mt-3">
-                            {form.partImagePreview && (
-                              <div>
-                                <span className="text-xs text-gray-600 block mb-1">
-                                  صورة القطعة:
-                                </span>
-                                <Image
-                                  src={form.partImagePreview}
-                                  alt="صورة القطعة"
-                                  className="w-full h-16 object-cover rounded border border-gray-300"
-                                  width={80}
-                                  height={64}
-                                />
-                              </div>
-                            )}
-                            {form.requestImagePreview && (
-                              <div>
-                                <span className="text-xs text-gray-600 block mb-1">
-                                  صورة الطلب:
-                                </span>
-                                <Image
-                                  src={form.requestImagePreview}
-                                  alt="صورة الطلب"
-                                  className="w-full h-16 object-cover rounded border border-gray-300"
-                                  width={80}
-                                  height={64}
-                                />
-                              </div>
-                            )}
-                            {form.formImagePreview && (
-                              <div>
-                                <span className="text-xs text-gray-600 block mb-1">
-                                  صورة الاستمارة:
-                                </span>
-                                <Image
-                                  src={form.formImagePreview}
-                                  alt="صورة الاستمارة"
-                                  className="w-full h-16 object-cover rounded border border-gray-300"
-                                  width={80}
-                                  height={64}
-                                />
-                              </div>
-                            )}
-                          </div>
-
-                          <div className="text-xs text-gray-400 mt-2">
-                            تم الحفظ: {form.submittedAt.toLocaleString("ar-EG")}
+                            </span>
                           </div>
                         </div>
+
+                        {/* Info Grid */}
+                        <div className="grid grid-cols-2 gap-2 mt-3">
+                          <div className="bg-gray-50 rounded p-2">
+                            <span className="text-xs text-gray-500">
+                              الكمية:{" "}
+                            </span>
+                            <span className="text-sm font-semibold">
+                              {form.quantity}
+                            </span>
+                          </div>
+                          {form.userType === "workshop" && form.userCode && (
+                            <div className="bg-gray-50 rounded p-2">
+                              <span className="text-xs text-gray-500">
+                                كود الورشة:{" "}
+                              </span>
+                              <span className="text-sm font-semibold">
+                                {form.userCode}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Optional Fields */}
+                        {form.userType === "workshop" && form.chassisNumber && (
+                          <div className="bg-gray-50 rounded p-2 mt-2">
+                            <span className="text-xs text-gray-500">
+                              رقم الهيكل:{" "}
+                            </span>
+                            <span className="text-sm font-semibold">
+                              {form.chassisNumber}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Images */}
+                        <div className="grid grid-cols-3 gap-2 mt-3">
+                          {form.partImagePreview && (
+                            <Image
+                              src={form.partImagePreview}
+                              alt="صورة القطعة"
+                              className="w-full h-16 object-cover rounded border"
+                              width={80}
+                              height={64}
+                            />
+                          )}
+                          {form.requestImagePreview && (
+                            <Image
+                              src={form.requestImagePreview}
+                              alt="صورة الطلب"
+                              className="w-full h-16 object-cover rounded border"
+                              width={80}
+                              height={64}
+                            />
+                          )}
+                          {form.formImagePreview && (
+                            <Image
+                              src={form.formImagePreview}
+                              alt="صورة الاستمارة"
+                              className="w-full h-16 object-cover rounded border"
+                              width={80}
+                              height={64}
+                            />
+                          )}
+                        </div>
+
+                        {/* Footer */}
+                        <p className="text-xs text-gray-400 mt-3">
+                          تم الحفظ: {form.submittedAt.toLocaleString("ar-EG")}
+                        </p>
                       </div>
                     ))}
                   </div>

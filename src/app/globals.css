@@ -8,6 +8,10 @@ body {
 }
 
 @theme inline {
+  /* Add logo colors to Tailwind theme */
+  --color-logo-black: var(--logo-black);
+  --color-logo-gold: var(--logo-gold);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-cairo);
@@ -49,6 +53,11 @@ body {
 
 :root {
   --radius: 0.625rem;
+
+  /* Logo Colors */
+  --logo-black: #000002;
+  --logo-gold: #c1a564;
+
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -83,6 +92,10 @@ body {
 }
 
 .dark {
+  /* Logo Colors (same in both themes) */
+  --logo-black: #000002;
+  --logo-gold: #c1a564;
+
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);

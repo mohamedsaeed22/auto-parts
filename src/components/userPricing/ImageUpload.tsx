@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import { Upload, X } from "lucide-react";
 import Image from "next/image";
-
+import { Image as ImageIcon } from "lucide-react";
 interface ImageUploadProps {
   id: string;
   label: string;
@@ -20,7 +20,9 @@ export const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
 
     return (
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
+        {/* put icon before label from lucide icon */}
+        <label className="text-sm font-medium text-logo-black mb-2 text-right flex items-center gap-2">
+          <ImageIcon   size={16} color="gray" />
           {label}
         </label>
         <div className="space-y-4">
@@ -32,30 +34,37 @@ export const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
             className="hidden"
             id={id}
           />
-          <label
-            htmlFor={id}
-            className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors"
-          >
-            <div className="text-center">
-              <Upload className="mx-auto text-gray-400 mb-2" size={24} />
-              <p className="text-sm text-gray-500">اضغط لاختيار {label}</p>
-              <p className="text-xs text-gray-400">JPG, PNG, GIF حتى 5MB</p>
-            </div>
-          </label>
 
+          {/* Show input only when there's no preview */}
+          {!preview && (
+            <label
+              htmlFor={id}
+              className="flex items-center justify-center w-full h-32 border-2 border-dashed border-logo-gold/50 rounded-lg cursor-pointer hover:border-logo-gold hover:bg-logo-gold/5 transition-colors"
+            >
+              <div className="text-center">
+                <Upload className="mx-auto text-logo-gold mb-2" size={24} />
+                <p className="text-sm text-logo-black">اضغط لاختيار {label}</p>
+                <p className="text-xs text-logo-black/60">
+                  JPG, PNG, GIF حتى 5MB
+                </p>
+              </div>
+            </label>
+          )}
+
+          {/* Show preview when there's an image */}
           {preview && (
             <div className="relative">
               <Image
                 src={preview}
                 alt={`معاينة ${label}`}
-                className="w-full h-48 object-cover rounded-lg border border-gray-300"
+                className="w-full h-48 object-cover rounded-lg border-2 border-logo-gold"
                 width={100}
                 height={100}
               />
               <button
                 type="button"
                 onClick={onRemoveImage}
-                className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                className="absolute top-2 left-2 bg-red-500 text-white rounded-full p-1 transition-colors"
               >
                 <X size={16} />
               </button>
