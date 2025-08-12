@@ -4,7 +4,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import Link from "next/link";
-import {User, ChevronDown, Globe, ShoppingCart, Bell } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { User, ChevronDown, Globe, ShoppingCart, Bell } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/hooks/useCart"; // Use Redux hook
 import LoginDialog from "./LoginDialog";
@@ -14,14 +15,15 @@ export default function Header() {
   const { totalItems, setCartOpen } = useCart(); // Use Redux hook
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
+  const pathname = usePathname();
 
   const navLinks = [
     { href: "/", label: "الرئيسية" },
-    { href: "/", label: "من نحن" },
-    { href: "/", label: "اتصل بنا" },
-    { href: "/", label: "البراندات" },
-    { href: "/", label: "اخر العروض" },
-    { href: "/pricing", label: "المنتجات" },
+    { href: "/about", label: "من نحن" },
+    { href: "/contact", label: "اتصل بنا" },
+    { href: "/brands", label: "البراندات" },
+    { href: "/offers", label: "اخر العروض" },
+    { href: "/products", label: "المنتجات" },
     // { href: "/pricing", label: "تسعير القطع" },
     { href: "/userPricing", label: "طلب تسعير" },
   ];
@@ -39,8 +41,16 @@ export default function Header() {
     setIsMenuOpen(false);
   };
 
+  // Helper function to check if link is active
+  const isActiveLink = (href: string) => {
+    if (href === "/") {
+      return pathname === "/";
+    }
+    return pathname.startsWith(href);
+  };
+
   return (
-    <header className="bg-white shadow-sm relative">
+    <header className="bg-white shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-0">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -54,7 +64,11 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors relative ${
+                  isActiveLink(link.href)
+                    ? "text-blue-600 after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600"
+                    : "text-gray-700 hover:text-gray-900"
+                }`}
               >
                 {link.label}
               </Link>
@@ -63,7 +77,7 @@ export default function Header() {
 
           {/* Right side buttons - Desktop */}
           <div className="hidden lg:flex items-center space-x-4">
-            {/* Language Dropdown */}
+            {/* Language Dropdown - Desktop */}
             <div className="relative">
               <button
                 onClick={() => setIsLanguageOpen(!isLanguageOpen)}
@@ -86,7 +100,8 @@ export default function Header() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-full right-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50"
+                    className="absolute top-full right-0 mt-1 w-48 max-w-[calc(100vw-2rem)] bg-white rounded-md shadow-lg border border-gray-200 z-50 transform -translate-x-0 lg:translate-x-0"
+                    style={{ right: 0, left: "auto" }}
                   >
                     <div className="py-1">
                       {languages.map((language) => (
@@ -200,7 +215,12 @@ export default function Header() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-full right-0 mt-1 w-40 bg-white rounded-md shadow-lg border border-gray-200 z-50"
+                    className="absolute top-full right-0 mt-1 w-40 max-w-[calc(100vw-2rem)] bg-white rounded-md shadow-lg border border-gray-200 z-500"
+                    style={{
+                      left: 0,
+                      right: "auto",
+                      transform: "translateX(0)",
+                    }}
                   >
                     <div className="py-1">
                       {languages.map((language) => (
@@ -291,7 +311,11 @@ export default function Header() {
                   >
                     <Link
                       href={link.href}
-                      className="block text-gray-700 hover:text-gray-900 hover:bg-gray-50 px-3 py-3 rounded-md text-base font-medium transition-colors"
+                      className={`block px-3 py-3 rounded-md text-base font-medium transition-colors relative ${
+                        isActiveLink(link.href)
+                          ? "text-blue-600 after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600"
+                          : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                      }`}
                       onClick={closeMobileMenu}
                     >
                       {link.label}
