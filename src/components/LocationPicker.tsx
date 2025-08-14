@@ -77,8 +77,8 @@ export default function LocationPicker({
     null
   );
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [mapInstance, setMapInstance] = useState<any>(null);
-  const [isClient, setIsClient] = useState(false);
+  const [mapInstance] = useState<any>(null);
+  const [isClient] = useState(false);
   const [zoom, setZoom] = useState(10);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
@@ -86,7 +86,7 @@ export default function LocationPicker({
 
   // Ensure we're on the client side
   useEffect(() => {
-    setIsClient(true);
+    // setIsClient(true);
   }, []);
 
   // Initialize position if initial location is provided

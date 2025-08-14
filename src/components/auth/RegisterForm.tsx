@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Control, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { FormInput, ImageUpload } from "@/components/ui";
-import { Building, Store } from "lucide-react";
+import { Building } from "lucide-react";
 import {
   registrationSchema,
   type RegistrationFormData,
@@ -44,19 +44,12 @@ export default function RegisterForm({
     defaultValues: registrationDefaultValues,
   });
 
-  const handleUserTypeChange = (type: "workshop" | "store") => {
-    setUserType(type);
-    setValue("userType", type);
-    clearErrors("userType");
-  };
-
   const handleLocationSelect = (location: LocationData) => {
     setValue("location", location);
     clearErrors("location");
   };
 
   const handleDocumentImageChange = (file: File | undefined) => {
-    console.log("file", file);
     setDocumentImagePreview(file ? URL.createObjectURL(file) : undefined);
     clearErrors("documentImage");
   };

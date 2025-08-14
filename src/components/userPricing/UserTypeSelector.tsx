@@ -11,7 +11,8 @@ export function UserTypeSelector<T extends { userType: "workshop" | "store" }>({
 }: UserTypeSelectorProps<T>) {
   return (
     <Controller
-      name="userType"
+      // @ts-expect-error - userType is not a valid path
+      name="userType"  
       control={control}
       render={({ field, fieldState }) => (
         <div>

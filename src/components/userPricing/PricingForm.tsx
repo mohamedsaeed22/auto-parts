@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { Package, User, Hash, Car } from "lucide-react";
-import { UseFormReturn, Control } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 import { UserPricingFormData } from "@/lib/validations/userPricingSchema";
 import { UserTypeSelector } from "./UserTypeSelector";
 import { ImageUpload } from "@/components/ui";

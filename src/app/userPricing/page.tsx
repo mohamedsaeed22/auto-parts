@@ -41,7 +41,7 @@ export default function UserPricingPage() {
               requestImagePreview={requestImagePreview}
               formImagePreview={formImagePreview}
               isSubmitting={isSubmitting}
-              savedFormsCount={savedForms.length}
+              // savedFormsCount={savedForms.length}
               onImageChange={handleImageChange}
               onRemoveImage={removeImage}
               onSubmit={onSubmit}
