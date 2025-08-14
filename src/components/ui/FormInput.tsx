@@ -1,9 +1,8 @@
 "use client";
 
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef } from "react";
 import { UseFormRegisterReturn, FieldError } from "react-hook-form";
-import { LucideIcon, Upload, X } from "lucide-react";
-import Image from "next/image";
+import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Input types that our component supports
@@ -13,7 +12,6 @@ export type InputType =
   | "tel"
   | "password"
   | "number"
-  | "file"
   | "textarea";
 
 // Props interface for the FormInput component
@@ -46,14 +44,6 @@ export interface FormInputProps {
   icon?: LucideIcon;
   iconPosition?: "left" | "right";
   iconClassName?: string;
-
-  // File input specific props
-  accept?: string;
-  multiple?: boolean;
-  maxFileSize?: number; // in bytes
-  onFileChange?: (file: File | null) => void;
-  filePreview?: string | null;
-  onRemoveFile?: () => void;
 
   // Textarea specific props
   rows?: number;
@@ -88,98 +78,12 @@ const FormInput = forwardRef<
       icon: Icon,
       iconPosition = "left",
       iconClassName,
-      accept,
-      multiple = false,
-      maxFileSize = 5 * 1024 * 1024, // 5MB default
-      onFileChange,
-      filePreview,
-      onRemoveFile,
       rows = 3,
       maxLength,
       ...props
     },
     ref
   ) => {
-    const [dragActive, setDragActive] = useState(false);
-    const [localFilePreview, setLocalFilePreview] = useState<string | null>(
-      filePreview
-    );
-
-    // Handle file input change
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0] || null;
-      if (file) {
-        // Validate file size
-        if (file.size > maxFileSize) {
-          alert(
-            `حجم الملف يجب أن يكون أقل من ${Math.round(
-              maxFileSize / (1024 * 1024)
-            )} ميجابايت`
-          );
-          return;
-        }
-
-        // Create preview for images
-        if (file.type.startsWith("image/")) {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            setLocalFilePreview(e.target?.result as string);
-          };
-          reader.readAsDataURL(file);
-        }
-      }
-
-      onFileChange?.(file);
-    };
-
-    // Handle drag and drop
-    const handleDragOver = (e: React.DragEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setDragActive(true);
-    };
-
-    const handleDragLeave = (e: React.DragEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setDragActive(false);
-    };
-
-    const handleDrop = (e: React.DragEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setDragActive(false);
-
-      const files = e.dataTransfer.files;
-      if (files.length > 0) {
-        const file = files[0];
-        if (file.size > maxFileSize) {
-          alert(
-            `حجم الملف يجب أن يكون أقل من ${Math.round(
-              maxFileSize / (1024 * 1024)
-            )} ميجابايت`
-          );
-          return;
-        }
-
-        if (file.type.startsWith("image/")) {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            setLocalFilePreview(e.target?.result as string);
-          };
-          reader.readAsDataURL(file);
-        }
-
-        onFileChange?.(file);
-      }
-    };
-
-    // Remove file
-    const handleRemoveFile = () => {
-      setLocalFilePreview(null);
-      onRemoveFile?.();
-    };
-
     // Base input classes
     const baseInputClasses = cn(
       "w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
@@ -195,68 +99,6 @@ const FormInput = forwardRef<
 
     // Render different input types
     const renderInput = () => {
-      if (type === "file") {
-        return (
-          <div className="space-y-2">
-            {!localFilePreview ? (
-              <div
-                className={cn(
-                  "border-2 border-dashed rounded-lg p-4 text-center hover:border-blue-500 transition-colors cursor-pointer",
-                  {
-                    "border-red-500": error,
-                    "border-gray-300": !error,
-                    "border-blue-500 bg-blue-50": dragActive,
-                  }
-                )}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-              >
-                <input
-                  {...register}
-                  {...props}
-                  type="file"
-                  id={id}
-                  name={name}
-                  accept={accept}
-                  multiple={multiple}
-                  onChange={handleFileChange}
-                  className="hidden"
-                  disabled={disabled}
-                  ref={ref as React.Ref<HTMLInputElement>}
-                />
-                <label
-                  htmlFor={id}
-                  className="cursor-pointer flex flex-col items-center"
-                >
-                  <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                  <span className="text-sm text-gray-600">
-                    انقر لاختيار ملف أو اسحب الملف هنا
-                  </span>
-                </label>
-              </div>
-            ) : (
-              <div className="relative">
-                <Image
-                  src={localFilePreview}
-                  alt="File preview"
-                  className="w-full h-48 object-cover rounded-lg border"
-                  width={100}
-                  height={100}
-                />
-                <button
-                  type="button"
-                  onClick={handleRemoveFile}
-                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            )}
-          </div>
-        );
-      }
-
       if (type === "textarea") {
         return (
           <textarea

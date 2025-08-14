@@ -1,12 +1,14 @@
 import { Control, Controller } from "react-hook-form";
 import { Building, Store } from "lucide-react";
-import { UserPricingFormData } from "@/lib/validations/userPricingSchema";
 
-interface UserTypeSelectorProps {
-  control: Control<UserPricingFormData>;
+// Generic interface that works with any form data that has a userType field
+interface UserTypeSelectorProps<T extends { userType: "workshop" | "store" }> {
+  control: Control<T>;
 }
 
-export function UserTypeSelector({ control }: UserTypeSelectorProps) {
+export function UserTypeSelector<T extends { userType: "workshop" | "store" }>({
+  control,
+}: UserTypeSelectorProps<T>) {
   return (
     <Controller
       name="userType"
