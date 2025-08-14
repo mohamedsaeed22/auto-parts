@@ -4,8 +4,8 @@ import Image from "next/image";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
-import ProductCard from "./product/ProductCard";
-import { products } from "./product/ProductsList";
+import ProductCard from "../product/ProductCard";
+import { products } from "../product/ProductsList";
 
 interface CategoryProps {
   title: string;
@@ -14,7 +14,7 @@ interface CategoryProps {
   // categoryFilter: string;
 }
 
-const Category: React.FC<CategoryProps> = ({ title, backgroundImage }) => {
+const CategorySwiper: React.FC<CategoryProps> = ({ title, backgroundImage }) => {
   const swiperRef = useRef<SwiperType | null>(null);
 
   // Filter products by category
@@ -145,4 +145,4 @@ const Category: React.FC<CategoryProps> = ({ title, backgroundImage }) => {
   );
 };
 
-export default Category;
+export default CategorySwiper;  

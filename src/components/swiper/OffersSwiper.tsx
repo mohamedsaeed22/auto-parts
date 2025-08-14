@@ -5,7 +5,7 @@ import { Pagination, Navigation } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 import Image from "next/image";
 
-const PackagesOffers = () => {
+const OffersSwiper = () => {
   const swiperRef = useRef<SwiperType | null>(null);
   const slides = [
     {
@@ -44,7 +44,6 @@ const PackagesOffers = () => {
       src: "/offers/offer7.jpg",
       alt: "Modern office building",
     },
-  
   ];
   return (
     <section className="py-16 bg-white">
@@ -114,10 +113,14 @@ const PackagesOffers = () => {
           >
             {slides.map((slide) => (
               <SwiperSlide key={slide.id}>
-                <Image src={slide.src} alt={slide.alt} fill className="rounded-3xl" />
+                <Image
+                  src={slide.src}
+                  alt={slide.alt}
+                  fill
+                  className="rounded-3xl"
+                />
               </SwiperSlide>
             ))}
-
           </Swiper>
 
           {/* Custom next button */}
@@ -146,4 +149,4 @@ const PackagesOffers = () => {
   );
 };
 
-export default PackagesOffers;
+export default OffersSwiper;

@@ -153,12 +153,8 @@ body {
   background: white !important;
   opacity: 1 !important;
 }
-.swiper-pagination-bullet-active {
-  opacity: 1 !important;
-}
 
 /* ============= packages swiper styles ============= */
-
 .packages-swiper .swiper-slide {
   background: transparent;
   border-radius: 12px;
@@ -171,11 +167,6 @@ body {
 
 .packages-swiper .swiper-slide:hover {
   transform: translateY(-5px);
-}
-
-.packages-swiper .swiper-pagination,
-.mySwiper .swiper-pagination {
-  bottom: 0; /* Position it 40px below the swiper */
 }
 
 /* ============= category swiper styles ============= */

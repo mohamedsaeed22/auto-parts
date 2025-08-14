@@ -5,7 +5,7 @@ import { Autoplay, Pagination, Navigation, EffectFade } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
 
-const SwiperCarousel = () => {
+const HeroSwiper = () => {
   const swiperRef = useRef<SwiperType | null>(null);
 
   // Sample images - replace with your actual image URLs
@@ -112,4 +112,4 @@ const SwiperCarousel = () => {
   );
 };
 
-export default SwiperCarousel;
+export default HeroSwiper;

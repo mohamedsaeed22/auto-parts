@@ -1,20 +1,20 @@
-import SwiperCarousel from "@/components/Swiper";
+import HeroSwiper from "@/components/swiper/HeroSwiper";
 import Brands from "@/components/Brands";
-import PackagesOffers from "@/components/PackagesOffers";
+import OffersSwiper from "@/components/swiper/OffersSwiper";
 import ProductsList from "@/components/product/ProductsList";
-import Category from "@/components/Category";
+import CategorySwiper from "@/components/swiper/CategorySwiper";
 
 export default function Home() {
   return (
     <div>
       <main className="min-h-screen mt-10">
         <div className="container mx-auto">
-          <SwiperCarousel />
+          <HeroSwiper />
           <Brands />
-          <PackagesOffers />
+          <OffersSwiper />
 
           {/* Example Category Section */}
-          <Category
+          <CategorySwiper
             title="قطع غيار المحرك"
             // description="اكتشف مجموعة واسعة من قطع غيار المحرك عالية الجودة لضمان أداء مثالي لسيارتك"
             backgroundImage="/categories/cat-bg-1.jpg"
@@ -23,7 +23,7 @@ export default function Home() {
 
           <ProductsList />
           {/* You can add more category sections */}
-          <Category
+          <CategorySwiper
             title="الزيوت والمواد التشحيم"
             // description="زيوت محرك عالية الجودة ومواد تشحيم متقدمة لحماية محرك سيارتك"
             backgroundImage="/categories/cat-bg-2.jpg"
