@@ -160,18 +160,27 @@ const Cart: React.FC = () => {
 
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-1 space-x-reverse">
-                              <button
-                                onClick={() =>
-                                  handleUpdateQuantity(
-                                    item.id,
-                                    item.quantity - 1
-                                  )
-                                }
-                                disabled={item.quantity <= 1}
-                                className="p-0.5 hover:bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                              >
-                                <Minus size={14} />
-                              </button>
+                              {item.quantity === 1 ? (
+                                <button
+                                  onClick={() => handleRemoveItem(item.id)}
+                                  className="p-0.5 text-red-500 hover:bg-red-50 rounded transition-colors"
+                                  aria-label="إزالة المنتج"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() =>
+                                    handleUpdateQuantity(
+                                      item.id,
+                                      item.quantity - 1
+                                    )
+                                  }
+                                  className="p-0.5 hover:bg-gray-200 rounded transition-colors"
+                                >
+                                  <Minus size={14} />
+                                </button>
+                              )}
                               <span className="text-xs font-medium w-6 text-center">
                                 {item.quantity}
                               </span>
@@ -188,13 +197,7 @@ const Cart: React.FC = () => {
                               </button>
                             </div>
 
-                            <button
-                              onClick={() => handleRemoveItem(item.id)}
-                              className="p-0.5 text-red-500 hover:bg-red-50 rounded transition-colors"
-                              aria-label="إزالة المنتج"
-                            >
-                              <Trash2 size={14} />
-                            </button>
+                           
                           </div>
 
                           <p className="text-xs text-gray-500 mt-1">
