@@ -166,7 +166,7 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
       </DialogTrigger>
       <DialogContent
         className={`${
-          currentStep === "register" ? "sm:max-w-4xl" : "sm:max-w-md"
+          currentStep === "register" ? "sm:max-w-xl" : "sm:max-w-md"
         } max-h-[90vh] overflow-y-auto`}
       >
         <DialogHeader>

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { FormInput, ImageUpload } from "@/components/ui";
-import { Building } from "lucide-react";
+import { Building, PhoneCall } from "lucide-react";
 import {
   registrationSchema,
   type RegistrationFormData,
@@ -26,9 +26,6 @@ export default function RegisterForm({
   onSwitchToLogin,
   isLoading,
 }: RegisterFormProps) {
-  const [userType, setUserType] = useState<"workshop" | "store" | "">(
-    "workshop"
-  );
   const [documentImagePreview, setDocumentImagePreview] = useState<
     string | undefined
   >(undefined);
@@ -39,10 +36,14 @@ export default function RegisterForm({
     setValue,
     clearErrors,
     control,
+    watch,
   } = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
     defaultValues: registrationDefaultValues,
   });
+
+  // Watch the userType from the form to update the shop name text
+  const userType = watch("userType");
 
   const handleLocationSelect = (location: LocationData) => {
     setValue("location", location);
@@ -56,11 +57,13 @@ export default function RegisterForm({
 
   return (
     <div className="space-y-6">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div className="max-w-xl mx-auto">
         <UserTypeSelector control={control} />
+      </div>
 
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" >
         {/* Two-column grid for form inputs */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 max-w-xl mx-auto">
           <FormInput
             label={userType === "workshop" ? "اسم الورشة" : "اسم المحل"}
             placeholder={
@@ -100,45 +103,51 @@ export default function RegisterForm({
             required
           />
         </div>
+        <div className="max-w-2xl mx-auto">
+          <FormInput
+            label="رقم الجوال"
+            placeholder="+966 50 123 4567"
+            type="tel"
+            register={register("phoneNumber")}
+            error={errors.phoneNumber}
+            icon={PhoneCall}
+            iconPosition="left"
+            // dir="ltr"
+            // textAlign="left"
+            required
+          />
+        </div>
 
         {/* Google Maps Location Picker */}
-        <LocationPicker
-          onLocationSelect={handleLocationSelect}
-          initialLocation={registrationDefaultValues.location}
-          error={errors.location?.message}
-        />
-
-        {/* Phone number - full width */}
-        <FormInput
-          label="رقم الجوال"
-          placeholder="+966 50 123 4567"
-          type="tel"
-          register={register("phoneNumber")}
-          error={errors.phoneNumber}
-          icon={Building}
-          iconPosition="left"
-          dir="ltr"
-          textAlign="left"
-          required
-        />
+        <div className="max-w-2xl mx-auto">
+          <LocationPicker
+            onLocationSelect={handleLocationSelect}
+            initialLocation={registrationDefaultValues.location}
+            error={errors.location?.message}
+          />
+        </div>
 
         {/* Document image - full width */}
-        <ImageUpload
-          id="documentImage"
-          label="صورة السجل التجاري"
-          preview={documentImagePreview ?? null}
-          onImageChange={handleDocumentImageChange}
-          onRemoveImage={() => setDocumentImagePreview(undefined)}
-          error={errors.documentImage?.message}
-        />
+        <div className="max-w-2xl mx-auto">
+          <ImageUpload
+            id="documentImage"
+            label="صورة السجل التجاري"
+            preview={documentImagePreview ?? null}
+            onImageChange={handleDocumentImageChange}
+            onRemoveImage={() => setDocumentImagePreview(undefined)}
+            error={errors.documentImage?.message}
+          />
+        </div>
 
-        <Button
-          type="submit"
-          className="w-full py-3 text-white font-medium rounded-lg"
-          disabled={isSubmitting || isLoading}
-        >
-          {isSubmitting || isLoading ? "جاري الإرسال..." : "إنشاء الحساب"}
-        </Button>
+        <div className="max-w-2xl mx-auto">
+          <Button
+            type="submit"
+            className="w-full py-3 text-white font-medium rounded-lg"
+            disabled={isSubmitting || isLoading}
+          >
+            {isSubmitting || isLoading ? "جاري الإرسال..." : "إنشاء الحساب"}
+          </Button>
+        </div>
       </form>
 
       <div className="text-center">
