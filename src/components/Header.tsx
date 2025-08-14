@@ -59,12 +59,12 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center justify-center space-x-8 space-x-reverse">
+          <nav className="hidden lg:flex items-center justify-evenly flex-1 max-w-2xl mx-auto">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`group relative px-4 py-2 text-sm font-medium transition-all duration-300 ${
+                className={`group relative py-2 text-sm font-medium transition-all duration-300 ${
                   isActiveLink(link.href)
                     ? "text-logo-gold"
                     : "text-gray-700 hover:text-logo-gold"
