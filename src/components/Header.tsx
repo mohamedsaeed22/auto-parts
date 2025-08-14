@@ -59,18 +59,25 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex space-x-reverse">
+          <nav className="hidden lg:flex items-center justify-center space-x-8 space-x-reverse">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors relative ${
+                className={`group relative px-4 py-2 text-sm font-medium transition-all duration-300 ${
                   isActiveLink(link.href)
-                    ? "text-logo-gold after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-logo-gold"
-                    : "text-gray-700 hover:text-gray-900"
+                    ? "text-logo-gold"
+                    : "text-gray-700 hover:text-logo-gold"
                 }`}
               >
                 {link.label}
+                <span
+                  className={`absolute -bottom-1 left-0 w-full h-0.5 bg-logo-gold transform origin-left transition-transform duration-300 ${
+                    isActiveLink(link.href)
+                      ? "scale-x-100"
+                      : "scale-x-0 group-hover:scale-x-100"
+                  }`}
+                />
               </Link>
             ))}
           </nav>

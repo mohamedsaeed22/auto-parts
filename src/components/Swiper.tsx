@@ -33,10 +33,10 @@ const SwiperCarousel = () => {
   ];
 
   return (
-    <div className="relative bg-white rounded-3xl overflow-hidden shadow-1xl">
+    <div className="relative bg-white rounded-3xl overflow-hidden shadow-1xl w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[500px] xl:h-[600px]">
       {/* Custom previous button */}
       <button
-        className="cursor-pointer absolute left-4 top-1/2 z-10 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg hover:bg-gray-50 transition-colors"
+        className="cursor-pointer absolute left-2 sm:left-4 top-1/2 z-10 -translate-y-1/2 bg-white p-2 sm:p-3 rounded-full shadow-lg hover:bg-gray-50 transition-colors"
         onClick={() => swiperRef.current?.slidePrev()}
       >
         <svg
@@ -45,7 +45,7 @@ const SwiperCarousel = () => {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-6 h-6"
+          className="w-4 h-4 sm:w-6 sm:h-6"
         >
           <path
             strokeLinecap="round"
@@ -59,7 +59,6 @@ const SwiperCarousel = () => {
         onBeforeInit={(swiper) => {
           swiperRef.current = swiper;
         }}
-        // spaceBetween={30}
         effect={"fade"}
         loop={true}
         centeredSlides={true}
@@ -69,25 +68,30 @@ const SwiperCarousel = () => {
         }}
         pagination={{
           clickable: true,
+          dynamicBullets: true,
         }}
         modules={[Autoplay, EffectFade, Pagination, Navigation]}
-        className="mySwiper"
+        className="w-full h-full"
       >
         {slides.map((slide) => (
-          <SwiperSlide key={slide.id}>
-            <Image
-              src={slide.src}
-              alt={slide.alt}
-              fill
-              className="w-full h-full object-cover"
-            />
+          <SwiperSlide key={slide.id} className="w-full h-full">
+            <div className="relative w-full h-full">
+              <Image
+                src={slide.src}
+                alt={slide.alt}
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, 100vw"
+                priority
+                className="object-cover"
+              />
+            </div>
           </SwiperSlide>
         ))}
       </Swiper>
 
       {/* Custom next button */}
       <button
-        className="cursor-pointer absolute right-4 top-1/2 z-10 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg hover:bg-gray-50 transition-colors"
+        className="cursor-pointer absolute right-2 sm:right-4 top-1/2 z-10 -translate-y-1/2 bg-white p-2 sm:p-3 rounded-full shadow-lg hover:bg-gray-50 transition-colors"
         onClick={() => swiperRef.current?.slideNext()}
       >
         <svg
@@ -96,7 +100,7 @@ const SwiperCarousel = () => {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-6 h-6"
+          className="w-4 h-4 sm:w-6 sm:h-6"
         >
           <path
             strokeLinecap="round"
