@@ -138,32 +138,26 @@ body {
   }
 }
 
+/* ============= main swiper styles ============= */
+
 .swiper {
   width: 100%;
   height: 500px;
 }
-
-.swiper-slide {
-  text-align: center;
-  font-size: 18px;
-  /* background: #444; */
-
-  /* Center slide text vertically */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.swiper-pagination-bullet {
+  background: #fff !important;
+  opacity: 0.5 !important;
 }
 
-.swiper-slide img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.swiper-pagination-bullet-active {
+  background: white !important;
+  opacity: 1 !important;
+}
+.swiper-pagination-bullet-active {
+  opacity: 1 !important;
 }
 
-/* Add these styles after your existing Swiper styles */
-
-/* Custom styles for PackagesOffers Swiper */
+/* ============= packages swiper styles ============= */
 
 .packages-swiper .swiper-slide {
   background: transparent;
@@ -176,7 +170,6 @@ body {
 }
 
 .packages-swiper .swiper-slide:hover {
-  /* border-color: #3b82f6; */
   transform: translateY(-5px);
 }
 
@@ -185,18 +178,8 @@ body {
   bottom: 0; /* Position it 40px below the swiper */
 }
 
-.packages-swiper .swiper-pagination-bullet,
-.mySwiper .swiper-pagination-bullet {
-  background: #fff;
-  opacity: 0.5;
-}
+/* ============= category swiper styles ============= */
 
-.packages-swiper .swiper-pagination-bullet-active,
-.mySwiper .swiper-pagination-bullet-active {
-  opacity: 1;
-}
-
-/* Category Swiper Styles */
 .category-swiper {
   padding: 20px 0;
   height: 450px;
@@ -206,23 +189,14 @@ body {
   bottom: -10px;
 }
 
-.category-swiper .swiper-pagination-bullet {
-  background: #b9974d;
-  opacity: 1;
-}
-
-.category-swiper .swiper-pagination-bullet-active {
-  background: white;
-}
-
 .category-swiper .swiper-slide {
   height: auto;
 }
 
-/* Leaflet CSS */
-@import 'leaflet/dist/leaflet.css';
+/* ============= leaflet styles ============= */
 
-/* Custom Leaflet Styles */
+@import "leaflet/dist/leaflet.css";
+
 .leaflet-container {
   font-family: inherit;
 }

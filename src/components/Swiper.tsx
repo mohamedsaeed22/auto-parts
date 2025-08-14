@@ -71,7 +71,6 @@ const SwiperCarousel = () => {
           dynamicBullets: true,
         }}
         modules={[Autoplay, EffectFade, Pagination, Navigation]}
-        className="w-full h-full"
       >
         {slides.map((slide) => (
           <SwiperSlide key={slide.id} className="w-full h-full">

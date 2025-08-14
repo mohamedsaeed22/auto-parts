@@ -267,7 +267,7 @@ const Cart: React.FC = () => {
         <DialogContent className="sm:max-w-md text-right" dir="rtl">
           <DialogHeader className="text-right">
             <DialogTitle className="text-center">
-              تأكيد تفريغ عربة التسوق
+               تفريغ عربة التسوق
             </DialogTitle>
             <DialogDescription className="text-right">
               هل أنت متأكد من أنك تريد تفريغ عربة التسوق؟ لا يمكن التراجع عن هذا
