@@ -33,7 +33,7 @@ const SwiperCarousel = () => {
   ];
 
   return (
-    <div className="relative bg-white rounded-3xl overflow-hidden shadow-1xl w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[500px] xl:h-[600px]">
+    <div className="relative bg-white rounded-3xl overflow-hidden shadow-1xl w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[500px]">
       {/* Custom previous button */}
       <button
         className="cursor-pointer absolute left-2 sm:left-4 top-1/2 z-10 -translate-y-1/2 bg-white p-2 sm:p-3 rounded-full shadow-lg hover:bg-gray-50 transition-colors"
