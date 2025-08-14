@@ -13,9 +13,12 @@ export function SavedFormItem({ form, index, onDelete }: SavedFormItemProps) {
   useEffect(() => {
     return () => {
       // Cleanup object URLs
-      if (form.partImage) URL.revokeObjectURL(URL.createObjectURL(form.partImage));
-      if (form.requestImage) URL.revokeObjectURL(URL.createObjectURL(form.requestImage));
-      if (form.formImage) URL.revokeObjectURL(URL.createObjectURL(form.formImage));
+      if (form.partImage)
+        URL.revokeObjectURL(URL.createObjectURL(form.partImage));
+      if (form.requestImage)
+        URL.revokeObjectURL(URL.createObjectURL(form.requestImage));
+      if (form.formImage)
+        URL.revokeObjectURL(URL.createObjectURL(form.formImage));
     };
   }, [form.partImage, form.requestImage, form.formImage]);
 
