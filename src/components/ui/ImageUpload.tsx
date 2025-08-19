@@ -41,12 +41,11 @@ export const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
     };
 
     return (
-      <div className={cn("space-y-2", className)}>
+      <div className={cn("space-y-2", className)} dir={isRTL ? "rtl" : "ltr"}>
         {/* Label with icon */}
         <label
           className={cn(
-            "text-sm font-medium text-logo-black mb-2 flex items-center gap-2",
-            isRTL ? "text-right flex-row-reverse" : "text-left"
+            "text-sm font-medium text-logo-black mb-2 flex items-center gap-2"
           )}
         >
           <ImageIcon size={16} color="gray" />

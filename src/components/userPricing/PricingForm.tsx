@@ -67,9 +67,7 @@ export function PricingForm({
         <h2 className="text-2xl font-semibold text-logo-black mb-2">
           {t("userPricing.form.title")}
         </h2>
-        <p className="text-gray-600">
-          {t("userPricing.form.subtitle")}
-        </p>
+        <p className="text-gray-600">{t("userPricing.form.subtitle")}</p>
       </div>
 
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
@@ -98,6 +96,8 @@ export function PricingForm({
             />
 
             {/* Part Image Upload */}
+            {/* add div to handle rtl */}
+
             <ImageUpload
               ref={partImageInputRef}
               id="partImage"
@@ -156,9 +156,7 @@ export function PricingForm({
         )}
 
         {/* Submit Button */}
-        <FormSubmissionButton
-          isSubmitting={isSubmitting}
-        />
+        <FormSubmissionButton isSubmitting={isSubmitting} />
       </form>
 
       {/* Additional Information */}
