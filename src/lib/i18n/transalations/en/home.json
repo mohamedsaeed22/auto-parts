@@ -107,9 +107,7 @@
         "The chassis number helps identify the appropriate part",
         "You can track your request through the user code"
       ],
-      "store": [
-        "For stores: We offer special wholesale prices"
-      ]
+      "store": ["For stores: We offer special wholesale prices"]
     }
   },
   "footer": {

@@ -110,7 +110,9 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("footer.sections.serviceCategories.links.tiresAndBatteries")}
+                  {t(
+                    "footer.sections.serviceCategories.links.tiresAndBatteries"
+                  )}
                 </a>
               </li>
               <li>
@@ -126,7 +128,9 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("footer.sections.serviceCategories.links.replacementAndRepairs")}
+                  {t(
+                    "footer.sections.serviceCategories.links.replacementAndRepairs"
+                  )}
                 </a>
               </li>
             </ul>
