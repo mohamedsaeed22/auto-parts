@@ -8,5 +8,23 @@
   "og:image": "فال الغربية",
   "og:url": "فال الغربية",
   "og:site_name": "فال الغربية",
-  "og:type": "website"
+  "og:type": "website",
+  "header": {
+    "navigation": {
+      "about": "من نحن",
+      "contact": "اتصل بنا",
+      "brands": "البراندات",
+      "offers": "اخر العروض",
+      "products": "المنتجات",
+      "userPricing": "طلب تسعير"
+    },
+    "language": {
+      "arabic": "العربية",
+      "english": "English"
+    },
+    "actions": {
+      "login": "تسجيل الدخول",
+      "openMainMenu": "فتح القائمة الرئيسية"
+    }
+  }
 }

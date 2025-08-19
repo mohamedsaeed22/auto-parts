@@ -19,24 +19,23 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const pathname = usePathname();
+  const { t, i18n } = useTranslation();
+  const activeLocale = i18n.language;
+  const isRTL = activeLocale === "ar";
 
   const navLinks = [
-    // { href: "/", label: "الرئيسية" },
-    { href: "/about", label: "من نحن" },
-    { href: "/contact", label: "اتصل بنا" },
-    { href: "/brands", label: "البراندات" },
-    { href: "/offers", label: "اخر العروض" },
-    { href: "/products", label: "المنتجات" },
-    // { href: "/pricing", label: "تسعير القطع" },
-    { href: "/userPricing", label: "طلب تسعير" },
+    { href: "/about", label: t("header.navigation.about") },
+    { href: "/contact", label: t("header.navigation.contact") },
+    { href: "/brands", label: t("header.navigation.brands") },
+    { href: "/offers", label: t("header.navigation.offers") },
+    { href: "/products", label: t("header.navigation.products") },
+    { href: "/userPricing", label: t("header.navigation.userPricing") },
   ];
 
   const languages = [
-    { code: "ar", name: " - العربية", flag: "🇸🇦" },
-    { code: "en", name: " - English", flag: "🇺🇸" },
+    { code: "ar", name: t("header.language.arabic"), flag: "🇸🇦" },
+    { code: "en", name: t("header.language.english"), flag: "🇺🇸" },
   ];
-  const { i18n } = useTranslation();
-  const activeLocale = i18n.language;
 
   const router = useRouter();
   const currentPathname = usePathname();
@@ -63,6 +62,7 @@ export default function Header() {
 
     router.refresh();
   };
+
   const handleCartClick = () => {
     setCartOpen(true);
   };
@@ -78,6 +78,8 @@ export default function Header() {
     }
     return pathname.startsWith(href);
   };
+
+  const currentLanguage = languages.find((lang) => lang.code === activeLocale);
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
@@ -102,7 +104,11 @@ export default function Header() {
               >
                 {link.label}
                 <span
-                  className={`absolute -bottom-1 left-0 w-full h-0.5 bg-logo-gold transform origin-left transition-transform duration-300 ${
+                  className={`absolute -bottom-1 ${
+                    isRTL ? "right-0" : "left-0"
+                  } w-full h-0.5 bg-logo-gold transform ${
+                    isRTL ? "origin-right" : "origin-left"
+                  } transition-transform duration-300 ${
                     isActiveLink(link.href)
                       ? "scale-x-100"
                       : "scale-x-0 group-hover:scale-x-100"
@@ -113,15 +119,21 @@ export default function Header() {
           </nav>
 
           {/* Right side buttons - Desktop */}
-          <div className="hidden lg:flex items-center space-x-4">
+          <div
+            className={`hidden lg:flex items-center ${
+              isRTL ? "space-x-reverse space-x-4" : "space-x-4"
+            }`}
+          >
             {/* Language Dropdown - Desktop */}
             <div className="relative">
               <button
                 onClick={() => setIsLanguageOpen(!isLanguageOpen)}
-                className="flex items-center space-x-2  px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+                className={`flex items-center ${
+                  isRTL ? "space-x-reverse space-x-2" : "space-x-2"
+                } px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors`}
               >
                 <Globe size={16} />
-                <span>العربية</span>
+                <span>{currentLanguage?.name}</span>
                 <ChevronDown
                   size={10}
                   className={`transition-transform ${
@@ -137,14 +149,19 @@ export default function Header() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-full right-0 mt-1 w-48 max-w-[calc(100vw-2rem)] bg-white rounded-md shadow-lg border border-gray-200 z-50 transform -translate-x-0 lg:translate-x-0"
-                    style={{ right: 0, left: "auto" }}
+                    className={`absolute top-full ${
+                      isRTL ? "left-0" : "right-0"
+                    } mt-1 w-48 max-w-[calc(100vw-2rem)] bg-white rounded-md shadow-lg border border-gray-200 z-50`}
                   >
                     <div className="py-1">
                       {languages.map((language) => (
                         <button
                           key={language.code}
-                          className="w-full text-right px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2 space-x-reverse"
+                          className={`w-full ${
+                            isRTL ? "text-right" : "text-left"
+                          } px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center ${
+                            isRTL ? "space-x-reverse space-x-2" : "space-x-2"
+                          }`}
                           onClick={onLanguageChange}
                         >
                           <span className="text-lg">{language.flag}</span>
@@ -163,27 +180,23 @@ export default function Header() {
               className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
             >
               <Bell size={24} />
-              {/* Optional: Add notification badge */}
-              {/* <motion.span
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
-              >
-                3
-              </motion.span> */}
             </Link>
 
             {/* Cart button */}
             <button
               onClick={handleCartClick}
-              className="relative p-2 hover:bg-gray-100 rounded-full transition-colors ml-4"
+              className={`relative p-2 hover:bg-gray-100 rounded-full transition-colors ${
+                isRTL ? "mr-4" : "ml-4"
+              }`}
             >
               <ShoppingCart size={24} />
               {totalItems > 0 && (
                 <motion.span
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+                  className={`absolute -top-1 ${
+                    isRTL ? "-left-1" : "-right-1"
+                  } bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center`}
                 >
                   {totalItems}
                 </motion.span>
@@ -195,21 +208,17 @@ export default function Header() {
           </div>
 
           {/* Mobile/Tablet right side */}
-          <div className="lg:hidden flex items-center space-x-reverse space-x-2">
+          <div
+            className={`lg:hidden flex items-center ${
+              isRTL ? "space-x-reverse space-x-2" : "space-x-2"
+            }`}
+          >
             {/* Notification button - Mobile/Tablet */}
             <Link
               href="/userprofile"
               className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
             >
               <Bell size={20} />
-              {/* Optional: Add notification badge */}
-              {/* <motion.span
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]"
-              >
-                3
-              </motion.span> */}
             </Link>
 
             {/* Cart button - Mobile/Tablet */}
@@ -222,7 +231,9 @@ export default function Header() {
                 <motion.span
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]"
+                  className={`absolute -top-1 ${
+                    isRTL ? "-left-1" : "-right-1"
+                  } bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]`}
                 >
                   {totalItems}
                 </motion.span>
@@ -233,10 +244,14 @@ export default function Header() {
             <div className="relative">
               <button
                 onClick={() => setIsLanguageOpen(!isLanguageOpen)}
-                className="flex items-center space-x-1 space-x-reverse px-2 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+                className={`flex items-center ${
+                  isRTL ? "space-x-reverse space-x-1" : "space-x-1"
+                } px-2 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors`}
               >
                 <Globe size={16} />
-                <span className="text-xs hidden sm:inline">العربية</span>
+                <span className="text-xs hidden sm:inline">
+                  {currentLanguage?.name}
+                </span>
                 <ChevronDown
                   size={12}
                   className={`transition-transform ${
@@ -252,18 +267,19 @@ export default function Header() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-full right-0 mt-1 w-40 max-w-[calc(100vw-2rem)] bg-white rounded-md shadow-lg border border-gray-200 z-500"
-                    style={{
-                      left: 0,
-                      right: "auto",
-                      transform: "translateX(0)",
-                    }}
+                    className={`absolute top-full ${
+                      isRTL ? "right-0" : "left-0"
+                    } mt-1 w-40 max-w-[calc(100vw-2rem)] bg-white rounded-md shadow-lg border border-gray-200 z-500`}
                   >
                     <div className="py-1">
                       {languages.map((language) => (
                         <button
                           key={language.code}
-                          className="w-full text-right px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2 space-x-reverse"
+                          className={`w-full ${
+                            isRTL ? "text-right" : "text-left"
+                          } px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center ${
+                            isRTL ? "space-x-reverse space-x-2" : "space-x-2"
+                          }`}
                           onClick={onLanguageChange}
                         >
                           <span className="text-base">{language.flag}</span>
@@ -281,7 +297,9 @@ export default function Header() {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
             >
-              <span className="sr-only">فتح القائمة الرئيسية</span>
+              <span className="sr-only">
+                {t("header.actions.openMainMenu")}
+              </span>
               {!isMenuOpen ? (
                 <svg
                   className="block h-6 w-6"
@@ -342,7 +360,7 @@ export default function Header() {
                 {navLinks.map((link, index) => (
                   <motion.div
                     key={link.href}
-                    initial={{ opacity: 0, x: -20 }}
+                    initial={{ opacity: 0, x: isRTL ? 20 : -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
                   >
@@ -350,7 +368,11 @@ export default function Header() {
                       href={link.href}
                       className={`block px-3 py-3 rounded-md text-base font-medium transition-colors relative ${
                         isActiveLink(link.href)
-                          ? "text-logo-gold after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-logo-gold"
+                          ? `text-logo-gold after:content-[''] after:absolute after:bottom-0 after:${
+                              isRTL ? "right-0" : "left-0"
+                            } after:${
+                              isRTL ? "left-0" : "right-0"
+                            } after:h-0.5 after:bg-logo-gold`
                           : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
                       }`}
                       onClick={closeMobileMenu}
@@ -361,7 +383,7 @@ export default function Header() {
                 ))}
 
                 <motion.div
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: isRTL ? 20 : -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: navLinks.length * 0.1 }}
                   className="pt-4 border-t border-gray-200"
@@ -373,8 +395,8 @@ export default function Header() {
                         variant="outline"
                         className="w-full justify-center"
                       >
-                        <User className="ml-2" />
-                        تسجيل الدخول
+                        <User className={isRTL ? "mr-2" : "ml-2"} />
+                        {t("header.actions.login")}
                       </Button>
                     }
                   />

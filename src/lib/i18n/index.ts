@@ -5,8 +5,8 @@ import { Locale } from "@/lib/types/index";
 
 // i18n configuration
 export const i18nConfig = {
-  locales: ["en", "ar"],
-  defaultLocale: "en",
+  locales: ["ar", "en"],
+  defaultLocale: "ar",
   prefixDefault: false,
 };
 

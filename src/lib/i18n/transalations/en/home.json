@@ -8,5 +8,23 @@
   "og:image": "Fal Al Gharbia",
   "og:url": "Fal Al Gharbia",
   "og:site_name": "Fal Al Gharbia",
-  "og:type": "website"
+  "og:type": "website",
+  "header": {
+    "navigation": {
+      "about": "About Us",
+      "contact": "Contact Us",
+      "brands": "Brands",
+      "offers": "Latest Offers",
+      "products": "Products",
+      "userPricing": "Request Pricing"
+    },
+    "language": {
+      "arabic": "العربية",
+      "english": "English"
+    },
+    "actions": {
+      "login": "Sign In",
+      "openMainMenu": "Open main menu"
+    }
+  }
 }

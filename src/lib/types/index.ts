@@ -1,4 +1,4 @@
-export type Locale = "en" | "ar";
+export type Locale = "ar" | "en";
 
 export type AllowedLocales = Locale[];
 
