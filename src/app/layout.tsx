@@ -1,17 +1,6 @@
 import type { Metadata } from "next";
 import { Cairo } from "next/font/google";
 import "./globals.css";
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
-import Cart from "@/components/Cart";
-import WhatsAppButton from "@/components/WhatsAppButton";
-import { Providers } from "@/store/providers";
-
-// Import Swiper styles
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-import "swiper/css/effect-fade";
 
 const cairo = Cairo({
   variable: "--font-cairo",
@@ -30,16 +19,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl">
-      <body className={`${cairo.variable} antialiased`}>
-        <Providers>
-          <Header />
-          {children}
-          <Footer />
-          <Cart />
-          <WhatsAppButton />
-        </Providers>
-      </body>
+    <html>
+      <body className={`${cairo.variable} antialiased`}>{children}</body>
     </html>
   );
 }

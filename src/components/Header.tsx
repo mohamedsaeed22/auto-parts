@@ -10,6 +10,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/hooks/useCart"; // Use Redux hook
 import LoginDialog from "./LoginDialog";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
+import { i18nConfig } from "@/lib/i18n";
 
 export default function Header() {
   const { totalItems, setCartOpen } = useCart(); // Use Redux hook
@@ -32,7 +35,34 @@ export default function Header() {
     { code: "ar", name: " - العربية", flag: "🇸🇦" },
     { code: "en", name: " - English", flag: "🇺🇸" },
   ];
+  const { i18n } = useTranslation();
+  const activeLocale = i18n.language;
 
+  const router = useRouter();
+  const currentPathname = usePathname();
+
+  const onLanguageChange = () => {
+    const newLocale = activeLocale === "en" ? "ar" : "en";
+
+    // Set a cookie for next-i18n-router to read the new locale
+    const days = 30;
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    const expires = date.toUTCString();
+    document.cookie = `NEXT_LOCALE=${newLocale};expires=${expires};path=/`;
+
+    // Compute new path with updated locale
+    if (
+      activeLocale === i18nConfig.defaultLocale &&
+      !i18nConfig.prefixDefault
+    ) {
+      router.push("/" + newLocale + currentPathname);
+    } else {
+      router.push(currentPathname.replace(`/${activeLocale}`, `/${newLocale}`));
+    }
+
+    router.refresh();
+  };
   const handleCartClick = () => {
     setCartOpen(true);
   };
@@ -115,7 +145,7 @@ export default function Header() {
                         <button
                           key={language.code}
                           className="w-full text-right px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2 space-x-reverse"
-                          onClick={() => setIsLanguageOpen(false)}
+                          onClick={onLanguageChange}
                         >
                           <span className="text-lg">{language.flag}</span>
                           <span>{language.name}</span>
@@ -234,7 +264,7 @@ export default function Header() {
                         <button
                           key={language.code}
                           className="w-full text-right px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2 space-x-reverse"
-                          onClick={() => setIsLanguageOpen(false)}
+                          onClick={onLanguageChange}
                         >
                           <span className="text-base">{language.flag}</span>
                           <span className="text-xs">{language.name}</span>

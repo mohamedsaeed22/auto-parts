@@ -7,7 +7,7 @@ import {
   Gift,
 } from "lucide-react";
 import React from "react";
-import { ProfilePage } from "@/app/userprofile/page";
+import { ProfilePage } from "@/app/[locale]/userprofile/page";
 
 const menu = [
   { key: "overview", label: "الملف الشخصي", icon: <User size={20} /> },
