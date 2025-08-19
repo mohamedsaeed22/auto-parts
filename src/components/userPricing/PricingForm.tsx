@@ -7,6 +7,7 @@ import { ImageUpload } from "@/components/ui";
 import FormInput from "@/components/ui/FormInput";
 import { FormSubmissionButton } from "./FormSubmissionButton";
 import { InformationPanel } from "./InformationPanel";
+import { useTranslation } from "react-i18next";
 
 interface PricingFormProps {
   form: UseFormReturn<UserPricingFormData>;
@@ -34,6 +35,7 @@ export function PricingForm({
   onRemoveImage,
   onSubmit,
 }: PricingFormProps) {
+  const { t } = useTranslation();
   const partImageInputRef = useRef<HTMLInputElement>(null);
   const requestImageInputRef = useRef<HTMLInputElement>(null);
   const formImageInputRef = useRef<HTMLInputElement>(null);
@@ -63,10 +65,10 @@ export function PricingForm({
           <Package className="text-logo-gold" size={32} />
         </div>
         <h2 className="text-2xl font-semibold text-logo-black mb-2">
-          نموذج طلب التسعير
+          {t("userPricing.form.title")}
         </h2>
         <p className="text-gray-600">
-          املأ النموذج أدناه وسيتم حفظ البيانات على اليسار
+          {t("userPricing.form.subtitle")}
         </p>
       </div>
 
@@ -76,9 +78,9 @@ export function PricingForm({
 
         {/* Part Name Input */}
         <FormInput
-          label="اسم القطعة"
+          label={t("userPricing.form.fields.partName.label")}
           icon={Package}
-          placeholder="أدخل اسم القطعة المطلوبة"
+          placeholder={t("userPricing.form.fields.partName.placeholder")}
           error={errors.partName?.message}
           {...register("partName")}
         />
@@ -87,10 +89,10 @@ export function PricingForm({
         {userType === "workshop" && (
           <>
             <FormInput
-              label="كود الورشة"
+              label={t("userPricing.form.fields.userCode.label")}
               icon={User}
-              placeholder="أدخل كود الورشة الخاص بك"
-              helpText="يمكنك تغيير الكود للحصول على نقاط إضافية"
+              placeholder={t("userPricing.form.fields.userCode.placeholder")}
+              helpText={t("userPricing.form.fields.userCode.helpText")}
               error={errors.userCode?.message}
               {...register("userCode")}
             />
@@ -99,7 +101,7 @@ export function PricingForm({
             <ImageUpload
               ref={partImageInputRef}
               id="partImage"
-              label="صورة القطعة"
+              label={t("userPricing.form.images.partImage")}
               preview={partImagePreview}
               onImageChange={(file) => onImageChange(file, "partImage")}
               onRemoveImage={() => onRemoveImage("partImage")}
@@ -110,7 +112,7 @@ export function PricingForm({
             <ImageUpload
               ref={requestImageInputRef}
               id="requestImage"
-              label="صورة الطلب"
+              label={t("userPricing.form.images.requestImage")}
               preview={requestImagePreview}
               onImageChange={(file) => onImageChange(file, "requestImage")}
               onRemoveImage={() => onRemoveImage("requestImage")}
@@ -121,7 +123,7 @@ export function PricingForm({
             <ImageUpload
               ref={formImageInputRef}
               id="formImage"
-              label="صورة الاستمارة"
+              label={t("userPricing.form.images.formImage")}
               preview={formImagePreview}
               onImageChange={(file) => onImageChange(file, "formImage")}
               onRemoveImage={() => onRemoveImage("formImage")}
@@ -132,10 +134,10 @@ export function PricingForm({
 
         {/* Quantity Input */}
         <FormInput
-          label="الكمية"
+          label={t("userPricing.form.fields.quantity.label")}
           type="number"
           icon={Hash}
-          placeholder="أدخل الكمية المطلوبة"
+          placeholder={t("userPricing.form.fields.quantity.placeholder")}
           min="1"
           error={errors.quantity?.message}
           {...register("quantity")}
@@ -144,10 +146,10 @@ export function PricingForm({
         {/* Chassis Number Input - Only for Workshop */}
         {userType === "workshop" && (
           <FormInput
-            label="رقم الهيكل"
+            label={t("userPricing.form.fields.chassisNumber.label")}
             icon={Car}
-            placeholder="أدخل رقم الهيكل"
-            helpText="رقم الهيكل يساعد في تحديد القطعة المناسبة لسيارتك"
+            placeholder={t("userPricing.form.fields.chassisNumber.placeholder")}
+            helpText={t("userPricing.form.fields.chassisNumber.helpText")}
             error={errors.chassisNumber?.message}
             {...register("chassisNumber")}
           />

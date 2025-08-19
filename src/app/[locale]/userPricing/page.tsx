@@ -4,8 +4,12 @@ import { useUserPricingForm } from "@/hooks/useUserPricingForm";
 import { HeroSection } from "@/components/userPricing/HeroSection";
 import { PricingForm } from "@/components/userPricing/PricingForm";
 import { SavedFormsList } from "@/components/userPricing/SavedFormsList";
+import { useTranslation } from "react-i18next";
 
 export default function UserPricingPage() {
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+
   const {
     form,
     savedForms,
@@ -32,8 +36,8 @@ export default function UserPricingPage() {
       {/* Main Content Section - Split Layout */}
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
-          {/* Right Side - Form */}
-          <div className="order-1 lg:order-1">
+          {/* Form Side */}
+          <div className={`order-1 ${isRTL ? 'lg:order-1' : 'lg:order-1'}`}>
             <PricingForm
               form={form}
               userType={userType}
@@ -41,15 +45,14 @@ export default function UserPricingPage() {
               requestImagePreview={requestImagePreview}
               formImagePreview={formImagePreview}
               isSubmitting={isSubmitting}
-              // savedFormsCount={savedForms.length}
               onImageChange={handleImageChange}
               onRemoveImage={removeImage}
               onSubmit={onSubmit}
             />
           </div>
 
-          {/* Left Side - Saved Data */}
-          <div className="order-2 lg:order-2">
+          {/* Saved Data Side */}
+          <div className={`order-2 ${isRTL ? 'lg:order-2' : 'lg:order-2'}`}>
             <SavedFormsList
               savedForms={savedForms}
               isSendingToBackend={isSendingToBackend}

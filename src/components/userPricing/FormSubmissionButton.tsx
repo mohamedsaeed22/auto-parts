@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface FormSubmissionButtonProps {
   isSubmitting: boolean;
@@ -8,6 +9,9 @@ interface FormSubmissionButtonProps {
 export function FormSubmissionButton({
   isSubmitting,
 }: FormSubmissionButtonProps) {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+
   return (
     <div className="pt-4">
       <Button
@@ -17,13 +21,13 @@ export function FormSubmissionButton({
       >
         {isSubmitting ? (
           <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white ml-2"></div>
-            جاري الحفظ...
+            <div className={`animate-spin rounded-full h-5 w-5 border-b-2 border-white ${isRTL ? 'ml-2' : 'mr-2'}`}></div>
+            {t("userPricing.form.buttons.saving")}
           </div>
         ) : (
           <div className="flex items-center justify-center">
-            اضافة للقائمه
-            <Plus className="mr-2" size={16} />
+            {t("userPricing.form.buttons.addToList")}
+            <Plus className={isRTL ? "ml-2" : "mr-2"} size={16} />
           </div>
         )}
       </Button>
