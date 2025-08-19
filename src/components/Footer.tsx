@@ -1,16 +1,18 @@
 "use client";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const Footer = () => {
-  // use this color #b9974d
+  const { t } = useTranslation();
+
   return (
     <footer className="bg-gray-900 text-white py-16">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-          {/* Column 1 - اطلبها */}
+          {/* Column 1 - Site Categories */}
           <div>
             <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
-              اقسام الموقع
+              {t("footer.sections.siteCategories.title")}
             </h3>
             <ul className="space-y-3 list-disc list-inside">
               <li>
@@ -18,7 +20,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  طلبات قطع الغيار
+                  {t("footer.sections.siteCategories.links.partsRequests")}
                 </a>
               </li>
               <li>
@@ -26,7 +28,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  متجر القطع
+                  {t("footer.sections.siteCategories.links.partsStore")}
                 </a>
               </li>
               <li>
@@ -34,7 +36,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  تجارب القيادة
+                  {t("footer.sections.siteCategories.links.testDrives")}
                 </a>
               </li>
               <li>
@@ -42,16 +44,16 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  خدمات السيارات
+                  {t("footer.sections.siteCategories.links.carServices")}
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Column 2 - المتجر */}
+          {/* Column 2 - Store Categories */}
           <div>
             <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
-              أقسام المتجر
+              {t("footer.sections.storeCategories.title")}
             </h3>
             <ul className="space-y-3 list-disc list-inside">
               <li>
@@ -59,7 +61,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  قطع الغيار
+                  {t("footer.sections.storeCategories.links.spareParts")}
                 </a>
               </li>
               <li>
@@ -67,7 +69,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  الاكسسوارات
+                  {t("footer.sections.storeCategories.links.accessories")}
                 </a>
               </li>
               <li>
@@ -75,7 +77,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  الزيوت
+                  {t("footer.sections.storeCategories.links.oils")}
                 </a>
               </li>
               <li>
@@ -83,7 +85,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  العناية بالسيارة
+                  {t("footer.sections.storeCategories.links.carCare")}
                 </a>
               </li>
               <li>
@@ -91,16 +93,16 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  الغسيل
+                  {t("footer.sections.storeCategories.links.washing")}
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Column 3 - الخدمات */}
+          {/* Column 3 - Service Categories */}
           <div>
             <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
-              أقسام الخدمات
+              {t("footer.sections.serviceCategories.title")}
             </h3>
             <ul className="space-y-3 list-disc list-inside">
               <li>
@@ -108,7 +110,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  الإطارات والبطاريات
+                  {t("footer.sections.serviceCategories.links.tiresAndBatteries")}
                 </a>
               </li>
               <li>
@@ -116,7 +118,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  الغسيل والعناية
+                  {t("footer.sections.serviceCategories.links.washingAndCare")}
                 </a>
               </li>
               <li>
@@ -124,22 +126,24 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  الاستبدال والحكات
+                  {t("footer.sections.serviceCategories.links.replacementAndRepairs")}
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Column 4 - الخدمات (duplicate section) */}
+          {/* Column 4 - Services */}
           <div>
-            <h3 className="font-bold text-lg mb-6 text-[#b9974d]">الخدمات</h3>
+            <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
+              {t("footer.sections.services.title")}
+            </h3>
             <ul className="space-y-3 list-disc list-inside">
               <li>
                 <a
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  الإطارات والبطاريات
+                  {t("footer.sections.services.links.tiresAndBatteries")}
                 </a>
               </li>
               <li>
@@ -147,7 +151,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  الغسيل والعناية
+                  {t("footer.sections.services.links.washingAndCare")}
                 </a>
               </li>
               <li>
@@ -155,16 +159,16 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  الاستبدال والحكات
+                  {t("footer.sections.services.links.replacementAndRepairs")}
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Column 5 - مركز المساعدة */}
+          {/* Column 5 - Help Center */}
           <div>
             <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
-              مركز المساعدة
+              {t("footer.sections.helpCenter.title")}
             </h3>
             <div className="space-y-4">
               <div className="flex items-center space-x-3 space-x-reverse">
@@ -183,10 +187,10 @@ const Footer = () => {
                   />
                 </svg>
                 <a
-                  href="mailto:info@atlobha.com"
+                  href="mailto:info@falfuture.com"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  info@falfuture.com
+                  {t("footer.sections.helpCenter.email")}
                 </a>
               </div>
               <div className="flex items-center space-x-3 space-x-reverse">
@@ -205,10 +209,10 @@ const Footer = () => {
                   />
                 </svg>
                 <a
-                  href="tel:+966502670094"
+                  href={`tel:${t("footer.sections.helpCenter.phone")}`}
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  0543777568
+                  {t("footer.sections.helpCenter.phone")}
                 </a>
               </div>
             </div>
@@ -218,7 +222,7 @@ const Footer = () => {
         {/* Bottom border */}
         <div className="border-t border-gray-700 mt-12 pt-8">
           <div className="text-center text-gray-400">
-            <p>&copy; 2025. جميع الحقوق محفوظة</p>
+            <p>&copy; 2025. {t("footer.copyright")}</p>
           </div>
         </div>
       </div>
