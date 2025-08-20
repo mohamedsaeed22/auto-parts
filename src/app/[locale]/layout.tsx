@@ -40,7 +40,11 @@ export default async function LocaleLayout({
   const direction = getDirection(locale);
 
   return (
-    <div lang={locale} dir={direction} className="min-h-screen">
+    <div
+      lang={locale}
+      dir={direction}
+      className={`min-h-screen ${cairo.variable}`}
+    >
       <I18NProvider locale={locale} namespaces={ns} resources={resources}>
         <Providers>
           <Header />
