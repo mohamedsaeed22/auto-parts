@@ -22,9 +22,63 @@
       "arabic": "العربية",
       "english": "English"
     },
+    "topBar": {
+      "freeShipping": "شحن مجاني للطلبات فوق 200 ريال",
+      "customerService": "خدمة العملاء 24/7",
+      "trackOrder": "تتبع طلبك",
+      "help": "المساعدة"
+    },
     "actions": {
-      "login": "تسجيل الدخول",
-      "openMainMenu": "فتح القائمة الرئيسية"
+      "login": "تسجيل الدخول / إنشاء حساب",
+      "account": "الحساب",
+      "openMainMenu": "فتح القائمة الرئيسية",
+      "search": "بحث",
+      "searchPlaceholder": "ابحث عن المنتجات والقطع..."
+    },
+    "cart": {
+      "cart": "السلة",
+      "title": "عربة التسوق",
+      "empty": {
+        "title": "عربة التسوق فارغة",
+        "description": "أضف بعض المنتجات للبدء في التسوق",
+        "continueShopping": "استمر في التسوق"
+      },
+      "items": {
+        "quantity": "الكمية",
+        "total": "المجموع",
+        "price": "ريال",
+        "remove": "إزالة المنتج",
+        "itemTotal": "المجموع"
+      },
+      "summary": {
+        "itemCount": "عدد المنتجات",
+        "grandTotal": "المجموع الكلي"
+      },
+      "actions": {
+        "checkout": "إتمام الطلب",
+        "continueShopping": "استمر في التسوق",
+        "clearCart": "تفريغ العربة",
+        "close": "إغلاق عربة التسوق"
+      },
+      "dialog": {
+        "clearTitle": "تفريغ عربة التسوق",
+        "clearDescription": "هل أنت متأكد من أنك تريد تفريغ عربة التسوق؟ لا يمكن التراجع عن هذا الإجراء.",
+        "cancel": "إلغاء",
+        "confirm": "تفريغ العربة"
+      },
+      "loading": "جاري التحميل..."
+    },
+    "bottomNav": {
+      "home": "الرئيسية",
+      "categories": "الأقسام",
+      "offers": "العروض",
+      "wishlist": "المفضلة",
+      "cart": "السلة"
+    },
+    "menu": {
+      "title": "القائمة",
+      "help": "المساعدة والدعم",
+      "trackOrder": "تتبع طلبك"
     }
   },
   "userPricing": {

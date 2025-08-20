@@ -1,7 +1,15 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { X, Plus, Minus, ShoppingBag, Trash2, ArrowLeft } from "lucide-react";
+import {
+  X,
+  Plus,
+  Minus,
+  ShoppingBag,
+  Trash2,
+  ArrowLeft,
+  ArrowRight,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/hooks/useCart"; // Use Redux hook
 import { Button } from "@/components/ui/button";
@@ -15,10 +23,13 @@ import {
 } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useTranslation } from "react-i18next";
 
 const Cart: React.FC = () => {
   const router = useRouter();
   const [showClearCartDialog, setShowClearCartDialog] = useState(false);
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
 
   // Use Redux hook
   const {
@@ -89,24 +100,36 @@ const Cart: React.FC = () => {
 
             {/* Cart Panel */}
             <motion.div
-              initial={{ x: "100%" }}
+              initial={{ x: isRTL ? "100%" : "-100%" }}
               animate={{ x: 0 }}
-              exit={{ x: "100%" }}
+              exit={{ x: isRTL ? "100%" : "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col"
+              className={`fixed ${
+                isRTL ? "right-0" : "left-0"
+              } top-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col`}
+              dir={isRTL ? "rtl" : "ltr"}
             >
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                <div className="flex items-center space-x-3 space-x-reverse">
+                <div
+                  className={`flex items-center space-x-3 ${
+                    isRTL ? "space-x-reverse" : ""
+                  }`}
+                >
                   <ShoppingBag size={24} className="text-gray-700" />
-                  <h2 className="text-xl font-bold text-gray-900 ms-2">
-                    عربة التسوق
+                  <h2
+                    className={`text-xl font-bold text-gray-900 ${
+                      isRTL ? "mr-2" : "ml-2"
+                    }`}
+                  >
+                    {t("cart.title") ||
+                      (isRTL ? "عربة التسوق" : "Shopping Cart")}
                   </h2>
                 </div>
                 <button
                   onClick={() => setCartOpen(false)}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                  aria-label="إغلاق عربة التسوق"
+                  aria-label={t("cart.actions.close")}
                 >
                   <X size={20} />
                 </button>
@@ -115,20 +138,21 @@ const Cart: React.FC = () => {
               {/* Cart Items */}
               <div className="flex-1 overflow-y-auto">
                 {loading ? (
-                  <div className="flex items-center justify-center h-full">
+                  <div className="flex flex-col items-center justify-center h-full space-y-4">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                    <p className="text-gray-500 text-sm">{t("cart.loading")}</p>
                   </div>
                 ) : items.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full p-8 text-center">
                     <ShoppingBag size={64} className="text-gray-300 mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      عربة التسوق فارغة
+                      {t("cart.empty.title")}
                     </h3>
                     <p className="text-gray-500 mb-6">
-                      أضف بعض المنتجات للبدء في التسوق
+                      {t("cart.empty.description")}
                     </p>
                     <Button onClick={handleContinueShopping} className="w-full">
-                      استمر في التسوق
+                      {t("cart.empty.continueShopping")}
                     </Button>
                   </div>
                 ) : (
@@ -139,9 +163,15 @@ const Cart: React.FC = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className="flex items-start space-x-3 space-x-reverse p-3 bg-gray-50 rounded-lg border border-gray-200"
+                        className={`flex items-start space-x-3 ${
+                          isRTL ? "space-x-reverse" : ""
+                        } p-3 bg-gray-50 rounded-lg border border-gray-200`}
                       >
-                        <div className="relative w-16 h-16 flex-shrink-0 ml-2">
+                        <div
+                          className={`relative w-16 h-16 flex-shrink-0 ${
+                            isRTL ? "mr-2" : "ml-2"
+                          }`}
+                        >
                           <Image
                             src={item.image}
                             alt={item.title}
@@ -155,16 +185,21 @@ const Cart: React.FC = () => {
                             {item.title}
                           </h3>
                           <p className="text-blue-600 font-semibold text-xs mb-1">
-                            {item.price.toFixed(2)} ريال
+                            {item.price.toFixed(2)}{" "}
+                            {t("cart.items.price") || (isRTL ? "ريال" : "SAR")}
                           </p>
 
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-1 space-x-reverse">
+                            <div
+                              className={`flex items-center space-x-1 ${
+                                isRTL ? "space-x-reverse" : ""
+                              }`}
+                            >
                               {item.quantity === 1 ? (
                                 <button
                                   onClick={() => handleRemoveItem(item.id)}
                                   className="p-0.5 text-red-500 hover:bg-red-50 rounded transition-colors"
-                                  aria-label="إزالة المنتج"
+                                  aria-label={t("cart.items.remove")}
                                 >
                                   <Trash2 size={14} />
                                 </button>
@@ -196,13 +231,13 @@ const Cart: React.FC = () => {
                                 <Plus size={14} />
                               </button>
                             </div>
-
-                           
                           </div>
 
                           <p className="text-xs text-gray-500 mt-1">
-                            المجموع: {(item.price * item.quantity).toFixed(2)}{" "}
-                            ريال
+                            {t("cart.items.itemTotal") ||
+                              (isRTL ? "المجموع" : "Total")}
+                            : {(item.price * item.quantity).toFixed(2)}{" "}
+                            {t("cart.items.price") || (isRTL ? "ريال" : "SAR")}
                           </p>
                         </div>
                       </motion.div>
@@ -220,13 +255,22 @@ const Cart: React.FC = () => {
                 >
                   <div className="space-y-2">
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-600">عدد المنتجات:</span>
+                      <span className="text-gray-600">
+                        {t("cart.summary.itemCount") ||
+                          (isRTL ? "عدد المنتجات" : "Number of products")}
+                        :
+                      </span>
                       <span className="font-medium">{totalItems}</span>
                     </div>
                     <div className="flex justify-between items-center text-lg font-bold">
-                      <span>المجموع الكلي:</span>
+                      <span>
+                        {t("cart.summary.grandTotal") ||
+                          (isRTL ? "المجموع الكلي" : "Grand Total")}
+                        :
+                      </span>
                       <span className="text-blue-600">
-                        {total.toFixed(2)} ريال
+                        {total.toFixed(2)}{" "}
+                        {t("cart.items.price") || (isRTL ? "ريال" : "SAR")}
                       </span>
                     </div>
                   </div>
@@ -237,22 +281,35 @@ const Cart: React.FC = () => {
                       className="w-full bg-black hover:bg-black/80"
                       size="lg"
                     >
-                      <span>إتمام الطلب</span>
-                      <ArrowLeft size={18} />
+                      <span>
+                        {t("cart.actions.checkout") ||
+                          (isRTL ? "إتمام الطلب" : "Complete Order")}
+                      </span>
+                      {isRTL ? (
+                        <ArrowRight size={18} />
+                      ) : (
+                        <ArrowLeft size={18} />
+                      )}
                     </Button>
 
-                    <div className="flex space-x-2 space-x-reverse">
+                    <div
+                      className={`flex space-x-2 ${
+                        isRTL ? "space-x-reverse" : ""
+                      }`}
+                    >
                       <Button
                         onClick={handleContinueShopping}
                         variant="outline"
                         className="flex-1"
                       >
-                        استمر في التسوق
+                        {t("cart.actions.continueShopping") ||
+                          (isRTL ? "استمر في التسوق" : "Continue Shopping")}
                       </Button>
                       <Button
                         onClick={handleClearCart}
                         variant="outline"
                         className="text-red-600 border-red-200 hover:bg-red-50"
+                        title={t("cart.actions.clearCart")}
                       >
                         <Trash2 size={16} />
                       </Button>
@@ -267,25 +324,29 @@ const Cart: React.FC = () => {
 
       {/* Clear Cart Confirmation Dialog */}
       <Dialog open={showClearCartDialog} onOpenChange={setShowClearCartDialog}>
-        <DialogContent className="sm:max-w-md text-right" dir="rtl">
-          <DialogHeader className="text-right">
+        <DialogContent
+          className={`sm:max-w-md ${isRTL ? "text-right" : "text-left"}`}
+          dir={isRTL ? "rtl" : "ltr"}
+        >
+          <DialogHeader className={isRTL ? "text-right" : "text-left"}>
             <DialogTitle className="text-center">
-               تفريغ عربة التسوق
+              {t("cart.dialog.clearTitle")}
             </DialogTitle>
-            <DialogDescription className="text-right">
-              هل أنت متأكد من أنك تريد تفريغ عربة التسوق؟ لا يمكن التراجع عن هذا
-              الإجراء.
+            <DialogDescription className={isRTL ? "text-right" : "text-left"}>
+              {t("cart.dialog.clearDescription")}
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="flex space-x-2 space-x-reverse">
+          <DialogFooter
+            className={`flex space-x-2 ${isRTL ? "space-x-reverse" : ""}`}
+          >
             <Button
               variant="outline"
               onClick={() => setShowClearCartDialog(false)}
             >
-              إلغاء
+              {t("cart.dialog.cancel")}
             </Button>
             <Button variant="destructive" onClick={confirmClearCart}>
-              تفريغ العربة
+              {t("cart.dialog.confirm")}
             </Button>
           </DialogFooter>
         </DialogContent>

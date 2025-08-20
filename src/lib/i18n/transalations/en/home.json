@@ -22,9 +22,63 @@
       "arabic": "العربية",
       "english": "English"
     },
+    "topBar": {
+      "freeShipping": "Free shipping on orders over $50",
+      "customerService": "24/7 Customer Service",
+      "trackOrder": "Track Your Order",
+      "help": "Help"
+    },
     "actions": {
-      "login": "Sign In",
-      "openMainMenu": "Open main menu"
+      "login": "Login / Register",
+      "account": "Account",
+      "openMainMenu": "Open main menu",
+      "search": "Search",
+      "searchPlaceholder": "Search for products, parts..."
+    },
+    "cart": {
+      "cart": "Cart",
+      "title": "Shopping Cart",
+      "empty": {
+        "title": "Cart is empty",
+        "description": "Add some products to start shopping",
+        "continueShopping": "Continue Shopping"
+      },
+      "items": {
+        "quantity": "Quantity",
+        "total": "Total",
+        "price": "SAR",
+        "remove": "Remove product",
+        "itemTotal": "Total"
+      },
+      "summary": {
+        "itemCount": "Number of products",
+        "grandTotal": "Grand Total"
+      },
+      "actions": {
+        "checkout": "Complete Order",
+        "continueShopping": "Continue Shopping",
+        "clearCart": "Clear Cart",
+        "close": "Close cart"
+      },
+      "dialog": {
+        "clearTitle": "Clear Shopping Cart",
+        "clearDescription": "Are you sure you want to clear the shopping cart? This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Clear Cart"
+      },
+      "loading": "Loading..."
+    },
+    "bottomNav": {
+      "home": "Home",
+      "categories": "Categories",
+      "offers": "Offers",
+      "wishlist": "Wishlist",
+      "cart": "Cart"
+    },
+    "menu": {
+      "title": "Menu",
+      "help": "Help & Support",
+      "trackOrder": "Track Your Order"
     }
   },
   "userPricing": {

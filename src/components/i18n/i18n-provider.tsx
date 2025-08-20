@@ -2,6 +2,7 @@
 
 import { I18nextProvider } from "react-i18next";
 import { createInstance } from "i18next";
+import { initReactI18next } from "react-i18next";
 import { serverSideTranslation } from "@/lib/i18n";
 
 type Props = {
@@ -19,8 +20,24 @@ export default function I18NProvider({
 }: Props) {
   const i18n = createInstance();
 
-  // Initialize client-side i18n instance with resources provided by the server
-  serverSideTranslation(locale, namespaces, { i18nInstance: i18n, resources });
+  // Initialize synchronously with server-provided resources
+  i18n.use(initReactI18next);
+
+  i18n.init({
+    lng: locale,
+    resources: resources as any,
+    fallbackLng: "ar",
+    supportedLngs: ["ar", "en"],
+    defaultNS: namespaces[0],
+    fallbackNS: namespaces[0],
+    ns: namespaces,
+    interpolation: {
+      escapeValue: false,
+    },
+    react: {
+      useSuspense: false,
+    },
+  });
 
   return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
 }
