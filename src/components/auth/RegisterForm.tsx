@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { FormInput, ImageUpload } from "@/components/ui";
-import { Building, PhoneCall } from "lucide-react";
+import { PhoneCall } from "lucide-react";
 import {
   registrationSchema,
   type RegistrationFormData,

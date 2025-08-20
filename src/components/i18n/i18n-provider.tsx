@@ -16,7 +16,6 @@ export default function I18NProvider({
   children,
   locale,
   namespaces,
-  resources,
 }: Props) {
   const i18n = createInstance();
 

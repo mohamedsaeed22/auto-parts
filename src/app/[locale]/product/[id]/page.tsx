@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowRight, ShoppingCart, Minus, Plus, Trash } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
@@ -84,18 +84,27 @@ export default function ProductDetails() {
     >
       {/* Breadcrumb */}
       <nav
-        className={`flex items-center space-x-2 text-sm text-gray-500 mb-8 ${
-          isRTL ? "flex-row-reverse space-x-reverse" : ""
+        className={`flex items-center gap-2 text-sm text-gray-500 mb-8 ${
+          isRTL ? "flex-row" : ""
         }`}
       >
         <button
           onClick={handleGoBack}
-          className={`flex items-center space-x-1 hover:text-gray-700 transition-colors ${
-            isRTL ? "flex-row-reverse space-x-reverse" : ""
+          className={`flex items-center gap-1 hover:text-gray-700 transition-colors ${
+            isRTL ? "flex-row-reverse" : ""
           }`}
         >
-          <span>{t("backButton")}</span>
-          <ArrowRight size={16} className={isRTL ? "rotate-180" : ""} />
+          {isRTL ? (
+            <>
+              <span>{t("backButton")}</span>
+              <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
+            </>
+          ) : (
+            <>
+              <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
+              <span>{t("backButton")}</span>
+            </>
+          )}
         </button>
         <span>/</span>
         <span className="capitalize">{product.category[locale]}</span>
@@ -103,9 +112,14 @@ export default function ProductDetails() {
         <span className="text-gray-900 truncate">{product.title[locale]}</span>
       </nav>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Product Images */}
-        <div className={`space-y-4 ${isRTL ? "lg:order-2" : "lg:order-1"}`}>
+      {/* Main Product Layout */}
+      <div
+        className={`grid grid-cols-1 lg:grid-cols-2 gap-12 ${
+          isRTL ? "lg:[direction:rtl]" : ""
+        }`}
+      >
+        {/* Product Images - Always first in RTL, second in LTR */}
+        <div className="space-y-4">
           <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
             <Image
               src={product.images[selectedImage]}
@@ -140,10 +154,14 @@ export default function ProductDetails() {
           </div>
         </div>
 
-        {/* Product Info */}
-        <div className={`space-y-6 ${isRTL ? "lg:order-1" : "lg:order-2"}`}>
+        {/* Product Info - Always second in RTL, first in LTR */}
+        <div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1
+              className={`text-3xl font-bold text-gray-900 mb-2 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
               {product.title[locale]}
             </h1>
             <p
@@ -151,7 +169,9 @@ export default function ProductDetails() {
                 isRTL ? "text-right" : "text-left"
               }`}
             >
-              {product.price} {t("currency")}
+              {isRTL
+                ? `${t("currency")} ${product.price}`
+                : `${product.price} ${t("currency")}`}
             </p>
           </div>
 
@@ -192,8 +212,8 @@ export default function ProductDetails() {
             {!isInCart ? (
               <Button
                 onClick={handleAddToCart}
-                className={`w-full h-9 flex items-center justify-center space-x-2 text-sm font-medium ${
-                  isRTL ? "flex-row-reverse space-x-reverse" : ""
+                className={`w-full h-9 flex items-center justify-center gap-2 text-sm font-medium ${
+                  isRTL ? "flex-row-reverse" : ""
                 }`}
                 size="sm"
               >
@@ -204,8 +224,8 @@ export default function ProductDetails() {
               // Quantity Selector with matching compact dimensions
               <div className="w-full max-w-[200px] h-9 flex items-center justify-center">
                 <div
-                  className={`flex items-center space-x-2 ${
-                    isRTL ? "flex-row-reverse space-x-reverse" : ""
+                  className={`flex items-center gap-2 ${
+                    isRTL ? "flex-row-reverse" : ""
                   }`}
                 >
                   <button

@@ -15,7 +15,7 @@ import {
   Home,
   Grid3X3,
   Tag,
-  Heart,
+  // Heart,
   Menu,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -70,12 +70,6 @@ export default function Header() {
       icon: Tag,
       label: t("bottomNav.offers") || "Offers",
       isActive: pathname.startsWith("/offers"),
-    },
-    {
-      href: "/wishlist",
-      icon: Heart,
-      label: t("bottomNav.wishlist") || "Wishlist",
-      isActive: pathname.startsWith("/wishlist"),
     },
     {
       href: "#",
@@ -271,12 +265,12 @@ export default function Header() {
               />
 
               {/* Wishlist */}
-              <Link
+              {/* <Link
                 href="/wishlist"
                 className="relative p-2 text-gray-700 hover:text-logo-gold transition-colors"
               >
                 <Heart size={24} />
-              </Link>
+              </Link> */}
 
               {/* Cart */}
               <button

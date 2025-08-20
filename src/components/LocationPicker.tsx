@@ -205,7 +205,7 @@ export default function LocationPicker({
         setIsSearching(false);
       }
     },
-    [mapInstance]
+    [mapInstance, reverseGeocode]
   );
 
   // Debounced search effect
@@ -230,13 +230,13 @@ export default function LocationPicker({
         clearTimeout(searchTimeout);
       }
     };
-  }, [searchValue, searchLocation]);
+  }, [searchValue, searchLocation, searchTimeout]);
 
   const handleMapClick = useCallback(async (lat: number, lng: number) => {
     setPosition([lat, lng]);
     setShowSearchResults(false);
     await reverseGeocode(lat, lng);
-  }, []);
+  }, [reverseGeocode]);
 
   const handleSearchResultClick = async (result: SearchResult) => {
     const lat = parseFloat(result.lat);

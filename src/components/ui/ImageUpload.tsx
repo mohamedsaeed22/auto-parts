@@ -32,7 +32,7 @@ export const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
     },
     ref
   ) => {
-    const { t, i18n } = useTranslation();
+    const { i18n } = useTranslation();
     const isRTL = i18n.language === "ar";
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,6 +1,7 @@
 import { i18nRouter } from "next-i18n-router";
 import { i18nConfig } from "./lib/i18n/index";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function middleware(request: any) {
   return i18nRouter(request, i18nConfig);
 }

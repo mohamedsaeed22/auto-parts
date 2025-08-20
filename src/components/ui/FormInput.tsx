@@ -1,7 +1,7 @@
 "use client";
 
 import React, { forwardRef } from "react";
-import { UseFormRegisterReturn, FieldError } from "react-hook-form";
+import { UseFormRegisterReturn } from "react-hook-form";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";

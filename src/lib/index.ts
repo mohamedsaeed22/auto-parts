@@ -7,7 +7,8 @@ import { Locale } from "@/lib/types/index";
 async function initTranslations(
   locale: string,
   namespaces: string[],
-  options?: { keyPrefix?: string; i18nInstance?: any; resources?: any }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  options?: { keyPrefix?: string; i18nInstance?:  any; resources?: any }
 ) {
   const i18nInstance = options?.i18nInstance || createInstance();
 
@@ -48,6 +49,7 @@ async function initTranslations(
 export async function serverSideTranslation(
   locale: string,
   namespaces: string[],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   options?: { keyPrefix?: string; i18nInstance?: any; resources?: any }
 ) {
   return await initTranslations(locale, namespaces, options);
