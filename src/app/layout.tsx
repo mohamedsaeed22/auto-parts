@@ -20,7 +20,10 @@ export default function RootLayout({
 }>) {
   return (
     <html suppressHydrationWarning>
-      <body className={`${cairo.variable} antialiased`} suppressHydrationWarning>
+      <body
+        className={`${cairo.variable} antialiased`}
+        suppressHydrationWarning
+      >
         {children}
       </body>
     </html>
