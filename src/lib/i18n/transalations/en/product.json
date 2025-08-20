@@ -1,0 +1,13 @@
+{
+  "backButton": "Back",
+  "description": "Description",
+  "quantity": "Quantity",
+  "addToCart": "Add to Cart",
+  "productCode": "Product Code",
+  "availability": "Availability",
+  "available": "Available",
+  "category": "Category",
+  "currency": "SAR",
+  "rating": "Rating",
+  "reviews": "Reviews"
+}

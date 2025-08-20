@@ -35,7 +35,7 @@ export default async function LocaleLayout({
   params: Promise<{ locale: Locale }>;
 }>) {
   const { locale } = await params;
-  const ns = ["common", "header", "footer", "cart", "userPricing"]; // namespaces used
+  const ns = ["common", "header", "footer", "cart", "userPricing", "product"]; // Added product namespace
   const { resources } = await serverSideTranslation(locale, ns);
   const direction = getDirection(locale);
 

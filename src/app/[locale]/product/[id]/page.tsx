@@ -4,16 +4,26 @@ import Image from "next/image";
 import { ArrowRight, ShoppingCart, Minus, Plus, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useCart } from "@/hooks/useCart"; // Use Redux hook
+import { useRouter, useParams } from "next/navigation";
+import { useCart } from "@/hooks/useCart";
+import { useTranslation } from "react-i18next";
+import { Locale } from "@/lib/types";
 
 const product = {
   id: 1,
-  title: "فرامل عالية الأداء",
+  title: {
+    ar: "فرامل عالية الأداء",
+    en: "High Performance Brake Pads",
+  },
   price: 89.99,
-  description:
-    "وسائد فرامل ممتازة مصممة للمركبات عالية الأداء. تتميز بمواد احتكاك متقدمة لقوة توقف فائقة وتقليل تلاشي الفرامل. مثالية للسيارات الرياضية والتطبيقات الشاقة.",
-  category: "الفرامل",
+  description: {
+    ar: "وسائد فرامل ممتازة مصممة للمركبات عالية الأداء. تتميز بمواد احتكاك متقدمة لقوة توقف فائقة وتقليل تلاشي الفرامل. مثالية للسيارات الرياضية والتطبيقات الشاقة.",
+    en: "Premium brake pads designed for high-performance vehicles. Features advanced friction materials for superior stopping power and reduced brake fade. Ideal for sports cars and demanding applications.",
+  },
+  category: {
+    ar: "الفرامل",
+    en: "Brakes",
+  },
   image: "/offers/offer1.jpg",
   rating: {
     rate: 4.5,
@@ -29,7 +39,13 @@ const product = {
 
 export default function ProductDetails() {
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as Locale;
+  const { t, i18n } = useTranslation("product");
   const [selectedImage, setSelectedImage] = useState(0);
+
+  const isRTL = i18n.language === "ar";
+  const direction = isRTL ? "rtl" : "ltr";
 
   // Use Redux hook
   const { items, addToCart, removeFromCart, updateQuantity } = useCart();
@@ -41,11 +57,11 @@ export default function ProductDetails() {
   const handleAddToCart = () => {
     addToCart({
       id: product.id,
-      title: product.title,
+      title: product.title[locale],
       price: product.price,
       image: product.image,
-      category: product.category,
-      description: product.description,
+      category: product.category[locale],
+      description: product.description[locale],
     });
   };
 
@@ -62,29 +78,38 @@ export default function ProductDetails() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+      dir={direction}
+    >
       {/* Breadcrumb */}
-      <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+      <nav
+        className={`flex items-center space-x-2 text-sm text-gray-500 mb-8 ${
+          isRTL ? "flex-row-reverse space-x-reverse" : ""
+        }`}
+      >
         <button
           onClick={handleGoBack}
-          className="flex items-center space-x-1 hover:text-gray-700 transition-colors flex-row-reverse space-x-reverse"
+          className={`flex items-center space-x-1 hover:text-gray-700 transition-colors ${
+            isRTL ? "flex-row-reverse space-x-reverse" : ""
+          }`}
         >
-          <span>رجوع</span>
-          <ArrowRight size={16} />
+          <span>{t("backButton")}</span>
+          <ArrowRight size={16} className={isRTL ? "rotate-180" : ""} />
         </button>
         <span>/</span>
-        <span className="capitalize">{product.category}</span>
+        <span className="capitalize">{product.category[locale]}</span>
         <span>/</span>
-        <span className="text-gray-900 truncate">{product.title}</span>
+        <span className="text-gray-900 truncate">{product.title[locale]}</span>
       </nav>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Product Images */}
-        <div className="space-y-4">
+        <div className={`space-y-4 ${isRTL ? "lg:order-2" : "lg:order-1"}`}>
           <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
             <Image
               src={product.images[selectedImage]}
-              alt={product.title}
+              alt={product.title[locale]}
               width={600}
               height={600}
               className="w-full h-full object-cover"
@@ -105,7 +130,7 @@ export default function ProductDetails() {
               >
                 <Image
                   src={image}
-                  alt={`${product.title} ${index + 1}`}
+                  alt={`${product.title[locale]} ${index + 1}`}
                   width={150}
                   height={150}
                   className="w-full h-full object-cover"
@@ -116,49 +141,73 @@ export default function ProductDetails() {
         </div>
 
         {/* Product Info */}
-        <div className="space-y-6">
+        <div className={`space-y-6 ${isRTL ? "lg:order-1" : "lg:order-2"}`}>
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {product.title}
+              {product.title[locale]}
             </h1>
-            <p className="text-2xl font-bold text-gray-900">
-              {product.price} ريال
+            <p
+              className={`text-2xl font-bold text-gray-900 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
+              {product.price} {t("currency")}
             </p>
           </div>
 
           {/* Description */}
           <div>
-            <h3 className="text-lg font-semibold mb-2">الوصف</h3>
-            <p className="text-gray-700 leading-relaxed">
-              {product.description}
+            <h3
+              className={`text-lg font-semibold mb-2 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
+              {t("description")}
+            </h3>
+            <p
+              className={`text-gray-700 leading-relaxed ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
+              {product.description[locale]}
             </p>
           </div>
 
           {/* Category */}
-          <div>
+          <div className={isRTL ? "text-right" : "text-left"}>
             <span className="inline-block bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm capitalize">
-              {product.category}
+              {product.category[locale]}
             </span>
           </div>
 
-          <label className="block text-sm font-medium text-black mb-4">
-            الكمية
+          <label
+            className={`block text-sm font-medium text-black mb-4 ${
+              isRTL ? "text-right" : "text-left"
+            }`}
+          >
+            {t("quantity")}
           </label>
 
           <div className="bg-black rounded-lg p-2 min-h-[44px] flex items-center justify-center">
             {!isInCart ? (
               <Button
                 onClick={handleAddToCart}
-                className="w-full   h-9 flex items-center justify-center space-x-2 flex-row-reverse space-x-reverse text-sm font-medium"
+                className={`w-full h-9 flex items-center justify-center space-x-2 text-sm font-medium ${
+                  isRTL ? "flex-row-reverse space-x-reverse" : ""
+                }`}
                 size="sm"
               >
                 <ShoppingCart size={16} />
-                <span>أضف إلى السلة</span>
+                <span>{t("addToCart")}</span>
               </Button>
             ) : (
               // Quantity Selector with matching compact dimensions
               <div className="w-full max-w-[200px] h-9 flex items-center justify-center">
-                <div className="flex items-center space-x-2 flex-row-reverse space-x-reverse">
+                <div
+                  className={`flex items-center space-x-2 ${
+                    isRTL ? "flex-row-reverse space-x-reverse" : ""
+                  }`}
+                >
                   <button
                     onClick={() => handleQuantityChange(currentQuantity + 1)}
                     className="w-8 h-8 border border-gray-500 rounded-md hover:bg-gray-800 transition-colors text-white flex items-center justify-center"
@@ -185,18 +234,34 @@ export default function ProductDetails() {
 
           {/* Additional Info */}
           <div className="border-t pt-6 space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">رمز المنتج:</span>
+            <div
+              className={`flex justify-between items-center ${
+                isRTL ? "flex-row-reverse" : ""
+              }`}
+            >
+              <span className="text-sm text-gray-600">{t("productCode")}:</span>
               <span className="text-sm font-medium">PRD-{product.id}</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">التوفر:</span>
-              <span className="text-sm font-medium text-green-600">متوفر</span>
+            <div
+              className={`flex justify-between items-center ${
+                isRTL ? "flex-row-reverse" : ""
+              }`}
+            >
+              <span className="text-sm text-gray-600">
+                {t("availability")}:
+              </span>
+              <span className="text-sm font-medium text-green-600">
+                {t("available")}
+              </span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">القسم:</span>
+            <div
+              className={`flex justify-between items-center ${
+                isRTL ? "flex-row-reverse" : ""
+              }`}
+            >
+              <span className="text-sm text-gray-600">{t("category")}:</span>
               <span className="text-sm font-medium capitalize">
-                {product.category}
+                {product.category[locale]}
               </span>
             </div>
           </div>

@@ -1,0 +1,13 @@
+{
+  "backButton": "رجوع",
+  "description": "الوصف",
+  "quantity": "الكمية",
+  "addToCart": "أضف إلى السلة",
+  "productCode": "رمز المنتج",
+  "availability": "التوفر",
+  "available": "متوفر",
+  "category": "القسم",
+  "currency": "ريال",
+  "rating": "التقييم",
+  "reviews": "مراجعة"
+}
