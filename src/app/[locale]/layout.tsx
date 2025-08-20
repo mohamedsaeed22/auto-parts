@@ -35,23 +35,21 @@ export default async function LocaleLayout({
   params: Promise<{ locale: Locale }>;
 }>) {
   const { locale } = await params;
-  const ns = ["common", "header", "footer", "cart", "userPricing", "product"]; // Added product namespace
+  const ns = ["common", "header", "footer", "cart", "userPricing", "product"];
   const { resources } = await serverSideTranslation(locale, ns);
   const direction = getDirection(locale);
 
   return (
-    <html lang={locale} dir={direction}>
-      <body className={`${cairo.variable} antialiased`}>
-        <I18NProvider locale={locale} namespaces={ns} resources={resources}>
-          <Providers>
-            <Header />
-            {children}
-            <Footer />
-            <Cart />
-            <WhatsAppButton />
-          </Providers>
-        </I18NProvider>
-      </body>
-    </html>
+    <div lang={locale} dir={direction} className="min-h-screen">
+      <I18NProvider locale={locale} namespaces={ns} resources={resources}>
+        <Providers>
+          <Header />
+          {children}
+          <Footer />
+          <Cart />
+          <WhatsAppButton />
+        </Providers>
+      </I18NProvider>
+    </div>
   );
 }
