@@ -35,7 +35,7 @@ export function PricingForm({
   onRemoveImage,
   onSubmit,
 }: PricingFormProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("userPricing");
   const partImageInputRef = useRef<HTMLInputElement>(null);
   const requestImageInputRef = useRef<HTMLInputElement>(null);
   const formImageInputRef = useRef<HTMLInputElement>(null);
@@ -65,9 +65,9 @@ export function PricingForm({
           <Package className="text-logo-gold" size={32} />
         </div>
         <h2 className="text-2xl font-semibold text-logo-black mb-2">
-          {t("userPricing.form.title")}
+          {t("form.title")}
         </h2>
-        <p className="text-gray-600">{t("userPricing.form.subtitle")}</p>
+        <p className="text-gray-600">{t("form.subtitle")}</p>
       </div>
 
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
@@ -76,9 +76,9 @@ export function PricingForm({
 
         {/* Part Name Input */}
         <FormInput
-          label={t("userPricing.form.fields.partName.label")}
+          label={t("form.fields.partName.label")}
           icon={Package}
-          placeholder={t("userPricing.form.fields.partName.placeholder")}
+          placeholder={t("form.fields.partName.placeholder")}
           error={errors.partName?.message}
           {...register("partName")}
         />
@@ -87,10 +87,10 @@ export function PricingForm({
         {userType === "workshop" && (
           <>
             <FormInput
-              label={t("userPricing.form.fields.userCode.label")}
+              label={t("form.fields.userCode.label")}
               icon={User}
-              placeholder={t("userPricing.form.fields.userCode.placeholder")}
-              helpText={t("userPricing.form.fields.userCode.helpText")}
+              placeholder={t("form.fields.userCode.placeholder")}
+              helpText={t("form.fields.userCode.helpText")}
               error={errors.userCode?.message}
               {...register("userCode")}
             />
@@ -101,7 +101,7 @@ export function PricingForm({
             <ImageUpload
               ref={partImageInputRef}
               id="partImage"
-              label={t("userPricing.form.images.partImage")}
+              label={t("form.images.partImage")}
               preview={partImagePreview}
               onImageChange={(file) => onImageChange(file, "partImage")}
               onRemoveImage={() => onRemoveImage("partImage")}
@@ -112,7 +112,7 @@ export function PricingForm({
             <ImageUpload
               ref={requestImageInputRef}
               id="requestImage"
-              label={t("userPricing.form.images.requestImage")}
+              label={t("form.images.requestImage")}
               preview={requestImagePreview}
               onImageChange={(file) => onImageChange(file, "requestImage")}
               onRemoveImage={() => onRemoveImage("requestImage")}
@@ -123,7 +123,7 @@ export function PricingForm({
             <ImageUpload
               ref={formImageInputRef}
               id="formImage"
-              label={t("userPricing.form.images.formImage")}
+              label={t("form.images.formImage")}
               preview={formImagePreview}
               onImageChange={(file) => onImageChange(file, "formImage")}
               onRemoveImage={() => onRemoveImage("formImage")}
@@ -134,10 +134,10 @@ export function PricingForm({
 
         {/* Quantity Input */}
         <FormInput
-          label={t("userPricing.form.fields.quantity.label")}
+          label={t("form.fields.quantity.label")}
           type="number"
           icon={Hash}
-          placeholder={t("userPricing.form.fields.quantity.placeholder")}
+          placeholder={t("form.fields.quantity.placeholder")}
           min="1"
           error={errors.quantity?.message}
           {...register("quantity")}
@@ -146,10 +146,10 @@ export function PricingForm({
         {/* Chassis Number Input - Only for Workshop */}
         {userType === "workshop" && (
           <FormInput
-            label={t("userPricing.form.fields.chassisNumber.label")}
+            label={t("form.fields.chassisNumber.label")}
             icon={Car}
-            placeholder={t("userPricing.form.fields.chassisNumber.placeholder")}
-            helpText={t("userPricing.form.fields.chassisNumber.helpText")}
+            placeholder={t("form.fields.chassisNumber.placeholder")}
+            helpText={t("form.fields.chassisNumber.helpText")}
             error={errors.chassisNumber?.message}
             {...register("chassisNumber")}
           />

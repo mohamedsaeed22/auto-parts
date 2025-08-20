@@ -1,0 +1,45 @@
+{
+  "sections": {
+    "siteCategories": {
+      "title": "اقسام الموقع",
+      "links": {
+        "partsRequests": "طلبات قطع الغيار",
+        "partsStore": "متجر القطع",
+        "testDrives": "تجارب القيادة",
+        "carServices": "خدمات السيارات"
+      }
+    },
+    "storeCategories": {
+      "title": "أقسام المتجر",
+      "links": {
+        "spareParts": "قطع الغيار",
+        "accessories": "الاكسسوارات",
+        "oils": "الزيوت",
+        "carCare": "العناية بالسيارة",
+        "washing": "الغسيل"
+      }
+    },
+    "serviceCategories": {
+      "title": "أقسام الخدمات",
+      "links": {
+        "tiresAndBatteries": "الإطارات والبطاريات",
+        "washingAndCare": "الغسيل والعناية",
+        "replacementAndRepairs": "الاستبدال والحكات"
+      }
+    },
+    "services": {
+      "title": "الخدمات",
+      "links": {
+        "tiresAndBatteries": "الإطارات والبطاريات",
+        "washingAndCare": "الغسيل والعناية",
+        "replacementAndRepairs": "الاستبدال والحكات"
+      }
+    },
+    "helpCenter": {
+      "title": "مركز المساعدة",
+      "email": "info@falfuture.com",
+      "phone": "0543777568"
+    }
+  },
+  "copyright": "جميع الحقوق محفوظة"
+}

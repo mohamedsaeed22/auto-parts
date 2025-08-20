@@ -28,9 +28,8 @@ import { useTranslation } from "react-i18next";
 const Cart: React.FC = () => {
   const router = useRouter();
   const [showClearCartDialog, setShowClearCartDialog] = useState(false);
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation("cart");
   const isRTL = i18n.language === "ar";
-
   // Use Redux hook
   const {
     isOpen,
@@ -122,8 +121,7 @@ const Cart: React.FC = () => {
                       isRTL ? "mr-2" : "ml-2"
                     }`}
                   >
-                    {t("cart.title") ||
-                      (isRTL ? "عربة التسوق" : "Shopping Cart")}
+                    {t("title") || (isRTL ? "عربة التسوق" : "Shopping Cart")}
                   </h2>
                 </div>
                 <button
@@ -140,19 +138,19 @@ const Cart: React.FC = () => {
                 {loading ? (
                   <div className="flex flex-col items-center justify-center h-full space-y-4">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                    <p className="text-gray-500 text-sm">{t("cart.loading")}</p>
+                    <p className="text-gray-500 text-sm">{t("loading")}</p>
                   </div>
                 ) : items.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full p-8 text-center">
                     <ShoppingBag size={64} className="text-gray-300 mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      {t("cart.empty.title")}
+                      {t("empty.title")}
                     </h3>
                     <p className="text-gray-500 mb-6">
-                      {t("cart.empty.description")}
+                      {t("empty.description")}
                     </p>
                     <Button onClick={handleContinueShopping} className="w-full">
-                      {t("cart.empty.continueShopping")}
+                      {t("empty.continueShopping")}
                     </Button>
                   </div>
                 ) : (
@@ -186,7 +184,7 @@ const Cart: React.FC = () => {
                           </h3>
                           <p className="text-blue-600 font-semibold text-xs mb-1">
                             {item.price.toFixed(2)}{" "}
-                            {t("cart.items.price") || (isRTL ? "ريال" : "SAR")}
+                            {t("items.price") || (isRTL ? "ريال" : "SAR")}
                           </p>
 
                           <div className="flex items-center justify-between">
@@ -199,7 +197,7 @@ const Cart: React.FC = () => {
                                 <button
                                   onClick={() => handleRemoveItem(item.id)}
                                   className="p-0.5 text-red-500 hover:bg-red-50 rounded transition-colors"
-                                  aria-label={t("cart.items.remove")}
+                                  aria-label={t("items.remove")}
                                 >
                                   <Trash2 size={14} />
                                 </button>
@@ -234,10 +232,10 @@ const Cart: React.FC = () => {
                           </div>
 
                           <p className="text-xs text-gray-500 mt-1">
-                            {t("cart.items.itemTotal") ||
+                            {t("items.itemTotal") ||
                               (isRTL ? "المجموع" : "Total")}
                             : {(item.price * item.quantity).toFixed(2)}{" "}
-                            {t("cart.items.price") || (isRTL ? "ريال" : "SAR")}
+                            {t("items.price") || (isRTL ? "ريال" : "SAR")}
                           </p>
                         </div>
                       </motion.div>
@@ -256,7 +254,7 @@ const Cart: React.FC = () => {
                   <div className="space-y-2">
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-gray-600">
-                        {t("cart.summary.itemCount") ||
+                        {t("summary.itemCount") ||
                           (isRTL ? "عدد المنتجات" : "Number of products")}
                         :
                       </span>
@@ -264,13 +262,13 @@ const Cart: React.FC = () => {
                     </div>
                     <div className="flex justify-between items-center text-lg font-bold">
                       <span>
-                        {t("cart.summary.grandTotal") ||
+                        {t("summary.grandTotal") ||
                           (isRTL ? "المجموع الكلي" : "Grand Total")}
                         :
                       </span>
                       <span className="text-blue-600">
                         {total.toFixed(2)}{" "}
-                        {t("cart.items.price") || (isRTL ? "ريال" : "SAR")}
+                        {t("items.price") || (isRTL ? "ريال" : "SAR")}
                       </span>
                     </div>
                   </div>
@@ -282,7 +280,7 @@ const Cart: React.FC = () => {
                       size="lg"
                     >
                       <span>
-                        {t("cart.actions.checkout") ||
+                        {t("actions.checkout") ||
                           (isRTL ? "إتمام الطلب" : "Complete Order")}
                       </span>
                       {isRTL ? (
@@ -302,14 +300,14 @@ const Cart: React.FC = () => {
                         variant="outline"
                         className="flex-1"
                       >
-                        {t("cart.actions.continueShopping") ||
+                        {t("actions.continueShopping") ||
                           (isRTL ? "استمر في التسوق" : "Continue Shopping")}
                       </Button>
                       <Button
                         onClick={handleClearCart}
                         variant="outline"
                         className="text-red-600 border-red-200 hover:bg-red-50"
-                        title={t("cart.actions.clearCart")}
+                        title={t("actions.clearCart")}
                       >
                         <Trash2 size={16} />
                       </Button>
@@ -330,10 +328,10 @@ const Cart: React.FC = () => {
         >
           <DialogHeader className={isRTL ? "text-right" : "text-left"}>
             <DialogTitle className="text-center">
-              {t("cart.dialog.clearTitle")}
+              {t("dialog.clearTitle")}
             </DialogTitle>
             <DialogDescription className={isRTL ? "text-right" : "text-left"}>
-              {t("cart.dialog.clearDescription")}
+              {t("dialog.clearDescription")}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter
@@ -343,10 +341,10 @@ const Cart: React.FC = () => {
               variant="outline"
               onClick={() => setShowClearCartDialog(false)}
             >
-              {t("cart.dialog.cancel")}
+              {t("dialog.cancel")}
             </Button>
             <Button variant="destructive" onClick={confirmClearCart}>
-              {t("cart.dialog.confirm")}
+              {t("dialog.confirm")}
             </Button>
           </DialogFooter>
         </DialogContent>

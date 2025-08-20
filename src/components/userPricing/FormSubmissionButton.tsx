@@ -9,7 +9,7 @@ interface FormSubmissionButtonProps {
 export function FormSubmissionButton({
   isSubmitting,
 }: FormSubmissionButtonProps) {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation("userPricing");
   const isRTL = i18n.language === "ar";
 
   return (
@@ -21,12 +21,16 @@ export function FormSubmissionButton({
       >
         {isSubmitting ? (
           <div className="flex items-center justify-center">
-            <div className={`animate-spin rounded-full h-5 w-5 border-b-2 border-white ${isRTL ? 'ml-2' : 'mr-2'}`}></div>
-            {t("userPricing.form.buttons.saving")}
+            <div
+              className={`animate-spin rounded-full h-5 w-5 border-b-2 border-white ${
+                isRTL ? "ml-2" : "mr-2"
+              }`}
+            ></div>
+            {t("form.buttons.saving")}
           </div>
         ) : (
           <div className="flex items-center justify-center">
-            {t("userPricing.form.buttons.addToList")}
+            {t("form.buttons.addToList")}
             <Plus className={isRTL ? "ml-2" : "mr-2"} size={16} />
           </div>
         )}

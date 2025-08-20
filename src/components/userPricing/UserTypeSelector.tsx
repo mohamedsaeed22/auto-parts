@@ -10,18 +10,22 @@ interface UserTypeSelectorProps<T extends { userType: "workshop" | "store" }> {
 export function UserTypeSelector<T extends { userType: "workshop" | "store" }>({
   control,
 }: UserTypeSelectorProps<T>) {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation("userPricing");
   const isRTL = i18n.language === "ar";
 
   return (
     <Controller
       // @ts-expect-error - userType is not a valid path
-      name="userType"  
+      name="userType"
       control={control}
       render={({ field, fieldState }) => (
         <div>
-          <label className={`block text-sm font-medium text-gray-700 mb-3 ${isRTL ? 'text-right' : 'text-left'}`}>
-            {t("userPricing.form.userType.label")}
+          <label
+            className={`block text-sm font-medium text-gray-700 mb-3 ${
+              isRTL ? "text-right" : "text-left"
+            }`}
+          >
+            {t("form.userType.label")}
           </label>
           <div className="grid grid-cols-2 gap-4">
             <button
@@ -34,7 +38,7 @@ export function UserTypeSelector<T extends { userType: "workshop" | "store" }>({
               }`}
             >
               <Building className="mx-auto mb-2" size={24} />
-              <span className="font-medium">{t("userPricing.form.userType.workshop")}</span>
+              <span className="font-medium">{t("form.userType.workshop")}</span>
             </button>
             <button
               type="button"
@@ -46,11 +50,15 @@ export function UserTypeSelector<T extends { userType: "workshop" | "store" }>({
               }`}
             >
               <Store className="mx-auto mb-2" size={24} />
-              <span className="font-medium">{t("userPricing.form.userType.store")}</span>
+              <span className="font-medium">{t("form.userType.store")}</span>
             </button>
           </div>
           {fieldState.error && (
-            <p className={`text-red-500 text-sm mt-1 ${isRTL ? 'text-right' : 'text-left'}`}>
+            <p
+              className={`text-red-500 text-sm mt-1 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
               {fieldState.error.message}
             </p>
           )}

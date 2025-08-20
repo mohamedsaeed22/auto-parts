@@ -11,7 +11,7 @@ interface SavedFormItemProps {
 }
 
 export function SavedFormItem({ form, index, onDelete }: SavedFormItemProps) {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation("userPricing");
   const isRTL = i18n.language === "ar";
 
   useEffect(() => {
@@ -34,14 +34,16 @@ export function SavedFormItem({ form, index, onDelete }: SavedFormItemProps) {
           <span
             className={`text-xs px-3 py-1 rounded-full font-medium bg-gray-100`}
           >
-            {form.userType === "workshop" ? t("userPricing.form.userType.workshop") : t("userPricing.form.userType.store")}
+            {form.userType === "workshop"
+              ? t("form.userType.workshop")
+              : t("form.userType.store")}
           </span>
           <span className="text-xs text-gray-500">#{index + 1}</span>
         </div>
         <button
           onClick={() => onDelete(form.id)}
           className="p-1.5 rounded-full bg-red-500 text-white hover:bg-red-600 transition-colors"
-          title={t("userPricing.savedForms.buttons.delete")}
+          title={t("savedForms.buttons.delete")}
         >
           <X size={14} />
         </button>
@@ -50,7 +52,9 @@ export function SavedFormItem({ form, index, onDelete }: SavedFormItemProps) {
       {/* Part Name */}
       <div className="w-full mt-3">
         <div className="bg-gray-50 rounded p-2 w-full">
-          <span className="text-sm text-gray-500">{t("userPricing.savedForms.labels.partName")}: </span>
+          <span className="text-sm text-gray-500">
+            {t("savedForms.labels.partName")}:{" "}
+          </span>
           <span className="text-lg font-semibold text-gray-900">
             {form.partName}
           </span>
@@ -60,12 +64,16 @@ export function SavedFormItem({ form, index, onDelete }: SavedFormItemProps) {
       {/* Info Grid */}
       <div className="grid grid-cols-2 gap-2 mt-3">
         <div className="bg-gray-50 rounded p-2">
-          <span className="text-xs text-gray-500">{t("userPricing.savedForms.labels.quantity")}: </span>
+          <span className="text-xs text-gray-500">
+            {t("savedForms.labels.quantity")}:{" "}
+          </span>
           <span className="text-sm font-semibold">{form.quantity}</span>
         </div>
         {form.userType === "workshop" && form.userCode && (
           <div className="bg-gray-50 rounded p-2">
-            <span className="text-xs text-gray-500">{t("userPricing.savedForms.labels.userCode")}: </span>
+            <span className="text-xs text-gray-500">
+              {t("savedForms.labels.userCode")}:{" "}
+            </span>
             <span className="text-sm font-semibold">{form.userCode}</span>
           </div>
         )}
@@ -74,7 +82,9 @@ export function SavedFormItem({ form, index, onDelete }: SavedFormItemProps) {
       {/* Optional Fields */}
       {form.userType === "workshop" && form.chassisNumber && (
         <div className="bg-gray-50 rounded p-2 mt-2">
-          <span className="text-xs text-gray-500">{t("userPricing.savedForms.labels.chassisNumber")}: </span>
+          <span className="text-xs text-gray-500">
+            {t("savedForms.labels.chassisNumber")}:{" "}
+          </span>
           <span className="text-sm font-semibold">{form.chassisNumber}</span>
         </div>
       )}
@@ -84,7 +94,7 @@ export function SavedFormItem({ form, index, onDelete }: SavedFormItemProps) {
         {form.partImage && (
           <Image
             src={URL.createObjectURL(form.partImage)}
-            alt={t("userPricing.savedForms.imageAlts.partImage")}
+            alt={t("savedForms.imageAlts.partImage")}
             className="w-full h-16 object-cover rounded border"
             width={80}
             height={64}
@@ -93,7 +103,7 @@ export function SavedFormItem({ form, index, onDelete }: SavedFormItemProps) {
         {form.requestImage && (
           <Image
             src={URL.createObjectURL(form.requestImage)}
-            alt={t("userPricing.savedForms.imageAlts.requestImage")}
+            alt={t("savedForms.imageAlts.requestImage")}
             className="w-full h-16 object-cover rounded border"
             width={80}
             height={64}
@@ -102,7 +112,7 @@ export function SavedFormItem({ form, index, onDelete }: SavedFormItemProps) {
         {form.formImage && (
           <Image
             src={URL.createObjectURL(form.formImage)}
-            alt={t("userPricing.savedForms.imageAlts.formImage")}
+            alt={t("savedForms.imageAlts.formImage")}
             className="w-full h-16 object-cover rounded border"
             width={80}
             height={64}
@@ -112,7 +122,8 @@ export function SavedFormItem({ form, index, onDelete }: SavedFormItemProps) {
 
       {/* Footer */}
       <p className="text-xs text-gray-400 mt-3">
-        {t("userPricing.savedForms.labels.savedAt")}: {form.submittedAt.toLocaleString(isRTL ? "ar-EG" : "en-US")}
+        {t("savedForms.labels.savedAt")}:{" "}
+        {form.submittedAt.toLocaleString(isRTL ? "ar-EG" : "en-US")}
       </p>
     </div>
   );

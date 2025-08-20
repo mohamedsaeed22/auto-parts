@@ -10,7 +10,6 @@ import {
   ChevronDown,
   Globe,
   ShoppingCart,
-  Bell,
   Search,
   X,
   Home,
@@ -34,22 +33,22 @@ export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const pathname = usePathname();
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation("header");
   const activeLocale = i18n.language;
   const isRTL = activeLocale === "ar";
 
   const navLinks = [
-    { href: "/about", label: t("header.navigation.about") },
-    { href: "/contact", label: t("header.navigation.contact") },
-    { href: "/brands", label: t("header.navigation.brands") },
-    { href: "/offers", label: t("header.navigation.offers") },
-    { href: "/products", label: t("header.navigation.products") },
-    { href: "/userPricing", label: t("header.navigation.userPricing") },
+    { href: "/about", label: t("navigation.about") },
+    { href: "/contact", label: t("navigation.contact") },
+    { href: "/brands", label: t("navigation.brands") },
+    { href: "/offers", label: t("navigation.offers") },
+    { href: "/products", label: t("navigation.products") },
+    { href: "/userPricing", label: t("navigation.userPricing") },
   ];
 
   const languages = [
-    { code: "ar", name: t("header.language.arabic"), flag: "🇸🇦" },
-    { code: "en", name: t("header.language.english"), flag: "🇺🇸" },
+    { code: "ar", name: t("language.arabic"), flag: "🇸🇦" },
+    { code: "en", name: t("language.english"), flag: "🇺🇸" },
   ];
 
   // Bottom navigation items for mobile
@@ -57,31 +56,31 @@ export default function Header() {
     {
       href: "/",
       icon: Home,
-      label: t("header.bottomNav.home") || "Home",
+      label: t("bottomNav.home") || "Home",
       isActive: pathname === "/",
     },
     {
       href: "/products",
       icon: Grid3X3,
-      label: t("header.bottomNav.categories") || "Categories",
+      label: t("bottomNav.categories") || "Categories",
       isActive: pathname.startsWith("/products"),
     },
     {
       href: "/offers",
       icon: Tag,
-      label: t("header.bottomNav.offers") || "Offers",
+      label: t("bottomNav.offers") || "Offers",
       isActive: pathname.startsWith("/offers"),
     },
     {
       href: "/wishlist",
       icon: Heart,
-      label: t("header.bottomNav.wishlist") || "Wishlist",
+      label: t("bottomNav.wishlist") || "Wishlist",
       isActive: pathname.startsWith("/wishlist"),
     },
     {
       href: "#",
       icon: ShoppingCart,
-      label: t("header.bottomNav.cart") || "Cart",
+      label: t("bottomNav.cart") || "Cart",
       isActive: false,
       isCart: true,
     },
@@ -145,10 +144,10 @@ export default function Header() {
 
   const currentLanguage = languages.find((lang) => lang.code === activeLocale);
 
-  const handleBottomNavClick = (item: any) => {
+  const handleBottomNavClick = (item: { href?: string; isCart?: boolean }) => {
     if (item.isCart) {
       handleCartClick();
-    } else {
+    } else if (item.href) {
       router.push(item.href);
     }
   };
@@ -156,7 +155,10 @@ export default function Header() {
   return (
     <>
       {/* Main Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-50" dir={isRTL ? "rtl" : "ltr"}>
+      <header
+        className="bg-white shadow-sm sticky top-0 z-50"
+        dir={isRTL ? "rtl" : "ltr"}
+      >
         {/* Main Header Content */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-0">
           <div className="flex justify-between items-center h-16 lg:h-20">
@@ -187,8 +189,7 @@ export default function Header() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={
-                      t("header.actions.searchPlaceholder") ||
-                      "Search products..."
+                      t("actions.searchPlaceholder") || "Search products..."
                     }
                     className={`w-full ${
                       isRTL ? "pr-12 pl-12 text-right" : "pl-12 pr-12 text-left"
@@ -263,7 +264,7 @@ export default function Header() {
                   <button className="flex items-center gap-2 text-gray-700 hover:text-logo-gold transition-colors">
                     <User size={20} />
                     <span className="text-sm font-medium">
-                      {t("header.actions.account") || "Account"}
+                      {t("actions.account") || "Account"}
                     </span>
                   </button>
                 }
@@ -413,8 +414,7 @@ export default function Header() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={
-                      t("header.actions.searchPlaceholder") ||
-                      "Search products..."
+                      t("actions.searchPlaceholder") || "Search products..."
                     }
                     className={`w-full ${
                       isRTL ? "pr-10 pl-10 text-right" : "pl-10 pr-10 text-left"
@@ -465,7 +465,7 @@ export default function Header() {
                 {/* Menu Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-200">
                   <h2 className="text-lg font-semibold text-gray-900">
-                    {t("header.menu.title") || "Menu"}
+                    {t("menu.title") || "Menu"}
                   </h2>
                   <button
                     onClick={closeMobileMenu}
@@ -484,7 +484,7 @@ export default function Header() {
                         className="w-full justify-center gap-2"
                       >
                         <User size={20} />
-                        {t("header.actions.login") || "Login / Register"}
+                        {t("actions.login") || "Login / Register"}
                       </Button>
                     }
                   />
@@ -529,14 +529,14 @@ export default function Header() {
                     className="block px-4 py-3 text-sm text-gray-600 hover:text-gray-900 transition-colors"
                     onClick={closeMobileMenu}
                   >
-                    {t("header.menu.help") || "Help & Support"}
+                    {t("menu.help") || "Help & Support"}
                   </Link>
                   <Link
                     href="/track-order"
                     className="block px-4 py-3 text-sm text-gray-600 hover:text-gray-900 transition-colors"
                     onClick={closeMobileMenu}
                   >
-                    {t("header.menu.trackOrder") || "Track Your Order"}
+                    {t("menu.trackOrder") || "Track Your Order"}
                   </Link>
                 </div>
               </motion.div>
@@ -547,7 +547,10 @@ export default function Header() {
 
       {/* Mobile Bottom Navigation - xs and sm only */}
       <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
-        <nav className="flex items-center justify-around h-16 px-2" dir={isRTL ? "rtl" : "ltr"}>
+        <nav
+          className="flex items-center justify-around h-16 px-2"
+          dir={isRTL ? "rtl" : "ltr"}
+        >
           {bottomNavItems.map((item) => {
             const Icon = item.icon;
             return (

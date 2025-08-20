@@ -1,0 +1,33 @@
+{
+  "cart": "Cart",
+  "title": "Shopping Cart",
+  "empty": {
+    "title": "Cart is empty",
+    "description": "Add some products to start shopping",
+    "continueShopping": "Continue Shopping"
+  },
+  "items": {
+    "quantity": "Quantity",
+    "total": "Total",
+    "price": "SAR",
+    "remove": "Remove product",
+    "itemTotal": "Total"
+  },
+  "summary": {
+    "itemCount": "Number of products",
+    "grandTotal": "Grand Total"
+  },
+  "actions": {
+    "checkout": "Complete Order",
+    "continueShopping": "Continue Shopping",
+    "clearCart": "Clear Cart",
+    "close": "Close cart"
+  },
+  "dialog": {
+    "clearTitle": "Clear Shopping Cart",
+    "clearDescription": "Are you sure you want to clear the shopping cart? This action cannot be undone.",
+    "cancel": "Cancel",
+    "confirm": "Clear Cart"
+  },
+  "loading": "Loading..."
+}

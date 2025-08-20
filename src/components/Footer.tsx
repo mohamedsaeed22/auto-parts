@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 
 const Footer = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("footer");
 
   return (
     <footer className="bg-gray-900 text-white py-16">
@@ -12,7 +12,7 @@ const Footer = () => {
           {/* Column 1 - Site Categories */}
           <div>
             <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
-              {t("footer.sections.siteCategories.title")}
+              {t("sections.siteCategories.title")}
             </h3>
             <ul className="space-y-3 list-disc list-inside">
               <li>
@@ -20,7 +20,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("footer.sections.siteCategories.links.partsRequests")}
+                  {t("sections.siteCategories.links.partsRequests")}
                 </a>
               </li>
               <li>
@@ -28,7 +28,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("footer.sections.siteCategories.links.partsStore")}
+                  {t("sections.siteCategories.links.partsStore")}
                 </a>
               </li>
               <li>
@@ -36,7 +36,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("footer.sections.siteCategories.links.testDrives")}
+                  {t("sections.siteCategories.links.testDrives")}
                 </a>
               </li>
               <li>
@@ -44,7 +44,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("footer.sections.siteCategories.links.carServices")}
+                  {t("sections.siteCategories.links.carServices")}
                 </a>
               </li>
             </ul>
@@ -53,7 +53,7 @@ const Footer = () => {
           {/* Column 2 - Store Categories */}
           <div>
             <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
-              {t("footer.sections.storeCategories.title")}
+              {t("sections.storeCategories.title")}
             </h3>
             <ul className="space-y-3 list-disc list-inside">
               <li>
@@ -61,7 +61,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("footer.sections.storeCategories.links.spareParts")}
+                  {t("sections.storeCategories.links.spareParts")}
                 </a>
               </li>
               <li>
@@ -69,7 +69,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("footer.sections.storeCategories.links.accessories")}
+                  {t("sections.storeCategories.links.accessories")}
                 </a>
               </li>
               <li>
@@ -77,7 +77,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("footer.sections.storeCategories.links.oils")}
+                  {t("sections.storeCategories.links.oils")}
                 </a>
               </li>
               <li>
@@ -85,7 +85,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("footer.sections.storeCategories.links.carCare")}
+                  {t("sections.storeCategories.links.carCare")}
                 </a>
               </li>
               <li>
@@ -93,7 +93,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("footer.sections.storeCategories.links.washing")}
+                  {t("sections.storeCategories.links.washing")}
                 </a>
               </li>
             </ul>
@@ -102,7 +102,7 @@ const Footer = () => {
           {/* Column 3 - Service Categories */}
           <div>
             <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
-              {t("footer.sections.serviceCategories.title")}
+              {t("sections.serviceCategories.title")}
             </h3>
             <ul className="space-y-3 list-disc list-inside">
               <li>
@@ -110,9 +110,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t(
-                    "footer.sections.serviceCategories.links.tiresAndBatteries"
-                  )}
+                  {t("sections.serviceCategories.links.tiresAndBatteries")}
                 </a>
               </li>
               <li>
@@ -120,7 +118,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("footer.sections.serviceCategories.links.washingAndCare")}
+                  {t("sections.serviceCategories.links.washingAndCare")}
                 </a>
               </li>
               <li>
@@ -128,9 +126,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t(
-                    "footer.sections.serviceCategories.links.replacementAndRepairs"
-                  )}
+                  {t("sections.serviceCategories.links.replacementAndRepairs")}
                 </a>
               </li>
             </ul>
@@ -139,7 +135,7 @@ const Footer = () => {
           {/* Column 4 - Services */}
           <div>
             <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
-              {t("footer.sections.services.title")}
+              {t("sections.services.title")}
             </h3>
             <ul className="space-y-3 list-disc list-inside">
               <li>
@@ -147,7 +143,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("footer.sections.services.links.tiresAndBatteries")}
+                  {t("sections.services.links.tiresAndBatteries")}
                 </a>
               </li>
               <li>
@@ -155,7 +151,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("footer.sections.services.links.washingAndCare")}
+                  {t("sections.services.links.washingAndCare")}
                 </a>
               </li>
               <li>
@@ -163,7 +159,7 @@ const Footer = () => {
                   href="#"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("footer.sections.services.links.replacementAndRepairs")}
+                  {t("sections.services.links.replacementAndRepairs")}
                 </a>
               </li>
             </ul>
@@ -172,7 +168,7 @@ const Footer = () => {
           {/* Column 5 - Help Center */}
           <div>
             <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
-              {t("footer.sections.helpCenter.title")}
+              {t("sections.helpCenter.title")}
             </h3>
             <div className="space-y-4">
               <div className="flex items-center space-x-3 space-x-reverse">
@@ -194,7 +190,7 @@ const Footer = () => {
                   href="mailto:info@falfuture.com"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("footer.sections.helpCenter.email")}
+                  {t("sections.helpCenter.email")}
                 </a>
               </div>
               <div className="flex items-center space-x-3 space-x-reverse">
@@ -213,10 +209,10 @@ const Footer = () => {
                   />
                 </svg>
                 <a
-                  href={`tel:${t("footer.sections.helpCenter.phone")}`}
+                  href={`tel:${t("sections.helpCenter.phone")}`}
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("footer.sections.helpCenter.phone")}
+                  {t("sections.helpCenter.phone")}
                 </a>
               </div>
             </div>
@@ -226,7 +222,7 @@ const Footer = () => {
         {/* Bottom border */}
         <div className="border-t border-gray-700 mt-12 pt-8">
           <div className="text-center text-gray-400">
-            <p>&copy; 2025. {t("footer.copyright")}</p>
+            <p>&copy; 2025. {t("copyright")}</p>
           </div>
         </div>
       </div>

@@ -1,0 +1,45 @@
+{
+  "sections": {
+    "siteCategories": {
+      "title": "Site Categories",
+      "links": {
+        "partsRequests": "Parts Requests",
+        "partsStore": "Parts Store",
+        "testDrives": "Test Drives",
+        "carServices": "Car Services"
+      }
+    },
+    "storeCategories": {
+      "title": "Store Categories",
+      "links": {
+        "spareParts": "Spare Parts",
+        "accessories": "Accessories",
+        "oils": "Oils",
+        "carCare": "Car Care",
+        "washing": "Washing"
+      }
+    },
+    "serviceCategories": {
+      "title": "Service Categories",
+      "links": {
+        "tiresAndBatteries": "Tires & Batteries",
+        "washingAndCare": "Washing & Care",
+        "replacementAndRepairs": "Replacement & Repairs"
+      }
+    },
+    "services": {
+      "title": "Services",
+      "links": {
+        "tiresAndBatteries": "Tires & Batteries",
+        "washingAndCare": "Washing & Care",
+        "replacementAndRepairs": "Replacement & Repairs"
+      }
+    },
+    "helpCenter": {
+      "title": "Help Center",
+      "email": "info@falfuture.com",
+      "phone": "0543777568"
+    }
+  },
+  "copyright": "All rights reserved"
+}
