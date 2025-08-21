@@ -2,8 +2,17 @@
 
 import { useState, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
-import { MapPin, Loader2, Navigation, Plus, Minus, Search, X } from "lucide-react";
+import {
+  MapPin,
+  Loader2,
+  Navigation,
+  Plus,
+  Minus,
+  Search,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 import type { LocationData } from "@/lib/validations/authSchema";
 
 // Dynamically import map components to avoid SSR issues
@@ -66,6 +75,8 @@ export default function LocationPicker({
   initialLocation,
   error,
 }: LocationPickerProps) {
+  const { t, i18n } = useTranslation("location");
+  const isRTL = i18n.language === "ar";
   const [position, setPosition] = useState<[number, number]>([
     initialLocation?.lat || 24.7136, // Default to Riyadh
     initialLocation?.lng || 46.6753,
@@ -82,7 +93,9 @@ export default function LocationPicker({
   const [zoom, setZoom] = useState(10);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
-  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
 
   // Ensure we're on the client side
   useEffect(() => {
@@ -102,45 +115,53 @@ export default function LocationPicker({
   }, [initialLocation]);
 
   // Reverse geocoding function using Nominatim (free)
-  const reverseGeocode = async (lat: number, lng: number) => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=ar,en`
-      );
-      
-      if (!response.ok) {
-        throw new Error('فشل في الحصول على بيانات العنوان');
-      }
-      
-      const data = await response.json();
+  const reverseGeocode = useCallback(
+    async (lat: number, lng: number) => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=ar,en`
+        );
 
-      if (data && data.display_name) {
-        const address = data.address || {};
-        const locationData: LocationData = {
-          address: data.display_name,
-          city: address.city || address.town || address.village || address.suburb || "",
-          region: address.state || address.region || address.province || "",
-          country: address.country || "Saudi Arabia",
-          postalCode: address.postcode || "",
-          lat: lat,
-          lng: lng,
-          placeId: data.place_id?.toString() || "",
-          formattedAddress: data.display_name,
-        };
+        if (!response.ok) {
+          throw new Error(t("errors.addressFetchFailed"));
+        }
 
-        setCurrentLocation(locationData);
-        onLocationSelect(locationData);
-        // Update search value with the formatted address
-        setSearchValue(data.display_name);
+        const data = await response.json();
+
+        if (data && data.display_name) {
+          const address = data.address || {};
+          const locationData: LocationData = {
+            address: data.display_name,
+            city:
+              address.city ||
+              address.town ||
+              address.village ||
+              address.suburb ||
+              "",
+            region: address.state || address.region || address.province || "",
+            country: address.country || "Saudi Arabia",
+            postalCode: address.postcode || "",
+            lat: lat,
+            lng: lng,
+            placeId: data.place_id?.toString() || "",
+            formattedAddress: data.display_name,
+          };
+
+          setCurrentLocation(locationData);
+          onLocationSelect(locationData);
+          // Update search value with the formatted address
+          setSearchValue(data.display_name);
+        }
+      } catch (error) {
+        console.error("Reverse geocoding failed:", error);
+        alert(t("errors.addressFetchFailed"));
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Reverse geocoding failed:", error);
-      alert("فشل في الحصول على بيانات العنوان. يرجى المحاولة مرة أخرى.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    [t, onLocationSelect]
+  );
 
   // Forward geocoding (search) with improved results
   const searchLocation = useCallback(
@@ -166,17 +187,20 @@ export default function LocationPicker({
             `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
               query + " Saudi Arabia"
             )}&limit=5&addressdetails=1&accept-language=ar,en&dedupe=1`
-          )
+          ),
         ];
 
         const responses = await Promise.all(searches);
-        const results = await Promise.all(responses.map(r => r.json()));
-        
+        const results = await Promise.all(responses.map((r) => r.json()));
+
         // Combine and deduplicate results
         const combinedResults = [...results[0], ...results[1]];
-        const uniqueResults = combinedResults.filter((result, index, self) => 
-          index === self.findIndex(r => r.place_id === result.place_id)
-        ).slice(0, 8); // Limit to 8 results
+        const uniqueResults = combinedResults
+          .filter(
+            (result, index, self) =>
+              index === self.findIndex((r) => r.place_id === result.place_id)
+          )
+          .slice(0, 8); // Limit to 8 results
 
         setSearchResults(uniqueResults);
         setShowSearchResults(!selectFirst && uniqueResults.length > 0);
@@ -200,12 +224,12 @@ export default function LocationPicker({
         }
       } catch (error) {
         console.error("Search failed:", error);
-        alert("فشل في البحث. يرجى التأكد من الاتصال بالإنترنت والمحاولة مرة أخرى.");
+        alert(t("errors.searchFailed"));
       } finally {
         setIsSearching(false);
       }
     },
-    [mapInstance, reverseGeocode]
+    [mapInstance, reverseGeocode, t]
   );
 
   // Debounced search effect
@@ -232,16 +256,19 @@ export default function LocationPicker({
     };
   }, [searchValue, searchLocation, searchTimeout]);
 
-  const handleMapClick = useCallback(async (lat: number, lng: number) => {
-    setPosition([lat, lng]);
-    setShowSearchResults(false);
-    await reverseGeocode(lat, lng);
-  }, [reverseGeocode]);
+  const handleMapClick = useCallback(
+    async (lat: number, lng: number) => {
+      setPosition([lat, lng]);
+      setShowSearchResults(false);
+      await reverseGeocode(lat, lng);
+    },
+    [reverseGeocode]
+  );
 
   const handleSearchResultClick = async (result: SearchResult) => {
     const lat = parseFloat(result.lat);
     const lng = parseFloat(result.lon);
-    
+
     setPosition([lat, lng]);
     setZoom(16);
     setSearchValue(result.display_name);
@@ -262,7 +289,7 @@ export default function LocationPicker({
 
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
-      alert("الموقع الجغرافي غير مدعوم في هذا المتصفح");
+      alert(t("errors.locationNotSupported"));
       return;
     }
 
@@ -281,20 +308,20 @@ export default function LocationPicker({
       },
       (error) => {
         console.error("Error getting current location:", error);
-        let errorMessage = "فشل في الحصول على الموقع الحالي";
-        
+        let errorMessage = t("errors.locationFailed");
+
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorMessage = "تم رفض الإذن للوصول للموقع. يرجى السماح بالوصول للموقع في إعدادات المتصفح.";
+            errorMessage = t("errors.permissionDenied");
             break;
           case error.POSITION_UNAVAILABLE:
-            errorMessage = "الموقع غير متوفر حالياً";
+            errorMessage = t("errors.positionUnavailable");
             break;
           case error.TIMEOUT:
-            errorMessage = "انتهت مهلة البحث عن الموقع";
+            errorMessage = t("errors.timeout");
             break;
         }
-        
+
         alert(errorMessage);
         setIsLoading(false);
       },
@@ -326,7 +353,7 @@ export default function LocationPicker({
   const createCustomIcon = () => {
     if (typeof window !== "undefined") {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const L = require("leaflet");
+      const L = require("leaflet");
       return new L.Icon({
         iconUrl:
           "data:image/svg+xml;base64," +
@@ -350,7 +377,9 @@ export default function LocationPicker({
       <div className="space-y-4">
         <div className="flex items-center justify-center h-[350px] bg-gray-100 rounded-lg">
           <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-          <span className="mr-2">جاري تحميل الخريطة...</span>
+          <span className={`${isRTL ? "mr-2" : "ml-2"}`}>
+            {t("loadingMap")}
+          </span>
         </div>
       </div>
     );
@@ -358,9 +387,13 @@ export default function LocationPicker({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 mb-2">
+      <div
+        className={`flex items-center gap-2 mb-2 ${
+          isRTL ? "flex-row-reverse" : ""
+        }`}
+      >
         <MapPin className="w-5 h-5 text-blue-600" />
-        <h3 className="text-lg font-medium text-gray-700">اختيار الموقع</h3>
+        <h3 className="text-lg font-medium text-gray-700">{t("title")}</h3>
       </div>
 
       {/* Enhanced Search Input */}
@@ -370,24 +403,36 @@ export default function LocationPicker({
             type="text"
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            placeholder="ابحث عن عنوان، مدينة، حي، أو معلم مميز في السعودية..."
-            className={`w-full pl-12 pr-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right ${
+            placeholder={t("searchPlaceholder")}
+            className={`w-full ${
+              isRTL ? "pl-12 pr-3 text-right" : "pr-12 pl-3 text-left"
+            } py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
               error ? "border-red-500" : "border-gray-300"
             }`}
           />
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-          
+          <Search
+            className={`absolute ${
+              isRTL ? "right-3" : "left-3"
+            } top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5`}
+          />
+
           {searchValue && (
             <button
               onClick={clearSearch}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className={`absolute ${
+                isRTL ? "left-3" : "right-3"
+              } top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600`}
             >
               <X className="w-4 h-4" />
             </button>
           )}
-          
+
           {isSearching && (
-            <div className="absolute left-10 top-1/2 transform -translate-y-1/2">
+            <div
+              className={`absolute ${
+                isRTL ? "right-10" : "left-10"
+              } top-1/2 transform -translate-y-1/2`}
+            >
               <Loader2 className="text-blue-500 w-4 h-4 animate-spin" />
             </div>
           )}
@@ -400,17 +445,24 @@ export default function LocationPicker({
               <button
                 key={result.place_id || index}
                 onClick={() => handleSearchResultClick(result)}
-                className="w-full px-4 py-3 text-right hover:bg-gray-50 border-b border-gray-100 last:border-b-0 focus:outline-none focus:bg-gray-50"
+                className={`w-full px-4 py-3 ${
+                  isRTL ? "text-right" : "text-left"
+                } hover:bg-gray-50 border-b border-gray-100 last:border-b-0 focus:outline-none focus:bg-gray-50`}
               >
                 <div className="flex items-start gap-2">
                   <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                  <div className="flex-1 text-right">
+                  <div
+                    className={`flex-1 ${isRTL ? "text-right" : "text-left"}`}
+                  >
                     <div className="text-sm font-medium text-gray-900 line-clamp-1">
                       {result.display_name}
                     </div>
                     {result.address && (
                       <div className="text-xs text-gray-500 mt-1">
-                        {result.address.city || result.address.town || result.address.village || ""}
+                        {result.address.city ||
+                          result.address.town ||
+                          result.address.village ||
+                          ""}
                         {result.address.state && `, ${result.address.state}`}
                       </div>
                     )}
@@ -430,13 +482,15 @@ export default function LocationPicker({
         >
           {isLoading ? (
             <>
-              <Loader2 className="w-4 h-4 ml-2 animate-spin" />
-              جاري تحديد الموقع...
+              <Loader2
+                className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"} animate-spin`}
+              />
+              {t("locatingText")}
             </>
           ) : (
             <>
-              <Navigation className="w-4 h-4 ml-2" />
-              استخدام موقعي الحالي
+              <Navigation className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`} />
+              {t("useCurrentLocation")}
             </>
           )}
         </Button>
@@ -470,8 +524,8 @@ export default function LocationPicker({
           center={position}
           zoom={zoom}
           style={{ height: "350px", width: "100%" }}
-           // whenReady={setMapInstance}
-           // onZoomEnd={(e: any) => setZoom(e.target.getZoom())}
+          // whenReady={setMapInstance}
+          // onZoomEnd={(e: any) => setZoom(e.target.getZoom())}
           zoomControl={false}
         >
           <TileLayer
@@ -502,7 +556,7 @@ export default function LocationPicker({
             onClick={zoomIn}
             disabled={zoom >= 18}
             className="block p-3 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed border-b transition-colors"
-            title="تكبير"
+            title={t("zoomIn")}
           >
             <Plus className="w-4 h-4" />
           </button>
@@ -510,15 +564,19 @@ export default function LocationPicker({
             onClick={zoomOut}
             disabled={zoom <= 1}
             className="block p-3 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            title="تصغير"
+            title={t("zoomOut")}
           >
             <Minus className="w-4 h-4" />
           </button>
         </div>
 
         {/* Enhanced instruction overlay */}
-        <div className="absolute bottom-4 right-4 z-[1000] bg-black bg-opacity-80 text-white text-xs px-3 py-2 rounded-lg">
-          💡 انقر على الخريطة لتحديد الموقع بدقة
+        <div
+          className={`absolute bottom-4 ${
+            isRTL ? "right-4" : "left-4"
+          } z-[1000] bg-black bg-opacity-80 text-white text-xs px-3 py-2 rounded-lg`}
+        >
+          {t("mapInstructions")}
         </div>
 
         {/* Loading overlay */}
@@ -526,7 +584,9 @@ export default function LocationPicker({
           <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-[1000]">
             <div className="flex items-center gap-2">
               <Loader2 className="w-5 h-5 animate-spin text-blue-500" />
-              <span className="text-sm text-gray-600">جاري تحديث الموقع...</span>
+              <span className="text-sm text-gray-600">
+                {t("updatingLocation")}
+              </span>
             </div>
           </div>
         )}
@@ -535,35 +595,45 @@ export default function LocationPicker({
       {/* Enhanced Selected Location Info */}
       {currentLocation && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="font-medium text-blue-900 mb-3 flex items-center gap-2">
+          <h4
+            className={`font-medium text-blue-900 mb-3 flex items-center gap-2 ${
+              isRTL ? "flex-row-reverse" : ""
+            }`}
+          >
             <MapPin className="w-4 h-4" />
-            الموقع المحدد:
+            {t("selectedLocation")}
           </h4>
-          <p className="text-sm text-blue-800 text-right mb-3 leading-relaxed">
+          <p
+            className={`text-sm text-blue-800 ${
+              isRTL ? "text-right" : "text-left"
+            } mb-3 leading-relaxed`}
+          >
             {currentLocation.formattedAddress}
           </p>
           <div className="grid grid-cols-2 gap-3 text-xs text-blue-700">
             {currentLocation.city && (
               <div className="flex justify-between">
-                <span className="font-medium">المدينة:</span>
+                <span className="font-medium">{t("city")}:</span>
                 <span>{currentLocation.city}</span>
               </div>
             )}
             {currentLocation.region && (
               <div className="flex justify-between">
-                <span className="font-medium">المنطقة:</span>
+                <span className="font-medium">{t("region")}:</span>
                 <span>{currentLocation.region}</span>
               </div>
             )}
             {currentLocation.postalCode && (
               <div className="flex justify-between">
-                <span className="font-medium">الرمز البريدي:</span>
+                <span className="font-medium">{t("postalCode")}:</span>
                 <span>{currentLocation.postalCode}</span>
               </div>
             )}
             <div className="flex justify-between">
-              <span className="font-medium">الإحداثيات:</span>
-              <span>{position[0].toFixed(6)}, {position[1].toFixed(6)}</span>
+              <span className="font-medium">{t("coordinates")}:</span>
+              <span>
+                {position[0].toFixed(6)}, {position[1].toFixed(6)}
+              </span>
             </div>
           </div>
         </div>
@@ -571,7 +641,13 @@ export default function LocationPicker({
 
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-          <p className="text-sm text-red-600 text-right">{error}</p>
+          <p
+            className={`text-sm text-red-600 ${
+              isRTL ? "text-right" : "text-left"
+            }`}
+          >
+            {error}
+          </p>
         </div>
       )}
 

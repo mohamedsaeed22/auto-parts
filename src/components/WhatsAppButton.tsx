@@ -1,12 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 const WhatsAppButton = () => {
+  const { t } = useTranslation("whatsapp");
+
   const handleWhatsAppClick = () => {
     // You can customize the phone number and message
     const phoneNumber = "1234567890"; // Replace with your actual WhatsApp number
-    const message = "مرحباً! أريد الاستفسار عن منتجات فال الغربيه"; // Customize the default message
+    const message = t("message");
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
       message
     )}`;
@@ -18,6 +21,8 @@ const WhatsAppButton = () => {
       onClick={handleWhatsAppClick}
       className="fixed bottom-18 sm:bottom-6 left-6 z-40 h-14 w-14 rounded-full bg-green-500 hover:bg-green-600 shadow-lg hover:shadow-xl transition-all duration-300"
       size="icon"
+      aria-label={t("ariaLabel")}
+      title={t("ariaLabel")}
     >
       <svg
         width="24"

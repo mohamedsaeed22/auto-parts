@@ -1,0 +1,26 @@
+{
+  "title": "Select Location",
+  "searchPlaceholder": "Search for address, city, neighborhood, or landmark in Saudi Arabia...",
+  "useCurrentLocation": "Use My Current Location",
+  "locatingText": "Locating...",
+  "mapInstructions": "💡 Click on the map to select location precisely",
+  "selectedLocation": "Selected Location:",
+  "updatingLocation": "Updating location...",
+  "loadingMap": "Loading map...",
+  "city": "City",
+  "region": "Region",
+  "postalCode": "Postal Code",
+  "coordinates": "Coordinates",
+  "errors": {
+    "addressFetchFailed": "Failed to get address data. Please try again.",
+    "searchFailed": "Search failed. Please check your internet connection and try again.",
+    "locationNotSupported": "Geolocation is not supported in this browser",
+    "locationFailed": "Failed to get current location",
+    "permissionDenied": "Location access permission denied. Please allow location access in browser settings.",
+    "positionUnavailable": "Location is currently unavailable",
+    "timeout": "Location search timeout"
+  },
+  "clearSearch": "Clear search",
+  "zoomIn": "Zoom in",
+  "zoomOut": "Zoom out"
+}

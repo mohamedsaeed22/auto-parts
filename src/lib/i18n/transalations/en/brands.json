@@ -1,0 +1,14 @@
+{
+  "title": "Our Trusted Brands",
+  "description": "We work with the most famous brands in the automotive industry to provide the best quality spare parts and accessories for your car",
+  "brands": {
+    "mercedes": "Mercedes",
+    "bmw": "BMW",
+    "audi": "Audi",
+    "toyota": "Toyota",
+    "honda": "Honda",
+    "ford": "Ford",
+    "volkswagen": "Volkswagen",
+    "nissan": "Nissan"
+  }
+}
