@@ -49,36 +49,38 @@ const CheckoutProgress: React.FC<CheckoutProgressProps> = ({ currentStep }) => {
       className="bg-white rounded-2xl shadow-sm p-6 mb-8"
       dir={isRTL ? "rtl" : "ltr"}
     >
-      <div className="flex items-center justify-between">
-        {steps.map((step, index) => (
-          <div key={step.id} className="flex items-center flex-1">
-            <div className="flex items-center">
-              <div
-                className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
-                  currentStep >= step.id
-                    ? "bg-black border-black text-white"
-                    : "border-gray-300 text-gray-400"
-                }`}
-              >
-                <step.icon className="w-5 h-5" />
+      <div className="overflow-x-auto scrollbar-hide">
+        <div className="flex items-center min-w-max">
+          {steps.map((step, index) => (
+            <div key={step.id} className="flex items-center flex-shrink-0">
+              <div className="flex items-center">
+                <div
+                  className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
+                    currentStep >= step.id
+                      ? "bg-black border-black text-white"
+                      : "border-gray-300 text-gray-400"
+                  }`}
+                >
+                  <step.icon className="w-5 h-5" />
+                </div>
+                <span
+                  className={`mx-3 text-sm font-medium ${
+                    currentStep >= step.id ? "text-black" : "text-gray-400"
+                  } whitespace-nowrap`}
+                >
+                  {t(step.titleKey)}
+                </span>
               </div>
-              <span
-                className={`mx-3 text-sm font-medium ${
-                  currentStep >= step.id ? "text-black" : "text-gray-400"
-                } whitespace-nowrap`}
-              >
-                {t(step.titleKey)}
-              </span>
+              {index < steps.length - 1 && (
+                <div
+                  className={`w-16 h-0.5 mx-3 flex-shrink-0 ${
+                    currentStep > step.id ? "bg-black" : "bg-gray-300"
+                  }`}
+                />
+              )}
             </div>
-            {index < steps.length - 1 && (
-              <div
-                className={`flex-1 h-0.5 mx-3 ${
-                  currentStep > step.id ? "bg-black" : "bg-gray-300"
-                }`}
-              />
-            )}
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
