@@ -9,5 +9,9 @@
   "category": "Category",
   "currency": "SAR",
   "rating": "Rating",
-  "reviews": "Reviews"
+  "reviews": "Reviews",
+  "featuredProducts": "Our Featured Products",
+  "featuredDescription": "Discover a wide range of high-quality spare parts and accessories for your car",
+  "loadMore": "Load More Products",
+  "currencySymbol": "SAR"
 }
