@@ -14,68 +14,68 @@ const phonePattern = /^[0-9+\-\s()]+$/;
 
 // Document image validation schema
 const documentImageSchema = z
-  .instanceof(File, { message: "صورة السجل التجاري مطلوبة" })
+  .instanceof(File, { message: "validation.documentImage.required" })
   .refine(
     (file) => file.size <= MAX_FILE_SIZE,
-    "حجم الملف يجب أن يكون أقل من 5 ميجابايت"
+    "validation.documentImage.fileSize"
   )
   .refine(
     (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
-    "نوع الملف يجب أن يكون JPG, PNG، أو GIF"
+    "validation.documentImage.fileType"
   );
 
 // Location schema for Google Maps data
 const locationSchema = z.object({
-  address: z.string().min(1, "العنوان مطلوب"),
-  city: z.string().min(1, "المدينة مطلوبة"),
-  region: z.string().min(1, "المنطقة مطلوبة"),
-  country: z.string().min(1, "البلد مطلوب"),
+  address: z.string().min(1, "validation.location.address"),
+  city: z.string().min(1, "validation.location.city"),
+  region: z.string().min(1, "validation.location.region"),
+  country: z.string().min(1, "validation.location.country"),
   postalCode: z.string().optional(),
-  lat: z.number().min(-90).max(90, "خط العرض غير صحيح"),
-  lng: z.number().min(-180).max(180, "خط الطول غير صحيح"),
+  lat: z.number().min(-90).max(90, "validation.location.lat"),
+  lng: z.number().min(-180).max(180, "validation.location.lng"),
   placeId: z.string().optional(),
-  formattedAddress: z.string().min(1, "العنوان المنسق مطلوب"),
+  formattedAddress: z.string().min(1, "validation.location.formattedAddress"),
 });
 
 // Login schema (phone number only) 
 export const loginSchema = z.object({
   phoneNumber: z
     .string()
-    .min(1, "رقم الجوال مطلوب")
-    .regex(phonePattern, "يرجى إدخال رقم هاتف صحيح"),
+    .min(1, "validation.phone.required")
+    .regex(phonePattern, "validation.phone.invalid"),
 });
 
 // Registration schema
 export const registrationSchema = z.object({
   userType: z.enum(["workshop", "store"], {
-    message: "يرجى اختيار نوع المستخدم",
+    message: "validation.userType.required",
   }),
 
   shopName: z
     .string()
-    .min(1, "اسم المحل أو الورشة مطلوب")
-    .min(2, "اسم المحل أو الورشة يجب أن يكون على الأقل حرفين")
-    .max(100, "اسم المحل أو الورشة طويل جداً"),
+    .min(1, "validation.shopName.required")
+    .min(2, "validation.shopName.minLength")
+    .max(100, "validation.shopName.maxLength"),
   managerName: z
     .string()
-    .min(1, "اسم المدير المسؤول مطلوب")
-    .min(2, "اسم المدير المسؤول يجب أن يكون على الأقل حرفين")
-    .max(100, "اسم المدير المسؤول طويل جداً"),
+    .min(1, "validation.managerName.required")
+    .min(2, "validation.managerName.minLength")
+    .max(100, "validation.managerName.maxLength"),
   email: z
     .string()
-    .email("يرجى إدخال بريد إلكتروني صحيح")
+    .email("validation.email.invalid")
     .optional()
     .or(z.literal("")),
   taxCardNumber: z
     .string()
-    .min(1, "رقم البطاقة الضريبية مطلوب")
-    .regex(/^[0-9]+$/, "رقم البطاقة الضريبية يجب أن يحتوي على أرقام فقط")
-    .min(6, "رقم البطاقة الضريبية يجب أن يكون على الأقل 6 أرقام")
-    .max(20, "رقم البطاقة الضريبية طويل جداً"),
+    .min(1, "validation.taxCardNumber.required")
+    .regex(/^[0-9]+$/, "validation.taxCardNumber.invalid")
+    .min(6, "validation.taxCardNumber.minLength")
+    .max(20, "validation.taxCardNumber.maxLength"),
   phoneNumber: z
     .string()
-    .min(1, "رقم الجوال مطلوب")
-    .regex(phonePattern, "يرجى إدخال رقم هاتف صحيح"),
+    .min(1, "validation.phone.required")
+    .regex(phonePattern, "validation.phone.invalid"),
   // Google Maps location data
   location: locationSchema,
   documentImage: documentImageSchema,
@@ -85,9 +85,9 @@ export const registrationSchema = z.object({
 export const otpSchema = z.object({
   otp: z
     .string()
-    .min(6, "يجب إدخال 6 أرقام")
-    .max(6, "يجب إدخال 6 أرقام")
-    .regex(/^[0-9]{6}$/, "يجب إدخال 6 أرقام فقط"),
+    .min(6, "validation.otp.length")
+    .max(6, "validation.otp.length")
+    .regex(/^[0-9]{6}$/, "validation.otp.invalid"),
 });
 
 // Type exports
@@ -135,11 +135,11 @@ export const validateImageFile = (
   file: File
 ): { isValid: boolean; error?: string } => {
   if (file.size > MAX_FILE_SIZE) {
-    return { isValid: false, error: "حجم الملف يجب أن يكون أقل من 5 ميجابايت" };
+    return { isValid: false, error: "validation.documentImage.fileSize" };
   }
 
   if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
-    return { isValid: false, error: "نوع الملف يجب أن يكون JPG, PNG، أو GIF" };
+    return { isValid: false, error: "validation.documentImage.fileType" };
   }
 
   return { isValid: true };

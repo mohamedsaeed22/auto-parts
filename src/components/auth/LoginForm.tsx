@@ -11,6 +11,7 @@ import {
   type LoginFormData,
   loginDefaultValues,
 } from "@/lib/validations/authSchema";
+import { useFormErrorTranslation } from "@/hooks/useFormErrorTranslation";
 
 interface LoginFormProps {
   onSubmit: (data: LoginFormData) => Promise<void>;
@@ -23,6 +24,8 @@ export default function LoginForm({
   onSwitchToRegister,
   isLoading,
 }: LoginFormProps) {
+  const { translateError } = useFormErrorTranslation();
+
   const {
     register,
     handleSubmit,
@@ -40,7 +43,7 @@ export default function LoginForm({
           placeholder="+966 50 123 4567"
           type="tel"
           register={register("phoneNumber")}
-          error={errors.phoneNumber?.message}
+          error={translateError(errors.phoneNumber)}
           icon={Phone}
           iconPosition="left"
           dir="ltr"

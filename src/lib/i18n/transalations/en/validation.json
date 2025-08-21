@@ -1,0 +1,48 @@
+{
+  "required": "This field is required",
+  "phone": {
+    "required": "Phone number is required",
+    "invalid": "Please enter a valid phone number"
+  },
+  "email": {
+    "invalid": "Please enter a valid email address"
+  },
+  "userType": {
+    "required": "Please select user type"
+  },
+  "shopName": {
+    "required": "Shop or workshop name is required",
+    "minLength": "Shop or workshop name must be at least 2 characters",
+    "maxLength": "Shop or workshop name is too long"
+  },
+  "managerName": {
+    "required": "Manager name is required",
+    "minLength": "Manager name must be at least 2 characters",
+    "maxLength": "Manager name is too long"
+  },
+  "taxCardNumber": {
+    "required": "Tax card number is required",
+    "invalid": "Tax card number must contain only numbers",
+    "minLength": "Tax card number must be at least 6 digits",
+    "maxLength": "Tax card number is too long"
+  },
+  "location": {
+    "address": "Address is required",
+    "city": "City is required",
+    "region": "Region is required",
+    "country": "Country is required",
+    "lat": "Invalid latitude",
+    "lng": "Invalid longitude",
+    "formattedAddress": "Formatted address is required"
+  },
+  "documentImage": {
+    "required": "Commercial registry image is required",
+    "fileSize": "File size must be less than 5MB",
+    "fileType": "File type must be JPG, PNG, or GIF"
+  },
+  "otp": {
+    "required": "Please enter 6 digits",
+    "length": "Please enter exactly 6 digits",
+    "invalid": "Please enter 6 digits only"
+  }
+}
