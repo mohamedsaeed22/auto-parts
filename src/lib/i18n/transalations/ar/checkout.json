@@ -1,0 +1,92 @@
+{
+  "progress": {
+    "cartReview": "مراجعة السلة",
+    "cartReviewDesc": "تأكيد المنتجات والكميات",
+    "shippingInfo": "معلومات الشحن",
+    "shippingInfoDesc": "عنوان التوصيل",
+    "paymentMethod": "طريقة الدفع",
+    "paymentMethodDesc": "اختيار طريقة الدفع",
+    "orderReview": "مراجعة الطلب",
+    "orderReviewDesc": "التأكيد النهائي"
+  },
+  "shipping": {
+    "title": "معلومات الشحن",
+    "description": "اختر عنوان التوصيل أو أضف عنواناً جديداً",
+    "selectAddress": "اختر عنوان التوصيل أو أضف عنواناً جديداً",
+    "edit": "تعديل",
+    "default": "افتراضي",
+    "addNewAddress": "إضافة عنوان جديد",
+    "freeDelivery": "توصيل مجاني خلال يومين",
+    "orderWithin": "اطلب خلال 5 ساعات و 23 دقيقة للحصول على التوصيل في موعدك المحدد",
+    "back": "رجوع",
+    "paymentMethod": "طريقة الدفع"
+  },
+  "payment": {
+    "title": "طريقة الدفع",
+    "description": "اختر الطريقة المناسبة للدفع",
+    "creditCard": "بطاقة ائتمان أو خصم",
+    "creditCardDesc": "Visa, MasterCard, American Express",
+    "cashOnDelivery": "الدفع عند الاستلام",
+    "cashOnDeliveryDesc": "ادفع نقداً عند وصول الطلب",
+    "cardNumber": "رقم البطاقة",
+    "expiryDate": "تاريخ الانتهاء",
+    "cvv": "CVV",
+    "cardholderName": "اسم حامل البطاقة",
+    "cardholderPlaceholder": "كما هو مكتوب على البطاقة",
+    "back": "رجوع",
+    "orderReview": "مراجعة الطلب"
+  },
+  "orderSummary": {
+    "title": "ملخص الطلب",
+    "freeDelivery": "توصيل مجاني خلال يومين",
+    "orderWithin": "اطلب خلال 5 ساعات و 23 دقيقة",
+    "couponPlaceholder": "أدخل كوبون الخصم",
+    "apply": "تطبيق",
+    "applying": "جاري...",
+    "discountApplied": "تم تطبيق الخصم",
+    "subtotal": "المجموع الفرعي",
+    "shipping": "الشحن",
+    "free": "مجاناً",
+    "tax": "الضريبة المضافة",
+    "discount": "الخصم",
+    "total": "المجموع الكلي",
+    "confirmOrder": "تأكيد الطلب",
+    "processing": "جاري معالجة الطلب...",
+    "securePayment": "دفع آمن ومشفر 256-bit SSL",
+    "returnPolicy": "إمكانية الإرجاع خلال 30 يوماً",
+    "customerSupport": "دعم عملاء على مدار الساعة"
+  },
+  "orderReview": {
+    "title": "مراجعة الطلب النهائية",
+    "description": "تأكد من جميع التفاصيل قبل التأكيد",
+    "products": "المنتجات",
+    "quantity": "الكمية",
+    "shippingAddress": "عنوان التوصيل",
+    "paymentMethod": "طريقة الدفع",
+    "creditCard": "بطاقة ائتمان/خصم",
+    "cashOnDelivery": "الدفع عند الاستلام",
+    "back": "رجوع",
+    "confirmOrder": "تأكيد الطلب",
+    "processing": "جاري معالجة الطلب..."
+  },
+  "cartReview": {
+    "title": "مراجعة سلة التسوق",
+    "items": "من السلع",
+    "inStock": "في المخزون",
+    "piece": "قطعة",
+    "continueToShipping": "المتابعة إلى معلومات الشحن"
+  },
+  "emptyCart": {
+    "title": "عربة التسوق فارغة",
+    "description": "لا توجد منتجات في عربة التسوق",
+    "backToShopping": "العودة للتسوق"
+  },
+  "orderComplete": {
+    "title": "تم الطلب بنجاح!",
+    "orderNumber": "رقم الطلب: #12345",
+    "deliveryTime": "سيتم توصيل طلبك خلال 2-3 أيام عمل",
+    "backToShopping": "العودة للتسوق",
+    "trackOrder": "تتبع الطلب"
+  },
+  "currency": "ريال"
+}

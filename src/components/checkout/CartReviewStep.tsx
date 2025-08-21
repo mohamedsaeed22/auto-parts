@@ -1,12 +1,20 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { ShoppingBag, ArrowLeft, Plus, Minus, Trash } from "lucide-react";
+import {
+  ShoppingBag,
+  ArrowLeft,
+  ArrowRight,
+  Plus,
+  Minus,
+  Trash,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useTranslation } from "react-i18next";
 
 interface CartReviewStepProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  items: any[]; 
+  items: any[];
   totalItems: number;
   onNext: () => void;
   onUpdateQuantity: (id: string, quantity: number) => void;
@@ -20,13 +28,20 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({
   onUpdateQuantity,
   onRemoveItem,
 }) => {
+  const { t, i18n } = useTranslation("checkout");
+  const isRTL = i18n.language === "ar";
+
   return (
-    <div>
+    <div dir={isRTL ? "rtl" : "ltr"}>
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-            <ShoppingBag className="w-6 h-6 ml-3" />
-            مراجعة سلة التسوق ({totalItems} من السلع)
+          <h2
+            className={`text-2xl font-bold text-gray-900 flex items-center ${
+              isRTL ? "flex-row-reverse" : ""
+            }`}
+          >
+            <ShoppingBag className={`w-6 h-6 ${isRTL ? "ml-3" : "mr-3"}`} />
+            {t("cartReview.title")} ({totalItems} {t("cartReview.items")})
           </h2>
         </div>
       </div>
@@ -40,7 +55,11 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({
             transition={{ delay: index * 0.1 }}
             className="p-6"
           >
-            <div className="flex items-start space-x-4 space-x-reverse">
+            <div
+              className={`flex items-start ${
+                isRTL ? "space-x-reverse space-x-4" : "space-x-4"
+              }`}
+            >
               <div className="relative w-24 h-24 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0">
                 <Image
                   src={item.image}
@@ -51,17 +70,33 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({
               </div>
 
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-gray-900 mb-1 text-lg">
+                <h3
+                  className={`font-semibold text-gray-900 mb-1 text-lg ${
+                    isRTL ? "text-right" : "text-left"
+                  }`}
+                >
                   {item.title}
                 </h3>
-                <div className="flex items-center space-x-4 space-x-reverse mb-3">
+                <div
+                  className={`flex items-center mb-3 ${
+                    isRTL ? "space-x-reverse space-x-4" : "space-x-4"
+                  }`}
+                >
                   <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">
-                    في المخزون
+                    {t("cartReview.inStock")}
                   </span>
                 </div>
 
-                <div className="flex items-center space-x-4 space-x-reverse">
-                  <div className="flex items-center bg-white border-2 border-gray-400 rounded-lg overflow-hidden">
+                <div
+                  className={`flex items-center ${
+                    isRTL ? "space-x-reverse space-x-4" : "space-x-4"
+                  }`}
+                >
+                  <div
+                    className={`flex items-center bg-white border-2 border-gray-400 rounded-lg overflow-hidden ${
+                      isRTL ? "flex-row-reverse" : ""
+                    }`}
+                  >
                     <button
                       onClick={() => {
                         if (item.quantity === 1) {
@@ -73,7 +108,11 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({
                           );
                         }
                       }}
-                      className="h-8 w-8 p-0 hover:bg-gray-100 text-gray-700 rounded-none border-r border-gray-300 flex items-center justify-center"
+                      className={`h-8 w-8 p-0 hover:bg-gray-100 text-gray-700 rounded-none flex items-center justify-center ${
+                        isRTL
+                          ? "border-l border-gray-300"
+                          : "border-r border-gray-300"
+                      }`}
                     >
                       {item.quantity === 1 ? (
                         <Trash size={16} />
@@ -92,7 +131,11 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({
                       onClick={() =>
                         onUpdateQuantity(item.id, item.quantity + 1)
                       }
-                      className="h-8 w-8 p-0 hover:bg-gray-100 text-gray-700 rounded-none border-l border-gray-300 flex items-center justify-center"
+                      className={`h-8 w-8 p-0 hover:bg-gray-100 text-gray-700 rounded-none flex items-center justify-center ${
+                        isRTL
+                          ? "border-r border-gray-300"
+                          : "border-l border-gray-300"
+                      }`}
                     >
                       <Plus size={14} />
                     </button>
@@ -100,13 +143,18 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({
                 </div>
               </div>
 
-              <div className="text-right flex-shrink-0">
+              <div
+                className={`flex-shrink-0 ${
+                  isRTL ? "text-left" : "text-right"
+                }`}
+              >
                 <p className="text-2xl font-bold text-gray-900 mb-1">
-                  {(item.price * item.quantity).toFixed(2)} ريال
+                  {(item.price * item.quantity).toFixed(2)} {t("currency")}
                 </p>
                 {item.quantity > 1 && (
                   <p className="text-sm text-gray-600">
-                    {item.price.toFixed(2)} ريال / قطعة
+                    {item.price.toFixed(2)} {t("currency")} /{" "}
+                    {t("cartReview.piece")}
                   </p>
                 )}
               </div>
@@ -118,10 +166,21 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({
       <div className="p-6 border-t border-gray-200">
         <Button
           onClick={onNext}
-          className="flex-1 bg-black hover:bg-gray-800 text-white py-3 rounded-lg font-medium w-full"
+          className={`flex-1 bg-black hover:bg-gray-800 text-white py-3 rounded-lg font-medium w-full flex items-center justify-center ${
+            isRTL ? "flex-row-reverse" : ""
+          }`}
         >
-          المتابعة إلى معلومات الشحن
-          <ArrowLeft className="w-5 h-5 mr-2" />
+          {isRTL ? (
+            <>
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              {t("cartReview.continueToShipping")}
+            </>
+          ) : (
+            <>
+              {t("cartReview.continueToShipping")}
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </>
+          )}
         </Button>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import React from "react";
-import { Truck, ArrowLeft, Plus, Clock } from "lucide-react";
+import { Truck, ArrowLeft, ArrowRight, Plus, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface Address {
   id: number;
@@ -27,16 +28,17 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
   onNext,
   onBack,
 }) => {
+  const { t, i18n } = useTranslation("checkout");
+  const isRTL = i18n.language === "ar";
+
   return (
-    <div>
+    <div dir={isRTL ? "rtl" : "ltr"}>
       <div className="p-6 border-b border-gray-200">
         <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-          <Truck className="w-6 h-6 ml-3" />
-          معلومات الشحن
+          <Truck className="w-6 h-6 mx-3" />
+          {t("shipping.title")}
         </h2>
-        <p className="text-gray-600 mt-1">
-          اختر عنوان التوصيل أو أضف عنواناً جديداً
-        </p>
+        <p className="text-gray-600 mt-1">{t("shipping.description")}</p>
       </div>
 
       <div className="p-6">
@@ -53,23 +55,25 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <div className="flex items-center space-x-2 space-x-reverse mb-2">
+                  <div className="flex items-center mb-2 space-x-2">
                     <span className="font-semibold text-gray-900">
                       {address.label}
                     </span>
                     {address.isDefault && (
                       <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">
-                        افتراضي
+                        {t("shipping.default")}
                       </span>
                     )}
                   </div>
                   <p className="text-gray-900 font-medium">{address.name}</p>
                   <p className="text-gray-600">{address.address}</p>
                   <p className="text-gray-600">{address.city}</p>
-                  <p className="text-gray-600">{address.phone}</p>
+                  <p className="text-gray-600" dir="ltr">
+                    {address.phone}
+                  </p>
                 </div>
                 <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                  تعديل
+                  {t("shipping.edit")}
                 </button>
               </div>
             </div>
@@ -78,32 +82,45 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
 
         <Button
           variant="outline"
-          className="w-full mb-6 border-2 border-dashed border-gray-300 py-4 text-gray-600 hover:border-gray-400"
+          className="w-full mb-6 border-2 border-dashed border-gray-300 py-4 text-gray-600 hover:border-gray-400 flex items-center"
         >
-          <Plus className="w-4 h-4 ml-2" />
-          إضافة عنوان جديد
+          <Plus className="w-4 h-4 mx-2" />
+          {t("shipping.addNewAddress")}
         </Button>
 
-        <div className="bg-green-50 rounded-xl p-4 mb-6">
-          <div className="flex items-center text-green-800 mb-2">
-            <Clock className="w-5 h-5 ml-2" />
-            <span className="font-medium">توصيل مجاني خلال يومين</span>
-          </div>
-          <p className="text-sm text-green-700">
-            اطلب خلال 5 ساعات و 23 دقيقة للحصول على التوصيل في موعدك المحدد
-          </p>
-        </div>
-
         <div className="flex gap-2">
-          <Button variant="outline" onClick={onBack} className="flex-1 py-3">
-            رجوع
+          <Button
+            variant="outline"
+            onClick={onBack}
+            className="flex-1 py-3 flex items-center"
+          >
+            {isRTL ? (
+              <>
+                {t("shipping.back")}
+                <ArrowRight className="w-4 h-4 mx-2" />
+              </>
+            ) : (
+              <>
+                <ArrowLeft className="w-4 h-4 mx-2" />
+                {t("shipping.back")}
+              </>
+            )}
           </Button>
           <Button
             onClick={onNext}
-            className="flex-1 bg-black hover:bg-gray-800 text-white py-3"
+            className="flex-1 bg-black hover:bg-gray-800 text-white py-3 flex items-center justify-center"
           >
-            طريقة الدفع
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            {isRTL ? (
+              <>
+                <ArrowLeft className="w-4 h-4 mx-2" />
+                {t("shipping.paymentMethod")}
+              </>
+            ) : (
+              <>
+                {t("shipping.paymentMethod")}
+                <ArrowRight className="w-4 h-4 mx-2" />
+              </>
+            )}
           </Button>
         </div>
       </div>

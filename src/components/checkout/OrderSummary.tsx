@@ -8,6 +8,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface OrderSummaryProps {
   currentStep: number;
@@ -36,22 +37,33 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   onRemoveCoupon,
   onPlaceOrder,
 }) => {
+  const { t, i18n } = useTranslation("checkout");
+  const isRTL = i18n.language === "ar";
   const finalTotal = total * 1.15 - couponDiscount;
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200">
+    <div
+      className="bg-white rounded-2xl shadow-sm border border-gray-200"
+      dir={isRTL ? "rtl" : "ltr"}
+    >
       <div className="p-6 border-b border-gray-200">
-        <h3 className="text-xl font-bold text-gray-900">ملخص الطلب</h3>
+        <h3 className="text-xl font-bold text-gray-900">
+          {t("orderSummary.title")}
+        </h3>
       </div>
 
       <div className="p-6">
         {/* Delivery Info */}
         <div className="bg-green-50 rounded-xl p-4 mb-6">
           <div className="flex items-center text-green-800 mb-2">
-            <Clock className="w-4 h-4 ml-2" />
-            <span className="font-medium text-sm">توصيل مجاني خلال يومين</span>
+            <Clock className="w-4 h-4 mx-2" />
+            <span className="font-medium text-sm">
+              {t("orderSummary.freeDelivery")}
+            </span>
           </div>
-          <p className="text-xs text-green-700">اطلب خلال 5 ساعات و 23 دقيقة</p>
+          <p className="text-xs text-green-700">
+            {t("orderSummary.orderWithin")}
+          </p>
         </div>
 
         {/* Coupon Section - Only show in first 3 steps */}
@@ -60,11 +72,12 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             <div className="flex gap-2 items-center">
               <input
                 type="text"
-                placeholder="أدخل كوبون الخصم"
+                placeholder={t("orderSummary.couponPlaceholder")}
                 value={couponCode}
                 onChange={(e) => onCouponCodeChange(e.target.value)}
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 disabled={couponDiscount > 0}
+                dir={isRTL ? "rtl" : "ltr"}
               />
               {couponDiscount > 0 ? (
                 <Button
@@ -82,7 +95,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                   size="sm"
                   className="px-3 py-2 text-xs bg-black hover:bg-gray-800 text-white"
                 >
-                  {isApplyingCoupon ? "جاري..." : "تطبيق"}
+                  {isApplyingCoupon
+                    ? t("orderSummary.applying")
+                    : t("orderSummary.apply")}
                 </Button>
               )}
             </div>
@@ -92,9 +107,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             {couponDiscount > 0 && (
               <div className="mt-2 p-3 bg-green-50 rounded-lg">
                 <div className="flex items-center justify-between text-sm text-green-800">
-                  <span>تم تطبيق الخصم</span>
+                  <span>{t("orderSummary.discountApplied")}</span>
                   <span className="font-medium">
-                    -{couponDiscount.toFixed(2)} ريال
+                    -{couponDiscount.toFixed(2)} {t("currency")}
                   </span>
                 </div>
               </div>
@@ -105,24 +120,28 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         {/* Price Breakdown */}
         <div className="space-y-3 text-sm">
           <div className="flex justify-between">
-            <span className="text-gray-600">المجموع الفرعي</span>
-            <span className="font-medium">{total.toFixed(2)} ريال</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-600">الشحن</span>
-            <span className="font-medium text-green-600">مجاناً</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-600">الضريبة المضافة</span>
+            <span className="text-gray-600">{t("orderSummary.subtotal")}</span>
             <span className="font-medium">
-              {(total * 0.15).toFixed(2)} ريال
+              {total.toFixed(2)} {t("currency")}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-600">{t("orderSummary.shipping")}</span>
+            <span className="font-medium text-green-600">
+              {t("orderSummary.free")}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-600">{t("orderSummary.tax")}</span>
+            <span className="font-medium">
+              {(total * 0.15).toFixed(2)} {t("currency")}
             </span>
           </div>
           {couponDiscount > 0 && (
             <div className="flex justify-between text-green-600">
-              <span>الخصم</span>
+              <span>{t("orderSummary.discount")}</span>
               <span className="font-medium">
-                -{couponDiscount.toFixed(2)} ريال
+                -{couponDiscount.toFixed(2)} {t("currency")}
               </span>
             </div>
           )}
@@ -130,9 +149,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
         <div className="border-t border-gray-200 mt-4 pt-4">
           <div className="flex justify-between text-xl font-bold">
-            <span>المجموع الكلي</span>
+            <span>{t("orderSummary.total")}</span>
             <span className="text-orange-600">
-              {finalTotal.toFixed(2)} ريال
+              {finalTotal.toFixed(2)} {t("currency")}
             </span>
           </div>
         </div>
@@ -145,13 +164,13 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           >
             {isProcessing ? (
               <div className="flex items-center justify-center">
-                <Loader2 className="w-5 h-5 animate-spin ml-2" />
-                جاري معالجة الطلب...
+                <Loader2 className="w-5 h-5 animate-spin mx-2" />
+                {t("orderSummary.processing")}
               </div>
             ) : (
               <>
-                تأكيد الطلب
-                <CheckCircle className="w-5 h-5 mr-2" />
+                {t("orderSummary.confirmOrder")}
+                <CheckCircle className="w-5 h-5 mx-2" />
               </>
             )}
           </Button>
@@ -160,16 +179,16 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         {/* Security Features */}
         <div className="mt-6 space-y-3">
           <div className="flex items-center text-sm text-gray-600">
-            <Shield className="w-4 h-4 text-green-600 ml-2" />
-            <span>دفع آمن ومشفر 256-bit SSL</span>
+            <Shield className="w-4 h-4 text-green-600 mx-2" />
+            <span>{t("orderSummary.securePayment")}</span>
           </div>
           <div className="flex items-center text-sm text-gray-600">
-            <RefreshCw className="w-4 h-4 text-blue-600 ml-2" />
-            <span>إمكانية الإرجاع خلال 30 يوماً</span>
+            <RefreshCw className="w-4 h-4 text-blue-600 mx-2" />
+            <span>{t("orderSummary.returnPolicy")}</span>
           </div>
           <div className="flex items-center text-sm text-gray-600">
-            <Clock className="w-4 h-4 text-purple-600 ml-2" />
-            <span>دعم عملاء على مدار الساعة</span>
+            <Clock className="w-4 h-4 text-purple-600 mx-2" />
+            <span>{t("orderSummary.customerSupport")}</span>
           </div>
         </div>
       </div>

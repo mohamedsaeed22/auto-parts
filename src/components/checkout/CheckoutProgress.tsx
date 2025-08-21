@@ -1,11 +1,12 @@
 import React from "react";
 import { ShoppingBag, Truck, CreditCard, CheckCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface Step {
   id: number;
-  title: string;
+  titleKey: string;
   icon: React.ComponentType<{ className?: string }>;
-  desc: string;
+  descKey: string;
 }
 
 interface CheckoutProgressProps {
@@ -13,52 +14,65 @@ interface CheckoutProgressProps {
 }
 
 const CheckoutProgress: React.FC<CheckoutProgressProps> = ({ currentStep }) => {
+  const { t, i18n } = useTranslation("checkout");
+  const isRTL = i18n.language === "ar";
+
   const steps: Step[] = [
     {
       id: 1,
-      title: "مراجعة السلة",
+      titleKey: "progress.cartReview",
       icon: ShoppingBag,
-      desc: "تأكيد المنتجات والكميات",
+      descKey: "progress.cartReviewDesc",
     },
-    { id: 2, title: "معلومات الشحن", icon: Truck, desc: "عنوان التوصيل" },
+    {
+      id: 2,
+      titleKey: "progress.shippingInfo",
+      icon: Truck,
+      descKey: "progress.shippingInfoDesc",
+    },
     {
       id: 3,
-      title: "طريقة الدفع",
+      titleKey: "progress.paymentMethod",
       icon: CreditCard,
-      desc: "اختيار طريقة الدفع",
+      descKey: "progress.paymentMethodDesc",
     },
     {
       id: 4,
-      title: "مراجعة الطلب",
+      titleKey: "progress.orderReview",
       icon: CheckCircle,
-      desc: "التأكيد النهائي",
+      descKey: "progress.orderReviewDesc",
     },
   ];
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
-      <div className="flex items-center">
+    <div
+      className="bg-white rounded-2xl shadow-sm p-6 mb-8"
+      dir={isRTL ? "rtl" : "ltr"}
+    >
+      <div className="flex items-center justify-between">
         {steps.map((step, index) => (
           <div key={step.id} className="flex items-center flex-1">
-            <div
-              className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
-                currentStep >= step.id
-                  ? "bg-black border-black text-white"
-                  : "border-gray-300 text-gray-400"
-              }`}
-            >
-              <step.icon className="w-5 h-5" />
+            <div className="flex items-center">
+              <div
+                className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
+                  currentStep >= step.id
+                    ? "bg-black border-black text-white"
+                    : "border-gray-300 text-gray-400"
+                }`}
+              >
+                <step.icon className="w-5 h-5" />
+              </div>
+              <span
+                className={`mx-3 text-sm font-medium ${
+                  currentStep >= step.id ? "text-black" : "text-gray-400"
+                } whitespace-nowrap`}
+              >
+                {t(step.titleKey)}
+              </span>
             </div>
-            <span
-              className={`mr-3 text-sm font-medium ${
-                currentStep >= step.id ? "text-black" : "text-gray-400"
-              }`}
-            >
-              {step.title}
-            </span>
             {index < steps.length - 1 && (
               <div
-                className={`flex-1 h-0.5 mx-6 ${
+                className={`flex-1 h-0.5 mx-3 ${
                   currentStep > step.id ? "bg-black" : "bg-gray-300"
                 }`}
               />
