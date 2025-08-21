@@ -62,32 +62,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             />
           </div>
           <div className="p-3 flex flex-col flex-1">
-            <h3
-              className={`text-base font-semibold text-gray-900 line-clamp-2 min-h-[3rem] ${
-                isRTL ? "text-right" : "text-left"
-              }`}
-            >
+            <h3 className="text-base font-semibold text-gray-900 line-clamp-2 min-h-[3rem]">
               {isRTL ? product.title.ar : product.title.en}
             </h3>
 
-            <p
-              className={`text-xs text-gray-600 mb-2 capitalize bg-gray-100 rounded-full px-2 py-1 w-fit ${
-                isRTL ? "text-right" : "text-left"
-              }`}
-            >
+            <p className="text-xs text-gray-600 mb-2 capitalize bg-gray-100 rounded-full px-2 py-1 w-fit">
               {isRTL ? product.category.ar : product.category.en}
             </p>
 
-            <div
-              className={`flex items-center justify-between mt-auto ${
-                isRTL ? "flex-row-reverse" : ""
-              }`}
-            >
-              <span
-                className={`text-lg font-bold text-gray-900 ${
-                  isRTL ? "text-right" : "text-left"
-                }`}
-              >
+            <div className="flex items-center justify-between mt-auto">
+              <span className="text-lg font-bold text-gray-900">
                 {product.price} {t("currencySymbol")}
               </span>
 
@@ -100,20 +84,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                   <ShoppingCart size={16} />
                 </Button>
               ) : (
-                <div
-                  className={`flex items-center bg-white border-2 border-gray-400 rounded-lg overflow-hidden ${
-                    isRTL ? "flex-row-reverse" : ""
-                  }`}
-                >
+                <div className="flex items-center bg-white border-2 border-gray-400 rounded-lg overflow-hidden">
                   <Button
                     onClick={handleDecreaseQuantity}
                     size="sm"
                     variant="ghost"
-                    className={`h-8 w-8 p-0 hover:bg-gray-100 text-gray-700 rounded-none ${
-                      isRTL
-                        ? "border-l border-gray-300"
-                        : "border-r border-gray-300"
-                    }`}
+                    className="h-8 w-8 p-0 hover:bg-gray-100 text-gray-700 rounded-none border-r border-gray-300"
                   >
                     {cartItem?.quantity === 1 ? (
                       <Trash size={16} />
@@ -132,11 +108,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                     onClick={handleIncreaseQuantity}
                     size="sm"
                     variant="ghost"
-                    className={`h-8 w-8 p-0 hover:bg-gray-100 text-gray-700 rounded-none ${
-                      isRTL
-                        ? "border-r border-gray-300"
-                        : "border-l border-gray-300"
-                    }`}
+                    className="h-8 w-8 p-0 hover:bg-gray-100 text-gray-700 rounded-none border-l border-gray-300"
                   >
                     <Plus size={14} />
                   </Button>

@@ -217,8 +217,17 @@ export default function ProductDetails() {
                 }`}
                 size="sm"
               >
-                <ShoppingCart size={16} />
-                <span>{t("addToCart")}</span>
+                {isRTL ? (
+                  <>
+                    <ShoppingCart size={16} />
+                    <span>{t("addToCart")}</span>
+                  </>
+                ) : (
+                  <>
+                    <span>{t("addToCart")}</span>
+                    <ShoppingCart size={16} />
+                  </>
+                )}
               </Button>
             ) : (
               // Quantity Selector with matching compact dimensions
