@@ -40,7 +40,7 @@ export default function LoginForm({
           placeholder="+966 50 123 4567"
           type="tel"
           register={register("phoneNumber")}
-          error={errors.phoneNumber}
+          error={errors.phoneNumber?.message}
           icon={Phone}
           iconPosition="left"
           dir="ltr"
