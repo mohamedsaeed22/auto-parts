@@ -45,9 +45,10 @@ export default function HeaderLanguageDropdown({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className={`absolute top-full ${
-                isRTL ? "right-0" : "left-0"
-              } mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-50`}
+              className="absolute top-full right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+              style={{
+                transform: "translateX(calc(-100% + 2.5rem))",
+              }}
             >
               <div className="py-1">
                 {languages.map((language) => (
@@ -91,9 +92,7 @@ export default function HeaderLanguageDropdown({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className={`absolute top-full ${
-              isRTL ? "left-0" : "right-0"
-            } mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50`}
+            className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
           >
             <div className="py-2">
               {languages.map((language) => (
