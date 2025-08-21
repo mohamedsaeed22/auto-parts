@@ -219,13 +219,13 @@ export default function ProductDetails() {
               >
                 {isRTL ? (
                   <>
-                    <ShoppingCart size={16} />
                     <span>{t("addToCart")}</span>
+                    <ShoppingCart size={16} />
                   </>
                 ) : (
                   <>
-                    <span>{t("addToCart")}</span>
                     <ShoppingCart size={16} />
+                    <span>{t("addToCart")}</span>
                   </>
                 )}
               </Button>
