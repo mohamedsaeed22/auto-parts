@@ -1,5 +1,5 @@
 import React from "react";
-import { Truck, ArrowLeft, ArrowRight, Plus, Clock } from "lucide-react";
+import { Truck, ArrowLeft, ArrowRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 

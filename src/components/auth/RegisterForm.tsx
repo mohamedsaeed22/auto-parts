@@ -132,6 +132,7 @@ export default function RegisterForm({
           <LocationPicker
             onLocationSelect={handleLocationSelect}
             initialLocation={registrationDefaultValues.location}
+            // @ts-expect-error - LocationPicker is not typed
             error={translateError(errors.location)}
           />
         </div>
