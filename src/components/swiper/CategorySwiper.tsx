@@ -10,9 +10,7 @@ import { useTranslation } from "react-i18next";
 
 interface CategoryProps {
   title: string;
-  // description: string;
   backgroundImage: string;
-  // categoryFilter: string;
 }
 
 const CategorySwiper: React.FC<CategoryProps> = ({
@@ -22,8 +20,6 @@ const CategorySwiper: React.FC<CategoryProps> = ({
   const { t, i18n } = useTranslation("product");
   const isRTL = i18n.language === "ar";
   const swiperRef = useRef<SwiperType | null>(null);
-
-  // Filter products by category
 
   return (
     <section
@@ -39,20 +35,9 @@ const CategorySwiper: React.FC<CategoryProps> = ({
           className="object-cover"
           priority
         />
-        {/* Overlay for better text readability */}
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        {/* Category Header */}
-        {/* <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            {title}
-          </h2>
-          <p className="text-xl text-gray-200 max-w-3xl mx-auto">
-            {description}
-          </p>
-        </div> */}
-
         {/* Products Swiper */}
         <div className="relative mt-60">
           {/* Custom previous button */}
@@ -61,6 +46,7 @@ const CategorySwiper: React.FC<CategoryProps> = ({
               isRTL ? "right-4" : "left-4"
             }`}
             onClick={() => swiperRef.current?.slidePrev()}
+            aria-label={t("category.previousSlide")}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -117,10 +103,11 @@ const CategorySwiper: React.FC<CategoryProps> = ({
             }}
             modules={[Autoplay, Pagination, Navigation]}
             className="category-swiper"
+            dir={isRTL ? "rtl" : "ltr"}
           >
             {products.map((product) => (
               <SwiperSlide key={product.id}>
-                <div className="  ">
+                <div>
                   <ProductCard product={product} />
                 </div>
               </SwiperSlide>
@@ -133,6 +120,7 @@ const CategorySwiper: React.FC<CategoryProps> = ({
               isRTL ? "left-4" : "right-4"
             }`}
             onClick={() => swiperRef.current?.slideNext()}
+            aria-label={t("category.nextSlide")}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -158,7 +146,7 @@ const CategorySwiper: React.FC<CategoryProps> = ({
         {/* View All Button */}
         <div className="text-center mt-8">
           <button className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors">
-            {isRTL ? `عرض جميع منتجات ${title}` : `View All ${title} Products`}
+            {t("category.viewAllProducts", { category: title })}
           </button>
         </div>
       </div>

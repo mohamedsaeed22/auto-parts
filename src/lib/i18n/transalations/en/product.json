@@ -13,5 +13,10 @@
   "featuredProducts": "Our Featured Products",
   "featuredDescription": "Discover a wide range of high-quality spare parts and accessories for your car",
   "loadMore": "Load More Products",
-  "currencySymbol": "SAR"
+  "currencySymbol": "SAR",
+  "category": {
+    "previousSlide": "Previous slide",
+    "nextSlide": "Next slide",
+    "viewAllProducts": "View All {{category}} Products"
+  }
 }

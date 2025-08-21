@@ -13,5 +13,10 @@
   "featuredProducts": "منتجاتنا المميزة",
   "featuredDescription": "اكتشف مجموعة واسعة من قطع الغيار والإكسسوارات عالية الجودة لسيارتك",
   "loadMore": "عرض المزيد من المنتجات",
-  "currencySymbol": "ريال"
+  "currencySymbol": "ريال",
+  "category": {
+    "previousSlide": "الشريحة السابقة",
+    "nextSlide": "الشريحة التالية",
+    "viewAllProducts": "عرض جميع منتجات {{category}}"
+  }
 }

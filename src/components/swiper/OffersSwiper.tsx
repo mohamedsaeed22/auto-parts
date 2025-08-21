@@ -4,65 +4,71 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 import Image from "next/image";
+import { useTranslation } from "react-i18next";
 
 const OffersSwiper = () => {
+  const { t, i18n } = useTranslation("home");
+  const isRTL = i18n.language === "ar";
   const swiperRef = useRef<SwiperType | null>(null);
+
   const slides = [
     {
       id: 1,
       src: "/offers/offer1.jpg",
-      alt: "Modern office building",
+      alt: t("offers.offer1.alt"),
     },
     {
       id: 2,
       src: "/offers/offer2.jpg",
-      alt: "Modern office building",
+      alt: t("offers.offer2.alt"),
     },
-
     {
       id: 3,
       src: "/offers/offer3.jpg",
-      alt: "Modern office building",
+      alt: t("offers.offer3.alt"),
     },
     {
       id: 4,
       src: "/offers/offer4.jpg",
-      alt: "Modern office building",
+      alt: t("offers.offer4.alt"),
     },
     {
       id: 5,
       src: "/offers/offer5.jpg",
-      alt: "Modern office building",
+      alt: t("offers.offer5.alt"),
     },
     {
       id: 6,
       src: "/offers/offer6.jpg",
-      alt: "Modern office building",
+      alt: t("offers.offer6.alt"),
     },
     {
       id: 7,
       src: "/offers/offer7.jpg",
-      alt: "Modern office building",
+      alt: t("offers.offer7.alt"),
     },
   ];
+
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-white" dir={isRTL ? "rtl" : "ltr"}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-            الباقات والعروض
+            {t("offers.title")}
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            اكتشف مجموعة متنوعة من الباقات والعروض المميزة على قطع الغيار
-            والإكسسوارات
+            {t("offers.description")}
           </p>
         </div>
 
         <div className="relative">
           {/* Custom previous button */}
           <button
-            className="cursor-pointer absolute left-4 top-1/2 z-10 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg hover:bg-gray-50 transition-colors"
+            className={`cursor-pointer absolute top-1/2 z-10 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg hover:bg-gray-50 transition-colors ${
+              isRTL ? "right-4" : "left-4"
+            }`}
             onClick={() => swiperRef.current?.slidePrev()}
+            aria-label={t("offers.previousSlide")}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -75,7 +81,11 @@ const OffersSwiper = () => {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M15.75 19.5L8.25 12l7.5-7.5"
+                d={
+                  isRTL
+                    ? "M8.25 4.5l7.5 7.5-7.5 7.5"
+                    : "M15.75 19.5L8.25 12l7.5-7.5"
+                }
               />
             </svg>
           </button>
@@ -84,25 +94,20 @@ const OffersSwiper = () => {
             onBeforeInit={(swiper) => {
               swiperRef.current = swiper;
             }}
-            // slidesPerView={2} // 3 small items on mobile
             breakpoints={{
               640: {
-                // sm
                 slidesPerView: 2,
                 spaceBetween: 15,
               },
               768: {
-                // md - bigger items
                 slidesPerView: 3,
                 spaceBetween: 20,
               },
               1024: {
-                // lg - even bigger
                 slidesPerView: 5,
                 spaceBetween: 24,
               },
             }}
-            // spaceBetween={8} // Very small spacing on mobile
             grabCursor={true}
             loop={true}
             pagination={{
@@ -110,6 +115,7 @@ const OffersSwiper = () => {
             }}
             modules={[Pagination, Navigation]}
             className="packages-swiper"
+            dir={isRTL ? "rtl" : "ltr"}
           >
             {slides.map((slide) => (
               <SwiperSlide key={slide.id}>
@@ -125,8 +131,11 @@ const OffersSwiper = () => {
 
           {/* Custom next button */}
           <button
-            className="cursor-pointer absolute right-4 top-1/2 z-10 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg hover:bg-gray-50 transition-colors"
+            className={`cursor-pointer absolute top-1/2 z-10 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg hover:bg-gray-50 transition-colors ${
+              isRTL ? "left-4" : "right-4"
+            }`}
             onClick={() => swiperRef.current?.slideNext()}
+            aria-label={t("offers.nextSlide")}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -139,7 +148,11 @@ const OffersSwiper = () => {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                d={
+                  isRTL
+                    ? "M15.75 19.5L8.25 12l7.5-7.5"
+                    : "M8.25 4.5l7.5 7.5-7.5 7.5"
+                }
               />
             </svg>
           </button>
