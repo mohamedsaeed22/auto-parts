@@ -2,6 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { FormInput } from "@/components/ui";
 import { Phone } from "lucide-react";
@@ -24,6 +25,7 @@ export default function LoginForm({
   onSwitchToRegister,
   isLoading,
 }: LoginFormProps) {
+  const { t } = useTranslation("auth");
   const { translateError } = useFormErrorTranslation();
 
   const {
@@ -39,15 +41,14 @@ export default function LoginForm({
     <div className="space-y-6">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <FormInput
-          label="رقم الجوال"
-          placeholder="+966 50 123 4567"
+          label={t("login.phoneLabel")}
+          placeholder={t("login.phonePlaceholder")}
           type="tel"
           register={register("phoneNumber")}
           error={translateError(errors.phoneNumber)}
           icon={Phone}
           iconPosition="left"
           dir="ltr"
-          // textAlign="right"
           required
         />
 
@@ -56,19 +57,21 @@ export default function LoginForm({
           className="w-full py-3 text-white font-medium rounded-lg"
           disabled={isSubmitting || isLoading}
         >
-          {isSubmitting || isLoading ? "جاري الإرسال..." : "إرسال رمز التحقق"}
+          {isSubmitting || isLoading
+            ? t("login.submitButtonLoading")
+            : t("login.submitButton")}
         </Button>
       </form>
 
       <div className="text-center">
         <p className="text-sm text-gray-600">
-          ليس لديك حساب؟{" "}
+          {t("login.noAccount")}{" "}
           <button
             type="button"
             onClick={onSwitchToRegister}
             className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
           >
-            إنشاء حساب
+            {t("login.createAccount")}
           </button>
         </p>
       </div>
@@ -79,7 +82,9 @@ export default function LoginForm({
           <div className="w-full border-t border-gray-300" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500">أو</span>
+          <span className="px-2 bg-white text-gray-500">
+            {t("login.orSeparator")}
+          </span>
         </div>
       </div>
 
@@ -95,7 +100,7 @@ export default function LoginForm({
           width={20}
           height={20}
         />
-        تسجيل الدخول باستخدام جوجل
+        {t("login.googleLogin")}
       </button>
     </div>
   );

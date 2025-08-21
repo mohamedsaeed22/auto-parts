@@ -2,6 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import {
@@ -9,6 +10,7 @@ import {
   type OtpFormData,
   otpDefaultValues,
 } from "@/lib/validations/authSchema";
+import { useFormErrorTranslation } from "@/hooks/useFormErrorTranslation";
 
 interface OtpFormProps {
   onSubmit: (data: OtpFormData) => Promise<void>;
@@ -25,6 +27,9 @@ export default function OtpForm({
   phoneNumber,
   isLoading,
 }: OtpFormProps) {
+  const { t } = useTranslation("auth");
+  const { translateError } = useFormErrorTranslation();
+
   const {
     register,
     handleSubmit,
@@ -38,7 +43,7 @@ export default function OtpForm({
     <div className="space-y-6">
       <div className="text-center">
         <p className="text-sm text-gray-600 mb-4">
-          تم إرسال رمز التحقق إلى {phoneNumber}
+          {t("otp.description")} {phoneNumber}
         </p>
       </div>
 
@@ -48,7 +53,7 @@ export default function OtpForm({
             htmlFor="otp"
             className="block text-sm font-medium text-gray-700 mb-2 text-center"
           >
-            رمز التحقق
+            {t("otp.label")}
           </label>
           <input
             {...register("otp")}
@@ -59,11 +64,11 @@ export default function OtpForm({
             className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center text-lg tracking-widest ${
               errors.otp ? "border-red-500" : "border-gray-300"
             }`}
-            placeholder="000000"
+            placeholder={t("otp.placeholder")}
           />
           {errors.otp && (
             <p className="mt-1 text-sm text-red-600 text-center">
-              {errors.otp.message}
+              {translateError(errors.otp)}
             </p>
           )}
         </div>
@@ -77,14 +82,16 @@ export default function OtpForm({
             disabled={isLoading}
           >
             <ArrowRight className="w-4 h-4 ml-2" />
-            رجوع
+            {t("otp.backButton")}
           </Button>
           <Button
             type="submit"
             className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium"
             disabled={isSubmitting || isLoading}
           >
-            {isSubmitting || isLoading ? "جاري التحقق..." : "تأكيد"}
+            {isSubmitting || isLoading
+              ? t("otp.submitButtonLoading")
+              : t("otp.submitButton")}
           </Button>
         </div>
       </form>
@@ -96,7 +103,7 @@ export default function OtpForm({
           onClick={onResendOtp}
           disabled={isLoading}
         >
-          {isLoading ? "جاري الإرسال..." : "إعادة إرسال رمز التحقق"}
+          {isLoading ? t("otp.resendButtonLoading") : t("otp.resendButton")}
         </button>
       </div>
     </div>

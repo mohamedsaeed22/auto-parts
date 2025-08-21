@@ -37,7 +37,7 @@ const locationSchema = z.object({
   formattedAddress: z.string().min(1, "validation.location.formattedAddress"),
 });
 
-// Login schema (phone number only) 
+// Login schema (phone number only)
 export const loginSchema = z.object({
   phoneNumber: z
     .string()
