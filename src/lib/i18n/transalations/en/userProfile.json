@@ -1,0 +1,201 @@
+{
+  "sidebar": {
+    "overview": "Profile",
+    "points": "My Points",
+    "notifications": "Notifications",
+    "orders": "Orders",
+    "addresses": "Addresses",
+    "wishlist": "Wishlist",
+    "settings": "Settings"
+  },
+  "profileOverview": {
+    "title": "Profile",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "fullName": "Full Name",
+    "email": "Email",
+    "phone": "Phone Number",
+    "birthDate": "Date of Birth",
+    "gender": "Gender",
+    "city": "City",
+    "male": "Male",
+    "female": "Female",
+    "stats": {
+      "completedOrders": "Completed Orders",
+      "favoriteProducts": "Favorite Products",
+      "savedAddresses": "Saved Addresses"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "tabs": {
+      "account": "Account",
+      "privacy": "Privacy",
+      "security": "Security",
+      "language": "Language & Region"
+    },
+    "account": {
+      "title": "Notification Settings",
+      "emailNotifications": "Email Notifications",
+      "emailNotificationsDesc": "Receive notifications via email",
+      "smsNotifications": "SMS Notifications",
+      "smsNotificationsDesc": "Receive notifications via SMS",
+      "marketingEmails": "Marketing Emails",
+      "marketingEmailsDesc": "Receive special offers and discounts",
+      "orderUpdates": "Order Updates",
+      "orderUpdatesDesc": "Order status and shipping updates",
+      "newsletter": "Newsletter",
+      "newsletterDesc": "Weekly newsletter"
+    },
+    "privacy": {
+      "title": "Privacy Settings",
+      "profileVisibility": "Profile Visibility",
+      "public": "Public",
+      "friends": "Friends Only",
+      "private": "Private",
+      "showEmail": "Show Email",
+      "showPhone": "Show Phone",
+      "allowSearch": "Allow Search"
+    },
+    "security": {
+      "title": "Security Settings",
+      "twoFactorAuth": "Two-Factor Authentication",
+      "twoFactorAuthDesc": "Additional security for your account",
+      "loginAlerts": "Login Alerts",
+      "loginAlertsDesc": "Notify when logging in from new device",
+      "deviceManagement": "Device Management",
+      "deviceManagementDesc": "Manage registered devices"
+    },
+    "language": {
+      "title": "Language & Region Settings",
+      "language": "Language",
+      "arabic": "Arabic",
+      "english": "English",
+      "currency": "Currency",
+      "sar": "Saudi Riyal (SAR)",
+      "usd": "US Dollar (USD)",
+      "eur": "Euro (EUR)",
+      "timezone": "Timezone",
+      "riyadh": "Riyadh (GMT+3)",
+      "dubai": "Dubai (GMT+4)",
+      "london": "London (GMT+0)"
+    }
+  },
+  "addresses": {
+    "title": "Addresses",
+    "addAddress": "Add New Address",
+    "editAddress": "Edit Address",
+    "home": "Home",
+    "work": "Work",
+    "default": "Default",
+    "setDefault": "Set as Default",
+    "name": "Name",
+    "phone": "Phone Number",
+    "address": "Detailed Address",
+    "city": "City",
+    "postalCode": "Postal Code",
+    "type": "Address Type",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Are you sure you want to delete this address?",
+    "add": "Add",
+    "update": "Update"
+  },
+  "orders": {
+    "title": "My Orders",
+    "orderNumber": "Order #",
+    "date": "Date",
+    "status": "Status",
+    "total": "Total",
+    "items": "Items",
+    "trackingNumber": "Tracking Number",
+    "viewDetails": "View Details",
+    "downloadInvoice": "Download Invoice",
+    "trackOrder": "Track Order",
+    "statuses": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    },
+    "quantity": "Qty",
+    "price": "Price",
+    "sar": "SAR"
+  },
+  "points": {
+    "title": "My Points",
+    "description": "Track your points and redeem them for great rewards",
+    "totalPoints": "Total Points",
+    "availableForRedemption": "Available for Redemption",
+    "availableRewards": "Available Rewards",
+    "pointsHistory": "Points History",
+    "earned": "Earned",
+    "redeemed": "Redeemed",
+    "productPurchase": "Product Purchase",
+    "discountVoucher": "Discount Voucher Redemption",
+    "productReview": "Product Review",
+    "redeem": "Redeem",
+    "notEnoughPoints": "Not enough points",
+    "rewards": {
+      "discount10": "10% Discount Voucher",
+      "discount10Desc": "10% discount on next order",
+      "freeShipping": "Free Shipping",
+      "freeShippingDesc": "Free shipping on next order",
+      "discount20": "20% Discount Voucher",
+      "discount20Desc": "20% discount on next order"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark All as Read",
+    "clearAll": "Clear All",
+    "filters": {
+      "all": "All",
+      "unread": "Unread",
+      "read": "Read"
+    },
+    "types": {
+      "order": "Orders",
+      "delivery": "Delivery",
+      "promotion": "Promotions",
+      "system": "System"
+    },
+    "orderConfirmed": "Order Confirmed",
+    "orderShipped": "Order Shipped",
+    "orderDelivered": "Order Delivered",
+    "specialOffer": "Special Offer on Brakes",
+    "privacyUpdate": "Privacy Policy Update",
+    "empty": "No notifications",
+    "emptyDesc": "You're all caught up! No new notifications."
+  },
+  "wishlist": {
+    "title": "Wishlist",
+    "itemsInWishlist": "items in wishlist",
+    "addAllToCart": "Add All to Cart",
+    "totalItems": "Total Items",
+    "totalValue": "Total Value",
+    "totalSavings": "Total Savings",
+    "addToCart": "Add to Cart",
+    "viewProduct": "View Product",
+    "removeFromWishlist": "Remove from Wishlist",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "addedOn": "Added on",
+    "sar": "SAR",
+    "categories": {
+      "brakes": "Brakes",
+      "oils": "Oils",
+      "filters": "Filters",
+      "ignition": "Ignition"
+    },
+    "empty": "Your wishlist is empty",
+    "emptyDesc": "Start adding products you love to your wishlist!"
+  }
+}

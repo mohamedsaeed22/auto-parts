@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Heart, ShoppingCart, Trash2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 import Image from "next/image";
 
 interface WishlistItem {
@@ -17,6 +18,9 @@ interface WishlistItem {
 }
 
 export default function WishlistPage() {
+  const { t, i18n } = useTranslation("userProfile");
+  const isRTL = i18n.language === "ar";
+
   const [wishlist, setWishlist] = useState<WishlistItem[]>([
     {
       id: 1,
@@ -77,12 +81,16 @@ export default function WishlistPage() {
   }, 0);
 
   return (
-    <div className="p-8">
+    <div className="p-8" dir={isRTL ? "rtl" : "ltr"}>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-right">المفضلة</h2>
+        <h2
+          className={`text-2xl font-bold ${isRTL ? "text-right" : "text-left"}`}
+        >
+          {t("wishlist.title")}
+        </h2>
         <div className="flex items-center gap-4">
           <div className="text-sm text-gray-600">
-            {wishlist.length} منتج في المفضلة
+            {wishlist.length} {t("wishlist.itemsInWishlist")}
           </div>
           <Button
             variant="outline"
@@ -90,7 +98,7 @@ export default function WishlistPage() {
             disabled={wishlist.filter((item) => item.inStock).length === 0}
           >
             <ShoppingCart size={16} />
-            إضافة الكل للسلة
+            {t("wishlist.addAllToCart")}
           </Button>
         </div>
       </div>

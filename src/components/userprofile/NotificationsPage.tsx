@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Bell, Package, ShoppingCart, Tag, X, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface Notification {
   id: number;
@@ -15,13 +16,17 @@ interface Notification {
 }
 
 export default function NotificationsPage() {
+  const { t, i18n } = useTranslation("userProfile");
+  const isRTL = i18n.language === "ar";
+
   const [notifications, setNotifications] = useState<Notification[]>([
     {
       id: 1,
       type: "order",
-      title: "تم تأكيد طلبك",
-      message:
-        "تم تأكيد طلبك رقم ORD-2024-001 بنجاح. سيتم شحنه خلال 2-3 أيام عمل.",
+      title: isRTL ? "تم تأكيد طلبك" : "Order Confirmed",
+      message: isRTL
+        ? "تم تأكيد طلبك رقم ORD-2024-001 بنجاح. سيتم شحنه خلال 2-3 أيام عمل."
+        : "Your order ORD-2024-001 has been confirmed successfully. It will be shipped within 2-3 business days.",
       date: "2024-01-25 14:30",
       isRead: false,
       actionUrl: "/orders/ORD-2024-001",
@@ -29,8 +34,10 @@ export default function NotificationsPage() {
     {
       id: 2,
       type: "delivery",
-      title: "تم شحن طلبك",
-      message: "تم شحن طلبك رقم ORD-2024-002. رقم التتبع: TRK987654321",
+      title: isRTL ? "تم شحن طلبك" : "Order Shipped",
+      message: isRTL
+        ? "تم شحن طلبك رقم ORD-2024-002. رقم التتبع: TRK987654321"
+        : "Your order ORD-2024-002 has been shipped. Tracking number: TRK987654321",
       date: "2024-01-24 09:15",
       isRead: false,
       actionUrl: "/orders/ORD-2024-002",
@@ -38,8 +45,10 @@ export default function NotificationsPage() {
     {
       id: 3,
       type: "promotion",
-      title: "عرض خاص على الفرامل",
-      message: "خصم 25% على جميع أنواع الفرامل. العرض ساري حتى نهاية الشهر.",
+      title: isRTL ? "عرض خاص على الفرامل" : "Special Offer on Brakes",
+      message: isRTL
+        ? "خصم 25% على جميع أنواع الفرامل. العرض ساري حتى نهاية الشهر."
+        : "25% discount on all brake types. Offer valid until end of month.",
       date: "2024-01-23 16:45",
       isRead: true,
       actionUrl: "/products?category=brakes",
@@ -47,17 +56,20 @@ export default function NotificationsPage() {
     {
       id: 4,
       type: "system",
-      title: "تحديث سياسة الخصوصية",
-      message: "تم تحديث سياسة الخصوصية الخاصة بنا. يرجى مراجعتها.",
+      title: isRTL ? "تحديث سياسة الخصوصية" : "Privacy Policy Update",
+      message: isRTL
+        ? "تم تحديث سياسة الخصوصية الخاصة بنا. يرجى مراجعتها."
+        : "Our privacy policy has been updated. Please review it.",
       date: "2024-01-22 11:20",
       isRead: true,
     },
     {
       id: 5,
       type: "order",
-      title: "تم توصيل طلبك",
-      message:
-        "تم توصيل طلبك رقم ORD-2024-003 بنجاح. نأمل أن تكون راضياً عن منتجاتنا.",
+      title: isRTL ? "تم توصيل طلبك" : "Order Delivered",
+      message: isRTL
+        ? "تم توصيل طلبك رقم ORD-2024-003 بنجاح. نأمل أن تكون راضياً عن منتجاتنا."
+        : "Your order ORD-2024-003 has been delivered successfully. We hope you're satisfied with our products.",
       date: "2024-01-21 13:10",
       isRead: true,
       actionUrl: "/orders/ORD-2024-003",
@@ -82,13 +94,13 @@ export default function NotificationsPage() {
   const getNotificationTypeText = (type: Notification["type"]) => {
     switch (type) {
       case "order":
-        return "الطلبات";
+        return t("notifications.types.order");
       case "delivery":
-        return "التوصيل";
+        return t("notifications.types.delivery");
       case "promotion":
-        return "العروض";
+        return t("notifications.types.promotion");
       case "system":
-        return "النظام";
+        return t("notifications.types.system");
     }
   };
 
@@ -119,12 +131,24 @@ export default function NotificationsPage() {
   const unreadCount = notifications.filter((notif) => !notif.isRead).length;
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-right">الإشعارات</h2>
-        <div className="flex items-center gap-4">
+    <div className="p-8" dir={isRTL ? "rtl" : "ltr"}>
+      <div
+        className={`flex justify-between items-center mb-6 ${
+          isRTL ? "flex-row-reverse" : ""
+        }`}
+      >
+        <h2
+          className={`text-2xl font-bold ${isRTL ? "text-right" : "text-left"}`}
+        >
+          {t("notifications.title")}
+        </h2>
+        <div
+          className={`flex items-center gap-4 ${
+            isRTL ? "flex-row-reverse" : ""
+          }`}
+        >
           <div className="text-sm text-gray-600">
-            {unreadCount} إشعارات جديدة
+            {unreadCount} {isRTL ? "إشعارات جديدة" : "new notifications"}
           </div>
           {unreadCount > 0 && (
             <Button
@@ -133,34 +157,35 @@ export default function NotificationsPage() {
               className="flex items-center gap-2"
             >
               <Check size={16} />
-              تحديد الكل كمقروء
+              {t("notifications.markAllRead")}
             </Button>
           )}
         </div>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex gap-2 mb-6">
+      <div className={`flex gap-2 mb-6 ${isRTL ? "flex-row-reverse" : ""}`}>
         <Button
           variant={filter === "all" ? "default" : "outline"}
           size="sm"
           onClick={() => setFilter("all")}
         >
-          الكل ({notifications.length})
+          {t("notifications.filters.all")} ({notifications.length})
         </Button>
         <Button
           variant={filter === "unread" ? "default" : "outline"}
           size="sm"
           onClick={() => setFilter("unread")}
         >
-          غير مقروء ({unreadCount})
+          {t("notifications.filters.unread")} ({unreadCount})
         </Button>
         <Button
           variant={filter === "read" ? "default" : "outline"}
           size="sm"
           onClick={() => setFilter("read")}
         >
-          مقروء ({notifications.length - unreadCount})
+          {t("notifications.filters.read")} (
+          {notifications.length - unreadCount})
         </Button>
       </div>
 
@@ -175,14 +200,24 @@ export default function NotificationsPage() {
                 : "bg-blue-50 border-blue-200"
             }`}
           >
-            <div className="flex items-start gap-4">
+            <div
+              className={`flex items-start gap-4 ${
+                isRTL ? "flex-row-reverse" : ""
+              }`}
+            >
               <div className="flex-shrink-0 mt-1">
                 {getNotificationIcon(notification.type)}
               </div>
 
-              <div className="flex-1 text-right">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex gap-2">
+              <div className={`flex-1 ${isRTL ? "text-right" : "text-left"}`}>
+                <div
+                  className={`flex items-center justify-between mb-2 ${
+                    isRTL ? "flex-row-reverse" : ""
+                  }`}
+                >
+                  <div
+                    className={`flex gap-2 ${isRTL ? "flex-row-reverse" : ""}`}
+                  >
                     {!notification.isRead && (
                       <Button
                         size="sm"
@@ -200,7 +235,7 @@ export default function NotificationsPage() {
                       <X size={14} />
                     </Button>
                   </div>
-                  <div>
+                  <div className={isRTL ? "text-right" : "text-left"}>
                     <div className="font-medium">{notification.title}</div>
                     <div className="text-sm text-gray-600">
                       {getNotificationTypeText(notification.type)} •{" "}
@@ -213,7 +248,7 @@ export default function NotificationsPage() {
 
                 {notification.actionUrl && (
                   <Button size="sm" variant="outline">
-                    عرض التفاصيل
+                    {isRTL ? "عرض التفاصيل" : "View Details"}
                   </Button>
                 )}
               </div>
@@ -226,19 +261,9 @@ export default function NotificationsPage() {
         <div className="text-center py-12">
           <Bell size={48} className="mx-auto text-gray-300 mb-4" />
           <h3 className="text-lg font-medium text-gray-600 mb-2">
-            {filter === "all"
-              ? "لا توجد إشعارات"
-              : filter === "unread"
-              ? "لا توجد إشعارات جديدة"
-              : "لا توجد إشعارات مقروءة"}
+            {t("notifications.empty")}
           </h3>
-          <p className="text-gray-500">
-            {filter === "all"
-              ? "ستظهر هنا جميع إشعاراتك"
-              : filter === "unread"
-              ? "ستظهر هنا الإشعارات الجديدة عند وصولها"
-              : "ستظهر هنا الإشعارات المقروءة"}
-          </p>
+          <p className="text-gray-500">{t("notifications.emptyDesc")}</p>
         </div>
       )}
     </div>

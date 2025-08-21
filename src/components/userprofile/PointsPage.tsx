@@ -1,8 +1,12 @@
 "use client";
 
 import { Gift, TrendingUp, History, Star } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function PointsPage() {
+  const { t, i18n } = useTranslation("userProfile");
+  const isRTL = i18n.language === "ar";
+
   // Mock data - replace with actual user points data
   const userPoints = 1250;
   const pointsHistory = [
@@ -10,7 +14,7 @@ export default function PointsPage() {
       id: 1,
       type: "earned",
       amount: 100,
-      description: "شراء منتج",
+      description: isRTL ? "شراء منتج" : "Product Purchase",
       date: "2024-01-15",
       orderId: "#12345",
     },
@@ -18,7 +22,7 @@ export default function PointsPage() {
       id: 2,
       type: "redeemed",
       amount: -50,
-      description: "استبدال قسيمة خصم",
+      description: isRTL ? "استبدال قسيمة خصم" : "Discount Voucher Redemption",
       date: "2024-01-10",
       orderId: "#12340",
     },
@@ -26,7 +30,7 @@ export default function PointsPage() {
       id: 3,
       type: "earned",
       amount: 200,
-      description: "مراجعة منتج",
+      description: isRTL ? "مراجعة منتج" : "Product Review",
       date: "2024-01-05",
       orderId: "#12335",
     },
@@ -34,7 +38,7 @@ export default function PointsPage() {
       id: 4,
       type: "earned",
       amount: 150,
-      description: "شراء منتج",
+      description: isRTL ? "شراء منتج" : "Product Purchase",
       date: "2024-01-01",
       orderId: "#12330",
     },
@@ -43,44 +47,62 @@ export default function PointsPage() {
   const availableRewards = [
     {
       id: 1,
-      name: "قسيمة خصم 10%",
+      name: isRTL ? "قسيمة خصم 10%" : "10% Discount Voucher",
       pointsRequired: 500,
-      description: "خصم 10% على الطلب التالي",
+      description: isRTL
+        ? "خصم 10% على الطلب التالي"
+        : "10% discount on next order",
       icon: <Gift size={24} className="text-yellow-500" />,
     },
     {
       id: 2,
-      name: "شحن مجاني",
+      name: isRTL ? "شحن مجاني" : "Free Shipping",
       pointsRequired: 300,
-      description: "شحن مجاني للطلب التالي",
+      description: isRTL
+        ? "شحن مجاني للطلب التالي"
+        : "Free shipping on next order",
       icon: <TrendingUp size={24} className="text-green-500" />,
     },
     {
       id: 3,
-      name: "قسيمة خصم 20%",
+      name: isRTL ? "قسيمة خصم 20%" : "20% Discount Voucher",
       pointsRequired: 1000,
-      description: "خصم 20% على الطلب التالي",
+      description: isRTL
+        ? "خصم 20% على الطلب التالي"
+        : "20% discount on next order",
       icon: <Star size={24} className="text-purple-500" />,
     },
   ];
 
   return (
-    <div className="p-6">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">نقاطي</h1>
-        <p className="text-gray-600">تابع نقاطك واستبدلها بمكافآت رائعة</p>
+    <div className="p-6" dir={isRTL ? "rtl" : "ltr"}>
+      <div className={`mb-8 ${isRTL ? "text-right" : "text-left"}`}>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          {t("points.title")}
+        </h1>
+        <p className="text-gray-600">{t("points.description")}</p>
       </div>
 
       {/* Points Summary */}
       <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-lg p-6 mb-8 text-white">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-semibold mb-1">إجمالي النقاط</h2>
+        <div
+          className={`flex items-center justify-between ${
+            isRTL ? "flex-row-reverse" : ""
+          }`}
+        >
+          <div className={isRTL ? "text-right" : "text-left"}>
+            <h2 className="text-lg font-semibold mb-1">
+              {t("points.totalPoints")}
+            </h2>
             <p className="text-3xl font-bold">{userPoints.toLocaleString()}</p>
           </div>
-          <div className="text-right">
-            <p className="text-yellow-100 text-sm">النقاط المتاحة</p>
-            <p className="text-lg font-semibold">للاستبدال</p>
+          <div className={isRTL ? "text-left" : "text-right"}>
+            <p className="text-yellow-100 text-sm">
+              {t("points.availableForRedemption")}
+            </p>
+            <p className="text-lg font-semibold">
+              {isRTL ? "للاستبدال" : "Available"}
+            </p>
           </div>
         </div>
       </div>
@@ -88,9 +110,13 @@ export default function PointsPage() {
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Available Rewards */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <h3
+            className={`text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2 ${
+              isRTL ? "flex-row-reverse" : ""
+            }`}
+          >
             <Gift size={20} />
-            المكافآت المتاحة
+            {t("points.availableRewards")}
           </h3>
           <div className="space-y-4">
             {availableRewards.map((reward) => (
@@ -102,10 +128,18 @@ export default function PointsPage() {
                     : "border-gray-200 bg-gray-50"
                 }`}
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
+                <div
+                  className={`flex items-start justify-between ${
+                    isRTL ? "flex-row-reverse" : ""
+                  }`}
+                >
+                  <div
+                    className={`flex items-center gap-3 ${
+                      isRTL ? "flex-row-reverse" : ""
+                    }`}
+                  >
                     {reward.icon}
-                    <div>
+                    <div className={isRTL ? "text-right" : "text-left"}>
                       <h4 className="font-medium text-gray-900">
                         {reward.name}
                       </h4>
@@ -114,9 +148,9 @@ export default function PointsPage() {
                       </p>
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className={isRTL ? "text-left" : "text-right"}>
                     <p className="text-sm font-medium text-gray-900">
-                      {reward.pointsRequired} نقطة
+                      {reward.pointsRequired} {isRTL ? "نقطة" : "points"}
                     </p>
                     <button
                       className={`mt-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -127,8 +161,8 @@ export default function PointsPage() {
                       disabled={userPoints < reward.pointsRequired}
                     >
                       {userPoints >= reward.pointsRequired
-                        ? "استبدال"
-                        : "نقاط غير كافية"}
+                        ? t("points.redeem")
+                        : t("points.notEnoughPoints")}
                     </button>
                   </div>
                 </div>
@@ -139,9 +173,13 @@ export default function PointsPage() {
 
         {/* Points History */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <h3
+            className={`text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2 ${
+              isRTL ? "flex-row-reverse" : ""
+            }`}
+          >
             <History size={20} />
-            سجل النقاط
+            {t("points.pointsHistory")}
           </h3>
           <div className="space-y-3">
             {pointsHistory.map((transaction) => (
@@ -149,19 +187,26 @@ export default function PointsPage() {
                 key={transaction.id}
                 className="border border-gray-200 rounded-lg p-4"
               >
-                <div className="flex items-center justify-between">
-                  <div>
+                <div
+                  className={`flex items-center justify-between ${
+                    isRTL ? "flex-row-reverse" : ""
+                  }`}
+                >
+                  <div className={isRTL ? "text-right" : "text-left"}>
                     <p className="font-medium text-gray-900">
                       {transaction.description}
                     </p>
                     <p className="text-sm text-gray-500">
-                      {new Date(transaction.date).toLocaleDateString("ar-SA")}
+                      {new Date(transaction.date).toLocaleDateString(
+                        isRTL ? "ar-SA" : "en-US"
+                      )}
                     </p>
                     <p className="text-xs text-gray-400">
-                      طلب: {transaction.orderId}
+                      {isRTL ? "طلب: " : "Order: "}
+                      {transaction.orderId}
                     </p>
                   </div>
-                  <div className="text-right">
+                  <div className={isRTL ? "text-left" : "text-right"}>
                     <p
                       className={`font-semibold ${
                         transaction.type === "earned"
@@ -170,7 +215,7 @@ export default function PointsPage() {
                       }`}
                     >
                       {transaction.type === "earned" ? "+" : ""}
-                      {transaction.amount} نقطة
+                      {transaction.amount} {isRTL ? "نقطة" : "points"}
                     </p>
                   </div>
                 </div>
@@ -181,36 +226,64 @@ export default function PointsPage() {
       </div>
 
       {/* How to Earn Points */}
-      <div className="mt-8 bg-blue-50 rounded-lg p-6">
+      <div
+        className={`mt-8 bg-blue-50 rounded-lg p-6 ${
+          isRTL ? "text-right" : "text-left"
+        }`}
+      >
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          كيف تكسب نقاط أكثر؟
+          {isRTL ? "كيف تكسب نقاط أكثر؟" : "How to earn more points?"}
         </h3>
         <div className="grid md:grid-cols-3 gap-4">
-          <div className="flex items-center gap-3">
+          <div
+            className={`flex items-center gap-3 ${
+              isRTL ? "flex-row-reverse" : ""
+            }`}
+          >
             <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
               1
             </div>
             <div>
-              <p className="font-medium text-gray-900">الشراء</p>
-              <p className="text-sm text-gray-600">10 نقاط لكل ريال</p>
+              <p className="font-medium text-gray-900">
+                {isRTL ? "الشراء" : "Purchase"}
+              </p>
+              <p className="text-sm text-gray-600">
+                {isRTL ? "10 نقاط لكل ريال" : "10 points per SAR"}
+              </p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div
+            className={`flex items-center gap-3 ${
+              isRTL ? "flex-row-reverse" : ""
+            }`}
+          >
             <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
               2
             </div>
             <div>
-              <p className="font-medium text-gray-900">مراجعة المنتجات</p>
-              <p className="text-sm text-gray-600">50 نقطة لكل مراجعة</p>
+              <p className="font-medium text-gray-900">
+                {isRTL ? "مراجعة المنتجات" : "Product Reviews"}
+              </p>
+              <p className="text-sm text-gray-600">
+                {isRTL ? "50 نقطة لكل مراجعة" : "50 points per review"}
+              </p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div
+            className={`flex items-center gap-3 ${
+              isRTL ? "flex-row-reverse" : ""
+            }`}
+          >
             <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
               3
             </div>
             <div>
-              <p className="font-medium text-gray-900">الإحالة</p>
-              <p className="text-sm text-gray-600">100 نقطة لكل صديق</p>
+              <p className="font-medium text-gray-900">
+                {isRTL ? "الإحالة" : "Referral"}
+              </p>
+              <p className="text-sm text-gray-600">
+                {isRTL ? "100 نقطة لكل صديق" : "100 points per friend"}
+              </p>
             </div>
           </div>
         </div>

@@ -10,6 +10,7 @@ import {
   Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 import Image from "next/image";
 
 interface Order {
@@ -28,6 +29,9 @@ interface Order {
 }
 
 export default function OrdersPage() {
+  const { t, i18n } = useTranslation("userProfile");
+  const isRTL = i18n.language === "ar";
+
   const [orders] = useState<Order[]>([
     {
       id: "ORD-2024-001",
@@ -37,14 +41,14 @@ export default function OrdersPage() {
       items: [
         {
           id: 1,
-          name: "فرامل عالية الأداء",
+          name: isRTL ? "فرامل عالية الأداء" : "High Performance Brakes",
           price: 89.99,
           quantity: 2,
           image: "/products/product1.jpg",
         },
         {
           id: 2,
-          name: "زيت محرك اصطناعي",
+          name: isRTL ? "زيت محرك اصطناعي" : "Synthetic Engine Oil",
           price: 120.01,
           quantity: 1,
           image: "/products/product2.jpg",
@@ -60,7 +64,7 @@ export default function OrdersPage() {
       items: [
         {
           id: 3,
-          name: "فلتر هواء محرك",
+          name: isRTL ? "فلتر هواء محرك" : "Engine Air Filter",
           price: 150.0,
           quantity: 3,
           image: "/products/product3.png",
@@ -76,7 +80,7 @@ export default function OrdersPage() {
       items: [
         {
           id: 4,
-          name: "شمعة اشتعال",
+          name: isRTL ? "شمعة اشتعال" : "Spark Plug",
           price: 199.99,
           quantity: 1,
           image: "/products/product4.png",
@@ -89,35 +93,35 @@ export default function OrdersPage() {
     switch (status) {
       case "pending":
         return {
-          text: "في الانتظار",
+          text: t("orders.statuses.pending"),
           color: "text-yellow-600",
           bg: "bg-yellow-100",
           icon: Clock,
         };
       case "processing":
         return {
-          text: "قيد المعالجة",
+          text: t("orders.statuses.processing"),
           color: "text-blue-600",
           bg: "bg-blue-100",
           icon: Package,
         };
       case "shipped":
         return {
-          text: "تم الشحن",
+          text: t("orders.statuses.shipped"),
           color: "text-purple-600",
           bg: "bg-purple-100",
           icon: Truck,
         };
       case "delivered":
         return {
-          text: "تم التوصيل",
+          text: t("orders.statuses.delivered"),
           color: "text-green-600",
           bg: "bg-green-100",
           icon: CheckCircle,
         };
       case "cancelled":
         return {
-          text: "ملغي",
+          text: t("orders.statuses.cancelled"),
           color: "text-red-600",
           bg: "bg-red-100",
           icon: Clock,
@@ -131,13 +135,21 @@ export default function OrdersPage() {
   };
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-right">الطلبات</h2>
-        <div className="flex gap-2">
+    <div className="p-8" dir={isRTL ? "rtl" : "ltr"}>
+      <div
+        className={`flex justify-between items-center mb-6 ${
+          isRTL ? "flex-row-reverse" : ""
+        }`}
+      >
+        <h2
+          className={`text-2xl font-bold ${isRTL ? "text-right" : "text-left"}`}
+        >
+          {t("orders.title")}
+        </h2>
+        <div className={`flex gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
           <Button variant="outline" className="flex items-center gap-2">
             <Download size={16} />
-            تصدير
+            {isRTL ? "تصدير" : "Export"}
           </Button>
         </div>
       </div>
@@ -148,13 +160,15 @@ export default function OrdersPage() {
           <div className="text-2xl font-bold text-blue-600">
             {orders.length}
           </div>
-          <div className="text-sm text-gray-600">إجمالي الطلبات</div>
+          <div className="text-sm text-gray-600">{t("orders.total")}</div>
         </div>
         <div className="bg-green-50 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-green-600">
             {orders.filter((o) => o.status === "delivered").length}
           </div>
-          <div className="text-sm text-gray-600">تم التوصيل</div>
+          <div className="text-sm text-gray-600">
+            {t("orders.statuses.delivered")}
+          </div>
         </div>
         <div className="bg-yellow-50 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-yellow-600">
@@ -164,13 +178,17 @@ export default function OrdersPage() {
               ).length
             }
           </div>
-          <div className="text-sm text-gray-600">قيد التوصيل</div>
+          <div className="text-sm text-gray-600">
+            {isRTL ? "قيد التوصيل" : "In Transit"}
+          </div>
         </div>
         <div className="bg-purple-50 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-purple-600">
             {orders.reduce((sum, order) => sum + order.total, 0).toFixed(2)}
           </div>
-          <div className="text-sm text-gray-600">إجمالي الإنفاق</div>
+          <div className="text-sm text-gray-600">
+            {isRTL ? "إجمالي الإنفاق" : "Total Spent"}
+          </div>
         </div>
       </div>
 
@@ -185,15 +203,21 @@ export default function OrdersPage() {
               key={order.id}
               className="border border-gray-200 rounded-lg p-6"
             >
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex gap-2">
+              <div
+                className={`flex justify-between items-start mb-4 ${
+                  isRTL ? "flex-row-reverse" : ""
+                }`}
+              >
+                <div
+                  className={`flex gap-2 ${isRTL ? "flex-row-reverse" : ""}`}
+                >
                   <Button
                     size="sm"
                     variant="outline"
                     className="flex items-center gap-2"
                   >
                     <Eye size={14} />
-                    تفاصيل
+                    {t("orders.viewDetails")}
                   </Button>
                   <Button
                     size="sm"
@@ -201,18 +225,25 @@ export default function OrdersPage() {
                     onClick={() => handleReorder(order)}
                     className="flex items-center gap-2"
                   >
-                    إعادة طلب
+                    {isRTL ? "إعادة طلب" : "Reorder"}
                   </Button>
                 </div>
-                <div className="text-right">
-                  <div className="font-medium text-lg">{order.id}</div>
-                  <div className="text-sm text-gray-600">{order.date}</div>
+                <div className={isRTL ? "text-right" : "text-left"}>
+                  <div className="font-medium text-lg">
+                    {t("orders.orderNumber")}
+                    {order.id}
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    {t("orders.date")}: {order.date}
+                  </div>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div>
-                  <div className="text-sm text-gray-600 mb-1">الحالة</div>
+                <div className={isRTL ? "text-right" : "text-left"}>
+                  <div className="text-sm text-gray-600 mb-1">
+                    {t("orders.status")}
+                  </div>
                   <div
                     className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${statusInfo.bg} ${statusInfo.color}`}
                   >
@@ -220,13 +251,21 @@ export default function OrdersPage() {
                     {statusInfo.text}
                   </div>
                 </div>
-                <div>
-                  <div className="text-sm text-gray-600 mb-1">إجمالي الطلب</div>
-                  <div className="font-medium">{order.total} ريال</div>
+                <div className={isRTL ? "text-right" : "text-left"}>
+                  <div className="text-sm text-gray-600 mb-1">
+                    {t("orders.total")}
+                  </div>
+                  <div className="font-medium">
+                    {order.total} {t("orders.sar")}
+                  </div>
                 </div>
-                <div>
-                  <div className="text-sm text-gray-600 mb-1">عدد المنتجات</div>
-                  <div className="font-medium">{order.items.length} منتج</div>
+                <div className={isRTL ? "text-right" : "text-left"}>
+                  <div className="text-sm text-gray-600 mb-1">
+                    {t("orders.items")}
+                  </div>
+                  <div className="font-medium">
+                    {order.items.length} {isRTL ? "منتج" : "items"}
+                  </div>
                 </div>
               </div>
 
@@ -235,7 +274,9 @@ export default function OrdersPage() {
                 {order.items.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg"
+                    className={`flex items-center gap-4 p-3 bg-gray-50 rounded-lg ${
+                      isRTL ? "flex-row-reverse" : ""
+                    }`}
                   >
                     <Image
                       src={item.image}
@@ -244,23 +285,33 @@ export default function OrdersPage() {
                       height={64}
                       className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
                     />
-                    <div className="flex-1 text-right">
+                    <div
+                      className={`flex-1 ${isRTL ? "text-right" : "text-left"}`}
+                    >
                       <div className="font-medium">{item.name}</div>
                       <div className="text-sm text-gray-600">
-                        الكمية: {item.quantity} × {item.price} ريال
+                        {t("orders.quantity")}: {item.quantity} × {item.price}{" "}
+                        {t("orders.sar")}
                       </div>
                     </div>
                     <div className="font-medium">
-                      {(item.quantity * item.price).toFixed(2)} ريال
+                      {(item.quantity * item.price).toFixed(2)}{" "}
+                      {t("orders.sar")}
                     </div>
                   </div>
                 ))}
               </div>
 
               {order.trackingNumber && (
-                <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                  <div className="text-sm text-gray-600 mb-1">رقم التتبع</div>
-                  <div className="font-mono text-blue-600">
+                <div
+                  className={`mt-4 p-3 bg-blue-50 rounded-lg ${
+                    isRTL ? "text-right" : "text-left"
+                  }`}
+                >
+                  <div className="text-sm text-gray-600 mb-1">
+                    {t("orders.trackingNumber")}
+                  </div>
+                  <div className="font-mono text-blue-600" dir="ltr">
                     {order.trackingNumber}
                   </div>
                 </div>

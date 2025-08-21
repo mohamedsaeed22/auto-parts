@@ -3,8 +3,12 @@
 import { useState } from "react";
 import { Lock, Bell, Globe, Shield, Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 export default function SettingsPage() {
+  const { t, i18n } = useTranslation("userProfile");
+  const isRTL = i18n.language === "ar";
+
   const [activeTab, setActiveTab] = useState("account");
   const [settings, setSettings] = useState({
     account: {
@@ -46,37 +50,55 @@ export default function SettingsPage() {
   };
 
   const tabs = [
-    { id: "account", label: "الحساب", icon: Bell },
-    { id: "privacy", label: "الخصوصية", icon: Shield },
-    { id: "security", label: "الأمان", icon: Lock },
-    { id: "language", label: "اللغة والمنطقة", icon: Globe },
+    { id: "account", labelKey: "settings.tabs.account", icon: Bell },
+    { id: "privacy", labelKey: "settings.tabs.privacy", icon: Shield },
+    { id: "security", labelKey: "settings.tabs.security", icon: Lock },
+    { id: "language", labelKey: "settings.tabs.language", icon: Globe },
   ];
 
   const renderAccountSettings = () => (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold mb-4 text-right">
-          إعدادات الإشعارات
+        <h3
+          className={`text-lg font-semibold mb-4 ${
+            isRTL ? "text-right" : "text-left"
+          }`}
+          dir={isRTL ? "rtl" : "ltr"}
+        >
+          {t("settings.account.title")}
         </h3>
         <div className="space-y-4">
           {Object.entries(formData.account).map(([key, value]) => (
-            <div key={key} className="flex items-center justify-between">
-              <div className="text-right">
+            <div
+              key={key}
+              className={`flex items-center justify-between ${
+                isRTL ? "flex-row-reverse" : ""
+              }`}
+            >
+              <div
+                className={`${isRTL ? "text-right" : "text-left"}`}
+                dir={isRTL ? "rtl" : "ltr"}
+              >
                 <div className="font-medium">
-                  {key === "emailNotifications" && "إشعارات البريد الإلكتروني"}
-                  {key === "smsNotifications" && "إشعارات الرسائل النصية"}
-                  {key === "marketingEmails" && "رسائل التسويق"}
-                  {key === "orderUpdates" && "تحديثات الطلبات"}
-                  {key === "newsletter" && "النشرة الإخبارية"}
+                  {key === "emailNotifications" &&
+                    t("settings.account.emailNotifications")}
+                  {key === "smsNotifications" &&
+                    t("settings.account.smsNotifications")}
+                  {key === "marketingEmails" &&
+                    t("settings.account.marketingEmails")}
+                  {key === "orderUpdates" && t("settings.account.orderUpdates")}
+                  {key === "newsletter" && t("settings.account.newsletter")}
                 </div>
                 <div className="text-sm text-gray-600">
                   {key === "emailNotifications" &&
-                    "استلام إشعارات عبر البريد الإلكتروني"}
+                    t("settings.account.emailNotificationsDesc")}
                   {key === "smsNotifications" &&
-                    "استلام إشعارات عبر الرسائل النصية"}
-                  {key === "marketingEmails" && "استلام عروض خاصة وتخفيضات"}
-                  {key === "orderUpdates" && "تحديثات حالة الطلبات والشحن"}
-                  {key === "newsletter" && "النشرة الإخبارية الأسبوعية"}
+                    t("settings.account.smsNotificationsDesc")}
+                  {key === "marketingEmails" &&
+                    t("settings.account.marketingEmailsDesc")}
+                  {key === "orderUpdates" &&
+                    t("settings.account.orderUpdatesDesc")}
+                  {key === "newsletter" && t("settings.account.newsletterDesc")}
                 </div>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
@@ -91,7 +113,15 @@ export default function SettingsPage() {
                   }
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                <div
+                  className={`w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer ${
+                    isRTL
+                      ? "peer-checked:after:-translate-x-full"
+                      : "peer-checked:after:translate-x-full"
+                  } peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] ${
+                    isRTL ? "after:right-[2px]" : "after:left-[2px]"
+                  } after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600`}
+                ></div>
               </label>
             </div>
           ))}
@@ -103,13 +133,23 @@ export default function SettingsPage() {
   const renderPrivacySettings = () => (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold mb-4 text-right">
-          إعدادات الخصوصية
+        <h3
+          className={`text-lg font-semibold mb-4 ${
+            isRTL ? "text-right" : "text-left"
+          }`}
+          dir={isRTL ? "rtl" : "ltr"}
+        >
+          {t("settings.privacy.title")}
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-              رؤية الملف الشخصي
+            <label
+              className={`block text-sm font-medium text-gray-700 mb-2 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+              dir={isRTL ? "rtl" : "ltr"}
+            >
+              {t("settings.privacy.profileVisibility")}
             </label>
             <select
               value={formData.privacy.profileVisibility}
@@ -122,23 +162,34 @@ export default function SettingsPage() {
                   },
                 })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+              dir={isRTL ? "rtl" : "ltr"}
             >
-              <option value="public">عام</option>
-              <option value="friends">الأصدقاء فقط</option>
-              <option value="private">خاص</option>
+              <option value="public">{t("settings.privacy.public")}</option>
+              <option value="friends">{t("settings.privacy.friends")}</option>
+              <option value="private">{t("settings.privacy.private")}</option>
             </select>
           </div>
 
           {Object.entries(formData.privacy)
             .slice(1)
             .map(([key, value]) => (
-              <div key={key} className="flex items-center justify-between">
-                <div className="text-right">
+              <div
+                key={key}
+                className={`flex items-center justify-between ${
+                  isRTL ? "flex-row-reverse" : ""
+                }`}
+              >
+                <div
+                  className={`${isRTL ? "text-right" : "text-left"}`}
+                  dir={isRTL ? "rtl" : "ltr"}
+                >
                   <div className="font-medium">
-                    {key === "showEmail" && "إظهار البريد الإلكتروني"}
-                    {key === "showPhone" && "إظهار رقم الجوال"}
-                    {key === "allowSearch" && "السماح بالبحث"}
+                    {key === "showEmail" && t("settings.privacy.showEmail")}
+                    {key === "showPhone" && t("settings.privacy.showPhone")}
+                    {key === "allowSearch" && t("settings.privacy.allowSearch")}
                   </div>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
@@ -156,7 +207,15 @@ export default function SettingsPage() {
                     }
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  <div
+                    className={`w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer ${
+                      isRTL
+                        ? "peer-checked:after:-translate-x-full"
+                        : "peer-checked:after:translate-x-full"
+                    } peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] ${
+                      isRTL ? "after:right-[2px]" : "after:left-[2px]"
+                    } after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600`}
+                  ></div>
                 </label>
               </div>
             ))}
@@ -168,23 +227,40 @@ export default function SettingsPage() {
   const renderSecuritySettings = () => (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold mb-4 text-right">
-          إعدادات الأمان
+        <h3
+          className={`text-lg font-semibold mb-4 ${
+            isRTL ? "text-right" : "text-left"
+          }`}
+          dir={isRTL ? "rtl" : "ltr"}
+        >
+          {t("settings.security.title")}
         </h3>
         <div className="space-y-4">
           {Object.entries(formData.security).map(([key, value]) => (
-            <div key={key} className="flex items-center justify-between">
-              <div className="text-right">
+            <div
+              key={key}
+              className={`flex items-center justify-between ${
+                isRTL ? "flex-row-reverse" : ""
+              }`}
+            >
+              <div
+                className={`${isRTL ? "text-right" : "text-left"}`}
+                dir={isRTL ? "rtl" : "ltr"}
+              >
                 <div className="font-medium">
-                  {key === "twoFactorAuth" && "المصادقة الثنائية"}
-                  {key === "loginAlerts" && "تنبيهات تسجيل الدخول"}
-                  {key === "deviceManagement" && "إدارة الأجهزة"}
+                  {key === "twoFactorAuth" &&
+                    t("settings.security.twoFactorAuth")}
+                  {key === "loginAlerts" && t("settings.security.loginAlerts")}
+                  {key === "deviceManagement" &&
+                    t("settings.security.deviceManagement")}
                 </div>
                 <div className="text-sm text-gray-600">
-                  {key === "twoFactorAuth" && "تأمين إضافي لحسابك"}
+                  {key === "twoFactorAuth" &&
+                    t("settings.security.twoFactorAuthDesc")}
                   {key === "loginAlerts" &&
-                    "إشعار عند تسجيل الدخول من جهاز جديد"}
-                  {key === "deviceManagement" && "إدارة الأجهزة المسجلة"}
+                    t("settings.security.loginAlertsDesc")}
+                  {key === "deviceManagement" &&
+                    t("settings.security.deviceManagementDesc")}
                 </div>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
@@ -202,7 +278,15 @@ export default function SettingsPage() {
                   }
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                <div
+                  className={`w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer ${
+                    isRTL
+                      ? "peer-checked:after:-translate-x-full"
+                      : "peer-checked:after:translate-x-full"
+                  } peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] ${
+                    isRTL ? "after:right-[2px]" : "after:left-[2px]"
+                  } after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600`}
+                ></div>
               </label>
             </div>
           ))}
@@ -214,13 +298,23 @@ export default function SettingsPage() {
   const renderLanguageSettings = () => (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold mb-4 text-right">
-          إعدادات اللغة والمنطقة
+        <h3
+          className={`text-lg font-semibold mb-4 ${
+            isRTL ? "text-right" : "text-left"
+          }`}
+          dir={isRTL ? "rtl" : "ltr"}
+        >
+          {t("settings.language.title")}
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-              اللغة
+            <label
+              className={`block text-sm font-medium text-gray-700 mb-2 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+              dir={isRTL ? "rtl" : "ltr"}
+            >
+              {t("settings.language.language")}
             </label>
             <select
               value={formData.language.language}
@@ -230,16 +324,24 @@ export default function SettingsPage() {
                   language: { ...formData.language, language: e.target.value },
                 })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+              dir={isRTL ? "rtl" : "ltr"}
             >
-              <option value="ar">العربية</option>
-              <option value="en">English</option>
+              <option value="ar">{t("settings.language.arabic")}</option>
+              <option value="en">{t("settings.language.english")}</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-              العملة
+            <label
+              className={`block text-sm font-medium text-gray-700 mb-2 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+              dir={isRTL ? "rtl" : "ltr"}
+            >
+              {t("settings.language.currency")}
             </label>
             <select
               value={formData.language.currency}
@@ -249,17 +351,25 @@ export default function SettingsPage() {
                   language: { ...formData.language, currency: e.target.value },
                 })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+              dir={isRTL ? "rtl" : "ltr"}
             >
-              <option value="SAR">ريال سعودي (SAR)</option>
-              <option value="USD">دولار أمريكي (USD)</option>
-              <option value="EUR">يورو (EUR)</option>
+              <option value="SAR">{t("settings.language.sar")}</option>
+              <option value="USD">{t("settings.language.usd")}</option>
+              <option value="EUR">{t("settings.language.eur")}</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-              المنطقة الزمنية
+            <label
+              className={`block text-sm font-medium text-gray-700 mb-2 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+              dir={isRTL ? "rtl" : "ltr"}
+            >
+              {t("settings.language.timezone")}
             </label>
             <select
               value={formData.language.timezone}
@@ -269,11 +379,18 @@ export default function SettingsPage() {
                   language: { ...formData.language, timezone: e.target.value },
                 })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+              dir={isRTL ? "rtl" : "ltr"}
             >
-              <option value="Asia/Riyadh">الرياض (GMT+3)</option>
-              <option value="Asia/Dubai">دبي (GMT+4)</option>
-              <option value="Europe/London">لندن (GMT+0)</option>
+              <option value="Asia/Riyadh">
+                {t("settings.language.riyadh")}
+              </option>
+              <option value="Asia/Dubai">{t("settings.language.dubai")}</option>
+              <option value="Europe/London">
+                {t("settings.language.london")}
+              </option>
             </select>
           </div>
         </div>
@@ -282,30 +399,48 @@ export default function SettingsPage() {
   );
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-right">الإعدادات</h2>
+    <div className="p-8" dir={isRTL ? "rtl" : "ltr"}>
+      <div
+        className={`flex justify-between items-center mb-6 ${
+          isRTL ? "flex-row-reverse" : ""
+        }`}
+      >
+        <h2
+          className={`text-2xl font-bold ${isRTL ? "text-right" : "text-left"}`}
+          dir={isRTL ? "rtl" : "ltr"}
+        >
+          {t("settings.title")}
+        </h2>
         {!isEditing ? (
           <Button
             onClick={() => setIsEditing(true)}
-            className="flex items-center gap-2"
+            className={`flex items-center gap-2 ${
+              isRTL ? "flex-row-reverse" : ""
+            }`}
           >
             <Save size={16} />
-            تعديل
+            {t("settings.edit")}
           </Button>
         ) : (
-          <div className="flex gap-2">
-            <Button onClick={handleSave} className="flex items-center gap-2">
+          <div className={`flex gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
+            <Button
+              onClick={handleSave}
+              className={`flex items-center gap-2 ${
+                isRTL ? "flex-row-reverse" : ""
+              }`}
+            >
               <Save size={16} />
-              حفظ
+              {t("settings.save")}
             </Button>
             <Button
               variant="outline"
               onClick={handleCancel}
-              className="flex items-center gap-2"
+              className={`flex items-center gap-2 ${
+                isRTL ? "flex-row-reverse" : ""
+              }`}
             >
               <X size={16} />
-              إلغاء
+              {t("settings.cancel")}
             </Button>
           </div>
         )}
@@ -313,7 +448,11 @@ export default function SettingsPage() {
 
       {/* Tabs */}
       <div className="border-b border-gray-200 mb-6">
-        <nav className="flex space-x-8 space-x-reverse">
+        <nav
+          className={`flex ${
+            isRTL ? "space-x-reverse space-x-8" : "space-x-8"
+          }`}
+        >
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
@@ -324,10 +463,11 @@ export default function SettingsPage() {
                   activeTab === tab.id
                     ? "border-blue-500 text-blue-600"
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                }`}
+                } ${isRTL ? "flex-row-reverse" : ""}`}
+                dir={isRTL ? "rtl" : "ltr"}
               >
                 <Icon size={16} />
-                {tab.label}
+                {t(tab.labelKey)}
               </button>
             );
           })}

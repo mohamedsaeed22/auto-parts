@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Plus, Edit, Trash2, Home, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface Address {
   id: number;
@@ -16,24 +17,27 @@ interface Address {
 }
 
 export default function AddressesPage() {
+  const { t, i18n } = useTranslation("userProfile");
+  const isRTL = i18n.language === "ar";
+
   const [addresses, setAddresses] = useState<Address[]>([
     {
       id: 1,
       type: "home",
-      name: "أحمد محمد علي",
+      name: isRTL ? "أحمد محمد علي" : "Ahmed Mohamed Ali",
       phone: "+966 50 123 4567",
-      address: "شارع الملك فهد، حي النزهة",
-      city: "الرياض",
+      address: isRTL ? "شارع الملك فهد، حي النزهة" : "King Fahd Street, Al Nuzha District",
+      city: isRTL ? "الرياض" : "Riyadh",
       postalCode: "12345",
       isDefault: true,
     },
     {
       id: 2,
       type: "work",
-      name: "أحمد محمد علي",
+      name: isRTL ? "أحمد محمد علي" : "Ahmed Mohamed Ali",
       phone: "+966 50 123 4567",
-      address: "شارع التحلية، حي الشاطئ",
-      city: "جدة",
+      address: isRTL ? "شارع التحلية، حي الشاطئ" : "Tahlia Street, Al Shati District",
+      city: isRTL ? "جدة" : "Jeddah",
       postalCode: "54321",
       isDefault: false,
     },
@@ -110,28 +114,30 @@ export default function AddressesPage() {
   };
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-right">العناوين</h2>
+    <div className="p-8" dir={isRTL ? "rtl" : "ltr"}>
+      <div className={`flex justify-between items-center mb-6 ${isRTL ? "flex-row-reverse" : ""}`}>
+        <h2 className={`text-2xl font-bold ${isRTL ? "text-right" : "text-left"}`}>
+          {t("addresses.title")}
+        </h2>
         <Button
           onClick={() => setShowAddForm(true)}
           className="flex items-center gap-2"
         >
           <Plus size={16} />
-          إضافة عنوان جديد
+          {t("addresses.addAddress")}
         </Button>
       </div>
 
       {/* Add/Edit Form */}
       {(showAddForm || editingId) && (
         <div className="bg-gray-50 p-6 rounded-lg mb-6">
-          <h3 className="text-lg font-semibold mb-4 text-right">
-            {editingId ? "تعديل العنوان" : "إضافة عنوان جديد"}
+          <h3 className={`text-lg font-semibold mb-4 ${isRTL ? "text-right" : "text-left"}`}>
+            {editingId ? t("addresses.editAddress") : t("addresses.addAddress")}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-                نوع العنوان
+              <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? "text-right" : "text-left"}`}>
+                {t("addresses.type")}
               </label>
               <select
                 value={formData.type}
@@ -141,15 +147,16 @@ export default function AddressesPage() {
                     type: e.target.value as "home" | "work",
                   })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
+                className={`w-full px-3 py-2 border border-gray-300 rounded-md ${isRTL ? "text-right" : "text-left"}`}
+                dir={isRTL ? "rtl" : "ltr"}
               >
-                <option value="home">المنزل</option>
-                <option value="work">العمل</option>
+                <option value="home">{t("addresses.home")}</option>
+                <option value="work">{t("addresses.work")}</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-                الاسم
+              <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? "text-right" : "text-left"}`}>
+                {t("addresses.name")}
               </label>
               <input
                 type="text"
@@ -157,13 +164,14 @@ export default function AddressesPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
-                placeholder="الاسم الكامل"
+                className={`w-full px-3 py-2 border border-gray-300 rounded-md ${isRTL ? "text-right" : "text-left"}`}
+                placeholder={isRTL ? "الاسم الكامل" : "Full Name"}
+                dir={isRTL ? "rtl" : "ltr"}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-                رقم الجوال
+              <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? "text-right" : "text-left"}`}>
+                {t("addresses.phone")}
               </label>
               <input
                 type="tel"
@@ -171,13 +179,14 @@ export default function AddressesPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, phone: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
+                className={`w-full px-3 py-2 border border-gray-300 rounded-md ${isRTL ? "text-right" : "text-left"}`}
                 placeholder="+966 50 123 4567"
+                dir="ltr"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-                المدينة
+              <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? "text-right" : "text-left"}`}>
+                {t("addresses.city")}
               </label>
               <input
                 type="text"
@@ -185,27 +194,29 @@ export default function AddressesPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, city: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
-                placeholder="الرياض"
+                className={`w-full px-3 py-2 border border-gray-300 rounded-md ${isRTL ? "text-right" : "text-left"}`}
+                placeholder={isRTL ? "الرياض" : "Riyadh"}
+                dir={isRTL ? "rtl" : "ltr"}
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-                العنوان التفصيلي
+              <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? "text-right" : "text-left"}`}>
+                {t("addresses.address")}
               </label>
               <textarea
                 value={formData.address}
                 onChange={(e) =>
                   setFormData({ ...formData, address: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
+                className={`w-full px-3 py-2 border border-gray-300 rounded-md ${isRTL ? "text-right" : "text-left"}`}
                 rows={3}
-                placeholder="الشارع، الحي، المبنى، الطابق"
+                placeholder={isRTL ? "الشارع، الحي، المبنى، الطابق" : "Street, District, Building, Floor"}
+                dir={isRTL ? "rtl" : "ltr"}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-                الرمز البريدي
+              <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? "text-right" : "text-left"}`}>
+                {t("addresses.postalCode")}
               </label>
               <input
                 type="text"
@@ -213,11 +224,12 @@ export default function AddressesPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, postalCode: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
+                className={`w-full px-3 py-2 border border-gray-300 rounded-md ${isRTL ? "text-right" : "text-left"}`}
                 placeholder="12345"
+                dir="ltr"
               />
             </div>
-            <div className="flex items-center gap-2">
+            <div className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
               <input
                 type="checkbox"
                 id="default"
@@ -228,13 +240,13 @@ export default function AddressesPage() {
                 className="rounded"
               />
               <label htmlFor="default" className="text-sm text-gray-700">
-                العنوان الافتراضي
+                {t("addresses.default")}
               </label>
             </div>
           </div>
-          <div className="flex gap-2 mt-4">
+          <div className={`flex gap-2 mt-4 ${isRTL ? "flex-row-reverse" : ""}`}>
             <Button onClick={editingId ? handleUpdate : handleAdd}>
-              {editingId ? "تحديث" : "إضافة"}
+              {editingId ? t("addresses.save") : t("addresses.save")}
             </Button>
             <Button
               variant="outline"
@@ -252,7 +264,7 @@ export default function AddressesPage() {
                 });
               }}
             >
-              إلغاء
+              {t("addresses.cancel")}
             </Button>
           </div>
         </div>
@@ -265,8 +277,8 @@ export default function AddressesPage() {
             key={address.id}
             className="border border-gray-200 rounded-lg p-4"
           >
-            <div className="flex justify-between items-start mb-3">
-              <div className="flex gap-2">
+            <div className={`flex justify-between items-start mb-3 ${isRTL ? "flex-row-reverse" : ""}`}>
+              <div className={`flex gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
                 <Button
                   size="sm"
                   variant="outline"
@@ -282,23 +294,23 @@ export default function AddressesPage() {
                   <Trash2 size={14} />
                 </Button>
               </div>
-              <div className="flex items-center gap-2">
+              <div className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
                 {address.type === "home" ? (
                   <Home size={16} />
                 ) : (
                   <Building size={16} />
                 )}
                 <span className="text-sm font-medium">
-                  {address.type === "home" ? "المنزل" : "العمل"}
+                  {address.type === "home" ? t("addresses.home") : t("addresses.work")}
                 </span>
                 {address.isDefault && (
                   <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                    افتراضي
+                    {t("addresses.default")}
                   </span>
                 )}
               </div>
             </div>
-            <div className="space-y-2 text-right">
+            <div className={`space-y-2 ${isRTL ? "text-right" : "text-left"}`}>
               <div className="font-medium">{address.name}</div>
               <div className="text-sm text-gray-600">{address.phone}</div>
               <div className="text-sm text-gray-600">{address.address}</div>
@@ -313,7 +325,7 @@ export default function AddressesPage() {
                 className="mt-3 w-full"
                 onClick={() => setDefault(address.id)}
               >
-                تعيين كافتراضي
+                {t("addresses.setDefault")}
               </Button>
             )}
           </div>

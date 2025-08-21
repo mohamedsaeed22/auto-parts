@@ -3,8 +3,12 @@
 import { useState } from "react";
 import { User, Mail, Phone, Calendar, Edit, Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 export default function ProfileOverview() {
+  const { t, i18n } = useTranslation("userProfile");
+  const isRTL = i18n.language === "ar";
+
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
     name: "أحمد محمد علي",
@@ -29,22 +33,26 @@ export default function ProfileOverview() {
   };
 
   return (
-    <div className="p-8">
+    <div className="p-8" dir={isRTL ? "rtl" : "ltr"}>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-right">الملف الشخصي</h2>
+        <h2
+          className={`text-2xl font-bold ${isRTL ? "text-right" : "text-left"}`}
+        >
+          {t("profileOverview.title")}
+        </h2>
         {!isEditing ? (
           <Button
             onClick={() => setIsEditing(true)}
             className="flex items-center gap-2"
           >
             <Edit size={16} />
-            تعديل
+            {t("profileOverview.edit")}
           </Button>
         ) : (
           <div className="flex gap-2">
             <Button onClick={handleSave} className="flex items-center gap-2">
               <Save size={16} />
-              حفظ
+              {t("profileOverview.save")}
             </Button>
             <Button
               variant="outline"
@@ -52,7 +60,7 @@ export default function ProfileOverview() {
               className="flex items-center gap-2"
             >
               <X size={16} />
-              إلغاء
+              {t("profileOverview.cancel")}
             </Button>
           </div>
         )}
@@ -79,8 +87,12 @@ export default function ProfileOverview() {
         {/* Personal Information */}
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-              الاسم الكامل
+            <label
+              className={`block text-sm font-medium text-gray-700 mb-2 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
+              {t("profileOverview.fullName")}
             </label>
             {isEditing ? (
               <input
@@ -89,18 +101,28 @@ export default function ProfileOverview() {
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
+                className={`w-full px-3 py-2 border border-gray-300 rounded-md ${
+                  isRTL ? "text-right" : "text-left"
+                }`}
               />
             ) : (
-              <div className="px-3 py-2 bg-gray-50 rounded-md text-right">
+              <div
+                className={`px-3 py-2 bg-gray-50 rounded-md ${
+                  isRTL ? "text-right" : "text-left"
+                }`}
+              >
                 {profile.name}
               </div>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-              البريد الإلكتروني
+            <label
+              className={`block text-sm font-medium text-gray-700 mb-2 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
+              {t("profileOverview.email")}
             </label>
             {isEditing ? (
               <input
@@ -109,7 +131,9 @@ export default function ProfileOverview() {
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
+                className={`w-full px-3 py-2 border border-gray-300 rounded-md ${
+                  isRTL ? "text-right" : "text-left"
+                }`}
               />
             ) : (
               <div className="px-3 py-2 bg-gray-50 rounded-md text-right flex items-center gap-2">
@@ -120,8 +144,12 @@ export default function ProfileOverview() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-              رقم الجوال
+            <label
+              className={`block text-sm font-medium text-gray-700 mb-2 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
+              {t("profileOverview.phone")}
             </label>
             {isEditing ? (
               <input
@@ -130,7 +158,9 @@ export default function ProfileOverview() {
                 onChange={(e) =>
                   setFormData({ ...formData, phone: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
+                className={`w-full px-3 py-2 border border-gray-300 rounded-md ${
+                  isRTL ? "text-right" : "text-left"
+                }`}
               />
             ) : (
               <div className="px-3 py-2 bg-gray-50 rounded-md text-right flex items-center gap-2">
@@ -144,8 +174,12 @@ export default function ProfileOverview() {
         {/* Additional Information */}
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-              تاريخ الميلاد
+            <label
+              className={`block text-sm font-medium text-gray-700 mb-2 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
+              {t("profileOverview.birthDate")}
             </label>
             {isEditing ? (
               <input
@@ -154,7 +188,9 @@ export default function ProfileOverview() {
                 onChange={(e) =>
                   setFormData({ ...formData, birthDate: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
+                className={`w-full px-3 py-2 border border-gray-300 rounded-md ${
+                  isRTL ? "text-right" : "text-left"
+                }`}
               />
             ) : (
               <div className="px-3 py-2 bg-gray-50 rounded-md text-right flex items-center gap-2">
@@ -165,8 +201,12 @@ export default function ProfileOverview() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-              الجنس
+            <label
+              className={`block text-sm font-medium text-gray-700 mb-2 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
+              {t("profileOverview.gender")}
             </label>
             {isEditing ? (
               <select
@@ -174,10 +214,12 @@ export default function ProfileOverview() {
                 onChange={(e) =>
                   setFormData({ ...formData, gender: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
+                className={`w-full px-3 py-2 border border-gray-300 rounded-md ${
+                  isRTL ? "text-right" : "text-left"
+                }`}
               >
-                <option value="ذكر">ذكر</option>
-                <option value="أنثى">أنثى</option>
+                <option value="ذكر">{t("profileOverview.male")}</option>
+                <option value="أنثى">{t("profileOverview.female")}</option>
               </select>
             ) : (
               <div className="px-3 py-2 bg-gray-50 rounded-md text-right">
@@ -187,8 +229,12 @@ export default function ProfileOverview() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 text-right">
-              المدينة
+            <label
+              className={`block text-sm font-medium text-gray-700 mb-2 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
+              {t("profileOverview.city")}
             </label>
             {isEditing ? (
               <input
@@ -197,7 +243,9 @@ export default function ProfileOverview() {
                 onChange={(e) =>
                   setFormData({ ...formData, city: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-right"
+                className={`w-full px-3 py-2 border border-gray-300 rounded-md ${
+                  isRTL ? "text-right" : "text-left"
+                }`}
               />
             ) : (
               <div className="px-3 py-2 bg-gray-50 rounded-md text-right">
@@ -212,15 +260,21 @@ export default function ProfileOverview() {
       <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-blue-50 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-blue-600">12</div>
-          <div className="text-sm text-gray-600">الطلبات المكتملة</div>
+          <div className="text-sm text-gray-600">
+            {t("profileOverview.stats.completedOrders")}
+          </div>
         </div>
         <div className="bg-green-50 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-green-600">8</div>
-          <div className="text-sm text-gray-600">المنتجات المفضلة</div>
+          <div className="text-sm text-gray-600">
+            {t("profileOverview.stats.favoriteProducts")}
+          </div>
         </div>
         <div className="bg-purple-50 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-purple-600">2</div>
-          <div className="text-sm text-gray-600">العناوين المحفوظة</div>
+          <div className="text-sm text-gray-600">
+            {t("profileOverview.stats.savedAddresses")}
+          </div>
         </div>
       </div>
     </div>
