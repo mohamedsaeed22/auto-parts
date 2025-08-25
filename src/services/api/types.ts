@@ -1,16 +1,21 @@
 // Base API Response Types
 export interface ApiResponse<T = any> {
+  code: number;
+  message: string;
+  errors: any[];
   data: T;
-  message?: string;
-  status: boolean;
 }
 
 export interface PaginatedResponse<T> {
-  data: T[];
-  current_page: number;
-  last_page: number;
-  per_page: number;
-  total: number;
+  items: T[];
+  pagination: {
+    total: number;
+    per_page: number;
+    current_page: number;
+    last_page: number;
+    from: number;
+    to: number;
+  };
 }
 
 // Auth Types
@@ -103,19 +108,40 @@ export interface AuthResponse {
 export interface Product {
   id: number;
   name: string;
-  description: string;
-  price: number;
-  product_identifier: string;
-  image: string;
+  price: string;
+  discount_type: "percentage" | "fixed" | null;
+  discount_amount: string | null;
+  final_price: number;
+  discount_info: string;
+  brand: Brand | null;
+  category: {
+    id: number;
+    name: string;
+    level: number;
+    image: string;
+    parent: {
+      id: number;
+      name: string;
+    } | null;
+  };
+  offer: {
+    id: number;
+    image: string;
+    discount_type: "percentage" | "fixed";
+    discount_amount: string;
+    discount_info: string;
+    products_count: number;
+  } | null;
+  primary_image: string;
   images: string[];
-  category_id: number;
-  brand_id: number;
-  category: Category;
-  brand: Brand;
-  is_favourite: boolean;
-  is_wishlist: boolean;
-  created_at: string;
-  updated_at: string;
+  description: string;
+  hover_text: string;
+  product_identifier: string;
+}
+
+// Product Details Response
+export interface ProductDetailsResponse {
+  product: Product;
 }
 
 export interface ProductsRequest {

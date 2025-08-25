@@ -1,71 +1,110 @@
 "use client";
 
 import Image from "next/image";
-import { ShoppingCart, Minus, Plus, Trash, ArrowLeft } from "lucide-react";
+import {
+  ShoppingCart,
+  Minus,
+  Plus,
+  Trash,
+  ArrowLeft,
+  Loader2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
 import { useTranslation } from "react-i18next";
-import { Locale } from "@/lib/types";
+import { useGetProductQuery, useAddToCartMutation } from "@/services/hooks";
 
-const product = {
-  id: 1,
-  title: {
-    ar: "فرامل عالية الأداء",
-    en: "High Performance Brake Pads",
-  },
-  price: 89.99,
-  description: {
-    ar: "وسائد فرامل ممتازة مصممة للمركبات عالية الأداء. تتميز بمواد احتكاك متقدمة لقوة توقف فائقة وتقليل تلاشي الفرامل. مثالية للسيارات الرياضية والتطبيقات الشاقة.",
-    en: "Premium brake pads designed for high-performance vehicles. Features advanced friction materials for superior stopping power and reduced brake fade. Ideal for sports cars and demanding applications.",
-  },
-  category: {
-    ar: "الفرامل",
-    en: "Brakes",
-  },
-  image: "/offers/offer1.jpg",
-  rating: {
-    rate: 4.5,
-    count: 128,
-  },
-  images: [
-    "/products/product1.jpg",
-    "/products/product1.jpg",
-    "/products/product1.jpg",
-    "/products/product1.jpg",
-  ],
-};
+// Loading Component
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center min-h-[400px]">
+    <div className="flex flex-col items-center gap-4">
+      <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
+      <p className="text-gray-600">Loading product details...</p>
+    </div>
+  </div>
+);
+
+// Error Component
+const ErrorMessage = ({
+  message,
+  onRetry,
+}: {
+  message: string;
+  onRetry?: () => void;
+}) => (
+  <div className="flex items-center justify-center min-h-[400px]">
+    <div className="text-center">
+      <div className="text-red-500 text-lg font-semibold mb-2">Error</div>
+      <p className="text-gray-600 mb-4">{message}</p>
+      {onRetry && (
+        <Button onClick={onRetry} variant="outline">
+          Try Again
+        </Button>
+      )}
+    </div>
+  </div>
+);
 
 export default function ProductDetails() {
   const router = useRouter();
   const params = useParams();
-  const locale = params.locale as Locale;
+  const productId = parseInt(params.id as string);
   const { t, i18n } = useTranslation("product");
   const [selectedImage, setSelectedImage] = useState(0);
 
   const isRTL = i18n.language === "ar";
   const direction = isRTL ? "rtl" : "ltr";
 
-  // Use Redux hook
+  // API Hooks
+  const {
+    data: productResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useGetProductQuery(productId);
+
+  const [addToCartApi, { isLoading: isAddingToCart }] = useAddToCartMutation();
+
+  // Use Redux hook for local cart state
   const { items, addToCart, removeFromCart, updateQuantity } = useCart();
 
-  const cartItem = items.find((item) => item.id === product.id);
+  const product = productResponse?.data?.product;
+  const cartItem = items.find((item) => item.id === productId);
   const currentQuantity = cartItem?.quantity || 0;
   const isInCart = currentQuantity > 0;
 
-  const handleAddToCart = () => {
-    addToCart({
-      id: product.id,
-      title: product.title[locale],
-      price: product.price,
-      image: product.image,
-      category: product.category[locale],
-      description: product.description[locale],
-    });
+  const handleAddToCart = async () => {
+    if (!product) return;
+
+    try {
+      // Add to API cart
+      await addToCartApi({
+        product_id: product.id,
+        quantity: 1,
+      }).unwrap();
+
+      // Add to local Redux cart for immediate UI update
+      addToCart({
+        id: product.id,
+        title: product.name || "Product",
+        price: Number(product.final_price) || Number(product.price) || 0,
+        image: product.primary_image || "",
+        category: product.category?.name || "Unknown Category",
+        description: product.description || "",
+      });
+
+      console.log("Added to cart successfully!");
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+      alert("Failed to add to cart");
+    }
   };
 
   const handleQuantityChange = (newQuantity: number) => {
+    if (!product) return;
+
     if (newQuantity <= 0) {
       removeFromCart(product.id);
     } else {
@@ -76,6 +115,76 @@ export default function ProductDetails() {
   const handleGoBack = () => {
     router.back();
   };
+
+  // Handle loading state
+  if (isLoading) {
+    return (
+      <div
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+        dir={direction}
+      >
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  // Handle error state
+  if (error) {
+    let errorMessage = "Failed to load product details";
+    if ("status" in error) {
+      errorMessage = `Error ${error.status}: Failed to load product`;
+    } else if ("message" in error) {
+      errorMessage = error.message || errorMessage;
+    }
+
+    return (
+      <div
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+        dir={direction}
+      >
+        <ErrorMessage message={errorMessage} onRetry={refetch} />
+      </div>
+    );
+  }
+
+  // Handle case where product is not found
+  if (!product) {
+    return (
+      <div
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+        dir={direction}
+      >
+        <ErrorMessage message="Product not found" />
+      </div>
+    );
+  }
+
+  // Prepare images array with safety checks
+  const productImages = (() => {
+    if (
+      product.images &&
+      Array.isArray(product.images) &&
+      product.images.length > 0
+    ) {
+      return product.images;
+    }
+    if (product.primary_image) {
+      return [product.primary_image];
+    }
+    return [];
+  })();
+
+  // Safe access to product properties
+  const productName = product.name || "Product Name Unavailable";
+  const productPrice = product.price || "0";
+  const productFinalPrice = product.final_price || productPrice;
+  const productDescription = product.description || "No description available";
+  const productCode = product.product_identifier || "N/A";
+  const categoryName = product.category?.name || "Unknown Category";
+  const parentCategoryName = product.category?.parent?.name;
+  const brandName = product.brand?.name;
+  const offerInfo = product.offer;
+  const hoverText = product.hover_text;
 
   return (
     <div
@@ -107,9 +216,9 @@ export default function ProductDetails() {
           )}
         </button>
         <span>/</span>
-        <span className="capitalize">{product.category[locale]}</span>
+        <span className="capitalize">{categoryName}</span>
         <span>/</span>
-        <span className="text-gray-900 truncate">{product.title[locale]}</span>
+        <span className="text-gray-900 truncate">{productName}</span>
       </nav>
 
       {/* Main Product Layout */}
@@ -121,37 +230,49 @@ export default function ProductDetails() {
         {/* Product Images - Always first in RTL, second in LTR */}
         <div className="space-y-4">
           <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-            <Image
-              src={product.images[selectedImage]}
-              alt={product.title[locale]}
-              width={600}
-              height={600}
-              className="w-full h-full object-cover"
-            />
+            {productImages.length > 0 ? (
+              <Image
+                src={
+                  productImages[
+                    Math.min(selectedImage, productImages.length - 1)
+                  ]
+                }
+                alt={productName}
+                width={600}
+                height={600}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-gray-400">
+                No image available
+              </div>
+            )}
           </div>
 
           {/* Thumbnail images */}
-          <div className="grid grid-cols-4 gap-2">
-            {product.images.map((image, index) => (
-              <button
-                key={index}
-                onClick={() => setSelectedImage(index)}
-                className={`aspect-square bg-gray-100 rounded-md overflow-hidden border-2 transition-colors ${
-                  index === selectedImage
-                    ? "border-gray-900"
-                    : "border-transparent"
-                }`}
-              >
-                <Image
-                  src={image}
-                  alt={`${product.title[locale]} ${index + 1}`}
-                  width={150}
-                  height={150}
-                  className="w-full h-full object-cover"
-                />
-              </button>
-            ))}
-          </div>
+          {productImages.length > 1 && (
+            <div className="grid grid-cols-4 gap-2">
+              {productImages.map((image: string, index: number) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedImage(index)}
+                  className={`aspect-square bg-gray-100 rounded-md overflow-hidden border-2 transition-colors ${
+                    index === selectedImage
+                      ? "border-gray-900"
+                      : "border-transparent"
+                  }`}
+                >
+                  <Image
+                    src={image}
+                    alt={`${productName} ${index + 1}`}
+                    width={150}
+                    height={150}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Product Info - Always second in RTL, first in LTR */}
@@ -162,17 +283,27 @@ export default function ProductDetails() {
                 isRTL ? "text-right" : "text-left"
               }`}
             >
-              {product.title[locale]}
+              {productName}
             </h1>
-            <p
-              className={`text-2xl font-bold text-gray-900 ${
-                isRTL ? "text-right" : "text-left"
-              }`}
-            >
-              {isRTL
-                ? `${t("currency")} ${product.price}`
-                : `${product.price} ${t("currency")}`}
-            </p>
+            <div className={`space-y-1 ${isRTL ? "text-right" : "text-left"}`}>
+              {product.discount_type && (
+                <p className="text-lg text-gray-500 line-through">
+                  {isRTL
+                    ? `${t("currency")} ${productPrice}`
+                    : `${productPrice} ${t("currency")}`}
+                </p>
+              )}
+              <p className="text-2xl font-bold text-gray-900">
+                {isRTL
+                  ? `${t("currency")} ${productFinalPrice}`
+                  : `${productFinalPrice} ${t("currency")}`}
+              </p>
+              {product.discount_info && (
+                <p className="text-sm text-green-600 font-medium">
+                  {product.discount_info}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Description */}
@@ -184,21 +315,73 @@ export default function ProductDetails() {
             >
               {t("description")}
             </h3>
-            <p
+            <div
               className={`text-gray-700 leading-relaxed ${
                 isRTL ? "text-right" : "text-left"
               }`}
-            >
-              {product.description[locale]}
-            </p>
+              dangerouslySetInnerHTML={{ __html: productDescription }}
+            />
           </div>
 
-          {/* Category */}
+          {/* Category and Brand */}
           <div className={isRTL ? "text-right" : "text-left"}>
-            <span className="inline-block bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm capitalize">
-              {product.category[locale]}
-            </span>
+            <div className="flex flex-wrap gap-2">
+              <span className="inline-block bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm capitalize">
+                {categoryName}
+              </span>
+              {parentCategoryName && (
+                <span className="inline-block bg-gray-50 text-gray-600 px-3 py-1 rounded-full text-sm">
+                  {parentCategoryName}
+                </span>
+              )}
+              {brandName && (
+                <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                  {brandName}
+                </span>
+              )}
+            </div>
           </div>
+
+          {/* Offer Information */}
+          {offerInfo && (
+            <div
+              className={`bg-yellow-50 border border-yellow-200 rounded-lg p-4 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                {offerInfo.image && (
+                  <img
+                    src={offerInfo.image}
+                    alt="Offer"
+                    className="w-12 h-12 object-cover rounded"
+                  />
+                )}
+                <div>
+                  <h4 className="font-semibold text-yellow-800">
+                    Special Offer!
+                  </h4>
+                  <p className="text-yellow-700 text-sm">
+                    {offerInfo.discount_info}
+                  </p>
+                  <p className="text-yellow-600 text-xs">
+                    {offerInfo.products_count} products in this offer
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Hover Text */}
+          {hoverText && (
+            <div
+              className={`bg-green-50 border border-green-200 rounded-lg p-3 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
+              <p className="text-green-800 text-sm font-medium">{hoverText}</p>
+            </div>
+          )}
 
           <label
             className={`block text-sm font-medium text-black mb-4 ${
@@ -212,12 +395,15 @@ export default function ProductDetails() {
             {!isInCart ? (
               <Button
                 onClick={handleAddToCart}
+                disabled={isAddingToCart}
                 className={`w-full h-9 flex items-center justify-center gap-2 text-sm font-medium ${
                   isRTL ? "flex-row-reverse" : ""
                 }`}
                 size="sm"
               >
-                {isRTL ? (
+                {isAddingToCart ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : isRTL ? (
                   <>
                     <span>{t("addToCart")}</span>
                     <ShoppingCart size={16} />
@@ -269,7 +455,7 @@ export default function ProductDetails() {
               }`}
             >
               <span className="text-sm text-gray-600">{t("productCode")}:</span>
-              <span className="text-sm font-medium">PRD-{product.id}</span>
+              <span className="text-sm font-medium">{productCode}</span>
             </div>
             <div
               className={`flex justify-between items-center ${
@@ -290,9 +476,19 @@ export default function ProductDetails() {
             >
               <span className="text-sm text-gray-600">{t("category")}:</span>
               <span className="text-sm font-medium capitalize">
-                {product.category[locale]}
+                {categoryName}
               </span>
             </div>
+            {brandName && (
+              <div
+                className={`flex justify-between items-center ${
+                  isRTL ? "flex-row-reverse" : ""
+                }`}
+              >
+                <span className="text-sm text-gray-600">Brand:</span>
+                <span className="text-sm font-medium">{brandName}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
