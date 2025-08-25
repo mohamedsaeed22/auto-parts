@@ -179,9 +179,10 @@ export interface CategoriesRequest {
 export interface Brand {
   id: number;
   name: string;
-  logo?: string;
-  created_at: string;
-  updated_at: string;
+  image?: string;
+  logo?: string; // Keep for backward compatibility
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface BrandsRequest {
