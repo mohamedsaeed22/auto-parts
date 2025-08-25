@@ -94,7 +94,7 @@ export const productsApi = api.injectEndpoints({
     }),
 
     // Banners
-    getBanners: builder.query<ApiResponse<Banner[]>, void>({
+    getBanners: builder.query<ApiResponse<PaginatedResponse<Banner>>, void>({
       query: () => "/banners",
       providesTags: ["Banners"],
     }),

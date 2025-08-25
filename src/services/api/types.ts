@@ -358,12 +358,8 @@ export interface RequestsRequest {
 // Banner & Offer Types
 export interface Banner {
   id: number;
-  title: string;
   image: string;
   link?: string;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
 }
 
 export interface Offer {
