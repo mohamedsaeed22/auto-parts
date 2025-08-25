@@ -11,6 +11,7 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import cartReducer from "./slices/cartSlice";
+import { api } from "../services/api";
 
 // Persist configuration
 const persistConfig = {
@@ -24,13 +25,14 @@ const persistedCartReducer = persistReducer(persistConfig, cartReducer);
 export const store = configureStore({
   reducer: {
     cart: persistedCartReducer,
+    [api.reducerPath]: api.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }),
+    }).concat(api.middleware),
   devTools: process.env.NODE_ENV !== "production",
 });
 
