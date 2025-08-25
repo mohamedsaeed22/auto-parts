@@ -364,16 +364,11 @@ export interface Banner {
 
 export interface Offer {
   id: number;
-  title: string;
-  description: string;
   image: string;
-  discount_percentage?: number;
-  discount_amount?: number;
-  is_active: boolean;
-  start_date: string;
-  end_date: string;
-  created_at: string;
-  updated_at: string;
+  discount_type: "percentage" | "fixed";
+  discount_amount: string;
+  discount_info: string;
+  products_count: number;
 }
 
 // Section Types

@@ -100,7 +100,7 @@ export const productsApi = api.injectEndpoints({
     }),
 
     // Offers
-    getOffers: builder.query<ApiResponse<Offer[]>, void>({
+    getOffers: builder.query<ApiResponse<PaginatedResponse<Offer>>, void>({
       query: () => "/offers",
       providesTags: ["Offers"],
     }),
