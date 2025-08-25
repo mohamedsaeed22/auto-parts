@@ -2,15 +2,7 @@ import { useCart } from "@/hooks/useCart";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  ShoppingCart,
-  Trash,
-  Minus,
-  Plus,
-  Heart,
-  Star,
-  Eye,
-} from "lucide-react";
+import { ShoppingCart, Trash, Minus, Plus, Heart, Eye } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Product } from "@/services/api/types";
 
@@ -70,7 +62,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <div className="group relative" dir={isRTL ? "rtl" : "ltr"}>
       <Link href={`/product/${product.id}`}>
-        <div className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 h-full flex flex-col border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col border border-gray-200 overflow-hidden">
           {/* Image Container with Badges */}
           <div className="relative aspect-square overflow-hidden bg-gray-100">
             {/* Product Image */}
@@ -84,38 +76,38 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
             {/* Action Buttons */}
             <div
-              className={`absolute top-3 ${
-                isRTL ? "left-3" : "right-3"
-              } flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200`}
+              className={`absolute top-2 ${
+                isRTL ? "left-2" : "right-2"
+              } flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200`}
             >
               <Button
                 size="sm"
                 variant="outline"
-                className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm border-gray-200 hover:bg-white shadow-sm"
+                className="w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm border-gray-200 hover:bg-white shadow-sm"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                 }}
               >
-                <Heart size={14} className="text-gray-600" />
+                <Heart size={12} className="text-gray-600" />
               </Button>
               <Button
                 size="sm"
                 variant="outline"
-                className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm border-gray-200 hover:bg-white shadow-sm"
+                className="w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm border-gray-200 hover:bg-white shadow-sm"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                 }}
               >
-                <Eye size={14} className="text-gray-600" />
+                <Eye size={12} className="text-gray-600" />
               </Button>
             </div>
 
             {/* Discount Badge */}
             {hasDiscount && (
-              <div className={`absolute top-3 ${isRTL ? "right-3" : "left-3"}`}>
-                <div className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md shadow-sm">
+              <div className={`absolute top-2 ${isRTL ? "right-2" : "left-2"}`}>
+                <div className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">
                   {discountInfo || "SALE"}
                 </div>
               </div>
@@ -124,9 +116,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {/* Offer Badge */}
             {product.offer && (
               <div
-                className={`absolute bottom-3 ${isRTL ? "right-3" : "left-3"}`}
+                className={`absolute bottom-2 ${isRTL ? "right-2" : "left-2"}`}
               >
-                <div className="bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-md shadow-sm">
+                <div className="bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">
                   OFFER
                 </div>
               </div>
@@ -134,7 +126,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </div>
 
           {/* Product Info */}
-          <div className="p-4 flex flex-col flex-1">
+          <div className="p-3 flex flex-col flex-1">
             {/* Category and Brand */}
             <div className="flex flex-wrap gap-1 mb-2">
               <span className="text-xs text-gray-600 bg-gray-100 rounded-full px-2 py-1 capitalize">
@@ -148,80 +140,63 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </div>
 
             {/* Product Name */}
-            <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 min-h-[2.5rem] mb-2 group-hover:text-blue-600 transition-colors">
+            <h3 className="text-sm font-medium text-gray-900 line-clamp-2 min-h-[2.5rem] mb-2 group-hover:text-blue-600 transition-colors">
               {productName}
             </h3>
 
-            {/* Rating */}
-            <div
-              className={`flex items-center gap-1 mb-3 ${
-                isRTL ? "flex-row-reverse" : ""
-              }`}
-            >
-              <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    size={12}
-                    className={`${
-                      i < 4
-                        ? "fill-yellow-400 text-yellow-400"
-                        : "text-gray-300"
-                    }`}
-                  />
-                ))}
-              </div>
-              <span className="text-xs text-gray-500">(24)</span>
-            </div>
-
-            {/* Price Section */}
+            {/* Price and Add to Cart Section */}
             <div className="mt-auto">
               <div
-                className={`flex items-center gap-2 mb-3 ${
-                  isRTL ? "flex-row-reverse justify-end" : "justify-start"
+                className={`flex items-center justify-between ${
+                  isRTL ? "flex-row-reverse" : ""
                 }`}
               >
-                <span className="text-lg font-bold text-gray-900">
-                  {isRTL
-                    ? `${t("currency")} ${productFinalPrice}`
-                    : `${productFinalPrice} ${t("currency")}`}
-                </span>
-                {hasDiscount && (
-                  <span className="text-sm text-gray-500 line-through">
+                {/* Price Section */}
+                <div
+                  className={`flex items-center gap-2 ${
+                    isRTL ? "flex-row-reverse" : ""
+                  }`}
+                >
+                  <span className="text-base font-bold text-gray-900">
                     {isRTL
-                      ? `${t("currency")} ${productPrice}`
-                      : `${productPrice} ${t("currency")}`}
+                      ? `${t("currency")} ${productFinalPrice}`
+                      : `${productFinalPrice} ${t("currency")}`}
                   </span>
-                )}
-              </div>
+                  {hasDiscount && (
+                    <span className="text-sm text-gray-500 line-through">
+                      {isRTL
+                        ? `${t("currency")} ${productPrice}`
+                        : `${productPrice} ${t("currency")}`}
+                    </span>
+                  )}
+                </div>
 
-              {/* Add to Cart Section */}
-              <div className="flex items-center justify-between">
+                {/* Add to Cart Section */}
                 {!isInCart ? (
                   <Button
                     size="sm"
-                    className="bg-black hover:bg-gray-800 text-white rounded-lg px-3 py-2 flex items-center gap-1 transition-all duration-200 hover:scale-105 flex-1"
+                    className="bg-black hover:bg-gray-800 text-white rounded px-2 py-1 flex items-center gap-1 transition-all duration-200 hover:scale-105 text-xs"
                     onClick={handleAddToCart}
                   >
-                    <ShoppingCart size={14} />
-                    <span className="text-xs">{t("addToCart")}</span>
+                    <ShoppingCart size={12} />
+                    <span>{t("addToCart")}</span>
                   </Button>
                 ) : (
-                  <div className="flex items-center bg-white border-2 border-gray-300 rounded-lg overflow-hidden flex-1">
+                  <div className="flex items-center bg-white border border-gray-300 rounded overflow-hidden">
                     <Button
                       onClick={handleDecreaseQuantity}
                       size="sm"
                       variant="ghost"
-                      className="h-8 w-8 p-0 hover:bg-gray-100 text-gray-700 rounded-none border-r border-gray-200"
+                      className="h-7 w-7 p-0 hover:bg-gray-100 text-gray-700 rounded-none border-r border-gray-200"
                     >
                       {cartItem?.quantity === 1 ? (
-                        <Trash size={12} />
+                        <Trash size={10} />
                       ) : (
-                        <Minus size={12} />
+                        <Minus size={10} />
                       )}
                     </Button>
 
-                    <div className="h-8 px-2 flex items-center justify-center bg-gray-50 min-w-[32px]">
+                    <div className="h-7 px-2 flex items-center justify-center bg-gray-50 min-w-[28px]">
                       <span className="text-sm font-semibold text-gray-800">
                         {cartItem?.quantity}
                       </span>
@@ -231,9 +206,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                       onClick={handleIncreaseQuantity}
                       size="sm"
                       variant="ghost"
-                      className="h-8 w-8 p-0 hover:bg-gray-100 text-gray-700 rounded-none border-l border-gray-200"
+                      className="h-7 w-7 p-0 hover:bg-gray-100 text-gray-700 rounded-none border-l border-gray-200"
                     >
-                      <Plus size={12} />
+                      <Plus size={10} />
                     </Button>
                   </div>
                 )}
