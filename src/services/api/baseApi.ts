@@ -7,7 +7,7 @@ import type {
 import type { RootState } from "@/store";
 
 // Base URL from your Postman collection
-const BASE_URL = "https://iseek.name/api";
+const BASE_URL = "https://brave.iseek.name/api";
 
 // Custom base query with auth token handling
 const baseQueryWithAuth: BaseQueryFn<
