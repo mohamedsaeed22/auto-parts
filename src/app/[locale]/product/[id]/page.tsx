@@ -55,29 +55,46 @@ const ErrorMessage = ({
 );
 
 // Enhanced Features Components
-const ProductBadges = ({ product, isRTL, t }: any) => {
+type TranslateFn = (key: string) => string;
+type ProductForBadges = {
+  offer?: { discount_info?: string } | null;
+  discount_info?: string | null;
+};
+const ProductBadges = ({
+  product,
+  isRTL,
+  t,
+}: {
+  product: ProductForBadges;
+  isRTL: boolean;
+  t: TranslateFn;
+}) => {
   const badges = [];
-  
+
   if (product.offer) {
     badges.push({
-      type: 'offer',
+      type: "offer",
       text: `${product.offer.discount_info} OFF`,
-      className: 'bg-red-500 text-white',
+      className: "bg-red-500 text-white",
     });
   }
-  
+
   if (product.discount_info) {
     badges.push({
-      type: 'discount',
-      text: t('sale') || 'SALE',
-      className: 'bg-orange-500 text-white',
+      type: "discount",
+      text: t("sale") || "SALE",
+      className: "bg-orange-500 text-white",
     });
   }
 
   if (badges.length === 0) return null;
 
   return (
-    <div className={`absolute top-4 ${isRTL ? 'right-4' : 'left-4'} flex flex-col gap-2 z-10`}>
+    <div
+      className={`absolute top-4 ${
+        isRTL ? "right-4" : "left-4"
+      } flex flex-col gap-2 z-10`}
+    >
       {badges.map((badge, index) => (
         <div
           key={index}
@@ -90,8 +107,12 @@ const ProductBadges = ({ product, isRTL, t }: any) => {
   );
 };
 
-const ProductActions = ({ isRTL, t }: any) => (
-  <div className={`absolute top-4 ${isRTL ? 'left-4' : 'right-4'} flex flex-col gap-2 z-10`}>
+const ProductActions = ({ isRTL }: { isRTL: boolean }) => (
+  <div
+    className={`absolute top-4 ${
+      isRTL ? "left-4" : "right-4"
+    } flex flex-col gap-2 z-10`}
+  >
     <Button
       variant="outline"
       size="sm"
@@ -109,14 +130,16 @@ const ProductActions = ({ isRTL, t }: any) => (
   </div>
 );
 
-const ProductRating = ({ isRTL }: any) => (
-  <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+const ProductRating = ({ isRTL }: { isRTL: boolean }) => (
+  <div className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
     <div className="flex items-center">
       {[...Array(5)].map((_, i) => (
         <Star
           key={i}
           size={16}
-          className={`${i < 4 ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+          className={`${
+            i < 4 ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+          }`}
         />
       ))}
     </div>
@@ -124,77 +147,133 @@ const ProductRating = ({ isRTL }: any) => (
   </div>
 );
 
-const ProductFeatures = ({ isRTL, t }: any) => (
+const ProductFeatures = ({ isRTL, t }: { isRTL: boolean; t: TranslateFn }) => (
   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 bg-gray-50 rounded-lg">
-    <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+    <div
+      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
+    >
       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
         <Truck size={20} className="text-blue-600" />
       </div>
-      <div className={isRTL ? 'text-right' : 'text-left'}>
-        <p className="font-medium text-gray-900">{t('freeShipping') || 'Free Shipping'}</p>
-        <p className="text-sm text-gray-500">{t('freeShippingDesc') || 'On orders over $50'}</p>
+      <div className={isRTL ? "text-right" : "text-left"}>
+        <p className="font-medium text-gray-900">
+          {t("freeShipping") || "Free Shipping"}
+        </p>
+        <p className="text-sm text-gray-500">
+          {t("freeShippingDesc") || "On orders over $50"}
+        </p>
       </div>
     </div>
-    <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+    <div
+      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
+    >
       <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
         <Shield size={20} className="text-green-600" />
       </div>
-      <div className={isRTL ? 'text-right' : 'text-left'}>
-        <p className="font-medium text-gray-900">{t('warranty') || 'Warranty'}</p>
-        <p className="text-sm text-gray-500">{t('warrantyDesc') || '1 year guarantee'}</p>
+      <div className={isRTL ? "text-right" : "text-left"}>
+        <p className="font-medium text-gray-900">
+          {t("warranty") || "Warranty"}
+        </p>
+        <p className="text-sm text-gray-500">
+          {t("warrantyDesc") || "1 year guarantee"}
+        </p>
       </div>
     </div>
-    <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+    <div
+      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
+    >
       <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
         <RotateCcw size={20} className="text-purple-600" />
       </div>
-      <div className={isRTL ? 'text-right' : 'text-left'}>
-        <p className="font-medium text-gray-900">{t('returns') || 'Easy Returns'}</p>
-        <p className="text-sm text-gray-500">{t('returnsDesc') || '30 day policy'}</p>
+      <div className={isRTL ? "text-right" : "text-left"}>
+        <p className="font-medium text-gray-900">
+          {t("returns") || "Easy Returns"}
+        </p>
+        <p className="text-sm text-gray-500">
+          {t("returnsDesc") || "30 day policy"}
+        </p>
       </div>
     </div>
   </div>
 );
 
-const PriceSection = ({ product, isRTL, t }: any) => {
-  const hasDiscount = product.discount_type || product.offer;
+type ProductForPrice = {
+  discount_type?: string | null;
+  offer?: unknown | null;
+  price: number | string;
+  final_price: number;
+  discount_info?: string | null;
+};
+const PriceSection = ({
+  product,
+  isRTL,
+  t,
+}: {
+  product: ProductForPrice;
+  isRTL: boolean;
+  t: TranslateFn;
+}) => {
+  const hasDiscount = Boolean(product.discount_type || product.offer);
   const originalPrice = product.price;
   const finalPrice = product.final_price;
-  
+
   return (
     <div className="space-y-2">
-      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse justify-end' : 'justify-start'}`}>
+      <div
+        className={`flex items-center gap-3 ${
+          isRTL ? "flex-row-reverse justify-end" : "justify-start"
+        }`}
+      >
         <span className="text-3xl font-bold text-gray-900">
-          {isRTL ? `${t("currency")} ${finalPrice}` : `${finalPrice} ${t("currency")}`}
+          {isRTL
+            ? `${t("currency")} ${finalPrice}`
+            : `${finalPrice} ${t("currency")}`}
         </span>
         {hasDiscount && (
           <span className="text-xl text-gray-500 line-through">
-            {isRTL ? `${t("currency")} ${originalPrice}` : `${originalPrice} ${t("currency")}`}
+            {isRTL
+              ? `${t("currency")} ${Number(originalPrice)}`
+              : `${Number(originalPrice)} ${t("currency")}`}
           </span>
         )}
       </div>
-      
+
       {product.discount_info && (
-        <div className={`inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <div
+          className={`inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium ${
+            isRTL ? "flex-row-reverse" : ""
+          }`}
+        >
           <Info size={14} />
           <span>{product.discount_info}</span>
         </div>
       )}
-      
+
       {hasDiscount && (
         <p className="text-sm text-green-600 font-medium">
-          {t('youSave') || 'You save'}: {isRTL ? `${t("currency")} ${(originalPrice - finalPrice).toFixed(2)}` : `${(originalPrice - finalPrice).toFixed(2)} ${t("currency")}`}
+          {t("youSave") || "You save"}:{" "}
+          {isRTL
+            ? `${t("currency")} ${(Number(originalPrice) - finalPrice).toFixed(
+                2
+              )}`
+            : `${(Number(originalPrice) - finalPrice).toFixed(2)} ${t(
+                "currency"
+              )}`}
         </p>
       )}
     </div>
   );
 };
 
-const StockIndicator = ({ isRTL, t }: any) => (
-  <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+const StockIndicator = ({ isRTL, t }: { isRTL: boolean; t: TranslateFn }) => (
+  <div className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
     <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-    <span className="text-sm font-medium text-green-600">{t('inStock') || 'In Stock'}</span>
-    <span className="text-sm text-gray-500">- {t('readyToShip') || 'Ready to ship'}</span>
+    <span className="text-sm font-medium text-green-600">
+      {t("inStock") || "In Stock"}
+    </span>
+    <span className="text-sm text-gray-500">
+      - {t("readyToShip") || "Ready to ship"}
+    </span>
   </div>
 );
 
@@ -367,11 +446,15 @@ export default function ProductDetails() {
         <span>/</span>
         {parentCategoryName && (
           <>
-            <span className="capitalize hover:text-gray-700 cursor-pointer">{parentCategoryName}</span>
+            <span className="capitalize hover:text-gray-700 cursor-pointer">
+              {parentCategoryName}
+            </span>
             <span>/</span>
           </>
         )}
-        <span className="capitalize hover:text-gray-700 cursor-pointer">{categoryName}</span>
+        <span className="capitalize hover:text-gray-700 cursor-pointer">
+          {categoryName}
+        </span>
         <span>/</span>
         <span className="text-gray-900 truncate">{productName}</span>
       </nav>
@@ -386,8 +469,8 @@ export default function ProductDetails() {
         <div className="space-y-4">
           <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
             <ProductBadges product={product} isRTL={isRTL} t={t} />
-            <ProductActions isRTL={isRTL} t={t} />
-            
+            <ProductActions isRTL={isRTL} />
+
             {productImages.length > 0 ? (
               <Image
                 src={
@@ -443,10 +526,10 @@ export default function ProductDetails() {
             >
               {productName}
             </h1>
-            
+
             {/* Rating */}
             <ProductRating isRTL={isRTL} />
-            
+
             {/* Stock Status */}
             <div className="mt-3">
               <StockIndicator isRTL={isRTL} t={t} />
@@ -499,23 +582,30 @@ export default function ProductDetails() {
                 isRTL ? "text-right" : "text-left"
               }`}
             >
-              <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div
+                className={`flex items-center gap-3 ${
+                  isRTL ? "flex-row-reverse" : ""
+                }`}
+              >
                 {offerInfo.image && (
-                  <img
+                  <Image
                     src={offerInfo.image}
                     alt="Offer"
+                    width={48}
+                    height={48}
                     className="w-12 h-12 object-cover rounded-lg shadow-sm"
                   />
                 )}
                 <div>
                   <h4 className="font-semibold text-orange-800 flex items-center gap-2">
-                    <span>🎉</span> {t('specialOffer') || 'Special Offer!'}
+                    <span>🎉</span> {t("specialOffer") || "Special Offer!"}
                   </h4>
                   <p className="text-orange-700 text-sm font-medium">
-                    {offerInfo.discount_info} {t('discount') || 'discount'}
+                    {offerInfo.discount_info} {t("discount") || "discount"}
                   </p>
                   <p className="text-orange-600 text-xs">
-                    {offerInfo.products_count} {t('productsInOffer') || 'products in this offer'}
+                    {offerInfo.products_count}{" "}
+                    {t("productsInOffer") || "products in this offer"}
                   </p>
                 </div>
               </div>
@@ -529,7 +619,11 @@ export default function ProductDetails() {
                 isRTL ? "text-right border-r-4 border-l-0" : "text-left"
               }`}
             >
-              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div
+                className={`flex items-center gap-2 ${
+                  isRTL ? "flex-row-reverse" : ""
+                }`}
+              >
                 <Info size={16} className="text-blue-600" />
                 <p className="text-blue-800 text-sm font-medium">{hoverText}</p>
               </div>
@@ -607,17 +701,23 @@ export default function ProductDetails() {
 
           {/* Enhanced Additional Info */}
           <div className="border-t pt-6 space-y-4">
-            <h3 className={`text-lg font-semibold mb-4 ${isRTL ? "text-right" : "text-left"}`}>
-              {t('productDetails') || 'Product Details'}
+            <h3
+              className={`text-lg font-semibold mb-4 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
+              {t("productDetails") || "Product Details"}
             </h3>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div
                 className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg ${
                   isRTL ? "flex-row-reverse" : ""
                 }`}
               >
-                <span className="text-sm text-gray-600 font-medium">{t("productCode")}:</span>
+                <span className="text-sm text-gray-600 font-medium">
+                  {t("productCode")}:
+                </span>
                 <span className="text-sm font-semibold">{productCode}</span>
               </div>
               <div
@@ -637,7 +737,9 @@ export default function ProductDetails() {
                   isRTL ? "flex-row-reverse" : ""
                 }`}
               >
-                <span className="text-sm text-gray-600 font-medium">{t("category")}:</span>
+                <span className="text-sm text-gray-600 font-medium">
+                  {t("category")}:
+                </span>
                 <span className="text-sm font-semibold capitalize">
                   {categoryName}
                 </span>
@@ -648,7 +750,9 @@ export default function ProductDetails() {
                     isRTL ? "flex-row-reverse" : ""
                   }`}
                 >
-                  <span className="text-sm text-gray-600 font-medium">Brand:</span>
+                  <span className="text-sm text-gray-600 font-medium">
+                    Brand:
+                  </span>
                   <span className="text-sm font-semibold">{brandName}</span>
                 </div>
               )}

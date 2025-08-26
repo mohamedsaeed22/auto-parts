@@ -1,8 +1,8 @@
 // Base API Response Types
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   code: number;
   message: string;
-  errors: any[];
+  errors: Record<string, unknown>[] | string[];
   data: T;
 }
 
@@ -254,7 +254,7 @@ export interface CreateAddressRequest {
   is_default: boolean;
 }
 
-export interface UpdateAddressRequest extends CreateAddressRequest {}
+export type UpdateAddressRequest = CreateAddressRequest;
 
 // Order Types
 export interface Order {
@@ -376,7 +376,7 @@ export interface Section {
   id: number;
   title: string;
   type: string;
-  content: any;
+  content: unknown;
   is_active: boolean;
   order: number;
   created_at: string;

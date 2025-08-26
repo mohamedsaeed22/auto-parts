@@ -4,6 +4,7 @@ import type {
   FetchArgs,
   FetchBaseQueryError,
 } from "@reduxjs/toolkit/query";
+import type { RootState } from "@/store";
 
 // Base URL from your Postman collection
 const BASE_URL = "https://iseek.name/api";
@@ -18,7 +19,9 @@ const baseQueryWithAuth: BaseQueryFn<
     baseUrl: BASE_URL,
     prepareHeaders: (headers, { getState }) => {
       // Get token from your auth state (adjust based on your auth slice structure)
-      const token = (getState() as any).auth?.token;
+      const state = getState() as RootState;
+      const token = (state as unknown as { auth?: { token?: string } }).auth
+        ?.token;
 
       if (token) {
         headers.set("authorization", `Bearer ${token}`);
