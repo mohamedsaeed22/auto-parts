@@ -1,0 +1,11 @@
+{
+  "loadingSections": "Loading sections...",
+  "error": {
+    "title": "Error loading sections",
+    "message": "Something went wrong. Please try again."
+  },
+  "empty": {
+    "title": "No sections found",
+    "message": "No sections are available at the moment."
+  }
+}

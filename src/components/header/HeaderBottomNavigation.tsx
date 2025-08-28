@@ -1,12 +1,5 @@
 import { motion } from "framer-motion";
-import {
-  Home,
-  Grid3X3,
-  Tag,
-  ShoppingCart,
-  Heart,
-  Bookmark,
-} from "lucide-react";
+import { Home, Grid3X3, ShoppingCart, Heart, Bookmark } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
 

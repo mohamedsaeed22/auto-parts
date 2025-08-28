@@ -9,7 +9,6 @@ import {
   Minus,
   Plus,
   Heart,
-  Eye,
   Bookmark,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";

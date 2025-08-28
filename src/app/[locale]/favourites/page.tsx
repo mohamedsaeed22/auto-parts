@@ -5,11 +5,13 @@ import {
   useGetFavouritesQuery,
   useRemoveFavouriteMutation,
 } from "@/services/api";
+import { FavouriteItem } from "@/services/api/favouritesApi";
 import { Heart, Trash2, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function FavouritesPage() {
   const { t } = useTranslation("favourites");
@@ -29,7 +31,12 @@ export default function FavouritesPage() {
     }
   };
 
-  const handleAddToCart = (product: any) => {
+  const handleAddToCart = (product: {
+    id: number;
+    name: string;
+    price: number;
+    image: string;
+  }) => {
     addToCart({
       id: product.id,
       title: product.name,
@@ -66,7 +73,7 @@ export default function FavouritesPage() {
     );
   }
 
-  const favourites = favouritesData?.data || [];
+  const favourites = (favouritesData?.data || []) as unknown as FavouriteItem[];
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -103,7 +110,7 @@ export default function FavouritesPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           <AnimatePresence>
-            {favourites.map((item) => (
+            {favourites.map((item: FavouriteItem) => (
               <motion.div
                 key={item.id}
                 layout
@@ -115,10 +122,11 @@ export default function FavouritesPage() {
               >
                 {/* Product Image */}
                 <div className="relative aspect-square overflow-hidden">
-                  <img
+                  <Image
                     src={item.product?.image || "/products/product1.jpg"}
                     alt={item.product?.name || "Product"}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
                   <div className="absolute top-2 right-2">
                     <Button
@@ -151,8 +159,11 @@ export default function FavouritesPage() {
                     </span>
                     <Button
                       size="sm"
-                      onClick={() => handleAddToCart(item.product)}
+                      onClick={() =>
+                        item.product && handleAddToCart(item.product)
+                      }
                       className="bg-logo-gold hover:bg-logo-gold/90"
+                      disabled={!item.product}
                     >
                       <ShoppingCart size={16} className="mr-1" />
                       {t("addToCart") || "Add to Cart"}
