@@ -5,13 +5,7 @@ export default function HeaderLogo() {
   return (
     <div className="flex-shrink-0">
       <Link href="/">
-        <Image
-          src="/logo-icon.jpeg"
-          alt="logo"
-          width={40}
-          height={50}
-          className="lg:w-12 lg:h-15"
-        />
+        <Image src="/one.png" alt="logo" width={100} height={100} />
       </Link>
     </div>
   );
