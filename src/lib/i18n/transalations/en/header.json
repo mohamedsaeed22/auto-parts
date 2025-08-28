@@ -20,6 +20,8 @@
   "actions": {
     "login": "Login / Register",
     "account": "Account",
+    "favourites": "Favourites",
+    "wishlist": "Wishlist",
     "openMainMenu": "Open main menu",
     "search": "Search",
     "searchPlaceholder": "Search for products, parts..."
@@ -30,7 +32,7 @@
   "bottomNav": {
     "home": "Home",
     "categories": "Categories",
-    "offers": "Offers",
+    "favourites": "Favourites",
     "wishlist": "Wishlist",
     "cart": "Cart"
   },

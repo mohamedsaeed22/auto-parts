@@ -1,6 +1,14 @@
 import { motion } from "framer-motion";
-import { Home, Grid3X3, Tag, ShoppingCart } from "lucide-react";
+import {
+  Home,
+  Grid3X3,
+  Tag,
+  ShoppingCart,
+  Heart,
+  Bookmark,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/navigation";
 
 interface HeaderBottomNavigationProps {
   totalItems: number;
@@ -16,6 +24,7 @@ export default function HeaderBottomNavigation({
   pathname,
 }: HeaderBottomNavigationProps) {
   const { t } = useTranslation("header");
+  const router = useRouter();
 
   // Bottom navigation items for mobile
   const bottomNavItems = [
@@ -32,10 +41,16 @@ export default function HeaderBottomNavigation({
       isActive: pathname.startsWith("/products"),
     },
     {
-      href: "/offers",
-      icon: Tag,
-      label: t("bottomNav.offers") || "Offers",
-      isActive: pathname.startsWith("/offers"),
+      href: "/favourites",
+      icon: Heart,
+      label: t("bottomNav.favourites") || "Favourites",
+      isActive: pathname.startsWith("/favourites"),
+    },
+    {
+      href: "/wishlist",
+      icon: Bookmark,
+      label: t("bottomNav.wishlist") || "Wishlist",
+      isActive: pathname.startsWith("/wishlist"),
     },
     {
       href: "#",
@@ -50,7 +65,7 @@ export default function HeaderBottomNavigation({
     if (item.isCart) {
       onCartClick();
     } else if (item.href) {
-      window.location.href = item.href;
+      router.push(item.href);
     }
   };
 

@@ -1,8 +1,17 @@
 import { useCart } from "@/hooks/useCart";
+import { useFavouritesWishlist } from "@/hooks/useFavouritesWishlist";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingCart, Trash, Minus, Plus, Heart, Eye } from "lucide-react";
+import {
+  ShoppingCart,
+  Trash,
+  Minus,
+  Plus,
+  Heart,
+  Eye,
+  Bookmark,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Product } from "@/services/api/types";
 
@@ -15,6 +24,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { t, i18n } = useTranslation("product");
   const isRTL = i18n.language === "ar";
   const { items, addToCart, updateQuantity, removeFromCart } = useCart();
+  const { handleToggleFavourite, handleToggleWishlist, isLoading } =
+    useFavouritesWishlist();
   const cartItem = items.find((item) => item.id === product.id);
   const isInCart = !!cartItem;
 
@@ -87,9 +98,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
+                  handleToggleFavourite(product.id);
                 }}
+                disabled={isLoading(`favourite-${product.id}`)}
               >
-                <Heart size={12} className="text-gray-600" />
+                {isLoading(`favourite-${product.id}`) ? (
+                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-gray-600"></div>
+                ) : (
+                  <Heart size={12} className="text-gray-600" />
+                )}
               </Button>
               <Button
                 size="sm"
@@ -98,9 +115,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
+                  handleToggleWishlist(product.id);
                 }}
+                disabled={isLoading(`wishlist-${product.id}`)}
               >
-                <Eye size={12} className="text-gray-600" />
+                {isLoading(`wishlist-${product.id}`) ? (
+                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-gray-600"></div>
+                ) : (
+                  <Bookmark size={12} className="text-gray-600" />
+                )}
               </Button>
             </div>
 

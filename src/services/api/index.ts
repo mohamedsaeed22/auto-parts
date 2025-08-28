@@ -12,6 +12,8 @@ export * from "./ordersApi";
 export * from "./addressesApi";
 export * from "./requestsApi";
 export * from "./settingsApi";
+export * from "./favouritesApi";
+export * from "./wishlistApi";
 
 // Re-export the main api for store configuration
 export { api } from "./baseApi";

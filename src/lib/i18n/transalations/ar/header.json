@@ -20,6 +20,8 @@
   "actions": {
     "login": "تسجيل الدخول / إنشاء حساب",
     "account": "الحساب",
+    "favourites": "المفضلة",
+    "wishlist": "قائمة الأمنيات",
     "openMainMenu": "فتح القائمة الرئيسية",
     "search": "بحث",
     "searchPlaceholder": "ابحث عن المنتجات والقطع..."
@@ -30,8 +32,8 @@
   "bottomNav": {
     "home": "الرئيسية",
     "categories": "الأقسام",
-    "offers": "العروض",
-    "wishlist": "المفضلة",
+    "favourites": "المفضلة",
+    "wishlist": "قائمة الأمنيات",
     "cart": "السلة"
   },
   "menu": {
