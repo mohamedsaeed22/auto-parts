@@ -6,6 +6,7 @@ import OffersSwiper from "@/components/swiper/OffersSwiper";
 import ProductsList from "@/components/product/ProductsList";
 import SectionsContainer from "@/components/sections/SectionsContainer";
 import CategoriesSection from "@/components/sections/CategoriesSection";
+import Partners from "@/components/partners/Partners";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 export default function Home() {
@@ -23,6 +24,9 @@ export default function Home() {
           <SectionsContainer />
           <ProductsList />
         </div>
+
+        {/* Partners Section - Above Footer */}
+        <Partners />
       </main>
     </div>
   );

@@ -12,7 +12,6 @@ import type {
   Banner,
   Offer,
   Section,
-  Partner,
 } from "./types";
 
 export const productsApi = api.injectEndpoints({
@@ -112,12 +111,6 @@ export const productsApi = api.injectEndpoints({
     }),
 
     // Sections moved to dedicated sectionsApi.ts file
-
-    // Partners
-    getPartners: builder.query<ApiResponse<Partner[]>, void>({
-      query: () => "/partners",
-      providesTags: ["Partners"],
-    }),
   }),
 });
 
@@ -129,5 +122,4 @@ export const {
   useGetBannersQuery,
   useGetOffersQuery,
   useGetOfferQuery,
-  useGetPartnersQuery,
 } = productsApi;

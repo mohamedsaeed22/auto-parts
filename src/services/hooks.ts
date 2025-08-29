@@ -37,7 +37,6 @@ export {
   useGetBannersQuery,
   useGetOffersQuery,
   useGetOfferQuery,
-  useGetPartnersQuery,
 } from "./api/productsApi";
 
 // Sections Hooks
@@ -103,3 +102,6 @@ export {
 
 // Re-export types for convenience
 export type * from "./api/types";
+
+// Partners API
+export { useGetPartnersQuery } from "./api/partnersApi";

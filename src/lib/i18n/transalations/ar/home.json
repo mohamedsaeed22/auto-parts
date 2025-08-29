@@ -190,6 +190,14 @@
     "offer6": { "alt": "عرض خاص 6" },
     "offer7": { "alt": "عرض خاص 7" }
   },
+  "partners": {
+    "title": "شركاؤنا الموثوقون",
+    "description": "نعمل مع الشركات الرائدة في جميع أنحاء العالم",
+    "scrollHint": "مرر لرؤية المزيد من الشركاء",
+    "loadingPartners": "جاري تحميل الشركاء...",
+    "errorLoadingPartners": "خطأ في تحميل الشركاء",
+    "noPartners": "لا توجد شركاء متاحون"
+  },
   "footer": {
     "sections": {
       "siteCategories": {
