@@ -3,10 +3,14 @@
 import React from "react";
 import ProductsList from "@/components/product/ProductsList";
 import { useTranslation } from "react-i18next";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 export default function ProductsPage() {
   const { t, i18n } = useTranslation("product");
   const isRTL = i18n.language === "ar";
+
+  // Scroll to top when page loads
+  useScrollToTop();
 
   return (
     <div className="min-h-screen bg-gray-50" dir={isRTL ? "rtl" : "ltr"}>

@@ -9,6 +9,7 @@ import { WishlistItem } from "@/services/api/wishlistApi";
 import { Bookmark, Trash2, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import Image from "next/image";
@@ -19,6 +20,9 @@ export default function WishlistPage() {
   const [removeFromWishlist] = useRemoveFromWishlistMutation();
   const { addToCart } = useCart();
   const [removingId, setRemovingId] = useState<number | null>(null);
+
+  // Scroll to top when page loads
+  useScrollToTop();
 
   const handleRemoveFromWishlist = async (productId: number) => {
     setRemovingId(productId);

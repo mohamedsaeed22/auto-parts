@@ -1,0 +1,11 @@
+import { useEffect } from "react";
+
+export const useScrollToTop = (dependencies: any[] = []) => {
+  useEffect(() => {
+    // Scroll to top with smooth behavior
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, dependencies);
+};

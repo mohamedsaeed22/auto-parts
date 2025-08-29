@@ -17,9 +17,10 @@ import {
   Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useTranslation } from "react-i18next";
 import { useGetProductQuery, useAddToCartMutation } from "@/services/hooks";
 
@@ -286,6 +287,9 @@ export default function ProductDetails() {
 
   const isRTL = i18n.language === "ar";
   const direction = isRTL ? "rtl" : "ltr";
+
+  // Scroll to top when component mounts or productId changes
+  useScrollToTop([productId]);
 
   // API Hooks
   const {
