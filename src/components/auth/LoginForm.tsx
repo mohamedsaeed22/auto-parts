@@ -17,12 +17,14 @@ import { useFormErrorTranslation } from "@/hooks/useFormErrorTranslation";
 interface LoginFormProps {
   onSubmit: (data: LoginFormData) => Promise<void>;
   onSwitchToRegister: () => void;
+  onSwitchToOtp: (phoneNumber: string) => void;
   isLoading: boolean;
 }
 
 export default function LoginForm({
   onSubmit,
   onSwitchToRegister,
+  onSwitchToOtp,
   isLoading,
 }: LoginFormProps) {
   const { t } = useTranslation("auth");
@@ -37,20 +39,39 @@ export default function LoginForm({
     defaultValues: loginDefaultValues,
   });
 
+  const handleSendOtp = async (data: LoginFormData) => {
+    // Simple: get phone number from form data and send it
+    const phoneNumber = data.phoneNumber || "";
+    console.log("Form submitted with phone:", phoneNumber);
+    console.log("Full form data:", data);
+
+    try {
+      await onSubmit(data);
+    } catch (error) {
+      console.error("Error in form submission:", error);
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <FormInput
-          label={t("login.phoneLabel")}
-          placeholder={t("login.phonePlaceholder")}
-          type="tel"
-          register={register("phoneNumber")}
-          error={translateError(errors.phoneNumber)}
-          icon={Phone}
-          iconPosition="left"
-          dir="ltr"
-          required
-        />
+      <form onSubmit={handleSubmit(handleSendOtp)} className="space-y-4">
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-neutral-700">
+            {t("login.phoneLabel")}
+          </label>
+          <input
+            type="tel"
+            placeholder={t("login.phonePlaceholder")}
+            {...register("phoneNumber")}
+            className="w-full px-3 py-3 border border-neutral-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+            dir="ltr"
+          />
+          {errors.phoneNumber && (
+            <p className="text-sm text-red-500">
+              {translateError(errors.phoneNumber)}
+            </p>
+          )}
+        </div>
 
         <Button
           type="submit"

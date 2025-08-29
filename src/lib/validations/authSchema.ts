@@ -9,8 +9,7 @@ const ACCEPTED_IMAGE_TYPES = [
   "image/gif",
 ];
 
-// Common phone number validation pattern
-const phonePattern = /^[0-9+\-\s()]+$/;
+// Phone number validation removed - now optional
 
 // Document image validation schema
 const documentImageSchema = z
@@ -39,10 +38,7 @@ const locationSchema = z.object({
 
 // Login schema (phone number only)
 export const loginSchema = z.object({
-  phoneNumber: z
-    .string()
-    .min(1, "validation.phone.required")
-    .regex(phonePattern, "validation.phone.invalid"),
+  phoneNumber: z.string().optional(),
 });
 
 // Registration schema
@@ -72,10 +68,7 @@ export const registrationSchema = z.object({
     .regex(/^[0-9]+$/, "validation.taxCardNumber.invalid")
     .min(6, "validation.taxCardNumber.minLength")
     .max(20, "validation.taxCardNumber.maxLength"),
-  phoneNumber: z
-    .string()
-    .min(1, "validation.phone.required")
-    .regex(phonePattern, "validation.phone.invalid"),
+  phoneNumber: z.string().optional(),
   // Google Maps location data
   location: locationSchema,
   documentImage: documentImageSchema,
@@ -85,9 +78,9 @@ export const registrationSchema = z.object({
 export const otpSchema = z.object({
   otp: z
     .string()
-    .min(6, "validation.otp.length")
-    .max(6, "validation.otp.length")
-    .regex(/^[0-9]{6}$/, "validation.otp.invalid"),
+    .min(4, "validation.otp.length")
+    .max(4, "validation.otp.length")
+    .regex(/^[0-9]{4}$/, "validation.otp.invalid"),
 });
 
 // Type exports
@@ -126,10 +119,7 @@ export const otpDefaultValues: Partial<OtpFormData> = {
   otp: "",
 };
 
-// Validation utilities
-export const validatePhoneNumber = (phoneNumber: string): boolean => {
-  return phonePattern.test(phoneNumber) && phoneNumber.length > 0;
-};
+// Validation utilities - removed phone validation since it's optional now
 
 export const validateImageFile = (
   file: File

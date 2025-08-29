@@ -99,9 +99,28 @@ export interface User {
 }
 
 export interface AuthResponse {
-  user: User;
+  user: {
+    id: number;
+    code: string;
+    name: string | null;
+    email: string | null;
+    phone: string;
+    type: string | null;
+    manager_name: string | null;
+    address: string | null;
+    city: string | null;
+    state: string | null;
+    zip: string | null;
+    tax_number: string | null;
+    commercial_register: string | null;
+    avatar: string | null;
+    latitude: string | null;
+    longitude: string | null;
+    is_registration_complete: boolean;
+    is_google_user: boolean;
+  };
   token: string;
-  token_type: string;
+  is_registration_complete: boolean;
 }
 
 // Product Types

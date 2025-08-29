@@ -2,7 +2,7 @@
   "required": "This field is required",
   "phone": {
     "required": "Phone number is required",
-    "invalid": "Please enter a valid phone number"
+    "invalid": "Please enter a valid Egyptian phone number (010, 011, 012, or 015)"
   },
   "email": {
     "invalid": "Please enter a valid email address"

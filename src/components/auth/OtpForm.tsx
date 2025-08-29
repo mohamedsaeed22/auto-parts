@@ -5,30 +5,38 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
 import {
   otpSchema,
   type OtpFormData,
   otpDefaultValues,
 } from "@/lib/validations/authSchema";
 import { useFormErrorTranslation } from "@/hooks/useFormErrorTranslation";
+import { useVerifyOtpMutation, useSendOtpMutation } from "@/services/hooks";
+import { storage } from "@/lib/storage";
+import { useRouter } from "next/navigation";
+import { showSuccess, showError } from "@/lib/toast";
 
 interface OtpFormProps {
-  onSubmit: (data: OtpFormData) => Promise<void>;
   onGoBack: () => void;
-  onResendOtp: () => Promise<void>;
   phoneNumber: string;
-  isLoading: boolean;
+  onAuthSuccess: (authData: import("@/lib/storage").AuthData) => void;
 }
 
 export default function OtpForm({
-  onSubmit,
   onGoBack,
-  onResendOtp,
   phoneNumber,
-  isLoading,
+  onAuthSuccess,
 }: OtpFormProps) {
   const { t } = useTranslation("auth");
   const { translateError } = useFormErrorTranslation();
+  const router = useRouter();
+  const [verifyOtp, { isLoading: isVerifying }] = useVerifyOtpMutation();
+  const [sendOtp, { isLoading: isResending }] = useSendOtpMutation();
+
+  // Counter state for resend button
+  const [countdown, setCountdown] = useState(60);
+  const [canResend, setCanResend] = useState(false);
 
   const {
     register,
@@ -39,6 +47,60 @@ export default function OtpForm({
     defaultValues: otpDefaultValues,
   });
 
+  // Countdown effect for resend button
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    if (countdown > 0) {
+      timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+    } else {
+      setCanResend(true);
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [countdown]);
+
+  const handleVerifyOtp = async (data: OtpFormData) => {
+    try {
+      const response = await verifyOtp({
+        phone: phoneNumber,
+        code: data.otp,
+      }).unwrap();
+
+      if (response.code === 200 && response.data) {
+        // Store auth data in browser
+        storage.setAuth(response.data);
+
+        // Call success callback
+        onAuthSuccess(response.data);
+
+        // Redirect to home page after successful login
+        router.push("/");
+      }
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+      showError("حدث خطأ أثناء التحقق من رمز التحقق");
+    }
+  };
+
+  const handleResendOtp = async () => {
+    try {
+      await sendOtp({ phone: phoneNumber }).unwrap();
+      showSuccess("تم إعادة إرسال رمز التحقق بنجاح!");
+
+      // Reset countdown after successful resend
+      setCountdown(60);
+      setCanResend(false);
+    } catch (error) {
+      console.error("Error resending OTP:", error);
+      showError("حدث خطأ أثناء إعادة إرسال رمز التحقق");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -47,7 +109,7 @@ export default function OtpForm({
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(handleVerifyOtp)} className="space-y-4">
         <div>
           <label
             htmlFor="otp"
@@ -59,7 +121,7 @@ export default function OtpForm({
             {...register("otp")}
             type="text"
             id="otp"
-            maxLength={6}
+            maxLength={4}
             dir="ltr"
             className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-center text-lg tracking-widest ${
               errors.otp ? "border-accent" : "border-neutral-300"
@@ -79,7 +141,7 @@ export default function OtpForm({
             variant="outline"
             onClick={onGoBack}
             className="flex-1 py-3"
-            disabled={isLoading}
+            disabled={isVerifying || isResending}
           >
             <ArrowRight className="w-4 h-4 ml-2" />
             {t("otp.backButton")}
@@ -87,9 +149,9 @@ export default function OtpForm({
           <Button
             type="submit"
             className="flex-1 py-3 bg-primary hover:bg-primary-dark text-white font-medium"
-            disabled={isSubmitting || isLoading}
+            disabled={isSubmitting || isVerifying || isResending}
           >
-            {isSubmitting || isLoading
+            {isSubmitting || isVerifying || isResending
               ? t("otp.submitButtonLoading")
               : t("otp.submitButton")}
           </Button>
@@ -100,10 +162,14 @@ export default function OtpForm({
         <button
           type="button"
           className="text-sm text-primary hover:text-primary-dark disabled:opacity-50 disabled:cursor-not-allowed"
-          onClick={onResendOtp}
-          disabled={isLoading}
+          onClick={handleResendOtp}
+          disabled={isResending || !canResend}
         >
-          {isLoading ? t("otp.resendButtonLoading") : t("otp.resendButton")}
+          {isResending
+            ? t("otp.resendButtonLoading")
+            : canResend
+            ? t("otp.resendButton")
+            : `${t("otp.resendButton")} (${countdown}s)`}
         </button>
       </div>
     </div>

@@ -9,6 +9,7 @@ import { Providers } from "@/store/providers";
 import { Locale } from "@/lib/types";
 import { getDirection } from "@/lib/utils/index";
 import LocaleProvider from "@/components/providers/LocaleProvider";
+import ToastProvider from "@/components/providers/ToastProvider";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
@@ -54,6 +55,7 @@ export default async function LocaleLayout({
             <Footer />
             <Cart />
             <WhatsAppButton />
+            <ToastProvider />
           </LocaleProvider>
         </Providers>
       </I18NProvider>

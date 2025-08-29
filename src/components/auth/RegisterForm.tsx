@@ -123,7 +123,6 @@ export default function RegisterForm({
             error={translateError(errors.phoneNumber)}
             icon={PhoneCall}
             iconPosition="left"
-            required
           />
         </div>
 

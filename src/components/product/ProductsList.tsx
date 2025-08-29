@@ -6,7 +6,7 @@ import ProductCard from "./ProductCard";
 import { useTranslation } from "react-i18next";
 import { useGetProductsMutation } from "@/services/hooks";
 import { Product, ProductsRequest } from "@/services/api/types";
-import { Search, Filter, Grid, List, AlertCircle } from "lucide-react";
+import { Search, Filter, Grid, List, AlertCircle, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const ProductsList = () => {

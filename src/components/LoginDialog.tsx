@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { User } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 // Import validation schemas and types
 import {
@@ -20,6 +21,9 @@ import {
 
 // Import separated auth components
 import { LoginForm, RegisterForm, OtpForm } from "./auth";
+import { useSendOtpMutation, useVerifyOtpMutation } from "@/services/hooks";
+import { storage } from "@/lib/storage";
+import { showSuccess, showError, showPromise } from "@/lib/toast";
 
 interface LoginDialogProps {
   trigger?: React.ReactNode;
@@ -35,19 +39,26 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
     LoginFormData | RegistrationFormData | null
   >(null);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const [sendOtp, { isLoading: isSendingOtp }] = useSendOtpMutation();
+  const [verifyOtp] = useVerifyOtpMutation();
 
   const onLoginSubmit = async (data: LoginFormData) => {
     try {
       setIsLoading(true);
-      console.log("Login data:", data);
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Simple: send phone number to API
+      const phoneNumber = data.phoneNumber || "";
+      console.log("Sending OTP to:", phoneNumber);
+
+      await sendOtp({ phone: phoneNumber }).unwrap();
 
       setFormData(data);
       setCurrentStep("otp");
+      showSuccess("تم إرسال رمز التحقق بنجاح!");
     } catch (error) {
-      console.error("Error submitting login:", error);
-      alert("حدث خطأ أثناء إرسال رمز التحقق");
+      console.error("Error sending OTP:", error);
+      showError("حدث خطأ أثناء إرسال رمز التحقق");
     } finally {
       setIsLoading(false);
     }
@@ -58,37 +69,16 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
       setIsLoading(true);
       console.log("Registration data:", data);
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Call the real API to send OTP for registration
+      const phoneNumber = data.phoneNumber || "";
+      await sendOtp({ phone: phoneNumber }).unwrap();
 
       setFormData(data);
       setCurrentStep("otp");
+      showSuccess("تم إرسال رمز التحقق بنجاح!");
     } catch (error) {
       console.error("Error submitting registration:", error);
-      alert("حدث خطأ أثناء إرسال رمز التحقق");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const onSubmitOtp = async (data: OtpFormData) => {
-    try {
-      setIsLoading(true);
-      console.log("OTP data:", data);
-
-      if (data.otp.length !== 6) {
-        alert("يرجى إدخال رمز التحقق المكون من 6 أرقام");
-        return;
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      alert(
-        currentStep === "login" ? "تم تسجيل الدخول بنجاح!" : "تم التسجيل بنجاح!"
-      );
-      handleDialogChange(false);
-    } catch (error) {
-      console.error("Error verifying OTP:", error);
-      alert("حدث خطأ أثناء التحقق من رمز التحقق");
+      showError("حدث خطأ أثناء إرسال رمز التحقق");
     } finally {
       setIsLoading(false);
     }
@@ -119,24 +109,6 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
     setCurrentStep("login");
   };
 
-  const resendOtp = async () => {
-    if (!formData) {
-      alert("لا توجد بيانات للنموذج");
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      alert("تم إعادة إرسال رمز التحقق");
-    } catch (error) {
-      console.error("Error resending OTP:", error);
-      alert("حدث خطأ أثناء إعادة إرسال رمز التحقق");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const getDialogTitle = () => {
     switch (currentStep) {
       case "login":
@@ -152,7 +124,7 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
 
   const getPhoneNumber = () => {
     if (!formData) return "";
-    return "phoneNumber" in formData ? formData.phoneNumber : "";
+    return "phoneNumber" in formData ? formData.phoneNumber || "" : "";
   };
 
   return (
@@ -177,7 +149,11 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
           <LoginForm
             onSubmit={onLoginSubmit}
             onSwitchToRegister={switchToRegister}
-            isLoading={isLoading}
+            onSwitchToOtp={(phoneNumber) => {
+              setFormData({ phoneNumber });
+              setCurrentStep("otp");
+            }}
+            isLoading={isLoading || isSendingOtp}
           />
         )}
 
@@ -185,21 +161,26 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
           <RegisterForm
             onSubmit={onRegisterSubmit}
             onSwitchToLogin={switchToLogin}
-            isLoading={isLoading}
+            isLoading={isLoading || isSendingOtp}
           />
         )}
 
         {currentStep === "otp" && (
           <OtpForm
-            onSubmit={onSubmitOtp}
             onGoBack={
               formData && "shopName" in formData
                 ? goBackToRegister
                 : goBackToLogin
             }
-            onResendOtp={resendOtp}
             phoneNumber={getPhoneNumber()}
-            isLoading={isLoading}
+            onAuthSuccess={(authData) => {
+              // Handle successful authentication
+              showSuccess("تم تسجيل الدخول بنجاح!");
+              handleDialogChange(false);
+
+              // Redirect to home page after successful login
+              router.push("/");
+            }}
           />
         )}
       </DialogContent>

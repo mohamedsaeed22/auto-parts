@@ -18,13 +18,13 @@ export const authApi = api.injectEndpoints({
     // Login with Phone - Send OTP
     sendOtp: builder.mutation<ApiResponse, LoginWithPhoneRequest>({
       query: (data) => {
-        const formData = new FormData();
-        formData.append("phone", data.phone);
-
         return {
           url: "/auth/send-otp",
           method: "POST",
-          body: formData,
+          body: JSON.stringify({ phone: data.phone }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
         };
       },
     }),
@@ -32,14 +32,16 @@ export const authApi = api.injectEndpoints({
     // Verify OTP
     verifyOtp: builder.mutation<ApiResponse<AuthResponse>, VerifyOtpRequest>({
       query: (data) => {
-        const formData = new FormData();
-        formData.append("phone", data.phone);
-        formData.append("code", data.code);
-
         return {
           url: "/auth/verify-otp",
           method: "POST",
-          body: formData,
+          body: JSON.stringify({ 
+            phone: data.phone,
+            code: data.code 
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
         };
       },
       invalidatesTags: ["Auth", "Profile"],
