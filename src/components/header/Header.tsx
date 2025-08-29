@@ -101,7 +101,7 @@ export default function Header() {
     <>
       {/* Main Header */}
       <header
-        className="bg-white shadow-sm sticky top-0 z-50"
+        className="bg-background shadow-sm sticky top-0 z-50"
         dir={isRTL ? "rtl" : "ltr"}
       >
         {/* Main Header Content */}
@@ -148,8 +148,8 @@ export default function Header() {
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 className={`p-2 transition-all duration-150 ${
                   isSearchOpen
-                    ? "text-logo-gold bg-yellow-50 rounded-lg"
-                    : "text-gray-700 hover:text-logo-gold hover:bg-gray-50 rounded-lg"
+                    ? "text-primary bg-primary-50 rounded-lg"
+                    : "text-neutral-700 hover:text-primary hover:bg-neutral-50 rounded-lg"
                 }`}
               >
                 <Search size={20} />
@@ -168,7 +168,7 @@ export default function Header() {
               {/* Mobile Menu Toggle */}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="p-2 text-gray-700 hover:text-logo-gold transition-colors"
+                className="p-2 text-neutral-700 hover:text-primary transition-colors"
               >
                 <Menu size={20} />
               </button>
@@ -194,7 +194,7 @@ export default function Header() {
                 duration: 0.15,
                 ease: "easeOut",
               }}
-              className="lg:hidden bg-white border-t border-gray-200 px-4 py-3"
+              className="lg:hidden bg-background border-t border-border px-4 py-3"
             >
               <HeaderSearch
                 searchQuery={searchQuery}

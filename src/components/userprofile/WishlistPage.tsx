@@ -111,17 +111,17 @@ export default function WishlistPage() {
           </div>
           <div className="text-sm text-gray-600">المنتجات المفضلة</div>
         </div>
-        <div className="bg-green-50 p-4 rounded-lg text-center">
-          <div className="text-2xl font-bold text-green-600">
+        <div className="bg-success-50 p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-success">
             {wishlist.filter((item) => item.inStock).length}
           </div>
-          <div className="text-sm text-gray-600">متوفر في المخزون</div>
+          <div className="text-sm text-neutral-600">متوفر في المخزون</div>
         </div>
-        <div className="bg-blue-50 p-4 rounded-lg text-center">
-          <div className="text-2xl font-bold text-blue-600">
+        <div className="bg-primary-50 p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-primary">
             {totalSavings.toFixed(2)}
           </div>
-          <div className="text-sm text-gray-600">إجمالي التوفير</div>
+          <div className="text-sm text-neutral-600">إجمالي التوفير</div>
         </div>
       </div>
 
@@ -130,7 +130,7 @@ export default function WishlistPage() {
         {wishlist.map((item) => (
           <div
             key={item.id}
-            className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+            className="border border-neutral-200 rounded-lg p-4 hover:shadow-md transition-shadow"
           >
             <div className="relative mb-4">
               <Image
@@ -138,35 +138,35 @@ export default function WishlistPage() {
                 alt={item.name}
                 width={100}
                 height={100}
-                className="aspect-square w-full h-auto object-cover bg-gray-200 rounded-lg mb-3"
+                className="aspect-square w-full h-auto object-cover bg-neutral-200 rounded-lg mb-3"
               />
               <button
                 onClick={() => handleRemoveFromWishlist(item.id)}
-                className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-md hover:bg-red-50"
+                className="absolute top-2 right-2 p-1 bg-background rounded-full shadow-md hover:bg-accent-50"
               >
-                <Trash2 size={16} className="text-red-500" />
+                <Trash2 size={16} className="text-accent" />
               </button>
               {!item.inStock && (
-                <div className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
+                <div className="absolute top-2 left-2 bg-accent text-white text-xs px-2 py-1 rounded">
                   نفذ المخزون
                 </div>
               )}
             </div>
 
             <div className="space-y-2">
-              <div className="text-sm text-gray-600">{item.category}</div>
+              <div className="text-sm text-neutral-600">{item.category}</div>
               <h3 className="font-medium text-right">{item.name}</h3>
 
               <div className="flex items-center gap-2 justify-end">
                 {item.originalPrice && (
-                  <span className="text-sm text-gray-500 line-through">
+                  <span className="text-sm text-neutral-500 line-through">
                     {item.originalPrice} ريال
                   </span>
                 )}
                 <span className="font-bold text-lg">{item.price} ريال</span>
               </div>
 
-              <div className="text-xs text-gray-500 text-right">
+              <div className="text-xs text-neutral-500 text-right">
                 أضيف في {item.addedDate}
               </div>
 
@@ -195,11 +195,11 @@ export default function WishlistPage() {
 
       {wishlist.length === 0 && (
         <div className="text-center py-12">
-          <Heart size={48} className="mx-auto text-gray-300 mb-4" />
-          <h3 className="text-lg font-medium text-gray-600 mb-2">
+          <Heart size={48} className="mx-auto text-neutral-300 mb-4" />
+          <h3 className="text-lg font-medium text-neutral-600 mb-2">
             قائمة المفضلة فارغة
           </h3>
-          <p className="text-gray-500 mb-4">
+          <p className="text-neutral-500 mb-4">
             لم تقم بإضافة أي منتجات للمفضلة بعد
           </p>
           <Button>تصفح المنتجات</Button>

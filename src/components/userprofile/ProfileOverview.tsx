@@ -258,21 +258,21 @@ export default function ProfileOverview() {
 
       {/* Account Stats */}
       <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-blue-50 p-4 rounded-lg text-center">
-          <div className="text-2xl font-bold text-blue-600">12</div>
-          <div className="text-sm text-gray-600">
+        <div className="bg-primary-50 p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-primary">12</div>
+          <div className="text-sm text-neutral-600">
             {t("profileOverview.stats.completedOrders")}
           </div>
         </div>
-        <div className="bg-green-50 p-4 rounded-lg text-center">
-          <div className="text-2xl font-bold text-green-600">8</div>
-          <div className="text-sm text-gray-600">
+        <div className="bg-success-50 p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-success">8</div>
+          <div className="text-sm text-neutral-600">
             {t("profileOverview.stats.favoriteProducts")}
           </div>
         </div>
-        <div className="bg-purple-50 p-4 rounded-lg text-center">
-          <div className="text-2xl font-bold text-purple-600">2</div>
-          <div className="text-sm text-gray-600">
+        <div className="bg-secondary-50 p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-secondary">2</div>
+          <div className="text-sm text-neutral-600">
             {t("profileOverview.stats.savedAddresses")}
           </div>
         </div>

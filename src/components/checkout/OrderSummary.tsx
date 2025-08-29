@@ -47,21 +47,21 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       dir={isRTL ? "rtl" : "ltr"}
     >
       <div className="p-6 border-b border-gray-200">
-        <h3 className="text-xl font-bold text-gray-900">
+        <h3 className="text-xl font-bold text-neutral-900">
           {t("orderSummary.title")}
         </h3>
       </div>
 
       <div className="p-6">
         {/* Delivery Info */}
-        <div className="bg-green-50 rounded-xl p-4 mb-6">
-          <div className="flex items-center text-green-800 mb-2">
+        <div className="bg-success-50 rounded-xl p-4 mb-6">
+          <div className="flex items-center text-success-800 mb-2">
             <Clock className="w-4 h-4 mx-2" />
             <span className="font-medium text-sm">
               {t("orderSummary.freeDelivery")}
             </span>
           </div>
-          <p className="text-xs text-green-700">
+          <p className="text-xs text-success-700">
             {t("orderSummary.orderWithin")}
           </p>
         </div>
@@ -75,7 +75,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                 placeholder={t("orderSummary.couponPlaceholder")}
                 value={couponCode}
                 onChange={(e) => onCouponCodeChange(e.target.value)}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1 px-4 py-2 border border-neutral-300 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent"
                 disabled={couponDiscount > 0}
                 dir={isRTL ? "rtl" : "ltr"}
               />
@@ -93,7 +93,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                   onClick={onApplyCoupon}
                   disabled={!couponCode.trim() || isApplyingCoupon}
                   size="sm"
-                  className="px-3 py-2 text-xs bg-black hover:bg-gray-800 text-white"
+                  className="px-3 py-2 text-xs bg-secondary hover:bg-secondary-dark text-white"
                 >
                   {isApplyingCoupon
                     ? t("orderSummary.applying")
@@ -102,11 +102,11 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               )}
             </div>
             {couponError && (
-              <p className="text-xs text-red-600 mt-2">{couponError}</p>
+              <p className="text-xs text-accent mt-2">{couponError}</p>
             )}
             {couponDiscount > 0 && (
-              <div className="mt-2 p-3 bg-green-50 rounded-lg">
-                <div className="flex items-center justify-between text-sm text-green-800">
+              <div className="mt-2 p-3 bg-success-50 rounded-lg">
+                <div className="flex items-center justify-between text-sm text-success-800">
                   <span>{t("orderSummary.discountApplied")}</span>
                   <span className="font-medium">
                     -{couponDiscount.toFixed(2)} {t("currency")}
@@ -120,25 +120,29 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         {/* Price Breakdown */}
         <div className="space-y-3 text-sm">
           <div className="flex justify-between">
-            <span className="text-gray-600">{t("orderSummary.subtotal")}</span>
+            <span className="text-neutral-600">
+              {t("orderSummary.subtotal")}
+            </span>
             <span className="font-medium">
               {total.toFixed(2)} {t("currency")}
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-600">{t("orderSummary.shipping")}</span>
-            <span className="font-medium text-green-600">
+            <span className="text-neutral-600">
+              {t("orderSummary.shipping")}
+            </span>
+            <span className="font-medium text-success">
               {t("orderSummary.free")}
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-600">{t("orderSummary.tax")}</span>
+            <span className="text-neutral-600">{t("orderSummary.tax")}</span>
             <span className="font-medium">
               {(total * 0.15).toFixed(2)} {t("currency")}
             </span>
           </div>
           {couponDiscount > 0 && (
-            <div className="flex justify-between text-green-600">
+            <div className="flex justify-between text-success">
               <span>{t("orderSummary.discount")}</span>
               <span className="font-medium">
                 -{couponDiscount.toFixed(2)} {t("currency")}

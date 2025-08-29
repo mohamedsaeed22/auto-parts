@@ -33,7 +33,7 @@ export default function HeaderLanguageDropdown({
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="p-2 text-gray-700 hover:text-logo-gold transition-colors"
+          className="p-2 text-neutral-700 hover:text-primary transition-colors"
         >
           <Globe size={20} />
         </button>
@@ -45,7 +45,7 @@ export default function HeaderLanguageDropdown({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-full right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+              className="absolute top-full right-0 mt-2 w-40 bg-background rounded-lg shadow-lg border border-border z-50"
               style={{
                 transform: "translateX(calc(-100% + 2.5rem))",
               }}
@@ -54,7 +54,7 @@ export default function HeaderLanguageDropdown({
                 {languages.map((language) => (
                   <button
                     key={language.code}
-                    className={`w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 ${
+                    className={`w-full px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-100 flex items-center gap-2 ${
                       isRTL ? "text-right" : "text-left"
                     }`}
                     onClick={onLanguageChange}
@@ -75,7 +75,7 @@ export default function HeaderLanguageDropdown({
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-neutral-700 hover:text-neutral-900 hover:bg-neutral-100 rounded-md transition-colors"
       >
         <Globe size={18} />
         <span>{currentLanguage?.name}</span>
@@ -92,13 +92,13 @@ export default function HeaderLanguageDropdown({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+            className="absolute top-full right-0 mt-2 w-48 bg-background rounded-lg shadow-lg border border-border z-50"
           >
             <div className="py-2">
               {languages.map((language) => (
                 <button
                   key={language.code}
-                  className={`w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-3 transition-colors ${
+                  className={`w-full px-4 py-3 text-sm text-neutral-700 hover:bg-neutral-100 flex items-center gap-3 transition-colors ${
                     isRTL ? "text-right" : "text-left"
                   }`}
                   onClick={onLanguageChange}

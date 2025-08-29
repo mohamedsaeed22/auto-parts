@@ -92,8 +92,8 @@ export default function HeaderMobileMenu({
                     href={link.href}
                     className={`block px-4 py-3 text-base font-medium transition-colors relative ${
                       isActiveLink(link.href)
-                        ? "text-logo-gold bg-yellow-50"
-                        : "text-gray-700 hover:text-logo-gold hover:bg-gray-50"
+                        ? "text-primary bg-primary-50"
+                        : "text-neutral-700 hover:text-primary hover:bg-neutral-50"
                     }`}
                     onClick={onClose}
                   >

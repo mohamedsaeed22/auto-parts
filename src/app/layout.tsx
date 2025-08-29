@@ -11,6 +11,9 @@ const cairo = Cairo({
 export const metadata: Metadata = {
   title: "فال الغربية",
   description: "فال الغربية",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({

@@ -72,9 +72,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <div className="group relative" dir={isRTL ? "rtl" : "ltr"}>
       <Link href={`/product/${product.id}`}>
-        <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col border border-gray-200 overflow-hidden">
+        <div className="bg-card rounded-lg shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col border border-border overflow-hidden">
           {/* Image Container with Badges */}
-          <div className="relative aspect-square overflow-hidden bg-gray-100">
+          <div className="relative aspect-square overflow-hidden bg-neutral-100">
             {/* Product Image */}
             <Image
               src={productImage}
@@ -93,7 +93,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               <Button
                 size="sm"
                 variant="outline"
-                className="w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm border-gray-200 hover:bg-white shadow-sm"
+                className="w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm border-neutral-200 hover:bg-white shadow-sm"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -102,15 +102,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 disabled={isLoading(`favourite-${product.id}`)}
               >
                 {isLoading(`favourite-${product.id}`) ? (
-                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-gray-600"></div>
+                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-neutral-600"></div>
                 ) : (
-                  <Heart size={12} className="text-gray-600" />
+                  <Heart size={12} className="text-neutral-600" />
                 )}
               </Button>
               <Button
                 size="sm"
                 variant="outline"
-                className="w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm border-gray-200 hover:bg-white shadow-sm"
+                className="w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm border-neutral-200 hover:bg-white shadow-sm"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -119,9 +119,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 disabled={isLoading(`wishlist-${product.id}`)}
               >
                 {isLoading(`wishlist-${product.id}`) ? (
-                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-gray-600"></div>
+                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-neutral-600"></div>
                 ) : (
-                  <Bookmark size={12} className="text-gray-600" />
+                  <Bookmark size={12} className="text-neutral-600" />
                 )}
               </Button>
             </div>
@@ -129,7 +129,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {/* Discount Badge */}
             {hasDiscount && (
               <div className={`absolute top-2 ${isRTL ? "right-2" : "left-2"}`}>
-                <div className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">
+                <div className="bg-accent text-white text-xs font-bold px-2 py-1 rounded shadow-sm">
                   {discountInfo || "SALE"}
                 </div>
               </div>
@@ -140,7 +140,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               <div
                 className={`absolute bottom-2 ${isRTL ? "right-2" : "left-2"}`}
               >
-                <div className="bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">
+                <div className="bg-primary text-white text-xs font-bold px-2 py-1 rounded shadow-sm">
                   OFFER
                 </div>
               </div>
@@ -151,18 +151,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <div className="p-3 flex flex-col flex-1">
             {/* Category and Brand */}
             <div className="flex flex-wrap gap-1 mb-2">
-              <span className="text-xs text-gray-600 bg-gray-100 rounded-full px-2 py-1 capitalize">
+              <span className="text-xs text-neutral-600 bg-neutral-100 rounded-full px-2 py-1 capitalize">
                 {categoryName}
               </span>
               {brandName && (
-                <span className="text-xs text-blue-600 bg-blue-50 rounded-full px-2 py-1">
+                <span className="text-xs text-info bg-info-light rounded-full px-2 py-1">
                   {brandName}
                 </span>
               )}
             </div>
 
             {/* Product Name */}
-            <h3 className="text-sm font-medium text-gray-900 line-clamp-2 min-h-[2rem]  group-hover:text-blue-600 transition-colors">
+            <h3 className="text-sm font-medium text-neutral-900 line-clamp-2 min-h-[2rem]  group-hover:text-primary transition-colors">
               {productName}
             </h3>
 
@@ -179,13 +179,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                     isRTL ? "flex-row-reverse" : ""
                   }`}
                 >
-                  <span className="text-base font-bold text-gray-900">
+                  <span className="text-base font-bold text-neutral-900">
                     {isRTL
                       ? `${t("currency")} ${productFinalPrice}`
                       : `${productFinalPrice} ${t("currency")}`}
                   </span>
                   {hasDiscount && (
-                    <span className="text-sm text-gray-500 line-through">
+                    <span className="text-sm text-neutral-500 line-through">
                       {isRTL
                         ? `${t("currency")} ${productPrice}`
                         : `${productPrice} ${t("currency")}`}
@@ -197,19 +197,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 {!isInCart ? (
                   <Button
                     size="sm"
-                    className="bg-black hover:bg-gray-800 text-white rounded px-2 py-1 flex items-center gap-1 transition-all duration-200 hover:scale-105 text-xs"
+                    className="bg-secondary hover:bg-secondary-dark text-white rounded px-2 py-1 flex items-center gap-1 transition-all duration-200 hover:scale-105 text-xs"
                     onClick={handleAddToCart}
                   >
                     <ShoppingCart size={12} />
                     <span>{t("addToCart")}</span>
                   </Button>
                 ) : (
-                  <div className="flex items-center bg-white border border-gray-300 rounded overflow-hidden">
+                  <div className="flex items-center bg-white border border-neutral-300 rounded overflow-hidden">
                     <Button
                       onClick={handleDecreaseQuantity}
                       size="sm"
                       variant="ghost"
-                      className="h-7 w-7 p-0 hover:bg-gray-100 text-gray-700 rounded-none border-r border-gray-200"
+                      className="h-7 w-7 p-0 hover:bg-neutral-100 text-neutral-700 rounded-none border-r border-neutral-200"
                     >
                       {cartItem?.quantity === 1 ? (
                         <Trash size={10} />
@@ -218,8 +218,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                       )}
                     </Button>
 
-                    <div className="h-7 px-2 flex items-center justify-center bg-gray-50 min-w-[28px]">
-                      <span className="text-sm font-semibold text-gray-800">
+                    <div className="h-7 px-2 flex items-center justify-center bg-neutral-50 min-w-[28px]">
+                      <span className="text-sm font-semibold text-neutral-800">
                         {cartItem?.quantity}
                       </span>
                     </div>
@@ -228,7 +228,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                       onClick={handleIncreaseQuantity}
                       size="sm"
                       variant="ghost"
-                      className="h-7 w-7 p-0 hover:bg-gray-100 text-gray-700 rounded-none border-l border-gray-200"
+                      className="h-7 w-7 p-0 hover:bg-neutral-100 text-neutral-700 rounded-none border-l border-neutral-200"
                     >
                       <Plus size={10} />
                     </Button>

@@ -42,7 +42,7 @@ export default function OtpForm({
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="text-sm text-neutral-600 mb-4">
           {t("otp.description")} {phoneNumber}
         </p>
       </div>
@@ -51,7 +51,7 @@ export default function OtpForm({
         <div>
           <label
             htmlFor="otp"
-            className="block text-sm font-medium text-gray-700 mb-2 text-center"
+            className="block text-sm font-medium text-neutral-700 mb-2 text-center"
           >
             {t("otp.label")}
           </label>
@@ -61,13 +61,13 @@ export default function OtpForm({
             id="otp"
             maxLength={6}
             dir="ltr"
-            className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center text-lg tracking-widest ${
-              errors.otp ? "border-red-500" : "border-gray-300"
+            className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-center text-lg tracking-widest ${
+              errors.otp ? "border-accent" : "border-neutral-300"
             }`}
             placeholder={t("otp.placeholder")}
           />
           {errors.otp && (
-            <p className="mt-1 text-sm text-red-600 text-center">
+            <p className="mt-1 text-sm text-accent text-center">
               {translateError(errors.otp)}
             </p>
           )}
@@ -86,7 +86,7 @@ export default function OtpForm({
           </Button>
           <Button
             type="submit"
-            className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium"
+            className="flex-1 py-3 bg-primary hover:bg-primary-dark text-white font-medium"
             disabled={isSubmitting || isLoading}
           >
             {isSubmitting || isLoading
@@ -99,7 +99,7 @@ export default function OtpForm({
       <div className="text-center">
         <button
           type="button"
-          className="text-sm text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="text-sm text-primary hover:text-primary-dark disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={onResendOtp}
           disabled={isLoading}
         >

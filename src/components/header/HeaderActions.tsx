@@ -23,7 +23,7 @@ export default function HeaderActions({
       {/* Account */}
       <LoginDialog
         trigger={
-          <button className="flex items-center gap-2 text-gray-700 hover:text-logo-gold transition-colors">
+          <button className="flex items-center gap-2 text-neutral-700 hover:text-primary transition-colors">
             <User size={20} />
             <span className="text-sm font-medium">
               {t("actions.account") || "Account"}
@@ -35,7 +35,7 @@ export default function HeaderActions({
       {/* Favourites */}
       <button
         onClick={() => router.push("/favourites")}
-        className="flex items-center gap-2 text-gray-700 hover:text-logo-gold transition-colors"
+        className="flex items-center gap-2 text-neutral-700 hover:text-primary transition-colors"
         title={t("actions.favourites") || "Favourites"}
       >
         <Heart size={20} />
@@ -47,7 +47,7 @@ export default function HeaderActions({
       {/* Wishlist */}
       <button
         onClick={() => router.push("/wishlist")}
-        className="flex items-center gap-2 text-gray-700 hover:text-logo-gold transition-colors"
+        className="flex items-center gap-2 text-neutral-700 hover:text-primary transition-colors"
         title={t("actions.wishlist") || "Wishlist"}
       >
         <Bookmark size={20} />
@@ -59,7 +59,7 @@ export default function HeaderActions({
       {/* Cart */}
       <button
         onClick={onCartClick}
-        className="relative flex items-center gap-2 text-gray-700 hover:text-logo-gold transition-colors"
+        className="relative flex items-center gap-2 text-neutral-700 hover:text-primary transition-colors"
       >
         <div className="relative">
           <ShoppingCart size={24} />
@@ -69,7 +69,7 @@ export default function HeaderActions({
               animate={{ scale: 1 }}
               className={`absolute -top-2 ${
                 isRTL ? "-left-2" : "-right-2"
-              } bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center`}
+              } bg-accent text-white text-xs rounded-full h-5 w-5 flex items-center justify-center`}
             >
               {totalItems}
             </motion.span>

@@ -6,19 +6,19 @@ const Footer = () => {
   const { t } = useTranslation("footer");
 
   return (
-    <footer className="bg-gray-900 text-white py-16">
+    <footer className="bg-secondary text-white py-16">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Column 1 - Site Categories */}
           <div>
-            <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
+            <h3 className="font-bold text-lg mb-6 text-primary">
               {t("sections.siteCategories.title")}
             </h3>
             <ul className="space-y-3 list-disc list-inside">
               <li>
                 <a
                   href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   {t("sections.siteCategories.links.partsRequests")}
                 </a>
@@ -26,7 +26,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   {t("sections.siteCategories.links.partsStore")}
                 </a>
@@ -34,7 +34,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   {t("sections.siteCategories.links.testDrives")}
                 </a>
@@ -42,7 +42,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   {t("sections.siteCategories.links.carServices")}
                 </a>
@@ -52,14 +52,14 @@ const Footer = () => {
 
           {/* Column 2 - Store Categories */}
           <div>
-            <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
+            <h3 className="font-bold text-lg mb-6 text-primary">
               {t("sections.storeCategories.title")}
             </h3>
             <ul className="space-y-3 list-disc list-inside">
               <li>
                 <a
                   href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   {t("sections.storeCategories.links.spareParts")}
                 </a>
@@ -67,7 +67,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   {t("sections.storeCategories.links.accessories")}
                 </a>
@@ -75,7 +75,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   {t("sections.storeCategories.links.oils")}
                 </a>
@@ -83,7 +83,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   {t("sections.storeCategories.links.carCare")}
                 </a>
@@ -91,7 +91,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   {t("sections.storeCategories.links.washing")}
                 </a>
@@ -101,14 +101,14 @@ const Footer = () => {
 
           {/* Column 3 - Service Categories */}
           <div>
-            <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
+            <h3 className="font-bold text-lg mb-6 text-primary">
               {t("sections.serviceCategories.title")}
             </h3>
             <ul className="space-y-3 list-disc list-inside">
               <li>
                 <a
                   href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   {t("sections.serviceCategories.links.tiresAndBatteries")}
                 </a>
@@ -116,7 +116,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   {t("sections.serviceCategories.links.washingAndCare")}
                 </a>
@@ -124,7 +124,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   {t("sections.serviceCategories.links.replacementAndRepairs")}
                 </a>
@@ -134,14 +134,14 @@ const Footer = () => {
 
           {/* Column 4 - Services */}
           <div>
-            <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
+            <h3 className="font-bold text-lg mb-6 text-primary">
               {t("sections.services.title")}
             </h3>
             <ul className="space-y-3 list-disc list-inside">
               <li>
                 <a
                   href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   {t("sections.services.links.tiresAndBatteries")}
                 </a>
@@ -149,7 +149,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   {t("sections.services.links.washingAndCare")}
                 </a>
@@ -157,7 +157,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   {t("sections.services.links.replacementAndRepairs")}
                 </a>
@@ -167,7 +167,7 @@ const Footer = () => {
 
           {/* Column 5 - Help Center */}
           <div>
-            <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
+            <h3 className="font-bold text-lg mb-6 text-primary">
               {t("sections.helpCenter.title")}
             </h3>
             <div className="space-y-4">
@@ -178,7 +178,7 @@ const Footer = () => {
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="w-5 h-5 text-[#b9974d] ml-2"
+                  className="w-5 h-5 text-primary ml-2"
                 >
                   <path
                     strokeLinecap="round"
@@ -188,7 +188,7 @@ const Footer = () => {
                 </svg>
                 <a
                   href="mailto:info@falfuture.com"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   {t("sections.helpCenter.email")}
                 </a>
@@ -200,7 +200,7 @@ const Footer = () => {
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="w-5 h-5 text-[#b9974d] ml-2"
+                  className="w-5 h-5 text-primary ml-2"
                 >
                   <path
                     strokeLinecap="round"
@@ -210,7 +210,7 @@ const Footer = () => {
                 </svg>
                 <a
                   href={`tel:${t("sections.helpCenter.phone")}`}
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-white transition-colors"
                 >
                   {t("sections.helpCenter.phone")}
                 </a>
@@ -220,8 +220,8 @@ const Footer = () => {
         </div>
 
         {/* Bottom border */}
-        <div className="border-t border-gray-700 mt-12 pt-8">
-          <div className="text-center text-gray-400">
+        <div className="border-t border-white/20 mt-12 pt-8">
+          <div className="text-center text-white/60">
             <p>&copy; 2025. {t("copyright")}</p>
           </div>
         </div>

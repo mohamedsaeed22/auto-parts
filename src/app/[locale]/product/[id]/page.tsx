@@ -532,7 +532,7 @@ export default function ProductDetails() {
             </h1>
 
             {/* Rating */}
-            <ProductRating isRTL={isRTL} />
+            {/* <ProductRating isRTL={isRTL} /> */}
 
             {/* Stock Status */}
             <div className="mt-3">
@@ -644,12 +644,12 @@ export default function ProductDetails() {
               {t("quantity")}
             </label>
 
-            <div className="bg-black rounded-lg p-2 min-h-[44px] flex items-center justify-center">
+            <div className="min-h-[44px] flex items-center justify-center">
               {!isInCart ? (
                 <Button
                   onClick={handleAddToCart}
                   disabled={isAddingToCart}
-                  className={`w-full h-9 flex items-center justify-center gap-2 text-sm font-medium transition-all duration-200 hover:bg-gray-800 ${
+                  className={`w-full h-12 flex items-center justify-center gap-2 text-sm font-medium bg-primary text-white ${
                     isRTL ? "flex-row-reverse" : ""
                   }`}
                   size="sm"
@@ -669,7 +669,7 @@ export default function ProductDetails() {
                   )}
                 </Button>
               ) : (
-                <div className="w-full max-w-[200px] h-9 flex items-center justify-center">
+                <div className="w-full max-w-[200px] h-12 flex items-center justify-center bg-primary rounded-md">
                   <div
                     className={`flex items-center gap-2 ${
                       isRTL ? "flex-row-reverse" : ""
@@ -677,7 +677,7 @@ export default function ProductDetails() {
                   >
                     <button
                       onClick={() => handleQuantityChange(currentQuantity + 1)}
-                      className="w-8 h-8 border border-gray-500 rounded-md hover:bg-gray-800 transition-colors text-white flex items-center justify-center"
+                      className="w-8 h-8 bg-white/20 rounded-md text-white flex items-center justify-center"
                     >
                       <Plus size={14} />
                     </button>
@@ -686,7 +686,7 @@ export default function ProductDetails() {
                     </span>
                     <button
                       onClick={() => handleQuantityChange(currentQuantity - 1)}
-                      className="w-8 h-8 border border-gray-500 rounded-md hover:bg-gray-800 transition-colors text-white flex items-center justify-center"
+                      className="w-8 h-8 bg-white/20 rounded-md text-white flex items-center justify-center"
                     >
                       {currentQuantity === 1 ? (
                         <Trash size={14} />

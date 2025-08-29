@@ -23,13 +23,13 @@ const OffersSwiper = () => {
   }));
 
   return (
-    <section className="py-16 bg-white" dir={isRTL ? "rtl" : "ltr"}>
+    <section className="py-16 bg-background" dir={isRTL ? "rtl" : "ltr"}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-neutral-800 mb-4">
             {t("offers.title")}
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-neutral-600 max-w-2xl mx-auto">
             {t("offers.description")}
           </p>
         </div>
@@ -37,7 +37,7 @@ const OffersSwiper = () => {
         <div className="relative">
           {/* Custom previous button */}
           <button
-            className={`cursor-pointer absolute top-1/2 z-10 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg hover:bg-gray-50 transition-colors ${
+            className={`cursor-pointer absolute top-1/2 z-10 -translate-y-1/2 bg-background p-3 rounded-full shadow-lg hover:bg-neutral-50 transition-colors ${
               isRTL ? "right-4" : "left-4"
             }`}
             onClick={() => swiperRef.current?.slidePrev()}
@@ -103,7 +103,7 @@ const OffersSwiper = () => {
                     className="rounded-3xl object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 rounded-3xl flex items-center justify-center">
-                    <div className="bg-white bg-opacity-90 px-4 py-2 rounded-full text-sm font-medium text-gray-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="bg-background bg-opacity-90 px-4 py-2 rounded-full text-sm font-medium text-neutral-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       {t("offers.viewOffer") || "View Offer"}
                     </div>
                   </div>
@@ -114,7 +114,7 @@ const OffersSwiper = () => {
 
           {/* Custom next button */}
           <button
-            className={`cursor-pointer absolute top-1/2 z-10 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg hover:bg-gray-50 transition-colors ${
+            className={`cursor-pointer absolute top-1/2 z-10 -translate-y-1/2 bg-background p-3 rounded-full shadow-lg hover:bg-neutral-50 transition-colors ${
               isRTL ? "left-4" : "right-4"
             }`}
             onClick={() => swiperRef.current?.slideNext()}

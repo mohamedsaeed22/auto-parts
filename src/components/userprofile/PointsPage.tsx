@@ -61,7 +61,7 @@ export default function PointsPage() {
       description: isRTL
         ? "شحن مجاني للطلب التالي"
         : "Free shipping on next order",
-      icon: <TrendingUp size={24} className="text-green-500" />,
+      icon: <TrendingUp size={24} className="text-success" />,
     },
     {
       id: 3,
@@ -70,17 +70,17 @@ export default function PointsPage() {
       description: isRTL
         ? "خصم 20% على الطلب التالي"
         : "20% discount on next order",
-      icon: <Star size={24} className="text-purple-500" />,
+      icon: <Star size={24} className="text-primary" />,
     },
   ];
 
   return (
     <div className="p-6" dir={isRTL ? "rtl" : "ltr"}>
       <div className={`mb-8 ${isRTL ? "text-right" : "text-left"}`}>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl font-bold text-neutral-900 mb-2">
           {t("points.title")}
         </h1>
-        <p className="text-gray-600">{t("points.description")}</p>
+        <p className="text-neutral-600">{t("points.description")}</p>
       </div>
 
       {/* Points Summary */}
@@ -124,8 +124,8 @@ export default function PointsPage() {
                 key={reward.id}
                 className={`border rounded-lg p-4 ${
                   userPoints >= reward.pointsRequired
-                    ? "border-green-200 bg-green-50"
-                    : "border-gray-200 bg-gray-50"
+                    ? "border-success-200 bg-success-50"
+                    : "border-neutral-200 bg-neutral-50"
                 }`}
               >
                 <div
@@ -140,23 +140,23 @@ export default function PointsPage() {
                   >
                     {reward.icon}
                     <div className={isRTL ? "text-right" : "text-left"}>
-                      <h4 className="font-medium text-gray-900">
+                      <h4 className="font-medium text-neutral-900">
                         {reward.name}
                       </h4>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-neutral-600">
                         {reward.description}
                       </p>
                     </div>
                   </div>
                   <div className={isRTL ? "text-left" : "text-right"}>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-neutral-900">
                       {reward.pointsRequired} {isRTL ? "نقطة" : "points"}
                     </p>
                     <button
                       className={`mt-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                         userPoints >= reward.pointsRequired
-                          ? "bg-yellow-500 text-white hover:bg-yellow-600"
-                          : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          ? "bg-primary text-white hover:bg-primary-dark"
+                          : "bg-neutral-300 text-neutral-500 cursor-not-allowed"
                       }`}
                       disabled={userPoints < reward.pointsRequired}
                     >

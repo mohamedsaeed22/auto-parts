@@ -26,15 +26,15 @@ export default function HeaderNavigation({
               href={link.href}
               className={`group relative py-2 text-sm font-medium transition-all duration-300 ${
                 isActiveLink(link.href)
-                  ? "text-logo-gold"
-                  : "text-gray-700 hover:text-logo-gold"
+                  ? "text-primary"
+                  : "text-neutral-700 hover:text-primary"
               }`}
             >
               {link.label}
               <span
                 className={`absolute -bottom-2 ${
                   isRTL ? "right-0" : "left-0"
-                } w-full h-0.5 bg-logo-gold transform ${
+                } w-full h-0.5 bg-primary transform ${
                   isRTL ? "origin-right" : "origin-left"
                 } transition-transform duration-300 ${
                   isActiveLink(link.href)

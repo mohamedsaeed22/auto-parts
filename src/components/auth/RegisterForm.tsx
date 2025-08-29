@@ -163,12 +163,12 @@ export default function RegisterForm({
       </form>
 
       <div className="text-center">
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-neutral-600">
           {t("register.haveAccount")}{" "}
           <button
             type="button"
             onClick={onSwitchToLogin}
-            className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
+            className="text-primary hover:text-primary-dark font-medium cursor-pointer"
           >
             {t("register.login")}
           </button>

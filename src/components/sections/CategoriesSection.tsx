@@ -41,7 +41,7 @@ const CategoryCard = ({
 
   return (
     <Card
-      className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-2 hover:border-blue-200 overflow-hidden"
+      className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-2 hover:border-primary-200 overflow-hidden"
       onClick={() => onCategoryClick(category.id)}
     >
       <CardContent className="p-0">
@@ -62,12 +62,12 @@ const CategoryCard = ({
           {/* Category Info */}
           <div className="p-4">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+              <h3 className="text-lg font-semibold text-neutral-900 group-hover:text-primary transition-colors">
                 {category.name}
               </h3>
               <ChevronRight
                 size={20}
-                className={`text-gray-400 group-hover:text-blue-600 transition-colors ${
+                className={`text-neutral-400 group-hover:text-primary transition-colors ${
                   isRTL ? "rotate-180" : ""
                 }`}
               />
@@ -75,8 +75,8 @@ const CategoryCard = ({
 
             {/* Subcategories Count */}
             {category.children && category.children.length > 0 && (
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Package size={16} className="text-blue-500" />
+              <div className="flex items-center gap-2 text-sm text-neutral-600">
+                <Package size={16} className="text-primary" />
                 <span>
                   {category.children.length}{" "}
                   {t("categories.subcategories") || "subcategories"}
@@ -85,13 +85,13 @@ const CategoryCard = ({
             )}
 
             {/* Features */}
-            <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
+            <div className="flex items-center gap-4 mt-3 text-xs text-neutral-500">
               <div className="flex items-center gap-1">
-                <Star size={12} className="text-yellow-500" />
+                <Star size={12} className="text-primary" />
                 <span>{t("categories.quality") || "Quality"}</span>
               </div>
               <div className="flex items-center gap-1">
-                <Zap size={12} className="text-blue-500" />
+                <Zap size={12} className="text-primary" />
                 <span>{t("categories.fast") || "Fast"}</span>
               </div>
             </div>
@@ -129,13 +129,13 @@ const CategoriesSection = () => {
 
   if (isLoading) {
     return (
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-neutral-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-neutral-900 mb-4">
               {t("categories.title") || "Shop by Category"}
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-neutral-600">
               {t("categories.subtitle") ||
                 "Find the perfect parts for your vehicle"}
             </p>
@@ -143,10 +143,10 @@ const CategoriesSection = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, index) => (
               <div key={index} className="animate-pulse">
-                <div className="bg-gray-200 h-48 rounded-t-lg"></div>
-                <div className="bg-white p-4 rounded-b-lg">
-                  <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                  <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                <div className="bg-neutral-200 h-48 rounded-t-lg"></div>
+                <div className="bg-background p-4 rounded-b-lg">
+                  <div className="h-4 bg-neutral-200 rounded mb-2"></div>
+                  <div className="h-3 bg-neutral-200 rounded w-2/3"></div>
                 </div>
               </div>
             ))}
@@ -158,13 +158,13 @@ const CategoriesSection = () => {
 
   if (error) {
     return (
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-neutral-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-neutral-900 mb-4">
               {t("categories.title") || "Shop by Category"}
             </h2>
-            <p className="text-gray-600 mb-8">
+            <p className="text-neutral-600 mb-8">
               {t("categories.error") ||
                 "Unable to load categories. Please try again later."}
             </p>
@@ -178,14 +178,14 @@ const CategoriesSection = () => {
   }
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-neutral-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
             {t("categories.title") || "Shop by Category"}
           </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className="text-lg text-neutral-600 max-w-3xl mx-auto">
             {t("categories.subtitle") ||
               "Find the perfect parts for your vehicle from our comprehensive selection"}
           </p>
@@ -211,7 +211,7 @@ const CategoriesSection = () => {
               <Button
                 size="lg"
                 onClick={handleViewAllCategories}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3"
+                className="bg-primary hover:bg-primary-dark text-white px-8 py-3"
               >
                 {t("categories.viewAll") || "View All Categories"}
                 <ChevronRight
@@ -223,11 +223,11 @@ const CategoriesSection = () => {
           </>
         ) : (
           <div className="text-center py-12">
-            <Package className="mx-auto h-16 w-16 text-gray-300 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-600 mb-2">
+            <Package className="mx-auto h-16 w-16 text-neutral-300 mb-4" />
+            <h3 className="text-lg font-semibold text-neutral-600 mb-2">
               {t("categories.noCategories") || "No Categories Available"}
             </h3>
-            <p className="text-gray-500">
+            <p className="text-neutral-500">
               {t("categories.noCategoriesDesc") ||
                 "Check back later for new categories."}
             </p>

@@ -375,8 +375,8 @@ export default function LocationPicker({
   if (!isClient) {
     return (
       <div className="space-y-4">
-        <div className="flex items-center justify-center h-[350px] bg-gray-100 rounded-lg">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+        <div className="flex items-center justify-center h-[350px] bg-neutral-100 rounded-lg">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
           <span className={`${isRTL ? "mr-2" : "ml-2"}`}>
             {t("loadingMap")}
           </span>
@@ -392,8 +392,8 @@ export default function LocationPicker({
           isRTL ? "flex-row-reverse" : ""
         }`}
       >
-        <MapPin className="w-5 h-5 text-blue-600" />
-        <h3 className="text-lg font-medium text-gray-700">{t("title")}</h3>
+        <MapPin className="w-5 h-5 text-primary" />
+        <h3 className="text-lg font-medium text-neutral-700">{t("title")}</h3>
       </div>
 
       {/* Enhanced Search Input */}
@@ -406,14 +406,14 @@ export default function LocationPicker({
             placeholder={t("searchPlaceholder")}
             className={`w-full ${
               isRTL ? "pl-12 pr-3 text-right" : "pr-12 pl-3 text-left"
-            } py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-              error ? "border-red-500" : "border-gray-300"
+            } py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
+              error ? "border-accent" : "border-neutral-300"
             }`}
           />
           <Search
             className={`absolute ${
               isRTL ? "right-3" : "left-3"
-            } top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5`}
+            } top-1/2 transform -translate-y-1/2 text-neutral-400 w-5 h-5`}
           />
 
           {searchValue && (
@@ -421,7 +421,7 @@ export default function LocationPicker({
               onClick={clearSearch}
               className={`absolute ${
                 isRTL ? "left-3" : "right-3"
-              } top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600`}
+              } top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-neutral-600`}
             >
               <X className="w-4 h-4" />
             </button>
@@ -433,21 +433,21 @@ export default function LocationPicker({
                 isRTL ? "right-10" : "left-10"
               } top-1/2 transform -translate-y-1/2`}
             >
-              <Loader2 className="text-blue-500 w-4 h-4 animate-spin" />
+              <Loader2 className="text-primary w-4 h-4 animate-spin" />
             </div>
           )}
         </div>
 
         {/* Search Results Dropdown */}
         {showSearchResults && searchResults.length > 0 && (
-          <div className="absolute z-50 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+          <div className="absolute z-50 w-full bg-background border border-neutral-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
             {searchResults.map((result, index) => (
               <button
                 key={result.place_id || index}
                 onClick={() => handleSearchResultClick(result)}
                 className={`w-full px-4 py-3 ${
                   isRTL ? "text-right" : "text-left"
-                } hover:bg-gray-50 border-b border-gray-100 last:border-b-0 focus:outline-none focus:bg-gray-50`}
+                } hover:bg-neutral-50 border-b border-neutral-100 last:border-b-0 focus:outline-none focus:bg-neutral-50`}
               >
                 <div className="flex items-start gap-2">
                   <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
@@ -499,7 +499,7 @@ export default function LocationPicker({
       {/* Enhanced Map Container */}
       <div
         className={`relative border rounded-lg overflow-hidden ${
-          error ? "border-red-500" : "border-gray-300"
+          error ? "border-accent" : "border-neutral-300"
         }`}
       >
         <style jsx global>{`
@@ -537,9 +537,9 @@ export default function LocationPicker({
           <Marker position={position} icon={createCustomIcon()}>
             <Popup>
               <div className="text-center p-2">
-                <p className="font-medium text-blue-900">📍 الموقع المحدد</p>
+                <p className="font-medium text-primary">📍 الموقع المحدد</p>
                 {currentLocation && (
-                  <p className="text-sm text-gray-600 mt-1 max-w-xs">
+                  <p className="text-sm text-neutral-600 mt-1 max-w-xs">
                     {currentLocation.formattedAddress}
                   </p>
                 )}
@@ -555,7 +555,7 @@ export default function LocationPicker({
           <button
             onClick={zoomIn}
             disabled={zoom >= 18}
-            className="block p-3 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed border-b transition-colors"
+            className="block p-3 hover:bg-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed border-b transition-colors"
             title={t("zoomIn")}
           >
             <Plus className="w-4 h-4" />
@@ -563,7 +563,7 @@ export default function LocationPicker({
           <button
             onClick={zoomOut}
             disabled={zoom <= 1}
-            className="block p-3 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="block p-3 hover:bg-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             title={t("zoomOut")}
           >
             <Minus className="w-4 h-4" />
@@ -583,8 +583,8 @@ export default function LocationPicker({
         {isLoading && (
           <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-[1000]">
             <div className="flex items-center gap-2">
-              <Loader2 className="w-5 h-5 animate-spin text-blue-500" />
-              <span className="text-sm text-gray-600">
+              <Loader2 className="w-5 h-5 animate-spin text-primary" />
+              <span className="text-sm text-neutral-600">
                 {t("updatingLocation")}
               </span>
             </div>
@@ -594,9 +594,9 @@ export default function LocationPicker({
 
       {/* Enhanced Selected Location Info */}
       {currentLocation && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
           <h4
-            className={`font-medium text-blue-900 mb-3 flex items-center gap-2 ${
+            className={`font-medium text-primary-900 mb-3 flex items-center gap-2 ${
               isRTL ? "flex-row-reverse" : ""
             }`}
           >
@@ -604,13 +604,13 @@ export default function LocationPicker({
             {t("selectedLocation")}
           </h4>
           <p
-            className={`text-sm text-blue-800 ${
+            className={`text-sm text-primary-800 ${
               isRTL ? "text-right" : "text-left"
             } mb-3 leading-relaxed`}
           >
             {currentLocation.formattedAddress}
           </p>
-          <div className="grid grid-cols-2 gap-3 text-xs text-blue-700">
+          <div className="grid grid-cols-2 gap-3 text-xs text-primary-700">
             {currentLocation.city && (
               <div className="flex justify-between">
                 <span className="font-medium">{t("city")}:</span>

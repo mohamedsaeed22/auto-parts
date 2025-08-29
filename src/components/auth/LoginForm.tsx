@@ -64,12 +64,12 @@ export default function LoginForm({
       </form>
 
       <div className="text-center">
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-neutral-600">
           {t("login.noAccount")}{" "}
           <button
             type="button"
             onClick={onSwitchToRegister}
-            className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
+            className="text-primary hover:text-primary-dark font-medium cursor-pointer"
           >
             {t("login.createAccount")}
           </button>
@@ -79,10 +79,10 @@ export default function LoginForm({
       {/* Separator */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-300" />
+          <div className="w-full border-t border-neutral-300" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500">
+          <span className="px-2 bg-background text-neutral-500">
             {t("login.orSeparator")}
           </span>
         </div>
@@ -91,7 +91,7 @@ export default function LoginForm({
       {/* Google Login Button */}
       <button
         type="button"
-        className="w-full flex items-center justify-center gap-2 py-3 rounded-lg border border-gray-300 hover:bg-gray-100 text-black transition"
+        className="w-full flex items-center justify-center gap-2 py-3 rounded-lg border border-neutral-300 hover:bg-neutral-100 text-black transition"
       >
         <Image
           src="/icons8-google.svg"

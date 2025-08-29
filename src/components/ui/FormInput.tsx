@@ -90,10 +90,10 @@ const FormInput = forwardRef<
 
     // Base input classes with RTL/LTR support
     const baseInputClasses = cn(
-      "w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
+      "w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors",
       {
-        "border-red-500": error,
-        "border-gray-300": !error,
+        "border-accent": error,
+        "border-neutral-300": !error,
         "opacity-50 cursor-not-allowed": disabled,
         "pl-10": Icon && effectiveIconPosition === "left",
         "pr-10": Icon && effectiveIconPosition === "right",
@@ -129,7 +129,7 @@ const FormInput = forwardRef<
           {Icon && effectiveIconPosition === "left" && (
             <Icon
               className={cn(
-                "absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5",
+                "absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-5 h-5",
                 iconClassName
               )}
             />
@@ -151,7 +151,7 @@ const FormInput = forwardRef<
           {Icon && effectiveIconPosition === "right" && (
             <Icon
               className={cn(
-                "absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5",
+                "absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-5 h-5",
                 iconClassName
               )}
             />
@@ -166,14 +166,14 @@ const FormInput = forwardRef<
           <label
             htmlFor={id}
             className={cn(
-              "block text-sm font-medium text-gray-700",
+              "block text-sm font-medium text-neutral-700",
               isRTL ? "text-right" : "text-left",
               labelClassName
             )}
           >
             {label}
             {required && (
-              <span className={cn("text-red-500", isRTL ? "mr-1" : "ml-1")}>
+              <span className={cn("text-accent", isRTL ? "mr-1" : "ml-1")}>
                 *
               </span>
             )}
@@ -185,7 +185,7 @@ const FormInput = forwardRef<
         {helpText && (
           <p
             className={cn(
-              "text-xs text-gray-500",
+              "text-xs text-neutral-500",
               isRTL ? "text-right" : "text-left"
             )}
           >
@@ -196,7 +196,7 @@ const FormInput = forwardRef<
         {error && (
           <p
             className={cn(
-              "text-sm text-red-600",
+              "text-sm text-accent",
               isRTL ? "text-right" : "text-left",
               errorClassName
             )}
