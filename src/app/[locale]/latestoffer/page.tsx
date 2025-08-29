@@ -26,6 +26,7 @@ import {
   Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb, Pagination } from "@/components/ui";
 
 // Loading Component
 const LoadingSpinner = () => (
@@ -357,34 +358,23 @@ export default function LatestOffersPage() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
-        <nav
-          className={`flex items-center gap-2 text-sm text-gray-500 mb-8 ${
-            isRTL ? "flex-row" : ""
-          }`}
-        >
-          <button
-            onClick={handleGoBack}
-            className={`flex items-center gap-1 hover:text-gray-700 transition-colors ${
-              isRTL ? "flex-row-reverse" : ""
-            }`}
-          >
-            {isRTL ? (
-              <>
-                <span>{t("backButton") || "Back"}</span>
+        <Breadcrumb
+          items={[
+            {
+              label: t("backButton") || "Back",
+              icon: (
                 <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
-              </>
-            ) : (
-              <>
-                <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
-                <span>{t("backButton") || "Back"}</span>
-              </>
-            )}
-          </button>
-          <span>/</span>
-          <span className="text-gray-900">
-            {t("latestOffers") || "Latest Offers"}
-          </span>
-        </nav>
+              ),
+            },
+            {
+              label: t("latestOffers") || "Latest Offers",
+            },
+          ]}
+          className="mb-8"
+          onItemClick={(item, index) => {
+            if (index === 0) handleGoBack();
+          }}
+        />
 
         {/* Offers Count */}
         <div className={`mb-8 ${isRTL ? "text-right" : "text-left"}`}>

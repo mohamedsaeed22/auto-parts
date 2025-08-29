@@ -42,6 +42,7 @@ import {
   Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb, Pagination } from "@/components/ui";
 import ProductCard from "@/components/product/ProductCard";
 
 // Loading Component
@@ -492,6 +493,7 @@ export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState({
     categories: [],
     brands: [],
@@ -618,32 +620,23 @@ export default function ProductsPage() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
-        <nav
-          className={`flex items-center gap-2 text-sm text-gray-500 mb-8 ${
-            isRTL ? "flex-row" : ""
-          }`}
-        >
-          <button
-            onClick={handleGoBack}
-            className={`flex items-center gap-1 hover:text-gray-700 transition-colors ${
-              isRTL ? "flex-row-reverse" : ""
-            }`}
-          >
-            {isRTL ? (
-              <>
-                <span>{t("backButton") || "Back"}</span>
+        <Breadcrumb
+          items={[
+            {
+              label: t("backButton") || "Back",
+              icon: (
                 <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
-              </>
-            ) : (
-              <>
-                <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
-                <span>{t("backButton") || "Back"}</span>
-              </>
-            )}
-          </button>
-          <span>/</span>
-          <span className="text-gray-900">{t("products") || "Products"}</span>
-        </nav>
+              ),
+            },
+            {
+              label: t("products") || "Products",
+            },
+          ]}
+          className="mb-8"
+          onItemClick={(item, index) => {
+            if (index === 0) handleGoBack();
+          }}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Filters Sidebar */}
@@ -764,30 +757,19 @@ export default function ProductsPage() {
 
             {/* Pagination */}
             {products.length > 0 && (
-              <div className="mt-12 flex items-center justify-center">
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm">
-                    {t("previous") || "Previous"}
-                  </Button>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="bg-green-500 text-white"
-                    >
-                      1
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      2
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      3
-                    </Button>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    {t("next") || "Next"}
-                  </Button>
-                </div>
+              <div className="mt-12">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={Math.ceil(products.length / 12) || 1}
+                  totalItems={products.length}
+                  itemsPerPage={12}
+                  onPageChange={setCurrentPage}
+                  showInfo={true}
+                  showFirstLast={true}
+                  maxVisiblePages={5}
+                  size="md"
+                  variant="outline"
+                />
               </div>
             )}
           </div>
