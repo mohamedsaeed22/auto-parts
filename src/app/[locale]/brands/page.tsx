@@ -1,0 +1,507 @@
+"use client";
+
+import React, { useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
+import { useGetBrandsQuery } from "@/services/hooks";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
+import {
+  ArrowLeft,
+  Loader2,
+  AlertCircle,
+  Building2,
+  Star,
+  Clock,
+  TrendingUp,
+  Filter,
+  Grid3X3,
+  List,
+  Search,
+  Flame,
+  Award,
+  Zap,
+  Shield,
+  CheckCircle,
+  Globe,
+  Users,
+  Car,
+  Settings,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+// Loading Component
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center min-h-[400px]">
+    <div className="flex flex-col items-center gap-4">
+      <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
+      <p className="text-gray-600">Loading brands...</p>
+    </div>
+  </div>
+);
+
+// Error Component
+const ErrorMessage = ({
+  message,
+  onRetry,
+}: {
+  message: string;
+  onRetry?: () => void;
+}) => (
+  <div className="flex items-center justify-center min-h-[400px]">
+    <div className="text-center">
+      <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+      <div className="text-red-500 text-lg font-semibold mb-2">Error</div>
+      <p className="text-gray-600 mb-4">{message}</p>
+      {onRetry && (
+        <Button onClick={onRetry} variant="outline">
+          Try Again
+        </Button>
+      )}
+    </div>
+  </div>
+);
+
+// Hero Section Component
+const HeroSection = ({
+  isRTL,
+  t,
+}: {
+  isRTL: boolean;
+  t: (key: string) => string;
+}) => (
+  <div className="bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 text-white py-16">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className={`text-center ${isRTL ? "text-right" : "text-left"}`}>
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <Building2 className="h-8 w-8 text-blue-200" />
+          <h1 className="text-4xl md:text-5xl font-bold">
+            {t("hero.title") || "Premium Brands"}
+          </h1>
+          <Award className="h-8 w-8 text-blue-200" />
+        </div>
+        <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto mb-6">
+          {t("hero.subtitle") ||
+            "Discover world-class automotive brands and premium quality parts"}
+        </p>
+        <div className="flex items-center justify-center gap-6 text-blue-100">
+          <div className="flex items-center gap-2">
+            <Shield className="h-5 w-5" />
+            <span>{t("hero.feature1") || "Trusted Quality"}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Star className="h-5 w-5" />
+            <span>{t("hero.feature2") || "Premium Brands"}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Globe className="h-5 w-5" />
+            <span>{t("hero.feature3") || "Global Standards"}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// Brand Card Component
+const BrandCard = ({
+  brand,
+  isRTL,
+  t,
+  onViewBrand,
+}: {
+  brand: any;
+  isRTL: boolean;
+  t: (key: string) => string;
+  onViewBrand: (id: number) => void;
+}) => (
+  <div className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100">
+    {/* Brand Image */}
+    <div className="relative aspect-square overflow-hidden bg-gray-50">
+      <Image
+        src={brand.image}
+        alt={brand.name}
+        fill
+        className="object-contain p-6 transition-transform duration-300 group-hover:scale-110"
+      />
+
+      {/* Premium Badge */}
+      <div className="absolute top-4 left-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1 shadow-lg">
+        <Star size={14} />
+        {t("premium") || "Premium"}
+      </div>
+
+      {/* Products Count Badge */}
+      <div className="absolute top-4 right-4 bg-black bg-opacity-70 text-white px-2 py-1 rounded-full text-xs font-medium">
+        {brand.products_count || 0} {t("products") || "Products"}
+      </div>
+
+      {/* Hover Overlay */}
+      <div className="absolute inset-0  bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+        <Button
+          onClick={() => onViewBrand(brand.id)}
+          className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white text-gray-900 hover:bg-gray-100"
+        >
+          {t("viewBrand") || "View Brand"}
+        </Button>
+      </div>
+    </div>
+
+    {/* Brand Details */}
+    <div className="p-6">
+      <div className={`space-y-3 ${isRTL ? "text-right" : "text-left"}`}>
+        <div className="flex items-center gap-2">
+          <Building2 className="text-blue-500" size={18} />
+          <h3 className="text-xl font-bold text-gray-900 truncate">
+            {brand.name}
+          </h3>
+        </div>
+
+        <div className="space-y-2">
+          <div
+            className={`flex items-center gap-2 ${
+              isRTL ? "flex-row-reverse" : ""
+            }`}
+          >
+            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+              <CheckCircle size={16} className="text-blue-600" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-gray-900">
+                {t("certified") || "Certified Brand"}
+              </p>
+              <p className="text-xs text-gray-500">
+                {t("qualityAssured") || "Quality assured"}
+              </p>
+            </div>
+          </div>
+
+          <div
+            className={`flex items-center gap-2 ${
+              isRTL ? "flex-row-reverse" : ""
+            }`}
+          >
+            <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+              <Car size={16} className="text-green-600" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-gray-900">
+                {brand.products_count || 0} {t("products") || "Products"}
+              </p>
+              <p className="text-xs text-gray-500">
+                {t("available") || "Available"}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="pt-3 border-t border-gray-100">
+          <Button
+            onClick={() => onViewBrand(brand.id)}
+            className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white"
+          >
+            {t("exploreBrand") || "Explore Brand"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// Filter Bar Component
+const FilterBar = ({
+  isRTL,
+  t,
+  viewMode,
+  onViewModeChange,
+}: {
+  isRTL: boolean;
+  t: (key: string) => string;
+  viewMode: "grid" | "list";
+  onViewModeChange: (mode: "grid" | "list") => void;
+}) => (
+  <div className="bg-white border-b border-gray-200 py-4 sticky top-0 z-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div
+        className={`flex items-center justify-between ${
+          isRTL ? "flex-row-reverse" : ""
+        }`}
+      >
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Filter className="text-gray-600" size={20} />
+            <span className="text-gray-700 font-medium">
+              {t("filters") || "Filters"}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Search className="text-gray-600" size={20} />
+            <span className="text-gray-700 font-medium">
+              {t("search") || "Search"}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="text-gray-700 font-medium">
+            {t("viewMode") || "View Mode"}:
+          </span>
+          <div className="flex bg-gray-100 rounded-lg p-1">
+            <button
+              onClick={() => onViewModeChange("grid")}
+              className={`p-2 rounded-md transition-colors ${
+                viewMode === "grid"
+                  ? "bg-white text-blue-600 shadow-sm"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              <Grid3X3 size={18} />
+            </button>
+            <button
+              onClick={() => onViewModeChange("list")}
+              className={`p-2 rounded-md transition-colors ${
+                viewMode === "list"
+                  ? "bg-white text-blue-600 shadow-sm"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              <List size={18} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// Brand Features Component
+const BrandFeatures = ({
+  isRTL,
+  t,
+}: {
+  isRTL: boolean;
+  t: (key: string) => string;
+}) => (
+  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 bg-gray-50 rounded-lg mb-8">
+    <div
+      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
+    >
+      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+        <Shield size={20} className="text-blue-600" />
+      </div>
+      <div className={isRTL ? "text-right" : "text-left"}>
+        <p className="font-medium text-gray-900">
+          {t("certifiedBrands") || "Certified Brands"}
+        </p>
+        <p className="text-sm text-gray-500">
+          {t("certifiedBrandsDesc") || "All brands are certified"}
+        </p>
+      </div>
+    </div>
+    <div
+      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
+    >
+      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+        <CheckCircle size={20} className="text-green-600" />
+      </div>
+      <div className={isRTL ? "text-right" : "text-left"}>
+        <p className="font-medium text-gray-900">
+          {t("qualityAssurance") || "Quality Assurance"}
+        </p>
+        <p className="text-sm text-gray-500">
+          {t("qualityAssuranceDesc") || "Premium quality guarantee"}
+        </p>
+      </div>
+    </div>
+    <div
+      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
+    >
+      <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+        <Globe size={20} className="text-purple-600" />
+      </div>
+      <div className={isRTL ? "text-right" : "text-left"}>
+        <p className="font-medium text-gray-900">
+          {t("globalStandards") || "Global Standards"}
+        </p>
+        <p className="text-sm text-gray-500">
+          {t("globalStandardsDesc") || "International quality standards"}
+        </p>
+      </div>
+    </div>
+  </div>
+);
+
+export default function BrandsPage() {
+  const router = useRouter();
+  const { t, i18n } = useTranslation("brands");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
+  const isRTL = i18n.language === "ar";
+  const direction = isRTL ? "rtl" : "ltr";
+
+  // Scroll to top when component mounts
+  useScrollToTop();
+
+  // API Hooks
+  const {
+    data: brandsResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useGetBrandsQuery();
+
+  const brands = brandsResponse?.data?.items || [];
+
+  const handleGoBack = () => {
+    router.back();
+  };
+
+  const handleViewBrand = (brandId: number) => {
+    router.push(`/brands/${brandId}`);
+  };
+
+  // Handle loading state
+  if (isLoading) {
+    return (
+      <div dir={direction}>
+        <HeroSection isRTL={isRTL} t={t} />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <LoadingSpinner />
+        </div>
+      </div>
+    );
+  }
+
+  // Handle error state
+  if (error) {
+    let errorMessage = "Failed to load brands";
+    if ("status" in error) {
+      errorMessage = `Error ${error.status}: Failed to load brands`;
+    } else if ("message" in error) {
+      errorMessage = error.message || errorMessage;
+    }
+
+    return (
+      <div dir={direction}>
+        <HeroSection isRTL={isRTL} t={t} />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <ErrorMessage message={errorMessage} onRetry={refetch} />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div dir={direction}>
+      {/* Hero Section */}
+      <HeroSection isRTL={isRTL} t={t} />
+
+      {/* Filter Bar */}
+      {/* <FilterBar
+        isRTL={isRTL}
+        t={t}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+      /> */}
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Breadcrumb */}
+        <nav
+          className={`flex items-center gap-2 text-sm text-gray-500 mb-8 ${
+            isRTL ? "flex-row" : ""
+          }`}
+        >
+          <button
+            onClick={handleGoBack}
+            className={`flex items-center gap-1 hover:text-gray-700 transition-colors ${
+              isRTL ? "flex-row-reverse" : ""
+            }`}
+          >
+            {isRTL ? (
+              <>
+                <span>{t("backButton") || "Back"}</span>
+                <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
+              </>
+            ) : (
+              <>
+                <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
+                <span>{t("backButton") || "Back"}</span>
+              </>
+            )}
+          </button>
+          <span>/</span>
+          <span className="text-gray-900">{t("brands") || "Brands"}</span>
+        </nav>
+
+        {/* Brand Features */}
+        <BrandFeatures isRTL={isRTL} t={t} />
+
+        {/* Brands Count */}
+        <div className={`mb-8 ${isRTL ? "text-right" : "text-left"}`}>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            {t("foundBrands") || "Found Brands"}
+          </h2>
+          <p className="text-gray-600">
+            {t("brandsCount") || `${brands.length} premium brands available`}
+          </p>
+        </div>
+
+        {/* Brands Grid/List */}
+        {brands.length === 0 ? (
+          <div className="text-center py-16">
+            <Building2 className="mx-auto h-16 w-16 text-gray-300 mb-4" />
+            <h3 className="text-xl font-semibold text-gray-600 mb-2">
+              {t("noBrands") || "No brands available"}
+            </h3>
+            <p className="text-gray-500 mb-6">
+              {t("noBrandsDesc") || "Check back later for new brands!"}
+            </p>
+            <Button onClick={handleGoBack} variant="outline">
+              {t("goBack") || "Go Back"}
+            </Button>
+          </div>
+        ) : (
+          <div
+            className={
+              viewMode === "grid"
+                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                : "space-y-6"
+            }
+          >
+            {brands.map((brand: any) => (
+              <BrandCard
+                key={brand.id}
+                brand={brand}
+                isRTL={isRTL}
+                t={t}
+                onViewBrand={handleViewBrand}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Bottom CTA */}
+        {brands.length > 0 && (
+          <div className="mt-16 text-center">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-200">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                {t("stayUpdated") || "Stay Updated"}
+              </h3>
+              <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+                {t("stayUpdatedDesc") ||
+                  "Don't miss out on new brands and exclusive partnerships. Subscribe to our newsletter for early access!"}
+              </p>
+              <div className="flex items-center justify-center gap-4">
+                <Clock className="text-blue-500" size={20} />
+                <span className="text-gray-700 font-medium">
+                  {t("newBrandsRegularly") || "New brands added regularly"}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
