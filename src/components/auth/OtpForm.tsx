@@ -13,7 +13,7 @@ import {
 } from "@/lib/validations/authSchema";
 import { useFormErrorTranslation } from "@/hooks/useFormErrorTranslation";
 import { useVerifyOtpMutation, useSendOtpMutation } from "@/services/hooks";
-import { storage } from "@/lib/storage";
+import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { showSuccess, showError } from "@/lib/toast";
 
@@ -33,6 +33,7 @@ export default function OtpForm({
   const router = useRouter();
   const [verifyOtp, { isLoading: isVerifying }] = useVerifyOtpMutation();
   const [sendOtp, { isLoading: isResending }] = useSendOtpMutation();
+  const { login } = useAuth();
 
   // Counter state for resend button
   const [countdown, setCountdown] = useState(60);
@@ -72,8 +73,8 @@ export default function OtpForm({
       }).unwrap();
 
       if (response.code === 200 && response.data) {
-        // Store auth data in browser
-        storage.setAuth(response.data);
+        // Store auth data in browser using hook
+        login(response.data);
 
         // Call success callback
         onAuthSuccess(response.data);

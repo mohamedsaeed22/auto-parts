@@ -21,6 +21,8 @@
   "actions": {
     "login": "Login / Register",
     "account": "Account",
+    "logout": "Logout",
+    "loggingOut": "Logging out...",
     "favourites": "Favourites",
     "wishlist": "Wishlist",
     "openMainMenu": "Open main menu",

@@ -5,6 +5,7 @@ import type {
   FetchBaseQueryError,
 } from "@reduxjs/toolkit/query";
 import type { RootState } from "@/store";
+import { storage } from "@/lib/storage";
 
 // Base URL from your Postman collection
 const BASE_URL = "https://brave.iseek.name/api";
@@ -18,17 +19,16 @@ const baseQueryWithAuth: BaseQueryFn<
   const baseQuery = fetchBaseQuery({
     baseUrl: BASE_URL,
     prepareHeaders: (headers, { getState }) => {
-      // Get token from your auth state (adjust based on your auth slice structure)
-      const state = getState() as RootState;
-      const token = (state as unknown as { auth?: { token?: string } }).auth
-        ?.token;
+      // Get token from storage utility
+      const token = storage.getToken();
 
       if (token) {
         headers.set("authorization", `Bearer ${token}`);
       }
 
       // Get current locale from Redux state
-      const currentLocale = (state as RootState).locale?.currentLocale || "en";
+      const state = getState() as RootState;
+      const currentLocale = state.locale?.currentLocale || "en";
       headers.set("locale", currentLocale);
 
       // Set default content type for form data requests
