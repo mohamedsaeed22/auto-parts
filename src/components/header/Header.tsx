@@ -15,6 +15,7 @@ import HeaderMobileMenu from "./HeaderMobileMenu";
 import HeaderBottomNavigation from "./HeaderBottomNavigation";
 import { useRouter } from "next/navigation";
 import { i18nConfig } from "@/lib/i18n";
+import { useLocale } from "@/hooks/useLocale";
 
 export default function Header() {
   const { totalItems, setCartOpen } = useCart();
@@ -23,9 +24,8 @@ export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const pathname = usePathname();
-  const { t, i18n } = useTranslation("header");
-  const activeLocale = i18n.language;
-  const isRTL = activeLocale === "ar";
+  const { t } = useTranslation("header");
+  const { currentLocale, changeLocale, isRTL } = useLocale();
   const router = useRouter();
   const currentPathname = usePathname();
 
@@ -40,26 +40,8 @@ export default function Header() {
   ];
 
   const onLanguageChange = () => {
-    const newLocale = activeLocale === "en" ? "ar" : "en";
-
-    // Set a cookie for next-i18n-router to read the new locale
-    const days = 30;
-    const date = new Date();
-    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-    const expires = date.toUTCString();
-    document.cookie = `NEXT_LOCALE=${newLocale};expires=${expires};path=/`;
-
-    // Compute new path with updated locale
-    if (
-      activeLocale === i18nConfig.defaultLocale &&
-      !i18nConfig.prefixDefault
-    ) {
-      router.push("/" + newLocale + currentPathname);
-    } else {
-      router.push(currentPathname.replace(`/${activeLocale}`, `/${newLocale}`));
-    }
-
-    router.refresh();
+    const newLocale = currentLocale === "en" ? "ar" : "en";
+    changeLocale(newLocale);
   };
 
   const handleCartClick = () => {
@@ -132,7 +114,7 @@ export default function Header() {
                 setIsOpen={setIsLanguageOpen}
                 onLanguageChange={onLanguageChange}
                 isRTL={isRTL}
-                activeLocale={activeLocale}
+                activeLocale={currentLocale}
               />
               <HeaderActions
                 totalItems={totalItems}
@@ -161,7 +143,7 @@ export default function Header() {
                 setIsOpen={setIsLanguageOpen}
                 onLanguageChange={onLanguageChange}
                 isRTL={isRTL}
-                activeLocale={activeLocale}
+                activeLocale={currentLocale}
                 isMobile={true}
               />
 

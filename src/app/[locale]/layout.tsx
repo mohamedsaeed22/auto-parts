@@ -8,6 +8,7 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import { Providers } from "@/store/providers";
 import { Locale } from "@/lib/types";
 import { getDirection } from "@/lib/utils/index";
+import LocaleProvider from "@/components/providers/LocaleProvider";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
@@ -47,11 +48,13 @@ export default async function LocaleLayout({
     >
       <I18NProvider locale={locale} namespaces={ns} resources={resources}>
         <Providers>
-          <Header />
-          {children}
-          <Footer />
-          <Cart />
-          <WhatsAppButton />
+          <LocaleProvider initialLocale={locale}>
+            <Header />
+            {children}
+            <Footer />
+            <Cart />
+            <WhatsAppButton />
+          </LocaleProvider>
         </Providers>
       </I18NProvider>
     </div>

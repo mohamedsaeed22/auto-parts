@@ -11,6 +11,7 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import cartReducer from "./slices/cartSlice";
+import localeReducer from "./slices/localeSlice";
 import { api } from "../services/api";
 
 // Persist configuration
@@ -25,6 +26,7 @@ const persistedCartReducer = persistReducer(persistConfig, cartReducer);
 export const store = configureStore({
   reducer: {
     cart: persistedCartReducer,
+    locale: localeReducer,
     [api.reducerPath]: api.reducer,
   },
   middleware: (getDefaultMiddleware) =>

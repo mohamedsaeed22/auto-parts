@@ -27,6 +27,10 @@ const baseQueryWithAuth: BaseQueryFn<
         headers.set("authorization", `Bearer ${token}`);
       }
 
+      // Get current locale from Redux state
+      const currentLocale = (state as RootState).locale?.currentLocale || "en";
+      headers.set("locale", currentLocale);
+
       // Set default content type for form data requests
       if (typeof args === "object" && args.body instanceof FormData) {
         // Don't set Content-Type for FormData, let browser set it with boundary
@@ -53,10 +57,28 @@ const baseQueryWithAuth: BaseQueryFn<
   return result;
 };
 
+// Enhanced base query that includes locale in cache key
+const enhancedBaseQuery: BaseQueryFn<
+  string | FetchArgs,
+  unknown,
+  FetchBaseQueryError
+> = async (args, api, extraOptions) => {
+  const state = api.getState() as RootState;
+  const currentLocale = state.locale?.currentLocale || "en";
+
+  // Add locale to the query key for cache invalidation
+  const enhancedArgs =
+    typeof args === "string"
+      ? { url: args, params: { locale: currentLocale } }
+      : { ...args, params: { ...args.params, locale: currentLocale } };
+
+  return baseQueryWithAuth(enhancedArgs, api, extraOptions);
+};
+
 // Create the main API slice
 export const api = createApi({
   reducerPath: "api",
-  baseQuery: baseQueryWithAuth,
+  baseQuery: enhancedBaseQuery,
   tagTypes: [
     "Auth",
     "Profile",
