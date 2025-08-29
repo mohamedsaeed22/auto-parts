@@ -33,7 +33,7 @@ export default function Header() {
     { href: "/about", label: t("navigation.about") },
     { href: "/contact", label: t("navigation.contact") },
     { href: "/brands", label: t("navigation.brands") },
-    { href: "/offers", label: t("navigation.offers") },
+    { href: "/latestoffer", label: t("navigation.offers") },
     { href: "/products", label: t("navigation.products") },
     { href: "/userPricing", label: t("navigation.userPricing") },
   ];

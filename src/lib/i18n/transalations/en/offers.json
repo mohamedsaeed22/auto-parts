@@ -17,5 +17,26 @@
   "offerProducts": "Products in this Offer",
   "offerProductsDesc": "Browse products with special discounts",
   "noProducts": "No products in this offer",
-  "noProductsDesc": "This offer doesn't contain any products at the moment."
+  "noProductsDesc": "This offer doesn't contain any products at the moment.",
+  "hero": {
+    "title": "Latest Offers",
+    "subtitle": "Discover amazing deals and exclusive discounts on premium auto parts",
+    "feature1": "Limited Time",
+    "feature2": "Premium Quality",
+    "feature3": "Best Prices"
+  },
+  "viewOffer": "View Offer",
+  "exploreOffer": "Explore Offer",
+  "filters": "Filters",
+  "search": "Search",
+  "viewMode": "View Mode",
+  "latestOffers": "Latest Offers",
+  "foundOffers": "Found Offers",
+  "offersCount": "amazing offers available",
+  "noOffers": "No offers available",
+  "noOffersDesc": "Check back later for new exciting offers!",
+  "goBack": "Go Back",
+  "stayUpdated": "Stay Updated",
+  "stayUpdatedDesc": "Don't miss out on our latest offers and exclusive deals. Subscribe to our newsletter for early access!",
+  "newOffersDaily": "New offers added daily"
 }
