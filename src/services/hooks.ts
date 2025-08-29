@@ -37,23 +37,36 @@ export {
   useGetBannersQuery,
   useGetOffersQuery,
   useGetOfferQuery,
-  useGetSectionsQuery,
-  useGetSectionQuery,
   useGetPartnersQuery,
 } from "./api/productsApi";
 
-// Cart & Wishlist Hooks
+// Sections Hooks
+export { useGetSectionsQuery } from "./api/sectionsApi";
+
+// Cart Hooks
 export {
   useGetCartQuery,
   useAddToCartMutation,
   useUpdateCartItemMutation,
   useClearCartMutation,
   useApplyCouponMutation,
-  useGetWishlistQuery,
-  useToggleWishlistMutation,
-  useGetFavouritesQuery,
-  useToggleFavouriteMutation,
 } from "./api/cartApi";
+
+// Wishlist Hooks
+export {
+  useGetWishlistQuery,
+  useAddToWishlistMutation,
+  useRemoveFromWishlistMutation,
+  useToggleWishlistMutation,
+} from "./api/wishlistApi";
+
+// Favourites Hooks
+export {
+  useGetFavouritesQuery,
+  useAddFavouriteMutation,
+  useRemoveFavouriteMutation,
+  useToggleFavouriteMutation,
+} from "./api/favouritesApi";
 
 // Orders Hooks
 export {

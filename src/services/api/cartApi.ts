@@ -5,9 +5,6 @@ import type {
   AddToCartRequest,
   UpdateCartRequest,
   ApplyCouponRequest,
-  ToggleWishlistRequest,
-  ToggleFavouriteRequest,
-  Product,
 } from "./types";
 
 export const cartApi = api.injectEndpoints({
@@ -78,45 +75,7 @@ export const cartApi = api.injectEndpoints({
       invalidatesTags: ["Cart"],
     }),
 
-    // Wishlist Operations
-    getWishlist: builder.query<ApiResponse<Product[]>, void>({
-      query: () => "/wishlist",
-      providesTags: ["Wishlist"],
-    }),
-
-    toggleWishlist: builder.mutation<ApiResponse, ToggleWishlistRequest>({
-      query: (data) => {
-        const formData = new FormData();
-        formData.append("product_id", data.product_id.toString());
-
-        return {
-          url: "/wishlist/toggle",
-          method: "POST",
-          body: formData,
-        };
-      },
-      invalidatesTags: ["Wishlist", "Products"],
-    }),
-
-    // Favourites Operations
-    getFavourites: builder.query<ApiResponse<Product[]>, void>({
-      query: () => "/favourites",
-      providesTags: ["Favourites"],
-    }),
-
-    toggleFavourite: builder.mutation<ApiResponse, ToggleFavouriteRequest>({
-      query: (data) => {
-        const formData = new FormData();
-        formData.append("product_id", data.product_id.toString());
-
-        return {
-          url: "/favourites/toggle",
-          method: "POST",
-          body: formData,
-        };
-      },
-      invalidatesTags: ["Favourites", "Products"],
-    }),
+    // Wishlist and Favourites operations moved to dedicated API files
   }),
 });
 
@@ -126,8 +85,4 @@ export const {
   useUpdateCartItemMutation,
   useClearCartMutation,
   useApplyCouponMutation,
-  useGetWishlistQuery,
-  useToggleWishlistMutation,
-  useGetFavouritesQuery,
-  useToggleFavouriteMutation,
 } = cartApi;

@@ -15,7 +15,7 @@ export default function Home() {
           <Brands />
           <OffersSwiper />
 
-          {/* Sections from API */}
+          Sections from API
           <SectionsContainer />
 
           <ProductsList />

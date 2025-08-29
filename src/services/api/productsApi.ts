@@ -111,17 +111,7 @@ export const productsApi = api.injectEndpoints({
       providesTags: (result, error, id) => [{ type: "Offers", id }],
     }),
 
-    // Sections
-    getSections: builder.query<ApiResponse<Section[]>, void>({
-      query: () => "/sections",
-      providesTags: ["Sections"],
-    }),
-
-    // Get Single Section
-    getSection: builder.query<ApiResponse<Section>, number>({
-      query: (id) => `/sections/${id}`,
-      providesTags: (result, error, id) => [{ type: "Sections", id }],
-    }),
+    // Sections moved to dedicated sectionsApi.ts file
 
     // Partners
     getPartners: builder.query<ApiResponse<Partner[]>, void>({
@@ -139,7 +129,5 @@ export const {
   useGetBannersQuery,
   useGetOffersQuery,
   useGetOfferQuery,
-  useGetSectionsQuery,
-  useGetSectionQuery,
   useGetPartnersQuery,
 } = productsApi;

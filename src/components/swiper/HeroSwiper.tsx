@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { Autoplay, Pagination, Navigation, EffectFade } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -8,19 +8,53 @@ import { useGetBannersQuery } from "@/services/hooks";
 import { Banner } from "@/services/api/types";
 import { Loader2, AlertCircle } from "lucide-react";
 
+// Fallback image as a simple SVG data URL
+const FALLBACK_IMAGE =
+  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yMDAgMTUwQzE3OS4wODkgMTUwIDE2MiAxMzIuOTExIDE2MiAxMTJDMTYyIDkxLjA4OSAxNzkuMDg5IDc0IDIwMCA3NEMyMjAuOTExIDc0IDIzOCA5MS4wODkgMjM4IDExMkMyMzggMTMyLjkxMSAyMjAuOTExIDE1MCAyMDAgMTUwWiIgZmlsbD0iIzlDQTNBRiIvPgo8cGF0aCBkPSJNMzAwIDIyNkgyMDBWMTc0SDEwMFYyMjZIMFYyNzRIMTAwVjMyNkgyMDBWMjc0SDMwMFYyMjZaIiBmaWxsPSIjOUNBM0FGIi8+Cjwvc3ZnPgo=";
+
 const HeroSwiper = () => {
   const swiperRef = useRef<SwiperType | null>(null);
+  const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
+  const [imageLoadAttempts, setImageLoadAttempts] = useState<
+    Map<string, number>
+  >(new Map());
 
-  // API hook to fetch banners
+  // API hook to fetch banners with error handling
   const {
     data: bannersResponse,
     isLoading,
     error,
     refetch,
-  } = useGetBannersQuery();
+  } = useGetBannersQuery(undefined, {
+    // Prevent infinite retries
+    refetchOnMountOrArgChange: false,
+    refetchOnFocus: false,
+    refetchOnReconnect: false,
+  });
 
   // Extract banners from response
   const banners = bannersResponse?.data?.items || [];
+
+  // Handle image load error
+  const handleImageError = (imageUrl: string) => {
+    const attempts = imageLoadAttempts.get(imageUrl) || 0;
+
+    if (attempts >= 1) {
+      // After first attempt, mark as failed and use fallback
+      setFailedImages((prev) => new Set(prev).add(imageUrl));
+    } else {
+      // Increment attempt count
+      setImageLoadAttempts((prev) => new Map(prev).set(imageUrl, attempts + 1));
+    }
+  };
+
+  // Get the appropriate image source
+  const getImageSrc = (banner: Banner) => {
+    if (failedImages.has(banner.image)) {
+      return FALLBACK_IMAGE;
+    }
+    return banner.image;
+  };
 
   // Loading component
   if (isLoading) {
@@ -116,41 +150,45 @@ const HeroSwiper = () => {
         }}
         modules={[Autoplay, EffectFade, Pagination, Navigation]}
       >
-        {banners.map((banner: Banner) => (
-          <SwiperSlide key={banner.id} className="w-full h-full">
-            <div className="relative w-full h-full">
-              {banner.link ? (
-                <a href={banner.link} target="_blank" rel="noopener noreferrer">
+        {banners.map((banner: Banner) => {
+          const imageSrc = getImageSrc(banner);
+
+          return (
+            <SwiperSlide key={banner.id} className="w-full h-full">
+              <div className="relative w-full h-full">
+                {banner.link ? (
+                  <a
+                    href={banner.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Image
+                      src={imageSrc}
+                      alt={`Banner ${banner.id}`}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, 100vw"
+                      priority
+                      className="object-cover"
+                      onError={() => handleImageError(banner.image)}
+                      unoptimized={imageSrc === FALLBACK_IMAGE}
+                    />
+                  </a>
+                ) : (
                   <Image
-                    src={banner.image}
+                    src={imageSrc}
                     alt={`Banner ${banner.id}`}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, 100vw"
                     priority
                     className="object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = "/placeholder-banner.png";
-                    }}
+                    onError={() => handleImageError(banner.image)}
+                    unoptimized={imageSrc === FALLBACK_IMAGE}
                   />
-                </a>
-              ) : (
-                <Image
-                  src={banner.image}
-                  alt={`Banner ${banner.id}`}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, 100vw"
-                  priority
-                  className="object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = "/placeholder-banner.png";
-                  }}
-                />
-              )}
-            </div>
-          </SwiperSlide>
-        ))}
+                )}
+              </div>
+            </SwiperSlide>
+          );
+        })}
       </Swiper>
 
       {/* Custom next button */}
