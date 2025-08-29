@@ -1,0 +1,21 @@
+{
+  "backButton": "رجوع",
+  "offers": "العروض",
+  "offer": "عرض",
+  "specialOffer": "عرض خاص",
+  "percentageDiscount": "خصم نسبة مئوية",
+  "fixedDiscount": "خصم مبلغ ثابت",
+  "products": "المنتجات",
+  "includedInOffer": "مدرجة في هذا العرض",
+  "offerDescription": "احصل على خصومات مذهلة على المنتجات المختارة. عرض لفترة محدودة!",
+  "freeShipping": "شحن مجاني",
+  "freeShippingDesc": "للطلبات أكثر من 50$",
+  "warranty": "الضمان",
+  "warrantyDesc": "ضمان سنة واحدة",
+  "returns": "إرجاع سهل",
+  "returnsDesc": "سياسة 30 يوم",
+  "offerProducts": "المنتجات في هذا العرض",
+  "offerProductsDesc": "تصفح المنتجات مع خصومات خاصة",
+  "noProducts": "لا توجد منتجات في هذا العرض",
+  "noProductsDesc": "هذا العرض لا يحتوي على أي منتجات في الوقت الحالي."
+}

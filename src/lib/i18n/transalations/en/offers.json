@@ -1,0 +1,21 @@
+{
+  "backButton": "Back",
+  "offers": "Offers",
+  "offer": "Offer",
+  "specialOffer": "Special Offer",
+  "percentageDiscount": "Percentage Discount",
+  "fixedDiscount": "Fixed Amount Discount",
+  "products": "Products",
+  "includedInOffer": "included in this offer",
+  "offerDescription": "Get amazing discounts on selected products. Limited time offer!",
+  "freeShipping": "Free Shipping",
+  "freeShippingDesc": "On orders over $50",
+  "warranty": "Warranty",
+  "warrantyDesc": "1 year guarantee",
+  "returns": "Easy Returns",
+  "returnsDesc": "30 day policy",
+  "offerProducts": "Products in this Offer",
+  "offerProductsDesc": "Browse products with special discounts",
+  "noProducts": "No products in this offer",
+  "noProductsDesc": "This offer doesn't contain any products at the moment."
+}

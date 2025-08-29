@@ -6,11 +6,13 @@ import type { Swiper as SwiperType } from "swiper";
 import Image from "next/image";
 import { useTranslation } from "react-i18next";
 import { useGetOffersQuery } from "@/services/hooks";
+import { useRouter } from "next/navigation";
 
 const OffersSwiper = () => {
   const { t, i18n } = useTranslation("home");
   const isRTL = i18n.language === "ar";
   const swiperRef = useRef<SwiperType | null>(null);
+  const router = useRouter();
 
   // Keep existing logic: fetch offers from API
   const { data: offersResponse } = useGetOffersQuery();
@@ -90,12 +92,22 @@ const OffersSwiper = () => {
           >
             {slides.map((slide) => (
               <SwiperSlide key={slide.id}>
-                <Image
-                  src={slide.src}
-                  alt={slide.alt}
-                  fill
-                  className="rounded-3xl"
-                />
+                <div
+                  className="relative w-full h-full group cursor-pointer"
+                  onClick={() => router.push(`/offers/${slide.id}`)}
+                >
+                  <Image
+                    src={slide.src}
+                    alt={slide.alt}
+                    fill
+                    className="rounded-3xl object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 rounded-3xl flex items-center justify-center">
+                    <div className="bg-white bg-opacity-90 px-4 py-2 rounded-full text-sm font-medium text-gray-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      {t("offers.viewOffer") || "View Offer"}
+                    </div>
+                  </div>
+                </div>
               </SwiperSlide>
             ))}
           </Swiper>
