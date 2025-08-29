@@ -8,6 +8,14 @@ import { useGetCategoriesQuery } from "@/services/api/categoriesApi";
 import { ChevronRight, Package, Star, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import ViewAllButton from "@/components/ui/view-all-button";
+
+interface Category {
+  id: number;
+  name: string;
+  image: string;
+  children?: Category[];
+}
 
 const CategoryCard = ({
   category,
@@ -15,7 +23,7 @@ const CategoryCard = ({
   t,
   onCategoryClick,
 }: {
-  category: any;
+  category: Category;
   isRTL: boolean;
   t: (key: string) => string;
   onCategoryClick: (categoryId: number) => void;
@@ -123,10 +131,6 @@ const CategoriesSection = () => {
     router.push(`/categories/${categoryId}`);
   };
 
-  const handleViewAllCategories = () => {
-    router.push("/categories");
-  };
-
   if (isLoading) {
     return (
       <section className="py-16 bg-neutral-50">
@@ -207,19 +211,12 @@ const CategoriesSection = () => {
             </div>
 
             {/* View All Button */}
-            <div className="text-center">
-              <Button
-                size="lg"
-                onClick={handleViewAllCategories}
-                className="bg-primary hover:bg-primary-dark text-white px-8 py-3"
-              >
-                {t("categories.viewAll") || "View All Categories"}
-                <ChevronRight
-                  size={20}
-                  className={`ml-2 ${isRTL ? "rotate-180" : ""}`}
-                />
-              </Button>
-            </div>
+            <ViewAllButton
+              href="/categories"
+              translationKey="categories.viewAll"
+              fallbackText="View All Categories"
+              namespace="home"
+            />
           </>
         ) : (
           <div className="text-center py-12">

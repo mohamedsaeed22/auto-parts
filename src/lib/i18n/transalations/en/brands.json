@@ -1,4 +1,6 @@
 {
+  "title": "Our Trusted Brands",
+  "description": "We work with the most famous brands in the automotive industry to provide the best quality spare parts and accessories for your car",
   "backButton": "Back",
   "brands": "Brands",
   "brand": "Brand",
@@ -45,5 +47,6 @@
   "fastDelivery": "Fast Delivery",
   "fastDeliveryDesc": "Quick and reliable shipping",
   "easyReturns": "Easy Returns",
-  "easyReturnsDesc": "30 day return policy"
+  "easyReturnsDesc": "30 day return policy",
+  "showAllBrands": "Show All Brands"
 }

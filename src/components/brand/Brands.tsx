@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useGetBrandsQuery } from "@/services/hooks";
 import { Brand } from "@/services/api/types";
 import { Loader2, AlertCircle } from "lucide-react";
+import ViewAllButton from "@/components/ui/view-all-button";
 
 const Brands = () => {
   const { t, i18n } = useTranslation("brands");
@@ -168,6 +169,14 @@ const Brands = () => {
             </div>
           ))}
         </div>
+
+        {/* Show All Brands Button */}
+        <ViewAllButton
+          href="/brands"
+          translationKey="showAllBrands"
+          fallbackText="Show All Brands"
+          namespace="brands"
+        />
       </div>
     </section>
   );
