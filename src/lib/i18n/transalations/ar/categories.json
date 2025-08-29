@@ -1,0 +1,31 @@
+{
+  "backButton": "رجوع",
+  "categories": "الفئات",
+  "hero": {
+    "title": "فئات المنتجات",
+    "subtitle": "استكشف مجموعتنا الشاملة من قطع غيار السيارات والملحقات",
+    "categories": "100+ فئة",
+    "quality": "جودة عالية",
+    "fast": "توصيل سريع"
+  },
+  "search": {
+    "placeholder": "البحث في الفئات..."
+  },
+  "viewMode": "وضع العرض",
+  "foundCategories": "الفئات الموجودة",
+  "categoriesCount": "فئة متاحة",
+  "noResults": "لم يتم العثور على فئات",
+  "noResultsDesc": "جرب تعديل مصطلحات البحث.",
+  "noCategories": "لا توجد فئات متاحة",
+  "noCategoriesDesc": "تحقق لاحقاً من الفئات الجديدة.",
+  "clearSearch": "مسح البحث",
+  "error": {
+    "title": "تعذر تحميل الفئات",
+    "message": "حدث خطأ في تحميل الفئات. يرجى المحاولة مرة أخرى.",
+    "retry": "حاول مرة أخرى"
+  },
+  "subcategories": "فئات فرعية",
+  "quality": "الجودة",
+  "fast": "السرعه",
+  "reliable": "الموثوق"
+}

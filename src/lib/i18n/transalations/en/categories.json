@@ -1,0 +1,31 @@
+{
+  "backButton": "Back",
+  "categories": "Categories",
+  "hero": {
+    "title": "Product Categories",
+    "subtitle": "Explore our comprehensive range of automotive parts and accessories",
+    "categories": "100+ Categories",
+    "quality": "Premium Quality",
+    "fast": "Fast Delivery"
+  },
+  "search": {
+    "placeholder": "Search categories..."
+  },
+  "viewMode": "View Mode",
+  "foundCategories": "Found Categories",
+  "categoriesCount": "categories available",
+  "noResults": "No categories found",
+  "noResultsDesc": "Try adjusting your search terms.",
+  "noCategories": "No categories available",
+  "noCategoriesDesc": "Check back later for new categories.",
+  "clearSearch": "Clear Search",
+  "error": {
+    "title": "Unable to Load Categories",
+    "message": "There was an error loading the categories. Please try again.",
+    "retry": "Try Again"
+  },
+  "subcategories": "subcategories",
+  "quality": "Quality",
+  "fast": "Fast",
+  "reliable": "Reliable"
+}

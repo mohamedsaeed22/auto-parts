@@ -5,6 +5,7 @@ import Brands from "@/components/brand/Brands";
 import OffersSwiper from "@/components/swiper/OffersSwiper";
 import ProductsList from "@/components/product/ProductsList";
 import SectionsContainer from "@/components/sections/SectionsContainer";
+import CategoriesSection from "@/components/sections/CategoriesSection";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 export default function Home() {
@@ -18,7 +19,7 @@ export default function Home() {
           <HeroSwiper />
           <Brands />
           <OffersSwiper />
-          Sections from API
+          <CategoriesSection />
           <SectionsContainer />
           <ProductsList />
         </div>

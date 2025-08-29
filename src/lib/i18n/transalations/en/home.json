@@ -81,6 +81,18 @@
       "trackOrder": "Track Your Order"
     }
   },
+  "categories": {
+    "title": "Shop by Category",
+    "subtitle": "Find the perfect parts for your vehicle from our comprehensive selection",
+    "viewAll": "View All Categories",
+    "subcategories": "subcategories",
+    "quality": "Quality",
+    "fast": "Fast",
+    "error": "Unable to load categories. Please try again later.",
+    "retry": "Retry",
+    "noCategories": "No Categories Available",
+    "noCategoriesDesc": "Check back later for new categories."
+  },
   "userPricing": {
     "hero": {
       "title": "Parts Pricing Request",
