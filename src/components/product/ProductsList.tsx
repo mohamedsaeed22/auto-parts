@@ -6,7 +6,8 @@ import ProductCard from "./ProductCard";
 import { useTranslation } from "react-i18next";
 import { useGetProductsMutation } from "@/services/hooks";
 import { Product, ProductsRequest } from "@/services/api/types";
-import { Search, Filter, Grid, List, Loader2, AlertCircle } from "lucide-react";
+import { Search, Filter, Grid, List, AlertCircle } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const ProductsList = () => {
   const { t, i18n } = useTranslation("product");
@@ -47,18 +48,27 @@ const ProductsList = () => {
     handleFilterChange({ page });
   };
 
-  // Loading component
+  // Loading skeleton
   if (isLoading && products.length === 0) {
     return (
       <section className="py-16 bg-gray-50" dir={isRTL ? "rtl" : "ltr"}>
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="flex flex-col items-center gap-4">
-              <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
-              <p className="text-gray-600">
-                {t("loadingProducts") || "Loading products..."}
-              </p>
-            </div>
+          {/* Header Skeleton */}
+          <div className="text-center mb-12">
+            <Skeleton className="h-8 w-64 mx-auto mb-4" />
+            <Skeleton className="h-4 w-96 mx-auto" />
+          </div>
+
+          {/* Products Grid Skeleton */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, index) => (
+              <div key={index} className="space-y-4">
+                <Skeleton className="h-48 rounded-lg" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-8 w-24" />
+              </div>
+            ))}
           </div>
         </div>
       </section>

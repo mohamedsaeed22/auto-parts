@@ -6,7 +6,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
 import { useGetBannersQuery } from "@/services/hooks";
 import { Banner } from "@/services/api/types";
-import { Loader2, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Fallback image as a simple SVG data URL
 const FALLBACK_IMAGE =
@@ -56,14 +57,11 @@ const HeroSwiper = () => {
     return banner.image;
   };
 
-  // Loading component
+  // Loading skeleton
   if (isLoading) {
     return (
-      <div className="relative bg-background rounded-3xl overflow-hidden shadow-1xl w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[500px] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-neutral-600" />
-          <p className="text-neutral-600">Loading banners...</p>
-        </div>
+      <div className="relative bg-background rounded-3xl overflow-hidden shadow-1xl w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[500px]">
+        <Skeleton className="w-full h-full" />
       </div>
     );
   }

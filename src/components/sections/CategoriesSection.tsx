@@ -9,6 +9,7 @@ import { ChevronRight, Package, Star, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import ViewAllButton from "@/components/ui/view-all-button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Category {
   id: number;
@@ -146,11 +147,11 @@ const CategoriesSection = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, index) => (
-              <div key={index} className="animate-pulse">
-                <div className="bg-neutral-200 h-48 rounded-t-lg"></div>
+              <div key={index}>
+                <Skeleton className="h-48 rounded-t-lg" />
                 <div className="bg-background p-4 rounded-b-lg">
-                  <div className="h-4 bg-neutral-200 rounded mb-2"></div>
-                  <div className="h-3 bg-neutral-200 rounded w-2/3"></div>
+                  <Skeleton className="h-4 rounded mb-2" />
+                  <Skeleton className="h-3 rounded w-2/3" />
                 </div>
               </div>
             ))}

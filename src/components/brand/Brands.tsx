@@ -4,7 +4,8 @@ import Image from "next/image";
 import { useTranslation } from "react-i18next";
 import { useGetBrandsQuery } from "@/services/hooks";
 import { Brand } from "@/services/api/types";
-import { Loader2, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import ViewAllButton from "@/components/ui/view-all-button";
 
 const Brands = () => {
@@ -22,7 +23,7 @@ const Brands = () => {
   // Extract brands from response
   const brands = brandsResponse?.data?.items || [];
 
-  // Loading component
+  // Loading skeleton
   if (isLoading) {
     return (
       <section className="py-16 bg-neutral-50" dir={isRTL ? "rtl" : "ltr"}>
@@ -36,13 +37,13 @@ const Brands = () => {
             </p>
           </div>
 
-          <div className="flex items-center justify-center min-h-[300px]">
-            <div className="flex flex-col items-center gap-4">
-              <Loader2 className="h-8 w-8 animate-spin text-neutral-600" />
-              <p className="text-neutral-600">
-                {t("loadingBrands") || "Loading brands..."}
-              </p>
-            </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 md:gap-8">
+            {[...Array(8)].map((_, index) => (
+              <div key={index} className="flex flex-col items-center">
+                <Skeleton className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-full mb-4" />
+                <Skeleton className="w-24 h-4 rounded" />
+              </div>
+            ))}
           </div>
         </div>
       </section>

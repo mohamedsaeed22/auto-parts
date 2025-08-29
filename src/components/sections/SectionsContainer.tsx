@@ -3,7 +3,8 @@ import React from "react";
 import { useGetSectionsQuery } from "@/services/api";
 import { SectionsRequest, Section } from "@/services/api/sectionsApi";
 import SectionSwiper from "../swiper/SectionSwiper";
-import { Loader2, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "react-i18next";
 
 const SectionsContainer: React.FC = () => {
@@ -13,13 +14,17 @@ const SectionsContainer: React.FC = () => {
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-logo-gold" />
-            <p className="text-gray-600">
-              {t("loadingSections") || "Loading sections..."}
-            </p>
-          </div>
+        <div className="space-y-8">
+          {[...Array(3)].map((_, index) => (
+            <div key={index} className="space-y-4">
+              <Skeleton className="h-8 w-64 mx-auto" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[...Array(4)].map((_, itemIndex) => (
+                  <Skeleton key={itemIndex} className="h-48 rounded-lg" />
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     );
