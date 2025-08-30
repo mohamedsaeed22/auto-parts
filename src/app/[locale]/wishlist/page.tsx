@@ -88,21 +88,13 @@ export default function WishlistPage() {
     );
   }
 
-  const wishlist = (wishlistData?.data || []) as unknown as WishlistItem[];
+  const wishlist = (wishlistData?.data?.items || []) as WishlistItem[];
 
   return (
     <ProtectedRoute>
       <RegistrationErrorHandler error={error}>
         <div className="container mx-auto px-4 py-8">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {t("title") || "My Wishlist"}
-            </h1>
-            <p className="text-gray-600">
-              {t("subtitle") || "Your saved wishlist products"}
-            </p>
-          </div>
+    
 
           {/* Wishlist List */}
           {wishlist.length === 0 ? (

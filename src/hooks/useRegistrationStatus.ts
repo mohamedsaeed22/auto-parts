@@ -36,7 +36,12 @@ export function useRegistrationStatus() {
       storage.setRegistrationCode(error.data.data.user.code);
     }
 
-    // Simple redirect to complete registration page
+    // Store current page URL before redirecting
+    const currentPath = window.location.pathname;
+    storage.setPreviousPage(currentPath);
+    console.log("Stored previous page:", currentPath);
+
+    // Redirect to complete registration page
     router.push(`/${currentLocale}/complete-registration`);
   };
 
@@ -44,6 +49,7 @@ export function useRegistrationStatus() {
     setIsRegistrationIncomplete(false);
     setRegistrationCode(null);
     storage.clearRegistrationCode();
+    storage.clearPreviousPage(); // Also clear the previous page URL
   };
 
   const isErrorRegistrationIncomplete = (

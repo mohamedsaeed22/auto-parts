@@ -18,9 +18,21 @@ export interface FavouriteItem {
 }
 
 export interface FavouritesResponse {
-  data: FavouriteItem[];
+  code: number;
   message: string;
-  status: boolean;
+  errors: string[];
+  data: {
+    items: FavouriteItem[];
+    pagination: {
+      total: number;
+      per_page: number;
+      current_page: number;
+      last_page: number;
+      from: number;
+      to: number;
+    };
+  };
+  count: number;
 }
 
 export interface AddFavouriteRequest {

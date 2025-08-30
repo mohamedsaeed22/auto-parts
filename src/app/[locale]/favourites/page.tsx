@@ -56,7 +56,7 @@ export default function FavouritesPage() {
   // Temporary test function
   const testRegistrationIncomplete = () => {
     const mockError = {
-      status: 403,
+      status: 403 as const,
       data: {
         code: 403,
         message: "يرجى إكمال تسجيلك",
@@ -133,29 +133,12 @@ export default function FavouritesPage() {
     );
   }
 
-  const favourites = (favouritesData?.data || []) as unknown as FavouriteItem[];
+  const favourites = (favouritesData?.data?.items || []) as FavouriteItem[];
 
   return (
     <ProtectedRoute>
       <RegistrationErrorHandler error={error}>
         <div className="container mx-auto px-4 py-8">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {t("title") || "My Favourites"}
-            </h1>
-            <p className="text-gray-600">
-              {t("subtitle") || "Your saved favourite products"}
-            </p>
-            {/* Temporary test button */}
-            <Button
-              onClick={testRegistrationIncomplete}
-              className="mt-4 bg-red-500 hover:bg-red-600"
-            >
-              Test Registration Incomplete
-            </Button>
-          </div>
-
           {/* Favourites List */}
           {favourites.length === 0 ? (
             <div className="text-center min-h-[400px] flex items-center justify-center">

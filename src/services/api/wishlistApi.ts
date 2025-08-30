@@ -18,9 +18,21 @@ export interface WishlistItem {
 }
 
 export interface WishlistResponse {
-  data: WishlistItem[];
+  code: number;
   message: string;
-  status: boolean;
+  errors: string[];
+  data: {
+    items: WishlistItem[];
+    pagination: {
+      total: number;
+      per_page: number;
+      current_page: number;
+      last_page: number;
+      from: number;
+      to: number;
+    };
+  };
+  count: number;
 }
 
 export interface AddWishlistRequest {

@@ -9,6 +9,7 @@ import { useLocale } from "@/hooks/useLocale";
 import { useRegistrationStatus } from "@/hooks/useRegistrationStatus";
 import { showSuccess, showError } from "@/lib/toast";
 import { Loader2 } from "lucide-react";
+import { storage } from "@/lib/storage";
 
 export default function CompleteRegistrationPage() {
   // Hooks
@@ -95,18 +96,48 @@ export default function CompleteRegistrationPage() {
       const result = await completeRegistration(requestData).unwrap();
 
       console.log("API Response:", result);
+      console.log("API Response structure:", {
+        code: result.code,
+        message: result.message,
+        data: result.data,
+        dataType: typeof result.data,
+        hasUser: !!result.data?.user,
+        hasToken: !!result.data?.token,
+      });
 
       if (result.data) {
-        // Update auth data with completed registration
-        login({
+        // Create the auth data object
+        const authData = {
           user: result.data.user,
           token: result.data.token,
           is_registration_complete: true,
-        });
+        };
+
+        console.log("About to store auth data:", authData);
+        console.log("Token to be stored:", result.data.token);
+
+        // Update auth data with completed registration
+        login(authData);
+
+        // Verify the token was stored
+        const storedAuth = storage.getAuth();
+        console.log("Stored auth data after login:", storedAuth);
+        console.log("Is authenticated after login:", storage.isAuthenticated());
+        console.log("Token in storage:", storage.getToken());
 
         clearRegistrationIncomplete();
         showSuccess("Registration completed successfully!");
-        router.push(`/${currentLocale}`);
+
+        // Get the previous page URL and redirect back
+        const previousPage = storage.getPreviousPage();
+        if (previousPage) {
+          console.log("Redirecting back to:", previousPage);
+          router.push(previousPage);
+        } else {
+          // Fallback to home page if no previous page stored
+          console.log("No previous page found, redirecting to home");
+          router.push(`/${currentLocale}`);
+        }
       }
     } catch (error: unknown) {
       console.error("Error completing registration:", error);

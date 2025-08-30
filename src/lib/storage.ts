@@ -27,12 +27,23 @@ export interface AuthData {
 
 const AUTH_STORAGE_KEY = "fal_parts_auth";
 const REGISTRATION_CODE_KEY = "fal_parts_registration_code";
+const PREVIOUS_PAGE_KEY = "fal_parts_previous_page";
 
 export const storage = {
   // Store auth data
   setAuth: (authData: AuthData): void => {
     try {
+      console.log("storage.setAuth called with:", authData);
+      console.log("Token to store:", authData.token);
+
       localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authData));
+
+      // Verify it was stored correctly
+      const stored = localStorage.getItem(AUTH_STORAGE_KEY);
+      console.log("Raw stored data:", stored);
+      const parsed = stored ? JSON.parse(stored) : null;
+      console.log("Parsed stored data:", parsed);
+      console.log("Stored token:", parsed?.token);
     } catch (error) {
       console.error("Error storing auth data:", error);
     }
@@ -107,6 +118,34 @@ export const storage = {
       localStorage.removeItem(REGISTRATION_CODE_KEY);
     } catch (error) {
       console.error("Error clearing registration code:", error);
+    }
+  },
+
+  // Store previous page URL
+  setPreviousPage: (url: string): void => {
+    try {
+      localStorage.setItem(PREVIOUS_PAGE_KEY, url);
+    } catch (error) {
+      console.error("Error storing previous page:", error);
+    }
+  },
+
+  // Get previous page URL
+  getPreviousPage: (): string | null => {
+    try {
+      return localStorage.getItem(PREVIOUS_PAGE_KEY);
+    } catch (error) {
+      console.error("Error retrieving previous page:", error);
+      return null;
+    }
+  },
+
+  // Clear previous page URL
+  clearPreviousPage: (): void => {
+    try {
+      localStorage.removeItem(PREVIOUS_PAGE_KEY);
+    } catch (error) {
+      console.error("Error clearing previous page:", error);
     }
   },
 };
