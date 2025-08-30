@@ -28,6 +28,8 @@ import {
   Building2,
   FolderOpen,
   Eye,
+  Search,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Breadcrumb, Pagination } from "@/components/ui";
@@ -364,40 +366,52 @@ const FilterPanel = ({
   </div>
 );
 
-// Sort Options Component
-const SortOptions = ({
+// Search Bar Component
+const ProductsSearchBar = ({
   isRTL,
   t,
-  sortBy,
-  onSortChange,
+  searchQuery,
+  onSearchChange,
+  onSearchSubmit,
+  onClear,
 }: {
   isRTL: boolean;
   t: (key: string) => string;
-  sortBy: string;
-  onSortChange: (value: string) => void;
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+  onSearchSubmit: (e: React.FormEvent) => void;
+  onClear: () => void;
 }) => (
-  <div className="flex items-center gap-4 mb-6">
-    <span className="text-sm font-medium text-gray-700">
-      {t("sortBy") || "Sort by"}:
-    </span>
-    <select
-      value={sortBy}
-      onChange={(e) => onSortChange(e.target.value)}
-      className={`px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-        isRTL ? "text-right" : "text-left"
-      }`}
-    >
-      <option value="newest">{t("newest") || "Newest"}</option>
-      <option value="price-low">
-        {t("priceLowToHigh") || "Price: Low to High"}
-      </option>
-      <option value="price-high">
-        {t("priceHighToLow") || "Price: High to Low"}
-      </option>
-      <option value="name-asc">{t("nameAZ") || "Name: A-Z"}</option>
-      <option value="name-desc">{t("nameZA") || "Name: Z-A"}</option>
-      <option value="popularity">{t("popularity") || "Popularity"}</option>
-    </select>
+  <div className="flex-1 max-w-md">
+    <form onSubmit={onSearchSubmit} className="relative">
+      <div className="relative">
+        <Search
+          className={`absolute top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 ${
+            isRTL ? "right-3" : "left-3"
+          }`}
+        />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+          placeholder={t("searchPlaceholder") || "Search products..."}
+          className={`w-full py-2 px-10 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors ${
+            isRTL ? "text-right" : "text-left"
+          }`}
+        />
+        {searchQuery && (
+          <button
+            type="button"
+            onClick={onClear}
+            className={`absolute top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 ${
+              isRTL ? "left-3" : "right-3"
+            }`}
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+    </form>
   </div>
 );
 
@@ -625,18 +639,23 @@ export default function ProductsPage() {
 
           {/* Products Section */}
           <div className="lg:col-span-3">
-            {/* Sort and View Controls */}
+            {/* Search and View Controls */}
             <div
               className={`flex items-center justify-between mb-6 ${
                 isRTL ? "flex-row-reverse" : ""
               }`}
             >
-              {/* <SortOptions
+              <ProductsSearchBar
                 isRTL={isRTL}
                 t={t}
-                sortBy={filters.sort_by}
-                onSortChange={handleSortChange}
-              /> */}
+                searchQuery={filters.search}
+                onSearchChange={updateSearch}
+                onSearchSubmit={(e) => {
+                  e.preventDefault();
+                  // Search is already handled by updateSearch
+                }}
+                onClear={() => updateSearch("")}
+              />
               <ViewModeToggle
                 isRTL={isRTL}
                 t={t}
