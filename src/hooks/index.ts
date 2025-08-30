@@ -24,3 +24,4 @@ export { useHeaderSearch } from "./useHeaderSearch";
 
 // Utility hooks
 export { useDebounce } from "./useDebounce";
+export { useRegistrationStatus } from "./useRegistrationStatus";

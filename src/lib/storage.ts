@@ -26,6 +26,7 @@ export interface AuthData {
 }
 
 const AUTH_STORAGE_KEY = "fal_parts_auth";
+const REGISTRATION_CODE_KEY = "fal_parts_registration_code";
 
 export const storage = {
   // Store auth data
@@ -79,5 +80,33 @@ export const storage = {
   isRegistrationComplete: (): boolean => {
     const authData = storage.getAuth();
     return authData?.is_registration_complete || false;
+  },
+
+  // Store registration code
+  setRegistrationCode: (code: string): void => {
+    try {
+      localStorage.setItem(REGISTRATION_CODE_KEY, code);
+    } catch (error) {
+      console.error("Error storing registration code:", error);
+    }
+  },
+
+  // Get registration code
+  getRegistrationCode: (): string | null => {
+    try {
+      return localStorage.getItem(REGISTRATION_CODE_KEY);
+    } catch (error) {
+      console.error("Error retrieving registration code:", error);
+      return null;
+    }
+  },
+
+  // Clear registration code
+  clearRegistrationCode: (): void => {
+    try {
+      localStorage.removeItem(REGISTRATION_CODE_KEY);
+    } catch (error) {
+      console.error("Error clearing registration code:", error);
+    }
   },
 };

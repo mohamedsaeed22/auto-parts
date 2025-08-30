@@ -431,3 +431,33 @@ export interface Partner {
   created_at: string;
   updated_at: string;
 }
+
+// Registration Incomplete Error Response
+export interface RegistrationIncompleteError {
+  code: 403;
+  message: string;
+  errors: string[];
+  data: {
+    is_registration_complete: false;
+    user: {
+      id: number;
+      code: string;
+      name: string | null;
+      email: string | null;
+      phone: string;
+      type: string | null;
+      manager_name: string | null;
+      address: string | null;
+      city: string | null;
+      state: string | null;
+      zip: string | null;
+      tax_number: string | null;
+      commercial_register: string | null;
+      avatar: string | null;
+      latitude: string | null;
+      longitude: string | null;
+      is_registration_complete: false;
+      is_google_user: boolean;
+    };
+  };
+}
