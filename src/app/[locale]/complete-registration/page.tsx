@@ -1,84 +1,100 @@
 "use client";
 
-import { useTranslation } from "react-i18next";
-import { useRegistrationStatus } from "@/hooks/useRegistrationStatus";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { useCompleteRegistrationMutation } from "@/services/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/hooks/useLocale";
-import { Button } from "@/components/ui/button";
-import { FormInput, ImageUpload } from "@/components/ui";
-import { UserTypeSelector } from "@/components/userPricing/UserTypeSelector";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  registrationSchema,
-  type RegistrationFormData,
-  registrationDefaultValues,
-} from "@/lib/validations/authSchema";
-import { useFormErrorTranslation } from "@/hooks/useFormErrorTranslation";
-import LocationPicker from "@/components/LocationPicker";
+import { useRegistrationStatus } from "@/hooks/useRegistrationStatus";
 import { showSuccess, showError } from "@/lib/toast";
-import { Loader2, AlertCircle, CheckCircle } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export default function CompleteRegistrationPage() {
-  const { t } = useTranslation("auth");
-  const { registrationCode, clearRegistrationIncomplete } =
-    useRegistrationStatus();
+  // Hooks
+  const [completeRegistration, { isLoading }] =
+    useCompleteRegistrationMutation();
   const { login } = useAuth();
   const router = useRouter();
   const { currentLocale } = useLocale();
-  const [completeRegistration, { isLoading }] =
-    useCompleteRegistrationMutation();
-  const { translateError } = useFormErrorTranslation();
+  const { clearRegistrationIncomplete } = useRegistrationStatus();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-    clearErrors,
-    control,
-    watch,
-  } = useForm<RegistrationFormData>({
-    resolver: zodResolver(registrationSchema),
-    defaultValues: registrationDefaultValues,
+  // State for form fields
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    type: "shop" as "shop" | "workshop", // shop or workshop
+    manager_name: "",
+    address: "",
+    city: "",
+    zip: "",
+    state: "",
+    tax_number: "",
+    latitude: "30.0444", // Static latitude for Cairo, Egypt (valid range: -90 to 90)
+    longitude: "31.2357", // Static longitude for Cairo, Egypt (valid range: -180 to 180)
   });
 
-  const userType = watch("userType");
+  const [commercialRegister, setCommercialRegister] = useState<File | null>(
+    null
+  );
+  const [avatar, setAvatar] = useState<File | null>(null);
 
-  const handleLocationSelect = (location: any) => {
-    setValue("location", location);
-    clearErrors("location");
+  // Handle input changes
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const handleDocumentImageChange = (file: File | undefined) => {
-    setValue("documentImage", file);
-    clearErrors("documentImage");
+  // Handle file changes
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    fieldName: string
+  ) => {
+    const file = e.target.files?.[0] || null;
+    if (fieldName === "commercial_register") {
+      setCommercialRegister(file);
+    } else if (fieldName === "avatar") {
+      setAvatar(file);
+    }
   };
 
-  const onSubmit = async (data: RegistrationFormData) => {
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     try {
-      const formData = new FormData();
+      // Create the request data object
+      const requestData = {
+        name: formData.name,
+        email: formData.email.trim() || undefined, // Only send if not empty
+        type: formData.type,
+        manager_name: formData.manager_name,
+        address: formData.address,
+        city: formData.city,
+        zip: formData.zip,
+        state: formData.state,
+        tax_number: formData.tax_number,
+        latitude: formData.latitude, // Static value: 30.0444 (Cairo, Egypt)
+        longitude: formData.longitude, // Static value: 31.2357 (Cairo, Egypt)
+        commercial_register: commercialRegister || undefined,
+        avatar: avatar || undefined,
+      };
 
-      // Add all form data
-      formData.append("name", data.shopName);
-      if (data.email) formData.append("email", data.email);
-      formData.append("type", data.userType);
-      formData.append("manager_name", data.managerName);
-      formData.append("address", data.location.address);
-      formData.append("city", data.location.city);
-      formData.append("zip", data.location.zip);
-      formData.append("state", data.location.state);
-      formData.append("tax_number", data.taxCardNumber);
-      formData.append("latitude", data.location.latitude);
-      formData.append("longitude", data.location.longitude);
+      // Log the data to console
+      console.log("Form Data Object:", formData);
+      console.log("Commercial Register File:", commercialRegister);
+      console.log("Avatar File:", avatar);
+      console.log("Request Data:", requestData);
 
-      if (data.documentImage) {
-        formData.append("commercial_register", data.documentImage);
-      }
+      // Send the request to the API
+      const result = await completeRegistration(requestData).unwrap();
 
-      const result = await completeRegistration(formData).unwrap();
+      console.log("API Response:", result);
 
       if (result.data) {
         // Update auth data with completed registration
@@ -89,16 +105,12 @@ export default function CompleteRegistrationPage() {
         });
 
         clearRegistrationIncomplete();
-        showSuccess(
-          t("registration.completeSuccess") || "تم إكمال التسجيل بنجاح!"
-        );
+        showSuccess("Registration completed successfully!");
         router.push(`/${currentLocale}`);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error completing registration:", error);
-      showError(
-        t("registration.completeError") || "حدث خطأ أثناء إكمال التسجيل"
-      );
+      showError("Failed to complete registration. Please try again.");
     }
   };
 
@@ -107,101 +119,272 @@ export default function CompleteRegistrationPage() {
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-yellow-100 rounded-full mb-4">
-            <AlertCircle className="w-8 h-8 text-yellow-600" />
-          </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {t("registration.completeTitle") || "إكمال التسجيل"}
+            Complete Registration
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            {t("registration.completeSubtitle") ||
-              "يرجى إكمال بيانات التسجيل الخاصة بك للوصول إلى جميع الميزات"}
+            Please complete your registration data to access all features
           </p>
-          {registrationCode && (
-            <div className="mt-4 inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-lg">
-              <CheckCircle className="w-4 h-4 mr-2" />
-              <span className="text-sm font-medium">
-                {t("registration.codeLabel") || "رمز المستخدم"}:{" "}
-                {registrationCode}
-              </span>
-            </div>
-          )}
         </div>
 
         {/* Registration Form */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 md:p-8">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* User Type Selection */}
-            <div className="max-w-xl mx-auto">
-              <UserTypeSelector control={control} />
-            </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Basic Information */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Name *
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter your name"
+                />
+              </div>
 
-            {/* Form Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-              <FormInput
-                label={
-                  userType === "workshop"
-                    ? t("register.shopNameWorkshop")
-                    : t("register.shopNameStore")
-                }
-                placeholder={
-                  userType === "workshop"
-                    ? t("register.shopNamePlaceholderWorkshop")
-                    : t("register.shopNamePlaceholderStore")
-                }
-                type="text"
-                register={register("shopName")}
-                error={translateError(errors.shopName)}
-                required
-              />
-
-              <FormInput
-                label={t("register.managerName")}
-                placeholder={t("register.managerNamePlaceholder")}
-                type="text"
-                register={register("managerName")}
-                error={translateError(errors.managerName)}
-                required
-              />
-
-              <FormInput
-                label={t("register.email")}
-                placeholder={t("register.emailPlaceholder")}
-                type="email"
-                register={register("email")}
-                error={translateError(errors.email)}
-                dir="ltr"
-              />
-
-              <FormInput
-                label={t("register.taxCardNumber")}
-                placeholder={t("register.taxCardNumberPlaceholder")}
-                type="text"
-                register={register("taxCardNumber")}
-                error={translateError(errors.taxCardNumber)}
-                required
-              />
-            </div>
-
-            {/* Location Picker */}
-            <div className="max-w-2xl mx-auto">
-              <LocationPicker onLocationSelect={handleLocationSelect} />
-              {errors.location && (
-                <p className="text-red-500 text-sm mt-1">
-                  {translateError(errors.location)}
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Email{" "}
+                  <span className="text-gray-500 font-normal">(Optional)</span>
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter your email (optional)"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Leave empty if you don&apos;t have an email
                 </p>
-              )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="type"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Type *
+                </label>
+                <select
+                  id="type"
+                  name="type"
+                  value={formData.type}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="shop">Shop</option>
+                  <option value="workshop">Workshop</option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="manager_name"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Manager Name *
+                </label>
+                <input
+                  type="text"
+                  id="manager_name"
+                  name="manager_name"
+                  value={formData.manager_name}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter manager name"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="address"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Address *
+                </label>
+                <input
+                  type="text"
+                  id="address"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter address"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="city"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  City *
+                </label>
+                <input
+                  type="text"
+                  id="city"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter city"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="zip"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  ZIP Code *
+                </label>
+                <input
+                  type="text"
+                  id="zip"
+                  name="zip"
+                  value={formData.zip}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter ZIP code"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="state"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  State *
+                </label>
+                <input
+                  type="text"
+                  id="state"
+                  name="state"
+                  value={formData.state}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter state"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="tax_number"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Tax Number *
+                </label>
+                <input
+                  type="text"
+                  id="tax_number"
+                  name="tax_number"
+                  value={formData.tax_number}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter tax number"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="latitude"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Latitude (Static)
+                </label>
+                <input
+                  type="text"
+                  id="latitude"
+                  name="latitude"
+                  value={formData.latitude}
+                  readOnly
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600 cursor-not-allowed"
+                  placeholder="Static latitude value"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Fixed location: Cairo, Egypt
+                </p>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="longitude"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Longitude (Static)
+                </label>
+                <input
+                  type="text"
+                  id="longitude"
+                  name="longitude"
+                  value={formData.longitude}
+                  readOnly
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600 cursor-not-allowed"
+                  placeholder="Static longitude value"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Fixed location: Cairo, Egypt
+                </p>
+              </div>
             </div>
 
-            {/* Document Upload */}
-            <div className="max-w-xl mx-auto">
-              <ImageUpload
-                label={t("register.documentImage")}
-                description={t("register.documentImageDescription")}
-                onChange={handleDocumentImageChange}
-                error={translateError(errors.documentImage)}
-                accept="image/*"
-              />
+            {/* File Uploads */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label
+                  htmlFor="commercial_register"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Commercial Register
+                </label>
+                <input
+                  type="file"
+                  id="commercial_register"
+                  onChange={(e) => handleFileChange(e, "commercial_register")}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  accept="image/*,.pdf"
+                />
+                {commercialRegister && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    Selected: {commercialRegister.name}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="avatar"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Avatar
+                </label>
+                <input
+                  type="file"
+                  id="avatar"
+                  onChange={(e) => handleFileChange(e, "avatar")}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  accept="image/*"
+                />
+                {avatar && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    Selected: {avatar.name}
+                  </p>
+                )}
+              </div>
             </div>
 
             {/* Submit Button */}
@@ -209,15 +392,15 @@ export default function CompleteRegistrationPage() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="bg-logo-gold hover:bg-logo-gold/90 text-white px-8 py-3 text-lg"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <>
                     <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    {t("registration.completing") || "جاري الإكمال..."}
+                    Submitting...
                   </>
                 ) : (
-                  t("registration.completeButton") || "إكمال التسجيل"
+                  "Submit Registration"
                 )}
               </Button>
             </div>
