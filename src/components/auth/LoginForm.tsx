@@ -7,12 +7,21 @@ import { Button } from "@/components/ui/button";
 import { FormInput } from "@/components/ui";
 import { Phone } from "lucide-react";
 import Image from "next/image";
+import { useEffect, useRef } from "react";
 import {
   loginSchema,
   type LoginFormData,
   loginDefaultValues,
 } from "@/lib/validations/authSchema";
 import { useFormErrorTranslation } from "@/hooks/useFormErrorTranslation";
+import {
+  initializeGoogleAuth,
+  handleCredentialResponse,
+  renderGoogleButton,
+} from "@/lib/googleAuth";
+import { showSuccess, showError } from "@/lib/toast";
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 interface LoginFormProps {
   onSubmit: (data: LoginFormData) => Promise<void>;
@@ -29,6 +38,9 @@ export default function LoginForm({
 }: LoginFormProps) {
   const { t } = useTranslation("auth");
   const { translateError } = useFormErrorTranslation();
+  const { login } = useAuth();
+  const router = useRouter();
+  const googleButtonRef = useRef<HTMLDivElement>(null);
 
   const {
     register,
@@ -38,6 +50,60 @@ export default function LoginForm({
     resolver: zodResolver(loginSchema),
     defaultValues: loginDefaultValues,
   });
+
+  // Initialize Google OAuth
+  useEffect(() => {
+    initializeGoogleAuth();
+
+    // Wait for Google script to load
+    const checkGoogle = () => {
+      if (window.google?.accounts?.id) {
+        // Initialize Google Identity Services
+        window.google.accounts.id.initialize({
+          client_id:
+            "933306839237-e22lqcs5d3tdhnue1uasvqhrf50r267e.apps.googleusercontent.com",
+          callback: handleGoogleCredentialResponse,
+        });
+
+        // Render Google button if element exists
+        if (googleButtonRef.current) {
+          renderGoogleButton("googleBtn");
+        }
+      } else {
+        // Retry after a short delay
+        setTimeout(checkGoogle, 100);
+      }
+    };
+
+    checkGoogle();
+  }, []);
+
+  const handleGoogleCredentialResponse = async (response: {
+    credential: string;
+  }) => {
+    try {
+      console.log("Google OAuth response received");
+      const result = await handleCredentialResponse(response);
+      console.log("Google login successful:", result);
+
+      // Check if the response has the expected structure
+      if (result.backendData.code === 200 && result.backendData.data) {
+        // Store authentication data using useAuth hook
+        login(result.backendData.data);
+
+        // Show success message
+        showSuccess("تم تسجيل الدخول بنجاح!");
+
+        // Redirect to home page after successful login
+        router.push("/");
+      } else {
+        throw new Error("Invalid response from backend");
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
+      showError("حدث خطأ أثناء تسجيل الدخول بجوجل");
+    }
+  };
 
   const handleSendOtp = async (data: LoginFormData) => {
     // Simple: get phone number from form data and send it
@@ -110,19 +176,11 @@ export default function LoginForm({
       </div>
 
       {/* Google Login Button */}
-      <button
-        type="button"
-        className="w-full flex items-center justify-center gap-2 py-3 rounded-lg border border-neutral-300 hover:bg-neutral-100 text-black transition"
-      >
-        <Image
-          src="/icons8-google.svg"
-          alt="Google"
-          className="w-5 h-5"
-          width={20}
-          height={20}
-        />
-        {t("login.googleLogin")}
-      </button>
+      <div
+        id="googleBtn"
+        ref={googleButtonRef}
+        className="w-full flex justify-center"
+      />
     </div>
   );
 }
