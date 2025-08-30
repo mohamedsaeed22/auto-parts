@@ -94,8 +94,6 @@ export default function WishlistPage() {
     <ProtectedRoute>
       <RegistrationErrorHandler error={error}>
         <div className="container mx-auto px-4 py-8">
-    
-
           {/* Wishlist List */}
           {wishlist.length === 0 ? (
             <div className="text-center min-h-[400px] flex items-center justify-center">
