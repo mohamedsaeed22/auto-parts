@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useCompleteRegistrationMutation } from "@/services/api";
 import { useAuth } from "@/hooks/useAuth";
@@ -15,10 +15,32 @@ export default function CompleteRegistrationPage() {
   // Hooks
   const [completeRegistration, { isLoading }] =
     useCompleteRegistrationMutation();
-  const { login } = useAuth();
+  const { login, authData } = useAuth();
   const router = useRouter();
   const { currentLocale } = useLocale();
   const { clearRegistrationIncomplete } = useRegistrationStatus();
+
+  // Check if user has already completed registration
+  const hasRedirectedRef = useRef(false);
+
+  useEffect(() => {
+    if (
+      authData &&
+      authData.is_registration_complete &&
+      !hasRedirectedRef.current
+    ) {
+      console.log("User has already completed registration, redirecting...");
+      hasRedirectedRef.current = true;
+
+      // Only show success message if we're actually on the complete-registration page
+      if (window.location.pathname.includes("/complete-registration")) {
+        showSuccess("Registration already completed!");
+      }
+
+      router.push(`/${currentLocale}`);
+      return;
+    }
+  }, [authData, currentLocale, router]);
 
   // State for form fields
   const [formData, setFormData] = useState({
@@ -39,6 +61,26 @@ export default function CompleteRegistrationPage() {
     null
   );
   const [avatar, setAvatar] = useState<File | null>(null);
+
+  // Show loading while checking auth status
+  if (!authData) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-logo-gold"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect unauthenticated users
+  if (!authData.token) {
+    console.log("User not authenticated, redirecting to login...");
+    router.push(`/${currentLocale}`);
+    return null;
+  }
 
   // Handle input changes
   const handleInputChange = (
@@ -156,6 +198,13 @@ export default function CompleteRegistrationPage() {
           <p className="text-gray-600 max-w-2xl mx-auto">
             Please complete your registration data to access all features
           </p>
+          {authData.user?.code && (
+            <div className="mt-4 inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-lg">
+              <span className="text-sm font-medium">
+                User Code: {authData.user.code}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Registration Form */}
