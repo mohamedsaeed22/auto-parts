@@ -1,4 +1,4 @@
-import { api } from "../api";
+import { api } from "./baseApi";
 
 export interface Category {
   id: number;
@@ -23,14 +23,8 @@ export interface CategoriesResponse {
 
 export const categoriesApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getCategories: builder.query<
-      CategoriesResponse,
-      { level?: number; perPage?: number; with_children?: boolean }
-    >({
-      query: (params) => ({
-        url: "/categories",
-        params,
-      }),
+    getCategories: builder.query<CategoriesResponse, void>({
+      query: () => "/categories",
     }),
   }),
 });

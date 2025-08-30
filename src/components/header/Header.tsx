@@ -16,18 +16,20 @@ import HeaderBottomNavigation from "./HeaderBottomNavigation";
 import { useRouter } from "next/navigation";
 import { i18nConfig } from "@/lib/i18n";
 import { useLocale } from "@/hooks/useLocale";
+import { useHeaderSearch } from "@/hooks/useHeaderSearch";
 
 export default function Header() {
   const { totalItems, setCartOpen } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const pathname = usePathname();
   const { t } = useTranslation("header");
   const { currentLocale, changeLocale, isRTL } = useLocale();
   const router = useRouter();
   const currentPathname = usePathname();
+  const { searchQuery, updateSearchQuery, clearSearchQuery } =
+    useHeaderSearch();
 
   const navLinks = [
     { href: "/about", label: t("navigation.about") },
@@ -55,15 +57,18 @@ export default function Header() {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Navigate to search results page or handle search
-      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      // Navigate to products page with search parameter
+      const locale = currentLocale;
+      router.push(
+        `/${locale}/products?search=${encodeURIComponent(searchQuery.trim())}`
+      );
       setIsSearchOpen(false);
-      setSearchQuery("");
+      clearSearchQuery();
     }
   };
 
   const clearSearch = () => {
-    setSearchQuery("");
+    clearSearchQuery();
   };
 
   // Helper function to check if link is active
@@ -96,7 +101,7 @@ export default function Header() {
             <div className="hidden lg:flex items-center flex-1 max-w-2xl mx-8">
               <HeaderSearch
                 searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
+                setSearchQuery={updateSearchQuery}
                 onSubmit={handleSearchSubmit}
                 onClear={clearSearch}
                 isRTL={isRTL}
@@ -180,7 +185,7 @@ export default function Header() {
             >
               <HeaderSearch
                 searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
+                setSearchQuery={updateSearchQuery}
                 onSubmit={handleSearchSubmit}
                 onClear={clearSearch}
                 isRTL={isRTL}

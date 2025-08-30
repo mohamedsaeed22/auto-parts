@@ -1,49 +1,38 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useGetProductsMutation } from "@/services/hooks";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import { useProductFilters } from "@/hooks/useProductFilters";
+import { useFilterData } from "@/hooks/useFilterData";
 import {
   ArrowLeft,
   Loader2,
   AlertCircle,
   Package,
   Star,
-  Clock,
-  TrendingUp,
   Filter,
   Grid3X3,
   List,
-  Search,
-  Flame,
   Award,
-  Zap,
   Shield,
   CheckCircle,
   Globe,
-  Car,
-  Settings,
   ChevronDown,
   ChevronUp,
-  X,
   SlidersHorizontal,
-  SortAsc,
-  SortDesc,
   DollarSign,
-  Percent,
-  Tag,
   Building2,
   FolderOpen,
-  ShoppingCart,
-  Heart,
   Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Breadcrumb, Pagination } from "@/components/ui";
 import ProductCard from "@/components/product/ProductCard";
+import type { FilterState, Category } from "@/lib/types/filters";
 
 // Loading Component
 const LoadingSpinner = () => (
@@ -118,60 +107,6 @@ const HeroSection = ({
   </div>
 );
 
-// Search Bar Component
-const SearchBar = ({
-  isRTL,
-  t,
-  searchQuery,
-  onSearchChange,
-  onSearchSubmit,
-}: {
-  isRTL: boolean;
-  t: (key: string) => string;
-  searchQuery: string;
-  onSearchChange: (value: string) => void;
-  onSearchSubmit: () => void;
-}) => (
-  <div className="bg-white border-b border-gray-200 py-4">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="relative">
-        <div className="flex items-center gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-            <input
-              type="text"
-              placeholder={
-                t("searchPlaceholder") ||
-                "Search for products, parts, brands..."
-              }
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && onSearchSubmit()}
-              className={`w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                isRTL ? "text-right" : "text-left"
-              }`}
-            />
-            {searchQuery && (
-              <button
-                onClick={() => onSearchChange("")}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
-          </div>
-          <Button
-            onClick={onSearchSubmit}
-            className="bg-green-500 hover:bg-green-600 text-white px-6 py-3"
-          >
-            {t("search") || "Search"}
-          </Button>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
 // Filter Sidebar Component
 const FilterSidebar = ({
   isRTL,
@@ -183,8 +118,11 @@ const FilterSidebar = ({
 }: {
   isRTL: boolean;
   t: (key: string) => string;
-  filters: any;
-  onFilterChange: (key: string, value: any) => void;
+  filters: FilterState;
+  onFilterChange: (
+    key: keyof FilterState,
+    value: string | number | null
+  ) => void;
   isOpen: boolean;
   onToggle: () => void;
 }) => (
@@ -214,12 +152,21 @@ const FilterPanel = ({
   filters,
   onFilterChange,
   onClearFilters,
+  categories,
+  brands,
+  isLoading,
 }: {
   isRTL: boolean;
   t: (key: string) => string;
-  filters: any;
-  onFilterChange: (key: string, value: any) => void;
+  filters: FilterState;
+  onFilterChange: (
+    key: keyof FilterState,
+    value: string | number | null
+  ) => void;
   onClearFilters: () => void;
+  categories: { id: number; name: string }[];
+  brands: { id: number; name: string }[];
+  isLoading: boolean;
 }) => (
   <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
     <div
@@ -248,38 +195,62 @@ const FilterPanel = ({
           <FolderOpen className="h-4 w-4" />
           {t("categories") || "Categories"}
         </h4>
-        <div className="space-y-2">
-          {[
-            "Primary Category 1",
-            "Primary Category 2",
-            "Primary Category 3",
-          ].map((category) => (
-            <label
-              key={category}
-              className="flex items-center gap-2 cursor-pointer"
-            >
-              <input
-                type="checkbox"
-                checked={filters.categories.includes(category)}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    onFilterChange("categories", [
-                      ...filters.categories,
-                      category,
-                    ]);
-                  } else {
-                    onFilterChange(
-                      "categories",
-                      filters.categories.filter((c: string) => c !== category)
-                    );
-                  }
-                }}
-                className="rounded border-gray-300 text-green-600 focus:ring-green-500"
-              />
-              <span className="text-sm text-gray-700">{category}</span>
-            </label>
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span className="text-sm text-gray-500">Loading categories...</span>
+          </div>
+        ) : (
+          <div className="space-y-2 max-h-40 overflow-y-auto">
+            {categories.map((category: any) => (
+              <label
+                key={category.id}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  name="category"
+                  value={category.id}
+                  checked={filters.category_id === category.id}
+                  onChange={(e) => {
+                    const value = e.target.checked ? category.id : null;
+                    onFilterChange("category_id", value);
+                  }}
+                  className="border-gray-300 text-green-600 focus:ring-green-500"
+                />
+                <span className="text-sm text-gray-700">
+                  {category.parent ? (
+                    <span>
+                      <span className="text-gray-500">
+                        {category.parent.name}
+                      </span>
+                      <span className="mx-1">→</span>
+                      <span>{category.name}</span>
+                    </span>
+                  ) : (
+                    category.name
+                  )}
+                </span>
+              </label>
+            ))}
+            {/* Clear category selection */}
+            {filters.category_id && (
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="category"
+                  value=""
+                  checked={false}
+                  onChange={() => onFilterChange("category_id", null)}
+                  className="border-gray-300 text-green-600 focus:ring-green-500"
+                />
+                <span className="text-sm text-gray-500">
+                  {t("clearCategory") || "Clear selection"}
+                </span>
+              </label>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Brands Filter */}
@@ -288,31 +259,50 @@ const FilterPanel = ({
           <Building2 className="h-4 w-4" />
           {t("brands") || "Brands"}
         </h4>
-        <div className="space-y-2">
-          {["Brand 1", "Brand 2", "Brand 3", "Brand 4"].map((brand) => (
-            <label
-              key={brand}
-              className="flex items-center gap-2 cursor-pointer"
-            >
-              <input
-                type="checkbox"
-                checked={filters.brands.includes(brand)}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    onFilterChange("brands", [...filters.brands, brand]);
-                  } else {
-                    onFilterChange(
-                      "brands",
-                      filters.brands.filter((b: string) => b !== brand)
-                    );
-                  }
-                }}
-                className="rounded border-gray-300 text-green-600 focus:ring-green-500"
-              />
-              <span className="text-sm text-gray-700">{brand}</span>
-            </label>
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span className="text-sm text-gray-500">Loading brands...</span>
+          </div>
+        ) : (
+          <div className="space-y-2 max-h-40 overflow-y-auto">
+            {brands.map((brand) => (
+              <label
+                key={brand.id}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  name="brand"
+                  value={brand.id}
+                  checked={filters.brand_id === brand.id}
+                  onChange={(e) => {
+                    const value = e.target.checked ? brand.id : null;
+                    onFilterChange("brand_id", value);
+                  }}
+                  className="border-gray-300 text-green-600 focus:ring-green-500"
+                />
+                <span className="text-sm text-gray-700">{brand.name}</span>
+              </label>
+            ))}
+            {/* Clear brand selection */}
+            {filters.brand_id && (
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="brand"
+                  value=""
+                  checked={false}
+                  onChange={() => onFilterChange("brand_id", null)}
+                  className="border-gray-300 text-green-600 focus:ring-green-500"
+                />
+                <span className="text-sm text-gray-500">
+                  {t("clearBrand") || "Clear selection"}
+                </span>
+              </label>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Price Range Filter */}
@@ -325,84 +315,50 @@ const FilterPanel = ({
           <div className="grid grid-cols-3 gap-2 items-center">
             <input
               type="number"
+              min="0"
+              step="0.01"
               placeholder={t("minPrice") || "Min"}
-              value={filters.minPrice}
-              onChange={(e) => onFilterChange("minPrice", e.target.value)}
+              value={filters.min_price}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "" || parseFloat(value) >= 0) {
+                  onFilterChange("min_price", value);
+                }
+              }}
               className="w-full px-2 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
             <span className="text-gray-500 text-center text-sm">-</span>
             <input
               type="number"
+              min="0"
+              step="0.01"
               placeholder={t("maxPrice") || "Max"}
-              value={filters.maxPrice}
-              onChange={(e) => onFilterChange("maxPrice", e.target.value)}
+              value={filters.max_price}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "" || parseFloat(value) >= 0) {
+                  onFilterChange("max_price", value);
+                }
+              }}
               className="w-full px-2 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
           </div>
         </div>
       </div>
 
-      {/* Discount Filter */}
+      {/* Description Filter */}
       <div>
         <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
-          <Percent className="h-4 w-4" />
-          {t("discount") || "Discount"}
+          <Eye className="h-4 w-4" />
+          {t("description") || "Description"}
         </h4>
-        <div className="space-y-2">
-          {[
-            { label: "10% or more", value: "10" },
-            { label: "20% or more", value: "20" },
-            { label: "30% or more", value: "30" },
-            { label: "50% or more", value: "50" },
-          ].map((discount) => (
-            <label
-              key={discount.value}
-              className="flex items-center gap-2 cursor-pointer"
-            >
-              <input
-                type="radio"
-                name="discount"
-                value={discount.value}
-                checked={filters.discount === discount.value}
-                onChange={(e) => onFilterChange("discount", e.target.value)}
-                className="border-gray-300 text-green-600 focus:ring-green-500"
-              />
-              <span className="text-sm text-gray-700">{discount.label}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Availability Filter */}
-      <div>
-        <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
-          <Package className="h-4 w-4" />
-          {t("availability") || "Availability"}
-        </h4>
-        <div className="space-y-2">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={filters.inStock}
-              onChange={(e) => onFilterChange("inStock", e.target.checked)}
-              className="rounded border-gray-300 text-green-600 focus:ring-green-500"
-            />
-            <span className="text-sm text-gray-700">
-              {t("inStock") || "In Stock"}
-            </span>
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={filters.onSale}
-              onChange={(e) => onFilterChange("onSale", e.target.checked)}
-              className="rounded border-gray-300 text-green-600 focus:ring-green-500"
-            />
-            <span className="text-sm text-gray-700">
-              {t("onSale") || "On Sale"}
-            </span>
-          </label>
-        </div>
+        <input
+          type="text"
+          placeholder={t("enterDescription") || "Enter description keywords..."}
+          value={filters.description}
+          onChange={(e) => onFilterChange("description", e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+        />
       </div>
     </div>
   </div>
@@ -489,20 +445,7 @@ const ViewModeToggle = ({
 export default function ProductsPage() {
   const router = useRouter();
   const { t, i18n } = useTranslation("products");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("newest");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [filters, setFilters] = useState({
-    categories: [],
-    brands: [],
-    minPrice: "",
-    maxPrice: "",
-    discount: "",
-    inStock: false,
-    onSale: false,
-  });
 
   const isRTL = i18n.language === "ar";
   const direction = isRTL ? "rtl" : "ltr";
@@ -510,69 +453,84 @@ export default function ProductsPage() {
   // Scroll to top when component mounts
   useScrollToTop();
 
+  // Custom hooks
+  const {
+    filters,
+    apiFilters,
+    hasActiveFilters,
+    updateSearch,
+    updateCategory,
+    updateBrand,
+    updatePriceRange,
+    updateDescription,
+    updateSortBy,
+    updateViewMode,
+    updatePage,
+    clearFilters,
+  } = useProductFilters();
+
+  const {
+    categories,
+    brands,
+    isLoading: isLoadingFilterData,
+  } = useFilterData();
+
   // API Hooks
   const [getProducts, { data: productsResponse, isLoading, error }] =
     useGetProductsMutation();
 
   const products = productsResponse?.data?.items || [];
+  const pagination = productsResponse?.data?.pagination;
 
-  // Load products on component mount
-  React.useEffect(() => {
-    getProducts({});
-  }, [getProducts]);
+  // Load products when filters change
+  useEffect(() => {
+    getProducts(apiFilters);
+  }, [getProducts, apiFilters]);
 
   const handleGoBack = () => {
     router.back();
   };
 
-  const handleSearchChange = (value: string) => {
-    setSearchQuery(value);
-  };
-
-  const handleSearchSubmit = () => {
-    // TODO: Implement search logic
-    console.log("Searching for:", searchQuery);
-  };
-
-  const handleFilterChange = (key: string, value: any) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
+  const handleFilterChange = (
+    key: keyof FilterState,
+    value: string | number | null
+  ) => {
+    switch (key) {
+      case "search":
+        updateSearch(value as string);
+        break;
+      case "category_id":
+        updateCategory(value as number | null);
+        break;
+      case "brand_id":
+        updateBrand(value as number | null);
+        break;
+      case "min_price":
+      case "max_price":
+        updatePriceRange(
+          key === "min_price" ? (value as string) : filters.min_price,
+          key === "max_price" ? (value as string) : filters.max_price
+        );
+        break;
+      case "description":
+        updateDescription(value as string);
+        break;
+      case "sort_by":
+        updateSortBy(value as string);
+        break;
+      case "view_mode":
+        updateViewMode(value as "grid" | "list");
+        break;
+    }
   };
 
   const handleClearFilters = () => {
-    setFilters({
-      categories: [],
-      brands: [],
-      minPrice: "",
-      maxPrice: "",
-      discount: "",
-      inStock: false,
-      onSale: false,
-    });
+    clearFilters();
   };
 
   const handleSortChange = (value: string) => {
-    setSortBy(value);
-    // TODO: Implement sort logic
+    updateSortBy(value);
   };
-
-  // Handle loading state
-  if (isLoading) {
-    return (
-      <div dir={direction}>
-        <HeroSection isRTL={isRTL} t={t} />
-        <SearchBar
-          isRTL={isRTL}
-          t={t}
-          searchQuery={searchQuery}
-          onSearchChange={handleSearchChange}
-          onSearchSubmit={handleSearchSubmit}
-        />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <LoadingSpinner />
-        </div>
-      </div>
-    );
-  }
 
   // Handle error state
   if (error) {
@@ -586,17 +544,10 @@ export default function ProductsPage() {
     return (
       <div dir={direction}>
         <HeroSection isRTL={isRTL} t={t} />
-        <SearchBar
-          isRTL={isRTL}
-          t={t}
-          searchQuery={searchQuery}
-          onSearchChange={handleSearchChange}
-          onSearchSubmit={handleSearchSubmit}
-        />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <ErrorMessage
             message={errorMessage}
-            onRetry={() => getProducts({})}
+            onRetry={() => getProducts(apiFilters)}
           />
         </div>
       </div>
@@ -607,15 +558,6 @@ export default function ProductsPage() {
     <div dir={direction}>
       {/* Hero Section */}
       <HeroSection isRTL={isRTL} t={t} />
-
-      {/* Search Bar */}
-      <SearchBar
-        isRTL={isRTL}
-        t={t}
-        searchQuery={searchQuery}
-        onSearchChange={handleSearchChange}
-        onSearchSubmit={handleSearchSubmit}
-      />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -658,6 +600,9 @@ export default function ProductsPage() {
                 filters={filters}
                 onFilterChange={handleFilterChange}
                 onClearFilters={handleClearFilters}
+                categories={categories}
+                brands={brands}
+                isLoading={isLoadingFilterData}
               />
             </div>
 
@@ -670,6 +615,9 @@ export default function ProductsPage() {
                   filters={filters}
                   onFilterChange={handleFilterChange}
                   onClearFilters={handleClearFilters}
+                  categories={categories}
+                  brands={brands}
+                  isLoading={isLoadingFilterData}
                 />
               </div>
             )}
@@ -683,94 +631,171 @@ export default function ProductsPage() {
                 isRTL ? "flex-row-reverse" : ""
               }`}
             >
-              <SortOptions
+              {/* <SortOptions
                 isRTL={isRTL}
                 t={t}
-                sortBy={sortBy}
+                sortBy={filters.sort_by}
                 onSortChange={handleSortChange}
-              />
+              /> */}
               <ViewModeToggle
                 isRTL={isRTL}
                 t={t}
-                viewMode={viewMode}
-                onViewModeChange={setViewMode}
+                viewMode={filters.view_mode}
+                onViewModeChange={updateViewMode}
               />
             </div>
 
             {/* Products Count */}
             <div className={`mb-6 ${isRTL ? "text-right" : "text-left"}`}>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                {t("foundProducts") || "Found Products"}
-              </h2>
-              <p className="text-gray-600">
-                {t("productsCount") || `${products.length} products available`}
-              </p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    {filters.search
+                      ? `${t("searchResults") || "Search Results"} for "${
+                          filters.search
+                        }"`
+                      : t("foundProducts") || "Found Products"}
+                  </h2>
+                  <p className="text-gray-600">
+                    {pagination
+                      ? `${pagination.total} products available`
+                      : `${products.length} products available`}
+                  </p>
+                  {hasActiveFilters && (
+                    <p className="text-sm text-green-600 mt-1">
+                      {t("filtersApplied") || "Filters applied"}
+                    </p>
+                  )}
+                </div>
+                {filters.search && (
+                  <Button
+                    onClick={() => updateSearch("")}
+                    variant="outline"
+                    size="sm"
+                    className="text-gray-600 hover:text-gray-900"
+                  >
+                    {t("clearSearch") || "Clear Search"}
+                  </Button>
+                )}
+              </div>
             </div>
 
             {/* Products Grid/List */}
-            {products.length === 0 ? (
+            {isLoading ? (
+              <div className="text-center py-16">
+                <LoadingSpinner />
+              </div>
+            ) : products.length === 0 ? (
               <div className="text-center py-16">
                 <Package className="mx-auto h-16 w-16 text-gray-300 mb-4" />
                 <h3 className="text-xl font-semibold text-gray-600 mb-2">
                   {t("noProducts") || "No products found"}
                 </h3>
                 <p className="text-gray-500 mb-6">
-                  {t("noProductsDesc") ||
-                    "Try adjusting your search or filter criteria."}
+                  {hasActiveFilters
+                    ? t("noProductsWithFilters") ||
+                      "Try adjusting your filter criteria."
+                    : t("noProductsDesc") ||
+                      "No products available at the moment."}
                 </p>
-                <Button onClick={handleClearFilters} variant="outline">
-                  {t("clearFilters") || "Clear Filters"}
-                </Button>
+                {hasActiveFilters && (
+                  <Button onClick={handleClearFilters} variant="outline">
+                    {t("clearFilters") || "Clear Filters"}
+                  </Button>
+                )}
               </div>
             ) : (
-              <div
-                className={
-                  viewMode === "grid"
-                    ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-                    : "space-y-6"
-                }
-              >
-                {products.map((product: any) => (
-                  <ProductCard
-                    key={product.id}
-                    product={{
-                      id: product.id,
-                      name: product.name,
-                      price: product.price,
-                      final_price: product.final_price,
-                      primary_image: product.primary_image,
-                      description: product.description,
-                      product_identifier: product.product_identifier,
-                      discount_info: product.discount_info,
-                      offer: product.offer,
-                      brand: product.brand,
-                      category: product.category,
-                      discount_type: product.discount_type,
-                      discount_amount: product.discount_amount,
-                      images: product.images,
-                      hover_text: product.hover_text,
-                    }}
-                  />
-                ))}
-              </div>
-            )}
+              <>
+                <div
+                  className={
+                    filters.view_mode === "grid"
+                      ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                      : "space-y-6"
+                  }
+                >
+                  {products.map(
+                    (product: {
+                      id: number;
+                      name: string;
+                      price: string;
+                      final_price: number;
+                      primary_image: string;
+                      description: string;
+                      product_identifier: string;
+                      discount_info: string;
+                      offer: {
+                        id: number;
+                        image: string;
+                        discount_type: "percentage" | "fixed";
+                        discount_amount: string;
+                        discount_info: string;
+                        products_count: number;
+                      } | null;
+                      brand: {
+                        id: number;
+                        name: string;
+                        image?: string;
+                      } | null;
+                      category: {
+                        id: number;
+                        name: string;
+                        level: number;
+                        image: string;
+                        parent: {
+                          id: number;
+                          name: string;
+                        } | null;
+                      };
+                      discount_type: "percentage" | "fixed" | null;
+                      discount_amount: string | null;
+                      images: string[];
+                      hover_text: string;
+                    }) => (
+                      <ProductCard
+                        key={product.id}
+                        product={{
+                          id: product.id,
+                          name: product.name,
+                          price: product.price,
+                          final_price: product.final_price,
+                          primary_image: product.primary_image,
+                          description: product.description,
+                          product_identifier: product.product_identifier,
+                          discount_info: product.discount_info,
+                          offer: product.offer,
+                          brand: product.brand,
+                          category: product.category,
+                          discount_type: product.discount_type as
+                            | "percentage"
+                            | "fixed"
+                            | null,
+                          discount_amount: product.discount_amount,
+                          images: product.images,
+                          hover_text: product.hover_text,
+                        }}
+                      />
+                    )
+                  )}
+                </div>
 
-            {/* Pagination */}
-            {products.length > 0 && (
-              <div className="mt-12">
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={Math.ceil(products.length / 12) || 1}
-                  totalItems={products.length}
-                  itemsPerPage={12}
-                  onPageChange={setCurrentPage}
-                  showInfo={true}
-                  showFirstLast={true}
-                  maxVisiblePages={5}
-                  size="md"
-                  variant="outline"
-                />
-              </div>
+                {/* Pagination */}
+                {products.length > 0 && (
+                  <div className="mt-12">
+                    <Pagination
+                      currentPage={pagination?.current_page || 1}
+                      totalPages={pagination?.last_page || 1}
+                      totalItems={pagination?.total || products.length}
+                      itemsPerPage={pagination?.per_page || 12}
+                      onPageChange={updatePage}
+                      showInfo={true}
+                      showFirstLast={true}
+                      maxVisiblePages={5}
+                      size="md"
+                      variant="outline"
+                    />
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
