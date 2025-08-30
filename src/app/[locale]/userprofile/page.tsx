@@ -9,6 +9,7 @@ import WishlistPage from "@/components/userprofile/WishlistPage";
 import SettingsPage from "@/components/userprofile/SettingsPage";
 import NotificationsPage from "@/components/userprofile/NotificationsPage";
 import PointsPage from "@/components/userprofile/PointsPage";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 export type ProfilePage =
   | "overview"
@@ -44,25 +45,27 @@ export default function UserProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar - Right side for Arabic */}
-          <div className="lg:w-80 lg:flex-shrink-0">
-            <UserProfileSidebar
-              activePage={activePage}
-              onPageChange={setActivePage}
-            />
-          </div>
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Sidebar - Right side for Arabic */}
+            <div className="lg:w-80 lg:flex-shrink-0">
+              <UserProfileSidebar
+                activePage={activePage}
+                onPageChange={setActivePage}
+              />
+            </div>
 
-          {/* Main Content - Left side */}
-          <div className="flex-1">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-              {renderActivePage()}
+            {/* Main Content - Left side */}
+            <div className="flex-1">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+                {renderActivePage()}
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 }

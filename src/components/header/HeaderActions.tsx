@@ -39,29 +39,33 @@ export default function HeaderActions({
         />
       )}
 
-      {/* Favourites */}
-      <button
-        onClick={() => router.push("/favourites")}
-        className="flex items-center gap-2 text-neutral-700 hover:text-primary transition-colors"
-        title={t("actions.favourites") || "Favourites"}
-      >
-        <Heart size={20} />
-        <span className="text-sm font-medium hidden sm:inline">
-          {t("actions.favourites") || "Favourites"}
-        </span>
-      </button>
+      {/* Favourites - Only show if authenticated */}
+      {isAuthenticated && (
+        <button
+          onClick={() => router.push("/favourites")}
+          className="flex items-center gap-2 text-neutral-700 hover:text-primary transition-colors"
+          title={t("actions.favourites") || "Favourites"}
+        >
+          <Heart size={20} />
+          <span className="text-sm font-medium hidden sm:inline">
+            {t("actions.favourites") || "Favourites"}
+          </span>
+        </button>
+      )}
 
-      {/* Wishlist */}
-      <button
-        onClick={() => router.push("/wishlist")}
-        className="flex items-center gap-2 text-neutral-700 hover:text-primary transition-colors"
-        title={t("actions.wishlist") || "Wishlist"}
-      >
-        <Bookmark size={20} />
-        <span className="text-sm font-medium hidden sm:inline">
-          {t("actions.wishlist") || "Wishlist"}
-        </span>
-      </button>
+      {/* Wishlist - Only show if authenticated */}
+      {isAuthenticated && (
+        <button
+          onClick={() => router.push("/wishlist")}
+          className="flex items-center gap-2 text-neutral-700 hover:text-primary transition-colors"
+          title={t("actions.wishlist") || "Wishlist"}
+        >
+          <Bookmark size={20} />
+          <span className="text-sm font-medium hidden sm:inline">
+            {t("actions.wishlist") || "Wishlist"}
+          </span>
+        </button>
+      )}
 
       {/* Cart */}
       <button

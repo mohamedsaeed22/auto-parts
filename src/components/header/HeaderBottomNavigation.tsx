@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Home, Grid3X3, ShoppingCart, Heart, Bookmark } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 interface HeaderBottomNavigationProps {
   totalItems: number;
@@ -18,6 +19,7 @@ export default function HeaderBottomNavigation({
 }: HeaderBottomNavigationProps) {
   const { t } = useTranslation("header");
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
 
   // Bottom navigation items for mobile
   const bottomNavItems = [
@@ -33,18 +35,23 @@ export default function HeaderBottomNavigation({
       label: t("bottomNav.categories") || "Categories",
       isActive: pathname.startsWith("/products"),
     },
-    {
-      href: "/favourites",
-      icon: Heart,
-      label: t("bottomNav.favourites") || "Favourites",
-      isActive: pathname.startsWith("/favourites"),
-    },
-    {
-      href: "/wishlist",
-      icon: Bookmark,
-      label: t("bottomNav.wishlist") || "Wishlist",
-      isActive: pathname.startsWith("/wishlist"),
-    },
+    // Only show favourites and wishlist if authenticated
+    ...(isAuthenticated
+      ? [
+          {
+            href: "/favourites",
+            icon: Heart,
+            label: t("bottomNav.favourites") || "Favourites",
+            isActive: pathname.startsWith("/favourites"),
+          },
+          {
+            href: "/wishlist",
+            icon: Bookmark,
+            label: t("bottomNav.wishlist") || "Wishlist",
+            isActive: pathname.startsWith("/wishlist"),
+          },
+        ]
+      : []),
     {
       href: "#",
       icon: ShoppingCart,

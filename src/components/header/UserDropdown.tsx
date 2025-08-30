@@ -61,7 +61,7 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
 
   const handleProfileClick = () => {
     setIsOpen(false);
-    router.push("/profile");
+    router.push("/userprofile");
   };
 
   if (!user) {
