@@ -32,12 +32,14 @@ export {
 export {
   useGetProductsMutation,
   useGetProductQuery,
-  useGetCategoriesQuery,
   useGetBrandsQuery,
   useGetBannersQuery,
   useGetOffersQuery,
   useGetOfferQuery,
 } from "./api/productsApi";
+
+// Categories Hooks
+export { useGetCategoriesQuery } from "./api/categoriesApi";
 
 // Sections Hooks
 export { useGetSectionsQuery } from "./api/sectionsApi";

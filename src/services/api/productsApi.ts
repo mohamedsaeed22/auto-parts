@@ -54,26 +54,6 @@ export const productsApi = api.injectEndpoints({
       providesTags: (result, error, id) => [{ type: "Products", id }],
     }),
 
-    // Categories
-    getCategories: builder.query<
-      ApiResponse<PaginatedResponse<Category>>,
-      CategoriesRequest | void
-    >({
-      query: (params) => {
-        const queryParams = new URLSearchParams();
-
-        if (params?.level) queryParams.append("level", params.level.toString());
-        if (params?.perPage)
-          queryParams.append("perPage", params.perPage.toString());
-        if (params?.with_children)
-          queryParams.append("with_children", params.with_children.toString());
-
-        const queryString = queryParams.toString();
-        return `/categories${queryString ? `?${queryString}` : ""}`;
-      },
-      providesTags: ["Categories"],
-    }),
-
     // Brands
     getBrands: builder.query<
       ApiResponse<PaginatedResponse<Brand>>,
@@ -117,7 +97,6 @@ export const productsApi = api.injectEndpoints({
 export const {
   useGetProductsMutation,
   useGetProductQuery,
-  useGetCategoriesQuery,
   useGetBrandsQuery,
   useGetBannersQuery,
   useGetOffersQuery,

@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
         protocol: "http",
         hostname: "brave.iseek.name",
       },
+      {
+        protocol: "https",
+        hostname: "brave.iseek.name",
+      },
     ],
   },
 };
