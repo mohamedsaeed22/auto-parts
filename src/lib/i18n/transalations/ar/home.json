@@ -180,12 +180,14 @@
   "footer": {
     "sections": {
       "siteCategories": {
-        "title": "اقسام الموقع",
+        "title": "التنقل",
         "links": {
-          "partsRequests": "طلبات قطع الغيار",
-          "partsStore": "متجر القطع",
-          "testDrives": "تجارب القيادة",
-          "carServices": "خدمات السيارات"
+          "about": "من نحن",
+          "contact": "اتصل بنا",
+          "brands": "العلامات التجارية",
+          "offers": "أحدث العروض",
+          "products": "المنتجات",
+          "userPricing": "طلب تسعيرة"
         }
       },
       "storeCategories": {
@@ -200,14 +202,6 @@
       },
       "serviceCategories": {
         "title": "أقسام الخدمات",
-        "links": {
-          "tiresAndBatteries": "الإطارات والبطاريات",
-          "washingAndCare": "الغسيل والعناية",
-          "replacementAndRepairs": "الاستبدال والحكات"
-        }
-      },
-      "services": {
-        "title": "الخدمات",
         "links": {
           "tiresAndBatteries": "الإطارات والبطاريات",
           "washingAndCare": "الغسيل والعناية",

@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
 const Footer = () => {
@@ -8,44 +9,60 @@ const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white py-16">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-          {/* Column 1 - Site Categories */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Column 1 - Navigation */}
           <div>
             <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
               {t("sections.siteCategories.title")}
             </h3>
             <ul className="space-y-3 list-disc list-inside">
               <li>
-                <a
-                  href="#"
+                <Link
+                  href="/about"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("sections.siteCategories.links.partsRequests")}
-                </a>
+                  {t("sections.siteCategories.links.about")}
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  href="/contact"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("sections.siteCategories.links.partsStore")}
-                </a>
+                  {t("sections.siteCategories.links.contact")}
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  href="/brands"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("sections.siteCategories.links.testDrives")}
-                </a>
+                  {t("sections.siteCategories.links.brands")}
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  href="/offers"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("sections.siteCategories.links.carServices")}
-                </a>
+                  {t("sections.siteCategories.links.offers")}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/products"
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
+                  {t("sections.siteCategories.links.products")}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/userPricing"
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
+                  {t("sections.siteCategories.links.userPricing")}
+                </Link>
               </li>
             </ul>
           </div>
@@ -132,40 +149,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Column 4 - Services */}
-          <div>
-            <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
-              {t("sections.services.title")}
-            </h3>
-            <ul className="space-y-3 list-disc list-inside">
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  {t("sections.services.links.tiresAndBatteries")}
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  {t("sections.services.links.washingAndCare")}
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  {t("sections.services.links.replacementAndRepairs")}
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 5 - Help Center */}
+          {/* Column 4 - Help Center */}
           <div>
             <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
               {t("sections.helpCenter.title")}

@@ -1,7 +1,7 @@
 "use client";
 
 import HeroSwiper from "@/components/swiper/HeroSwiper";
-import Brands from "@/components/Brands";
+import Brands from "@/components/brand/Brands";
 import OffersSwiper from "@/components/swiper/OffersSwiper";
 import ProductsList from "@/components/product/ProductsList";
 import CategorySwiper from "@/components/swiper/CategorySwiper";

@@ -1,7 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    domains: ["iseek.name"],
+    // Or if using Next.js 12.3+, you can use remotePatterns:
+    // remotePatterns: [
+    //   {
+    //     protocol: 'https',
+    //     hostname: 'iseek.name',
+    //   },
+    // ],
+  },
 };
 
 export default nextConfig;
