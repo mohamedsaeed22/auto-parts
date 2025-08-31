@@ -1,12 +1,14 @@
 {
   "sections": {
     "siteCategories": {
-      "title": "Site Categories",
+      "title": "Navigation",
       "links": {
-        "partsRequests": "Parts Requests",
-        "partsStore": "Parts Store",
-        "testDrives": "Test Drives",
-        "carServices": "Car Services"
+        "about": "About Us",
+        "contact": "Contact Us",
+        "brands": "Brands",
+        "offers": "Latest Offers",
+        "products": "Products",
+        "userPricing": "Request Pricing"
       }
     },
     "storeCategories": {
@@ -21,14 +23,6 @@
     },
     "serviceCategories": {
       "title": "Service Categories",
-      "links": {
-        "tiresAndBatteries": "Tires & Batteries",
-        "washingAndCare": "Washing & Care",
-        "replacementAndRepairs": "Replacement & Repairs"
-      }
-    },
-    "services": {
-      "title": "Services",
       "links": {
         "tiresAndBatteries": "Tires & Batteries",
         "washingAndCare": "Washing & Care",
