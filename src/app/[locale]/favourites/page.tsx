@@ -3,7 +3,7 @@
 import { useTranslation } from "react-i18next";
 import {
   useGetFavouritesQuery,
-  useRemoveFavouriteMutation,
+  useToggleFavouriteMutation,
 } from "@/services/api";
 import { FavouriteItem } from "@/services/api/favouritesApi";
 import { Heart, Trash2, ShoppingCart, Bookmark } from "lucide-react";
@@ -16,14 +16,22 @@ import Image from "next/image";
 import { ProtectedPageGuard } from "@/components/auth/AuthGuard";
 import { useApiErrorHandler } from "@/hooks/useApiErrorHandler";
 import { useFavouritesWishlist } from "@/hooks/useFavouritesWishlist";
+import React from "react";
 
 export default function FavouritesPage() {
   const { t } = useTranslation("favourites");
   const { data: favouritesData, isLoading, error } = useGetFavouritesQuery();
-  const [removeFavourite] = useRemoveFavouriteMutation();
+  const [toggleFavourite] = useToggleFavouriteMutation();
   const { addToCart } = useCart();
-  const { handleToggleWishlist, isLoading: isWishlistLoading } = useFavouritesWishlist();
+  const { handleToggleWishlist, isLoading: isWishlistLoading } =
+    useFavouritesWishlist();
   const [removingId, setRemovingId] = useState<number | null>(null);
+  const [optimisticFavourites, setOptimisticFavourites] = useState<
+    FavouriteItem[]
+  >([]);
+  const [optimisticWishlist, setOptimisticWishlist] = useState<{
+    [key: number]: boolean;
+  }>({});
 
   // Handle API errors (403 registration incomplete, 401 unauthorized, etc.)
   // Disable toasts since ProtectedPageGuard handles authentication toasts
@@ -32,14 +40,74 @@ export default function FavouritesPage() {
   // Scroll to top when page loads
   useScrollToTop();
 
+  // Update optimistic favourites when data changes
+  React.useEffect(() => {
+    if (favouritesData?.data?.items) {
+      setOptimisticFavourites(favouritesData.data.items as FavouriteItem[]);
+    }
+  }, [favouritesData]);
+
   const handleRemoveFavourite = async (productId: number) => {
     setRemovingId(productId);
+
+    // Optimistically remove from UI
+    const currentFavourites = [...optimisticFavourites];
+    const itemToRemove = currentFavourites.find(
+      (item) => item.id === productId
+    );
+    setOptimisticFavourites(
+      currentFavourites.filter((item) => item.id !== productId)
+    );
+
     try {
-      await removeFavourite({ product_id: productId }).unwrap();
+      await toggleFavourite({ product_id: productId }).unwrap();
     } catch (error) {
+      // Revert optimistic update on error
+      if (itemToRemove) {
+        setOptimisticFavourites([...currentFavourites]);
+      }
       console.error("Failed to remove favourite:", error);
     } finally {
       setRemovingId(null);
+    }
+  };
+
+  const handleToggleWishlistOptimistic = async (productId: number) => {
+    // Get current wishlist state
+    const currentItem = optimisticFavourites.find(
+      (item) => item.id === productId
+    );
+    const currentWishlistState = currentItem?.in_wishlist || false;
+    const newWishlistState = !currentWishlistState;
+
+    // Optimistically update UI
+    setOptimisticWishlist((prev) => ({
+      ...prev,
+      [productId]: newWishlistState,
+    }));
+    setOptimisticFavourites((prev) =>
+      prev.map((item) =>
+        item.id === productId
+          ? { ...item, in_wishlist: newWishlistState }
+          : item
+      )
+    );
+
+    try {
+      await handleToggleWishlist(productId);
+    } catch (error) {
+      // Revert optimistic update on error
+      setOptimisticWishlist((prev) => ({
+        ...prev,
+        [productId]: currentWishlistState,
+      }));
+      setOptimisticFavourites((prev) =>
+        prev.map((item) =>
+          item.id === productId
+            ? { ...item, in_wishlist: currentWishlistState }
+            : item
+        )
+      );
     }
   };
 
@@ -53,6 +121,12 @@ export default function FavouritesPage() {
       description: product.description,
     });
   };
+
+  // Use optimistic data for rendering
+  const favourites =
+    optimisticFavourites.length > 0
+      ? optimisticFavourites
+      : ((favouritesData?.data?.items || []) as FavouriteItem[]);
 
   const renderContent = () => {
     if (isLoading) {
@@ -83,8 +157,6 @@ export default function FavouritesPage() {
         </div>
       );
     }
-
-    const favourites = (favouritesData?.data?.items || []) as FavouriteItem[];
 
     if (favourites.length === 0) {
       return (
@@ -119,145 +191,161 @@ export default function FavouritesPage() {
             {t("title") || "My Favourites"}
           </h1>
           <p className="text-gray-600">
-            {t("subtitle") || `You have ${favourites.length} favourite product${favourites.length !== 1 ? 's' : ''}`}
+            {t("subtitle") ||
+              `You have ${favourites.length} favourite product${
+                favourites.length !== 1 ? "s" : ""
+              }`}
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           <AnimatePresence>
-            {favourites.map((item: FavouriteItem) => (
-              <motion.div
-                key={item.id}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.2 }}
-                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-              >
-                {/* Product Image */}
-                <div className="relative aspect-square overflow-hidden">
-                  <Image
-                    src={item.primary_image || "/products/product1.jpg"}
-                    alt={item.name || "Product"}
-                    fill
-                    className="object-cover"
-                  />
-                  
-                  {/* Action Buttons */}
-                  <div className="absolute top-2 right-2 flex flex-col gap-2">
-                    {/* Wishlist Button */}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleToggleWishlist(item.id);
-                      }}
-                      disabled={isWishlistLoading(`wishlist-${item.id}`)}
-                      className={`h-8 w-8 p-0 rounded-full backdrop-blur-sm border-neutral-200 hover:bg-white shadow-sm transition-colors ${
-                        item.in_wishlist 
-                          ? "bg-blue-500 border-blue-500 hover:bg-blue-600" 
-                          : "bg-white/90 hover:bg-white"
-                      }`}
-                    >
-                      {isWishlistLoading(`wishlist-${item.id}`) ? (
-                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-neutral-600"></div>
-                      ) : (
-                        <Bookmark 
-                          size={14} 
-                          className={`${
-                            item.in_wishlist ? "text-white fill-white" : "text-neutral-600"
-                          }`} 
-                        />
-                      )}
-                    </Button>
+            {favourites.map((item: FavouriteItem) => {
+              // Use optimistic state if available, otherwise use item state
+              const isInWishlist = optimisticWishlist.hasOwnProperty(item.id)
+                ? optimisticWishlist[item.id]
+                : item.in_wishlist;
 
-                    {/* Remove from Favourites Button */}
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleRemoveFavourite(item.id);
-                      }}
-                      disabled={removingId === item.id}
-                      className="h-8 w-8 p-0 rounded-full"
-                    >
-                      {removingId === item.id ? (
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                      ) : (
-                        <Trash2 size={14} />
-                      )}
-                    </Button>
-                  </div>
+              return (
+                <motion.div
+                  key={item.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.2 }}
+                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                >
+                  {/* Product Image */}
+                  <div className="relative aspect-square overflow-hidden">
+                    <Image
+                      src={item.primary_image || "/products/product1.jpg"}
+                      alt={item.name || "Product"}
+                      fill
+                      className="object-cover"
+                    />
 
-                  {/* Discount Badge */}
-                  {item.discount_type && (
-                    <div className="absolute top-2 left-2">
-                      <div className="bg-accent text-white text-xs font-bold px-2 py-1 rounded shadow-sm">
-                        {item.discount_info || "SALE"}
-                      </div>
+                    {/* Action Buttons */}
+                    <div className="absolute top-2 right-2 flex flex-col gap-2">
+                      {/* Wishlist Button */}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleToggleWishlistOptimistic(item.id);
+                        }}
+                        disabled={isWishlistLoading(`wishlist-${item.id}`)}
+                        className={`h-8 w-8 p-0 rounded-full backdrop-blur-sm border-neutral-200 hover:bg-white shadow-sm transition-colors ${
+                          isInWishlist
+                            ? "bg-blue-500 border-blue-500 hover:bg-blue-600"
+                            : "bg-white/90 hover:bg-white"
+                        }`}
+                      >
+                        {isWishlistLoading(`wishlist-${item.id}`) ? (
+                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-neutral-600"></div>
+                        ) : (
+                          <Bookmark
+                            size={14}
+                            className={`${
+                              isInWishlist
+                                ? "text-white fill-white"
+                                : "text-neutral-600"
+                            }`}
+                          />
+                        )}
+                      </Button>
+
+                      {/* Remove from Favourites Button */}
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleRemoveFavourite(item.id);
+                        }}
+                        disabled={removingId === item.id}
+                        className="h-8 w-8 p-0 rounded-full"
+                      >
+                        {removingId === item.id ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        ) : (
+                          <Trash2 size={14} />
+                        )}
+                      </Button>
                     </div>
-                  )}
 
-                  {/* Offer Badge */}
-                  {item.offer && (
-                    <div className="absolute bottom-2 left-2">
-                      <div className="bg-primary text-white text-xs font-bold px-2 py-1 rounded shadow-sm">
-                        OFFER
+                    {/* Discount Badge */}
+                    {item.discount_type && (
+                      <div className="absolute top-2 left-2">
+                        <div className="bg-accent text-white text-xs font-bold px-2 py-1 rounded shadow-sm">
+                          {item.discount_info || "SALE"}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
+                    )}
 
-                {/* Product Info */}
-                <div className="p-4">
-                  {/* Category and Brand */}
-                  <div className="flex flex-wrap gap-1 mb-2">
-                    <span className="text-xs text-neutral-600 bg-neutral-100 rounded-full px-2 py-1 capitalize">
-                      {item.category?.name || "Unknown Category"}
-                    </span>
-                    {item.brand?.name && (
-                      <span className="text-xs text-info bg-info-light rounded-full px-2 py-1">
-                        {item.brand.name}
-                      </span>
+                    {/* Offer Badge */}
+                    {item.offer && (
+                      <div className="absolute bottom-2 left-2">
+                        <div className="bg-primary text-white text-xs font-bold px-2 py-1 rounded shadow-sm">
+                          OFFER
+                        </div>
+                      </div>
                     )}
                   </div>
 
-                  <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
-                    {item.name || "Product Name"}
-                  </h3>
-                  
-                  <div className="text-gray-600 text-sm mb-3 line-clamp-2">
-                    <div dangerouslySetInnerHTML={{ __html: item.description || "Product description" }} />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col">
-                      <span className="text-lg font-bold text-logo-gold">
-                        ${item.final_price || 0}
+                  {/* Product Info */}
+                  <div className="p-4">
+                    {/* Category and Brand */}
+                    <div className="flex flex-wrap gap-1 mb-2">
+                      <span className="text-xs text-neutral-600 bg-neutral-100 rounded-full px-2 py-1 capitalize">
+                        {item.category?.name || "Unknown Category"}
                       </span>
-                      {item.discount_type && (
-                        <span className="text-sm text-gray-500 line-through">
-                          ${item.price || 0}
+                      {item.brand?.name && (
+                        <span className="text-xs text-info bg-info-light rounded-full px-2 py-1">
+                          {item.brand.name}
                         </span>
                       )}
                     </div>
-                    <Button
-                      size="sm"
-                      onClick={() => handleAddToCart(item)}
-                      className="bg-logo-gold hover:bg-logo-gold/90"
-                    >
-                      <ShoppingCart size={16} className="mr-1" />
-                      {t("addToCart") || "Add to Cart"}
-                    </Button>
+
+                    <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
+                      {item.name || "Product Name"}
+                    </h3>
+
+                    <div className="text-gray-600 text-sm mb-3 line-clamp-2">
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: item.description || "Product description",
+                        }}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex flex-col">
+                        <span className="text-lg font-bold text-logo-gold">
+                          ${item.final_price || 0}
+                        </span>
+                        {item.discount_type && (
+                          <span className="text-sm text-gray-500 line-through">
+                            ${item.price || 0}
+                          </span>
+                        )}
+                      </div>
+                      <Button
+                        size="sm"
+                        onClick={() => handleAddToCart(item)}
+                        className="bg-logo-gold hover:bg-logo-gold/90"
+                      >
+                        <ShoppingCart size={16} className="mr-1" />
+                        {t("addToCart") || "Add to Cart"}
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
         </div>
       </div>
