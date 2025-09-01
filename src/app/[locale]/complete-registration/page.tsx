@@ -12,7 +12,7 @@ import { Loader2 } from "lucide-react";
 import { storage } from "@/lib/storage";
 
 export default function CompleteRegistrationPage() {
-  // Hooks
+  // ALL HOOKS MUST BE CALLED FIRST - before any early returns
   const [completeRegistration, { isLoading }] =
     useCompleteRegistrationMutation();
   const { login, authData } = useAuth();
@@ -20,71 +20,7 @@ export default function CompleteRegistrationPage() {
   const { currentLocale } = useLocale();
   const { clearRegistrationIncomplete } = useRegistrationStatus();
 
-  // Check if user has already completed registration
-  const hasRedirectedRef = useRef(false);
-
-  useEffect(() => {
-    // Check if user is not authenticated at all
-    if (!storage.isAuthenticated() && !hasRedirectedRef.current) {
-      console.log("User not authenticated, redirecting to home...");
-      hasRedirectedRef.current = true;
-      router.push(`/${currentLocale}`);
-      return;
-    }
-
-    // Check if user has already completed registration
-    if (
-      authData &&
-      authData.is_registration_complete &&
-      !hasRedirectedRef.current
-    ) {
-      console.log("User has already completed registration, redirecting...");
-      hasRedirectedRef.current = true;
-
-      // Only show success message if we're actually on the complete-registration page
-      if (window.location.pathname.includes("/complete-registration")) {
-        showSuccess("Registration already completed!");
-      }
-
-      router.push(`/${currentLocale}`);
-      return;
-    }
-  }, [authData, currentLocale, router]);
-
-  // Show loading while checking auth status
-  if (!storage.isAuthenticated()) {
-    return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-logo-gold"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Show loading while auth data is being fetched
-  if (!authData) {
-    return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-logo-gold"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Redirect unauthenticated users
-  if (!authData.token) {
-    console.log("User not authenticated, redirecting to home...");
-    router.push(`/${currentLocale}`);
-    return null;
-  }
-
-  // State for form fields
+  // State for form fields - these must also be called before any early returns
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -103,6 +39,37 @@ export default function CompleteRegistrationPage() {
     null
   );
   const [avatar, setAvatar] = useState<File | null>(null);
+
+  // Check if user has already completed registration
+  const hasRedirectedRef = useRef(false);
+
+  useEffect(() => {
+    // Check if user is not authenticated at all
+    if (!storage.isAuthenticated() && !hasRedirectedRef.current) {
+      console.log("User not authenticated, redirecting to home...");
+      hasRedirectedRef.current = true;
+      router.push(`/${currentLocale}`);
+      return;
+    }
+
+    // Check if user has already completed registration
+    if (
+      authData &&
+      authData.user?.is_registration_complete &&
+      !hasRedirectedRef.current
+    ) {
+      console.log("User has already completed registration, redirecting...");
+      hasRedirectedRef.current = true;
+
+      // Only show success message if we're actually on the complete-registration page
+      if (window.location.pathname.includes("/complete-registration")) {
+        showSuccess("Registration already completed!");
+      }
+
+      router.push(`/${currentLocale}`);
+      return;
+    }
+  }, [authData, currentLocale, router]);
 
   // Handle input changes
   const handleInputChange = (
@@ -214,6 +181,40 @@ export default function CompleteRegistrationPage() {
       showError("Failed to complete registration. Please try again.");
     }
   };
+
+  // NOW we can have conditional rendering - after all hooks are called
+  // Show loading while checking auth status
+  if (!storage.isAuthenticated()) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-logo-gold"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading while auth data is being fetched
+  if (!authData) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-logo-gold"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect unauthenticated users
+  if (!authData.token) {
+    console.log("User not authenticated, redirecting to home...");
+    router.push(`/${currentLocale}`);
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
