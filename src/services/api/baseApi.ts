@@ -6,7 +6,7 @@ import type {
 } from "@reduxjs/toolkit/query";
 
 // Base URL from your Postman collection
-const BASE_URL = "https://iseek.name/api";
+const BASE_URL = "https://brave.iseek.name/api";
 
 // Custom base query with auth token handling
 const baseQueryWithAuth: BaseQueryFn<

@@ -15,19 +15,24 @@ export const ordersApi = api.injectEndpoints({
       ApiResponse<PaginatedResponse<Order>>,
       OrdersRequest | void
     >({
-      query: (params = {}) => {
+      query: (params) => {
         const queryParams = new URLSearchParams();
 
-        if (params.status) queryParams.append("status", params.status);
-        if (params.payment_status)
+        if (params && params.status)
+          queryParams.append("status", params.status);
+        if (params && params.payment_status)
           queryParams.append("payment_status", params.payment_status);
-        if (params.date_from) queryParams.append("date_from", params.date_from);
-        if (params.date_to) queryParams.append("date_to", params.date_to);
-        if (params.per_page)
+        if (params && params.date_from)
+          queryParams.append("date_from", params.date_from);
+        if (params && params.date_to)
+          queryParams.append("date_to", params.date_to);
+        if (params && params.per_page)
           queryParams.append("per_page", params.per_page.toString());
-        if (params.page) queryParams.append("page", params.page.toString());
-        if (params.sort_by) queryParams.append("sort_by", params.sort_by);
-        if (params.sort_direction)
+        if (params && params.page)
+          queryParams.append("page", params.page.toString());
+        if (params && params.sort_by)
+          queryParams.append("sort_by", params.sort_by);
+        if (params && params.sort_direction)
           queryParams.append("sort_direction", params.sort_direction);
 
         const queryString = queryParams.toString();
