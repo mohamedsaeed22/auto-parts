@@ -30,6 +30,7 @@ export default function UserPricingPage() {
     sendAllToBackend,
   } = useUserPricingForm();
 
+  // Get userType from form for conditional rendering
   const { watch } = form;
   const userType = watch("userType");
 
@@ -45,7 +46,7 @@ export default function UserPricingPage() {
           <div className={`order-1 ${isRTL ? "lg:order-1" : "lg:order-1"}`}>
             <PricingForm
               form={form}
-              userType={userType}
+              // Remove userType prop since it's now handled internally
               partImagePreview={partImagePreview}
               requestImagePreview={requestImagePreview}
               formImagePreview={formImagePreview}

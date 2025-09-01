@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 import { UserPricingFormData } from "@/lib/validations/userPricingSchema";
-import { UserTypeSelector } from "./UserTypeSelector";
 import { ImageUpload } from "@/components/ui";
 import FormInput from "@/components/ui/FormInput";
 import { FormSubmissionButton } from "./FormSubmissionButton";
@@ -22,7 +21,6 @@ import { useLocale } from "@/hooks/useLocale";
 
 interface PricingFormProps {
   form: UseFormReturn<UserPricingFormData>;
-  userType: string;
   partImagePreview: string | null;
   requestImagePreview: string | null;
   formImagePreview: string | null;
@@ -39,7 +37,6 @@ interface PricingFormProps {
 
 export function PricingForm({
   form,
-  userType,
   partImagePreview,
   requestImagePreview,
   formImagePreview,
@@ -61,8 +58,12 @@ export function PricingForm({
     register,
     handleSubmit,
     control,
+    watch, // Add watch to get userType from form
     formState: { errors },
   } = form;
+
+  // Get userType from form for conditional rendering
+  const userType = watch("userType");
 
   const resetImageInputs = () => {
     if (partImageInputRef.current) partImageInputRef.current.value = "";
@@ -106,14 +107,7 @@ export function PricingForm({
                 {t("auth.status.loginRequired")}
               </p>
             </div>
-            <Button
-              onClick={handleLoginClick}
-              size="sm"
-              className="bg-amber-600 hover:bg-amber-700 text-white"
-            >
-              <LogIn size={16} className="mr-2" />
-              {t("auth.buttons.login")}
-            </Button>
+           
           </div>
         ) : !isRegistrationComplete ? (
           <div className="flex items-center gap-3 text-orange-700 bg-orange-50 border-orange-200">
@@ -148,8 +142,8 @@ export function PricingForm({
       </div>
 
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
-        {/* User Type Selection */}
-        <UserTypeSelector control={control} />
+        {/* Remove User Type Selection section */}
+        {/* User Type is now automatically set from local storage */}
 
         {/* Part Name Input */}
         <FormInput

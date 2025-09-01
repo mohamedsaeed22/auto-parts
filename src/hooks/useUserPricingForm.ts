@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/hooks/useLocale";
 import { storage } from "@/lib/storage";
@@ -27,41 +27,56 @@ export function useUserPricingForm() {
   const { currentLocale } = useLocale();
   const { t } = useTranslation("userPricing");
 
+  // Get user type from local storage
+  const getUserTypeFromStorage = () => {
+    const user = storage.getUser();
+    return user?.type || "store"; // Default to "store" if no user type found
+  };
+
   const form = useForm<UserPricingFormData>({
     resolver: zodResolver(userPricingSchema),
-    defaultValues,
+    defaultValues: {
+      ...defaultValues,
+      userType: getUserTypeFromStorage() as "workshop" | "store",
+    },
     mode: "onChange",
   });
+
+  // Set user type from local storage when component mounts
+  useEffect(() => {
+    const userType = getUserTypeFromStorage();
+    form.setValue("userType", userType as "workshop" | "store");
+  }, [form]);
 
   // Check authentication status
   const checkAuthStatus = () => {
     const isAuthenticated = storage.isAuthenticated();
     const isRegistrationComplete = storage.isRegistrationComplete();
-    
+
     return { isAuthenticated, isRegistrationComplete };
   };
 
   // Handle authentication check for form submission
   const handleAuthCheck = (action: "submit" | "sendToBackend") => {
     const { isAuthenticated, isRegistrationComplete } = checkAuthStatus();
-    
+
     if (!isAuthenticated) {
       showError(
         t("auth.loginRequired") || "Please login to access this feature"
       );
       return false;
     }
-    
+
     if (!isRegistrationComplete) {
       showError(
-        t("auth.completeRegistrationRequired") || 
-        "Please complete your registration to access this feature"
+        t("auth.completeRegistrationRequired") ||
+          "Please complete your registration to access this feature"
       );
       // Navigate to complete registration page
       router.push(`/${currentLocale}/complete-registration`);
       return false;
     }
-    
+
     return true;
   };
 
