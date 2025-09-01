@@ -79,5 +79,21 @@
       "You can track your request through the user code"
     ],
     "store": ["For stores: We offer special wholesale prices"]
+  },
+  "auth": {
+    "loginRequired": "Please login to access this feature",
+    "completeRegistrationRequired": "Please complete your registration to access this feature",
+    "buttons": {
+      "login": "Login",
+      "completeRegistration": "Complete Registration"
+    },
+    "status": {
+      "loginRequired": "You need to login to submit pricing requests",
+      "completeRegistration": "Please complete your registration to submit requests",
+      "readyToSubmit": "You can now submit pricing requests",
+      "backendLoginRequired": "Login required to send data to backend",
+      "backendCompleteRegistration": "Complete registration to send data",
+      "backendReady": "Ready to send data to backend"
+    }
   }
 }

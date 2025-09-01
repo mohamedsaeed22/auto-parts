@@ -1,6 +1,11 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useLocale } from "@/hooks/useLocale";
+import { storage } from "@/lib/storage";
+import { showError } from "@/lib/toast";
+import { useTranslation } from "react-i18next";
 import {
   userPricingSchema,
   type UserPricingFormData,
@@ -17,12 +22,48 @@ export function useUserPricingForm() {
   const [formImagePreview, setFormImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSendingToBackend, setIsSendingToBackend] = useState(false);
+  
+  const router = useRouter();
+  const { currentLocale } = useLocale();
+  const { t } = useTranslation("userPricing");
 
   const form = useForm<UserPricingFormData>({
     resolver: zodResolver(userPricingSchema),
     defaultValues,
     mode: "onChange",
   });
+
+  // Check authentication status
+  const checkAuthStatus = () => {
+    const isAuthenticated = storage.isAuthenticated();
+    const isRegistrationComplete = storage.isRegistrationComplete();
+    
+    return { isAuthenticated, isRegistrationComplete };
+  };
+
+  // Handle authentication check for form submission
+  const handleAuthCheck = (action: "submit" | "sendToBackend") => {
+    const { isAuthenticated, isRegistrationComplete } = checkAuthStatus();
+    
+    if (!isAuthenticated) {
+      showError(
+        t("auth.loginRequired") || "Please login to access this feature"
+      );
+      return false;
+    }
+    
+    if (!isRegistrationComplete) {
+      showError(
+        t("auth.completeRegistrationRequired") || 
+        "Please complete your registration to access this feature"
+      );
+      // Navigate to complete registration page
+      router.push(`/${currentLocale}/complete-registration`);
+      return false;
+    }
+    
+    return true;
+  };
 
   const createFilePreview = (file: File): Promise<string> => {
     return new Promise((resolve) => {
@@ -67,6 +108,11 @@ export function useUserPricingForm() {
   };
 
   const onSubmit = async (data: UserPricingFormData) => {
+    // Check authentication before allowing form submission
+    if (!handleAuthCheck("submit")) {
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -100,6 +146,11 @@ export function useUserPricingForm() {
   };
 
   const sendAllToBackend = async () => {
+    // Check authentication before allowing backend operation
+    if (!handleAuthCheck("sendToBackend")) {
+      return;
+    }
+
     if (savedForms.length === 0) {
       alert("لا توجد بيانات لإرسالها!");
       return;

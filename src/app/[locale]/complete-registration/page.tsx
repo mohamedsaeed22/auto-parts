@@ -24,6 +24,15 @@ export default function CompleteRegistrationPage() {
   const hasRedirectedRef = useRef(false);
 
   useEffect(() => {
+    // Check if user is not authenticated at all
+    if (!storage.isAuthenticated() && !hasRedirectedRef.current) {
+      console.log("User not authenticated, redirecting to home...");
+      hasRedirectedRef.current = true;
+      router.push(`/${currentLocale}`);
+      return;
+    }
+
+    // Check if user has already completed registration
     if (
       authData &&
       authData.is_registration_complete &&
@@ -41,6 +50,39 @@ export default function CompleteRegistrationPage() {
       return;
     }
   }, [authData, currentLocale, router]);
+
+  // Show loading while checking auth status
+  if (!storage.isAuthenticated()) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-logo-gold"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading while auth data is being fetched
+  if (!authData) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-logo-gold"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect unauthenticated users
+  if (!authData.token) {
+    console.log("User not authenticated, redirecting to home...");
+    router.push(`/${currentLocale}`);
+    return null;
+  }
 
   // State for form fields
   const [formData, setFormData] = useState({
@@ -61,26 +103,6 @@ export default function CompleteRegistrationPage() {
     null
   );
   const [avatar, setAvatar] = useState<File | null>(null);
-
-  // Show loading while checking auth status
-  if (!authData) {
-    return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-logo-gold"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Redirect unauthenticated users
-  if (!authData.token) {
-    console.log("User not authenticated, redirecting to login...");
-    router.push(`/${currentLocale}`);
-    return null;
-  }
 
   // Handle input changes
   const handleInputChange = (

@@ -1,5 +1,13 @@
 import { useRef } from "react";
-import { Package, User, Hash, Car } from "lucide-react";
+import {
+  Package,
+  User,
+  Hash,
+  Car,
+  AlertCircle,
+  CheckCircle,
+  LogIn,
+} from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 import { UserPricingFormData } from "@/lib/validations/userPricingSchema";
 import { UserTypeSelector } from "./UserTypeSelector";
@@ -8,6 +16,9 @@ import FormInput from "@/components/ui/FormInput";
 import { FormSubmissionButton } from "./FormSubmissionButton";
 import { InformationPanel } from "./InformationPanel";
 import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { useLocale } from "@/hooks/useLocale";
 
 interface PricingFormProps {
   form: UseFormReturn<UserPricingFormData>;
@@ -22,6 +33,8 @@ interface PricingFormProps {
   ) => void;
   onRemoveImage: (field: "partImage" | "requestImage" | "formImage") => void;
   onSubmit: (data: UserPricingFormData) => void;
+  isAuthenticated: boolean;
+  isRegistrationComplete: boolean;
 }
 
 export function PricingForm({
@@ -34,8 +47,12 @@ export function PricingForm({
   onImageChange,
   onRemoveImage,
   onSubmit,
+  isAuthenticated,
+  isRegistrationComplete,
 }: PricingFormProps) {
   const { t } = useTranslation("userPricing");
+  const router = useRouter();
+  const { currentLocale } = useLocale();
   const partImageInputRef = useRef<HTMLInputElement>(null);
   const requestImageInputRef = useRef<HTMLInputElement>(null);
   const formImageInputRef = useRef<HTMLInputElement>(null);
@@ -58,6 +75,14 @@ export function PricingForm({
     resetImageInputs();
   };
 
+  const handleLoginClick = () => {
+    router.push(`/${currentLocale}`);
+  };
+
+  const handleCompleteRegistrationClick = () => {
+    router.push(`/${currentLocale}/complete-registration`);
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-lg p-8">
       <div className="text-center mb-8">
@@ -68,6 +93,58 @@ export function PricingForm({
           {t("form.title")}
         </h2>
         <p className="text-gray-600">{t("form.subtitle")}</p>
+      </div>
+
+      {/* Authentication Status Section */}
+      <div className="mb-6 p-4 rounded-lg border">
+        {!isAuthenticated ? (
+          <div className="flex items-center gap-3 text-amber-700 bg-amber-50 border-amber-200">
+            <AlertCircle size={20} />
+            <div className="flex-1">
+              <p className="font-medium">{t("auth.loginRequired")}</p>
+              <p className="text-sm text-amber-600">
+                {t("auth.status.loginRequired")}
+              </p>
+            </div>
+            <Button
+              onClick={handleLoginClick}
+              size="sm"
+              className="bg-amber-600 hover:bg-amber-700 text-white"
+            >
+              <LogIn size={16} className="mr-2" />
+              {t("auth.buttons.login")}
+            </Button>
+          </div>
+        ) : !isRegistrationComplete ? (
+          <div className="flex items-center gap-3 text-orange-700 bg-orange-50 border-orange-200">
+            <AlertCircle size={20} />
+            <div className="flex-1">
+              <p className="font-medium">
+                {t("auth.completeRegistrationRequired")}
+              </p>
+              <p className="text-sm text-orange-600">
+                {t("auth.status.completeRegistration")}
+              </p>
+            </div>
+            <Button
+              onClick={handleCompleteRegistrationClick}
+              size="sm"
+              className="bg-orange-600 hover:bg-orange-700 text-white"
+            >
+              {t("auth.buttons.completeRegistration")}
+            </Button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3 text-green-700 bg-green-50 border-green-200">
+            <CheckCircle size={20} />
+            <div>
+              <p className="font-medium">Ready to submit</p>
+              <p className="text-sm text-green-600">
+                {t("auth.status.readyToSubmit")}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
