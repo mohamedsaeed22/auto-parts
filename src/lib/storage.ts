@@ -1,5 +1,7 @@
 // Storage utility for managing auth data in browser
 
+// ... existing code ...
+
 export interface AuthData {
   user: {
     id: number;
@@ -22,8 +24,10 @@ export interface AuthData {
     is_google_user: boolean;
   };
   token: string;
-  is_registration_complete: boolean;
+  // Remove the duplicate is_registration_complete field from root level
 }
+
+// ... existing code ...
 
 const AUTH_STORAGE_KEY = "fal_parts_auth";
 const REGISTRATION_CODE_KEY = "fal_parts_registration_code";
@@ -46,6 +50,37 @@ export const storage = {
       console.log("Stored token:", parsed?.token);
     } catch (error) {
       console.error("Error storing auth data:", error);
+    }
+  },
+
+  updateUser: (userData: AuthData["user"]): void => {
+    try {
+      const currentAuth = storage.getAuth();
+      if (!currentAuth) {
+        console.error("No existing auth data to update");
+        return;
+      }
+
+      // Update only the user object and is_registration_complete
+      const updatedAuth: AuthData = {
+        ...currentAuth,
+        user: {
+          ...currentAuth.user,
+          ...userData,
+        },
+        // Remove the duplicate is_registration_complete from root level
+        // Use only the one inside user object
+      };
+
+      // Remove the duplicate field from root level
+      delete (updatedAuth as any).is_registration_complete;
+
+      console.log("Updating user data:", userData);
+      console.log("Updated auth data:", updatedAuth);
+
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(updatedAuth));
+    } catch (error) {
+      console.error("Error updating user data:", error);
     }
   },
 
@@ -90,7 +125,7 @@ export const storage = {
   // Check if registration is complete
   isRegistrationComplete: (): boolean => {
     const authData = storage.getAuth();
-    return authData?.is_registration_complete || false;
+    return authData?.user?.is_registration_complete || false;
   },
 
   // Store registration code

@@ -170,24 +170,30 @@ export default function CompleteRegistrationPage() {
       });
 
       if (result.data) {
-        // Create the auth data object
-        const authData = {
-          user: result.data.user,
-          token: result.data.token,
+        // Update only the user data while preserving the existing token
+        const updatedUser = {
+          ...result.data.user,
           is_registration_complete: true,
         };
 
-        console.log("About to store auth data:", authData);
-        console.log("Token to be stored:", result.data.token);
+        console.log("About to update user data:", updatedUser);
+        console.log("Preserving existing token");
 
-        // Update auth data with completed registration
-        login(authData);
+        // Update only the user data, don't replace the entire auth structure
+        storage.updateUser(updatedUser);
 
-        // Verify the token was stored
+        // Verify the update worked
         const storedAuth = storage.getAuth();
-        console.log("Stored auth data after login:", storedAuth);
-        console.log("Is authenticated after login:", storage.isAuthenticated());
+        console.log("Stored auth data after update:", storedAuth);
+        console.log(
+          "Is authenticated after update:",
+          storage.isAuthenticated()
+        );
         console.log("Token in storage:", storage.getToken());
+        console.log(
+          "User registration complete:",
+          storedAuth?.user?.is_registration_complete
+        );
 
         clearRegistrationIncomplete();
         showSuccess("Registration completed successfully!");
