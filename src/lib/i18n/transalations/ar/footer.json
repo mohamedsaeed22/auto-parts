@@ -1,45 +1,42 @@
 {
   "sections": {
-    "siteCategories": {
-      "title": "اقسام الموقع",
+    "mainNavigation": {
+      "title": "التنقل الرئيسي",
       "links": {
-        "partsRequests": "طلبات قطع الغيار",
-        "partsStore": "متجر القطع",
-        "testDrives": "تجارب القيادة",
-        "carServices": "خدمات السيارات"
+        "about": "من نحن",
+        "contact": "اتصل بنا",
+        "categories": "الفئات",
+        "brands": "العلامات التجارية",
+        "offers": "العروض"
       }
     },
-    "storeCategories": {
-      "title": "أقسام المتجر",
+    "shoppingServices": {
+      "title": "التسوق والخدمات",
+      "links": {
+        "products": "المنتجات",
+        "userPricing": "تسعير المستخدم",
+        "checkout": "إتمام الشراء",
+        "favourites": "المفضلة",
+        "wishlist": "قائمة الرغبات"
+      }
+    },
+    "autoPartsCategories": {
+      "title": "فئات قطع السيارات",
       "links": {
         "spareParts": "قطع الغيار",
         "accessories": "الاكسسوارات",
-        "oils": "الزيوت",
+        "oils": "الزيوت والمواد التشحيم",
         "carCare": "العناية بالسيارة",
-        "washing": "الغسيل"
+        "tiresBatteries": "الإطارات والبطاريات"
       }
     },
-    "serviceCategories": {
-      "title": "أقسام الخدمات",
-      "links": {
-        "tiresAndBatteries": "الإطارات والبطاريات",
-        "washingAndCare": "الغسيل والعناية",
-        "replacementAndRepairs": "الاستبدال والحكات"
-      }
-    },
-    "services": {
-      "title": "الخدمات",
-      "links": {
-        "tiresAndBatteries": "الإطارات والبطاريات",
-        "washingAndCare": "الغسيل والعناية",
-        "replacementAndRepairs": "الاستبدال والحكات"
-      }
-    },
-    "helpCenter": {
-      "title": "مركز المساعدة",
+    "contactSupport": {
+      "title": "الاتصال والدعم",
       "email": "info@falfuture.com",
-      "phone": "0543777568"
+      "phone": "0543777568",
+      "address": "الرياض، المملكة العربية السعودية"
     }
   },
+  "companyName": "فال فيوتشر لقطع السيارات",
   "copyright": "جميع الحقوق محفوظة"
 }

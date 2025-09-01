@@ -1,174 +1,166 @@
 "use client";
 import React from "react";
+import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
 const Footer = () => {
   const { t } = useTranslation("footer");
 
   return (
-    <footer className="bg-secondary text-white py-16">
+    <footer className="bg-gray-900 text-white py-16">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-          {/* Column 1 - Site Categories */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Column 1 - Main Navigation */}
           <div>
-            <h3 className="font-bold text-lg mb-6 text-primary">
-              {t("sections.siteCategories.title")}
+            <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
+              {t("sections.mainNavigation.title")}
             </h3>
             <ul className="space-y-3 list-disc list-inside">
               <li>
-                <a
-                  href="#"
-                  className="text-white/80 hover:text-white transition-colors"
+                <Link
+                  href="/about"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("sections.siteCategories.links.partsRequests")}
-                </a>
+                  {t("sections.mainNavigation.links.about")}
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-white/80 hover:text-white transition-colors"
+                <Link
+                  href="/contact"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("sections.siteCategories.links.partsStore")}
-                </a>
+                  {t("sections.mainNavigation.links.contact")}
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-white/80 hover:text-white transition-colors"
+                <Link
+                  href="/categories"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("sections.siteCategories.links.testDrives")}
-                </a>
+                  {t("sections.mainNavigation.links.categories")}
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-white/80 hover:text-white transition-colors"
+                <Link
+                  href="/brands"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("sections.siteCategories.links.carServices")}
-                </a>
+                  {t("sections.mainNavigation.links.brands")}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/offers"
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
+                  {t("sections.mainNavigation.links.offers")}
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* Column 2 - Store Categories */}
+          {/* Column 2 - Shopping & Services */}
           <div>
-            <h3 className="font-bold text-lg mb-6 text-primary">
-              {t("sections.storeCategories.title")}
+            <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
+              {t("sections.shoppingServices.title")}
             </h3>
             <ul className="space-y-3 list-disc list-inside">
               <li>
-                <a
-                  href="#"
-                  className="text-white/80 hover:text-white transition-colors"
+                <Link
+                  href="/products"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("sections.storeCategories.links.spareParts")}
-                </a>
+                  {t("sections.shoppingServices.links.products")}
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-white/80 hover:text-white transition-colors"
+                <Link
+                  href="/userPricing"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("sections.storeCategories.links.accessories")}
-                </a>
+                  {t("sections.shoppingServices.links.userPricing")}
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-white/80 hover:text-white transition-colors"
+                <Link
+                  href="/checkout"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("sections.storeCategories.links.oils")}
-                </a>
+                  {t("sections.shoppingServices.links.checkout")}
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-white/80 hover:text-white transition-colors"
+                <Link
+                  href="/favourites"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("sections.storeCategories.links.carCare")}
-                </a>
+                  {t("sections.shoppingServices.links.favourites")}
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-white/80 hover:text-white transition-colors"
+                <Link
+                  href="/wishlist"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("sections.storeCategories.links.washing")}
-                </a>
+                  {t("sections.shoppingServices.links.wishlist")}
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* Column 3 - Service Categories */}
+          {/* Column 3 - Auto Parts Categories */}
           <div>
-            <h3 className="font-bold text-lg mb-6 text-primary">
-              {t("sections.serviceCategories.title")}
+            <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
+              {t("sections.autoPartsCategories.title")}
             </h3>
             <ul className="space-y-3 list-disc list-inside">
               <li>
-                <a
-                  href="#"
-                  className="text-white/80 hover:text-white transition-colors"
+                <Link
+                  href="/categories"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("sections.serviceCategories.links.tiresAndBatteries")}
-                </a>
+                  {t("sections.autoPartsCategories.links.spareParts")}
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-white/80 hover:text-white transition-colors"
+                <Link
+                  href="/categories"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("sections.serviceCategories.links.washingAndCare")}
-                </a>
+                  {t("sections.autoPartsCategories.links.accessories")}
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-white/80 hover:text-white transition-colors"
+                <Link
+                  href="/categories"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("sections.serviceCategories.links.replacementAndRepairs")}
-                </a>
+                  {t("sections.autoPartsCategories.links.oils")}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/categories"
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
+                  {t("sections.autoPartsCategories.links.carCare")}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/categories"
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
+                  {t("sections.autoPartsCategories.links.tiresBatteries")}
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* Column 4 - Services */}
+          {/* Column 4 - Contact & Support */}
           <div>
-            <h3 className="font-bold text-lg mb-6 text-primary">
-              {t("sections.services.title")}
-            </h3>
-            <ul className="space-y-3 list-disc list-inside">
-              <li>
-                <a
-                  href="#"
-                  className="text-white/80 hover:text-white transition-colors"
-                >
-                  {t("sections.services.links.tiresAndBatteries")}
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-white/80 hover:text-white transition-colors"
-                >
-                  {t("sections.services.links.washingAndCare")}
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-white/80 hover:text-white transition-colors"
-                >
-                  {t("sections.services.links.replacementAndRepairs")}
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 5 - Help Center */}
-          <div>
-            <h3 className="font-bold text-lg mb-6 text-primary">
-              {t("sections.helpCenter.title")}
+            <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
+              {t("sections.contactSupport.title")}
             </h3>
             <div className="space-y-4">
               <div className="flex items-center space-x-3 space-x-reverse">
@@ -178,7 +170,7 @@ const Footer = () => {
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="w-5 h-5 text-primary ml-2"
+                  className="w-5 h-5 text-[#b9974d] ml-2"
                 >
                   <path
                     strokeLinecap="round"
@@ -188,9 +180,9 @@ const Footer = () => {
                 </svg>
                 <a
                   href="mailto:info@falfuture.com"
-                  className="text-white/80 hover:text-white transition-colors"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("sections.helpCenter.email")}
+                  {t("sections.contactSupport.email")}
                 </a>
               </div>
               <div className="flex items-center space-x-3 space-x-reverse">
@@ -200,7 +192,7 @@ const Footer = () => {
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="w-5 h-5 text-primary ml-2"
+                  className="w-5 h-5 text-[#b9974d] ml-2"
                 >
                   <path
                     strokeLinecap="round"
@@ -209,20 +201,46 @@ const Footer = () => {
                   />
                 </svg>
                 <a
-                  href={`tel:${t("sections.helpCenter.phone")}`}
-                  className="text-white/80 hover:text-white transition-colors"
+                  href={`tel:${t("sections.contactSupport.phone")}`}
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t("sections.helpCenter.phone")}
+                  {t("sections.contactSupport.phone")}
                 </a>
+              </div>
+              <div className="flex items-center space-x-3 space-x-reverse">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-5 h-5 text-[#b9974d] ml-2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
+                  />
+                </svg>
+                <span className="text-gray-300">
+                  {t("sections.contactSupport.address")}
+                </span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Bottom border */}
-        <div className="border-t border-white/20 mt-12 pt-8">
-          <div className="text-center text-white/60">
-            <p>&copy; 2025. {t("copyright")}</p>
+        <div className="border-t border-gray-700 mt-12 pt-8">
+          <div className="text-center text-gray-400">
+            <p>
+              &copy; 2025 {t("companyName")}. {t("copyright")}
+            </p>
           </div>
         </div>
       </div>

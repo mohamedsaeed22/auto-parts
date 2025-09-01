@@ -1,45 +1,42 @@
 {
   "sections": {
-    "siteCategories": {
-      "title": "Site Categories",
+    "mainNavigation": {
+      "title": "Main Navigation",
       "links": {
-        "partsRequests": "Parts Requests",
-        "partsStore": "Parts Store",
-        "testDrives": "Test Drives",
-        "carServices": "Car Services"
+        "about": "About Us",
+        "contact": "Contact",
+        "categories": "Categories",
+        "brands": "Brands",
+        "offers": "Offers"
       }
     },
-    "storeCategories": {
-      "title": "Store Categories",
+    "shoppingServices": {
+      "title": "Shopping & Services",
+      "links": {
+        "products": "Products",
+        "userPricing": "User Pricing",
+        "checkout": "Checkout",
+        "favourites": "Favourites",
+        "wishlist": "Wishlist"
+      }
+    },
+    "autoPartsCategories": {
+      "title": "Auto Parts Categories",
       "links": {
         "spareParts": "Spare Parts",
         "accessories": "Accessories",
-        "oils": "Oils",
+        "oils": "Oils & Lubricants",
         "carCare": "Car Care",
-        "washing": "Washing"
+        "tiresBatteries": "Tires & Batteries"
       }
     },
-    "serviceCategories": {
-      "title": "Service Categories",
-      "links": {
-        "tiresAndBatteries": "Tires & Batteries",
-        "washingAndCare": "Washing & Care",
-        "replacementAndRepairs": "Replacement & Repairs"
-      }
-    },
-    "services": {
-      "title": "Services",
-      "links": {
-        "tiresAndBatteries": "Tires & Batteries",
-        "washingAndCare": "Washing & Care",
-        "replacementAndRepairs": "Replacement & Repairs"
-      }
-    },
-    "helpCenter": {
-      "title": "Help Center",
+    "contactSupport": {
+      "title": "Contact & Support",
       "email": "info@falfuture.com",
-      "phone": "0543777568"
+      "phone": "0543777568",
+      "address": "Riyadh, Saudi Arabia"
     }
   },
+  "companyName": "Fal Future Auto Parts",
   "copyright": "All rights reserved"
 }
