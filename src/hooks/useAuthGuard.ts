@@ -121,6 +121,7 @@ export function useAuthGuard(options: AuthGuardOptions = {}) {
     // Prevent duplicate toasts within 2 seconds or for the same path
     const shouldShowToast =
       mergedOptions.showToastOnIncompleteRegistration &&
+      !hasShownToast.current &&
       now - lastToastTime.current > 2000 &&
       lastRedirectPath.current !== redirectPath;
 
@@ -130,6 +131,7 @@ export function useAuthGuard(options: AuthGuardOptions = {}) {
           "Please complete your registration"
       );
       lastToastTime.current = now;
+      hasShownToast.current = true;
       lastRedirectPath.current = redirectPath;
     }
 

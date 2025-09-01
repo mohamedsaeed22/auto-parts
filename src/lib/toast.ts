@@ -1,18 +1,54 @@
 import toast from "react-hot-toast";
 
+// Track recent toast messages to prevent duplicates
+const recentToasts = new Map<string, number>();
+const TOAST_COOLDOWN = 3000; // 3 seconds cooldown between identical messages
+
+// Helper function to check if toast should be shown
+const shouldShowToast = (message: string): boolean => {
+  const now = Date.now();
+  const lastShown = recentToasts.get(message);
+
+  if (lastShown && now - lastShown < TOAST_COOLDOWN) {
+    return false;
+  }
+
+  recentToasts.set(message, now);
+  return true;
+};
+
+// Clean up old entries periodically
+setInterval(() => {
+  const now = Date.now();
+  for (const [message, timestamp] of recentToasts.entries()) {
+    if (now - timestamp > TOAST_COOLDOWN) {
+      recentToasts.delete(message);
+    }
+  }
+}, TOAST_COOLDOWN);
+
 // Success toast
 export const showSuccess = (message: string) => {
-  return toast.success(message);
+  if (shouldShowToast(message)) {
+    return toast.success(message);
+  }
+  return null;
 };
 
 // Error toast
 export const showError = (message: string) => {
-  return toast.error(message);
+  if (shouldShowToast(message)) {
+    return toast.error(message);
+  }
+  return null;
 };
 
 // Loading toast
 export const showLoading = (message: string) => {
-  return toast.loading(message);
+  if (shouldShowToast(message)) {
+    return toast.loading(message);
+  }
+  return null;
 };
 
 // Promise toast for async operations
@@ -43,4 +79,9 @@ export const dismissAll = () => {
 // Dismiss specific toast
 export const dismissToast = (toastId: string) => {
   toast.dismiss(toastId);
+};
+
+// Clear toast history (useful for testing or when user logs out)
+export const clearToastHistory = () => {
+  recentToasts.clear();
 };

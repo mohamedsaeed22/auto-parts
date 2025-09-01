@@ -98,8 +98,7 @@ const CheckoutPage = () => {
         );
         setCouponError("");
       } else {
-        setCouponError("كوبون غير صحيح");
-        setCouponDiscount(0);
+        setCouponError("Invalid coupon code");
       }
       setIsApplyingCoupon(false);
     }, 1000);
@@ -115,8 +114,8 @@ const CheckoutPage = () => {
     setCouponCode(code);
   };
 
-  const handleAddressSelect = (id: number) => {
-    setSelectedAddress(id);
+  const handleAddressSelect = (addressId: number) => {
+    setSelectedAddress(addressId);
   };
 
   const handlePaymentMethodChange = (method: string) => {
@@ -127,25 +126,17 @@ const CheckoutPage = () => {
     router.push("/");
   };
 
-  // Early returns for special states
-  if (items.length === 0 && !orderComplete) {
-    return (
-      <ProtectedPageGuard>
-        <EmptyCart onBackToShopping={handleBackToShopping} />
-      </ProtectedPageGuard>
-    );
-  }
+  const renderContent = () => {
+    // Early returns for special states
+    if (items.length === 0 && !orderComplete) {
+      return <EmptyCart onBackToShopping={handleBackToShopping} />;
+    }
 
-  if (orderComplete) {
-    return (
-      <ProtectedPageGuard>
-        <OrderComplete onBackToShopping={handleBackToShopping} />
-      </ProtectedPageGuard>
-    );
-  }
+    if (orderComplete) {
+      return <OrderComplete onBackToShopping={handleBackToShopping} />;
+    }
 
-  return (
-    <ProtectedPageGuard>
+    return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <CheckoutProgress currentStep={currentStep} />
@@ -227,8 +218,10 @@ const CheckoutPage = () => {
           </div>
         </div>
       </div>
-    </ProtectedPageGuard>
-  );
+    );
+  };
+
+  return <ProtectedPageGuard>{renderContent()}</ProtectedPageGuard>;
 };
 
 export default CheckoutPage;
