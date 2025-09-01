@@ -9,7 +9,7 @@ import WishlistPage from "@/components/userprofile/WishlistPage";
 import SettingsPage from "@/components/userprofile/SettingsPage";
 import NotificationsPage from "@/components/userprofile/NotificationsPage";
 import PointsPage from "@/components/userprofile/PointsPage";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { ProtectedPageGuard } from "@/components/auth/AuthGuard";
 
 export type ProfilePage =
   | "overview"
@@ -45,7 +45,7 @@ export default function UserProfilePage() {
   };
 
   return (
-    <ProtectedRoute>
+    <ProtectedPageGuard>
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row gap-8">
@@ -66,6 +66,6 @@ export default function UserProfilePage() {
           </div>
         </div>
       </div>
-    </ProtectedRoute>
+    </ProtectedPageGuard>
   );
 }

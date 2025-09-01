@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cairo } from "next/font/google";
 import "./globals.css";
+import ToastProvider from "@/components/providers/ToastProvider";
 
 const cairo = Cairo({
   variable: "--font-cairo",
@@ -28,6 +29,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         {children}
+        <ToastProvider />
       </body>
     </html>
   );

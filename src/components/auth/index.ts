@@ -8,3 +8,12 @@ export {
   withRegistrationErrorHandling,
   ProtectedPageWithErrorHandling,
 } from "./withRegistrationErrorHandling";
+
+// New Authentication System
+export {
+  AuthGuard,
+  ProtectedPageGuard,
+  AuthOnlyGuard,
+  SilentAuthGuard,
+  withAuthGuard,
+} from "./AuthGuard";

@@ -52,13 +52,23 @@ const baseQueryWithAuth: BaseQueryFn<
 
   const result = await baseQuery(args, api, extraOptions);
 
-  // Handle unauthorized responses
+  // Handle unauthorized responses (401)
   if (result.error && result.error.status === 401) {
-    // Dispatch logout action or redirect to login
-    // You can customize this based on your auth logic
-    console.warn(
-      "Unauthorized request, consider refreshing token or redirecting to login"
-    );
+    console.warn("BaseApi - 401 Unauthorized detected, clearing auth data");
+
+    // Clear auth data on 401
+    storage.removeAuth();
+
+    // Dispatch auth change event
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("authChange"));
+    }
+
+    // Store current page for redirect after login
+    if (typeof window !== "undefined") {
+      const currentPath = window.location.pathname;
+      storage.setPreviousPage(currentPath);
+    }
   }
 
   // Handle registration incomplete responses (403)
@@ -76,6 +86,22 @@ const baseQueryWithAuth: BaseQueryFn<
       // Store the user code for registration completion
       if (errorData.data.user?.code) {
         storage.setRegistrationCode(errorData.data.user.code);
+      }
+
+      // Update auth data with incomplete registration status
+      const currentAuth = storage.getAuth();
+      if (currentAuth && errorData.data.user) {
+        const updatedAuth = {
+          ...currentAuth,
+          user: errorData.data.user,
+          is_registration_complete: false,
+        };
+        storage.setAuth(updatedAuth);
+
+        // Dispatch auth change event
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("authChange"));
+        }
       }
 
       // Return a custom error type for registration incomplete

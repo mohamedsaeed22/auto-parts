@@ -9,7 +9,6 @@ import { Providers } from "@/store/providers";
 import { Locale } from "@/lib/types";
 import { getDirection } from "@/lib/utils/index";
 import LocaleProvider from "@/components/providers/LocaleProvider";
-import ToastProvider from "@/components/providers/ToastProvider";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
@@ -51,13 +50,12 @@ export default async function LocaleLayout({
       <I18NProvider locale={locale} namespaces={ns} resources={resources}>
         <Providers>
           <NuqsAdapter>
-          <LocaleProvider initialLocale={locale}>
-            <Header />
-            {children}
-            <Footer />
-            <Cart />
-            <WhatsAppButton />
-              <ToastProvider />
+            <LocaleProvider initialLocale={locale}>
+              <Header />
+              {children}
+              <Footer />
+              <Cart />
+              <WhatsAppButton />
             </LocaleProvider>
           </NuqsAdapter>
         </Providers>
