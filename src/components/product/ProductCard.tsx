@@ -38,6 +38,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const hasDiscount = product.discount_type || product.offer;
   const discountInfo = product.discount_info;
 
+  // Check if product is in favourites or wishlist
+  const isInFavourites = product.in_favourites === true;
+  const isInWishlist = product.in_wishlist === true;
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -93,7 +97,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               <Button
                 size="sm"
                 variant="outline"
-                className="w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm border-neutral-200 hover:bg-white shadow-sm"
+                className={`w-7 h-7 rounded-full backdrop-blur-sm border-neutral-200 hover:bg-white shadow-sm transition-colors ${
+                  isInFavourites 
+                    ? "bg-red-500 border-red-500 hover:bg-red-600" 
+                    : "bg-white/90 hover:bg-white"
+                }`}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -104,13 +112,22 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 {isLoading(`favourite-${product.id}`) ? (
                   <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-neutral-600"></div>
                 ) : (
-                  <Heart size={12} className="text-neutral-600" />
+                  <Heart 
+                    size={12} 
+                    className={`${
+                      isInFavourites ? "text-white fill-white" : "text-neutral-600"
+                    }`} 
+                  />
                 )}
               </Button>
               <Button
                 size="sm"
                 variant="outline"
-                className="w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm border-neutral-200 hover:bg-white shadow-sm"
+                className={`w-7 h-7 rounded-full backdrop-blur-sm border-neutral-200 hover:bg-white shadow-sm transition-colors ${
+                  isInWishlist 
+                    ? "bg-blue-500 border-blue-500 hover:bg-blue-600" 
+                    : "bg-white/90 hover:bg-white"
+                }`}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -121,7 +138,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 {isLoading(`wishlist-${product.id}`) ? (
                   <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-neutral-600"></div>
                 ) : (
-                  <Bookmark size={12} className="text-neutral-600" />
+                  <Bookmark 
+                    size={12} 
+                    className={`${
+                      isInWishlist ? "text-white fill-white" : "text-neutral-600"
+                    }`} 
+                  />
                 )}
               </Button>
             </div>

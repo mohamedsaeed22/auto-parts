@@ -6,14 +6,18 @@
   "productCode": "رمز المنتج",
   "availability": "التوفر",
   "available": "متوفر",
-  "category": "القسم",
+  "category": "الفئة",
   "currency": "ريال",
   "rating": "التقييم",
-  "reviews": "مراجعة",
+  "reviews": "التقييمات",
   "featuredProducts": "منتجاتنا المميزة",
   "featuredDescription": "اكتشف مجموعة واسعة من قطع الغيار والإكسسوارات عالية الجودة لسيارتك",
-  "loadMore": "عرض المزيد من المنتجات",
+  "loadMore": "تحميل المزيد من المنتجات",
   "currencySymbol": "ريال",
+  "auth": {
+    "loginRequired": "يرجى تسجيل الدخول لإضافة العناصر إلى المفضلة/قائمة الرغبات",
+    "completeRegistrationRequired": "يرجى إكمال التسجيل لاستخدام هذه الميزة"
+  },
   "category": {
     "previousSlide": "الشريحة السابقة",
     "nextSlide": "الشريحة التالية",

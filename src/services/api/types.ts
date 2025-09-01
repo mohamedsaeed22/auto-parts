@@ -124,6 +124,9 @@ export interface AuthResponse {
 }
 
 // Product Types
+// ... existing code ...
+
+// Product Types
 export interface Product {
   id: number;
   name: string;
@@ -156,7 +159,12 @@ export interface Product {
   description: string;
   hover_text: string;
   product_identifier: string;
+  // Add new fields for favourites and wishlist status
+  in_favourites: boolean | null;
+  in_wishlist: boolean | null;
 }
+
+// ... existing code ...
 
 // Product Details Response
 export interface ProductDetailsResponse {

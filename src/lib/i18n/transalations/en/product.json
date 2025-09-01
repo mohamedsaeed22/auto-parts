@@ -14,6 +14,10 @@
   "featuredDescription": "Discover a wide range of high-quality spare parts and accessories for your car",
   "loadMore": "Load More Products",
   "currencySymbol": "SAR",
+  "auth": {
+    "loginRequired": "Please login to add items to your favourites/wishlist",
+    "completeRegistrationRequired": "Please complete your registration to use this feature"
+  },
   "category": {
     "previousSlide": "Previous slide",
     "nextSlide": "Next slide",
