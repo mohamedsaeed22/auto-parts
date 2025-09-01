@@ -6,7 +6,7 @@ import {
   useRemoveFromWishlistMutation,
 } from "@/services/api";
 import { WishlistItem } from "@/services/api/wishlistApi";
-import { Bookmark, Trash2, ShoppingCart } from "lucide-react";
+import { Bookmark, Trash2, ShoppingCart, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
@@ -15,12 +15,14 @@ import { useState } from "react";
 import Image from "next/image";
 import { ProtectedPageGuard } from "@/components/auth/AuthGuard";
 import { useApiErrorHandler } from "@/hooks/useApiErrorHandler";
+import { useFavouritesWishlist } from "@/hooks/useFavouritesWishlist";
 
 export default function WishlistPage() {
   const { t } = useTranslation("wishlist");
   const { data: wishlistData, isLoading, error } = useGetWishlistQuery();
   const [removeFromWishlist] = useRemoveFromWishlistMutation();
   const { addToCart } = useCart();
+  const { handleToggleFavourite, isLoading: isFavouriteLoading } = useFavouritesWishlist();
   const [removingId, setRemovingId] = useState<number | null>(null);
 
   // Handle API errors (403 registration incomplete, 401 unauthorized, etc.)
@@ -41,17 +43,14 @@ export default function WishlistPage() {
     }
   };
 
-  const handleAddToCart = (product: {
-    id: number;
-    name: string;
-    price: number;
-    image: string;
-  }) => {
+  const handleAddToCart = (product: WishlistItem) => {
     addToCart({
       id: product.id,
       title: product.name,
-      price: product.price,
-      image: product.image,
+      price: product.final_price,
+      image: product.primary_image,
+      category: product.category.name,
+      description: product.description,
     });
   };
 
@@ -114,6 +113,16 @@ export default function WishlistPage() {
 
     return (
       <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            {t("title") || "My Wishlist"}
+          </h1>
+          <p className="text-gray-600">
+            {t("subtitle") || `You have ${wishlist.length} wishlist item${wishlist.length !== 1 ? 's' : ''}`}
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           <AnimatePresence>
             {wishlist.map((item: WishlistItem) => (
@@ -129,47 +138,118 @@ export default function WishlistPage() {
                 {/* Product Image */}
                 <div className="relative aspect-square overflow-hidden">
                   <Image
-                    src={item.product?.image || "/products/product1.jpg"}
-                    alt={item.product?.name || "Product"}
+                    src={item.primary_image || "/products/product1.jpg"}
+                    alt={item.name || "Product"}
                     fill
                     className="object-cover"
                   />
-                  <div className="absolute top-2 right-2">
+                  
+                  {/* Action Buttons */}
+                  <div className="absolute top-2 right-2 flex flex-col gap-2">
+                    {/* Favourites Button */}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleToggleFavourite(item.id);
+                      }}
+                      disabled={isFavouriteLoading(`favourite-${item.id}`)}
+                      className={`h-8 w-8 p-0 rounded-full backdrop-blur-sm border-neutral-200 hover:bg-white shadow-sm transition-colors ${
+                        item.in_favorites 
+                          ? "bg-red-500 border-red-500 hover:bg-red-600" 
+                          : "bg-white/90 hover:bg-white"
+                      }`}
+                    >
+                      {isFavouriteLoading(`favourite-${item.id}`) ? (
+                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-neutral-600"></div>
+                      ) : (
+                        <Heart 
+                          size={14} 
+                          className={`${
+                            item.in_favorites ? "text-white fill-white" : "text-neutral-600"
+                          }`} 
+                        />
+                      )}
+                    </Button>
+
+                    {/* Remove from Wishlist Button */}
                     <Button
                       size="sm"
                       variant="destructive"
-                      onClick={() => handleRemoveFromWishlist(item.product_id)}
-                      disabled={removingId === item.product_id}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleRemoveFromWishlist(item.id);
+                      }}
+                      disabled={removingId === item.id}
                       className="h-8 w-8 p-0 rounded-full"
                     >
-                      {removingId === item.product_id ? (
+                      {removingId === item.id ? (
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                       ) : (
                         <Trash2 size={14} />
                       )}
                     </Button>
                   </div>
+
+                  {/* Discount Badge */}
+                  {item.discount_type && (
+                    <div className="absolute top-2 left-2">
+                      <div className="bg-accent text-white text-xs font-bold px-2 py-1 rounded shadow-sm">
+                        {item.discount_info || "SALE"}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Offer Badge */}
+                  {item.offer && (
+                    <div className="absolute bottom-2 left-2">
+                      <div className="bg-primary text-white text-xs font-bold px-2 py-1 rounded shadow-sm">
+                        OFFER
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Product Info */}
                 <div className="p-4">
-                  <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
-                    {item.product?.name || "Product Name"}
-                  </h3>
-                  <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                    {item.product?.description || "Product description"}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold text-logo-gold">
-                      ${item.product?.price || 0}
+                  {/* Category and Brand */}
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    <span className="text-xs text-neutral-600 bg-neutral-100 rounded-full px-2 py-1 capitalize">
+                      {item.category?.name || "Unknown Category"}
                     </span>
+                    {item.brand?.name && (
+                      <span className="text-xs text-info bg-info-light rounded-full px-2 py-1">
+                        {item.brand.name}
+                      </span>
+                    )}
+                  </div>
+
+                  <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
+                    {item.name || "Product Name"}
+                  </h3>
+                  
+                  <div className="text-gray-600 text-sm mb-3 line-clamp-2">
+                    <div dangerouslySetInnerHTML={{ __html: item.description || "Product description" }} />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col">
+                      <span className="text-lg font-bold text-logo-gold">
+                        ${item.final_price || 0}
+                      </span>
+                      {item.discount_type && (
+                        <span className="text-sm text-gray-500 line-through">
+                          ${item.price || 0}
+                        </span>
+                      )}
+                    </div>
                     <Button
                       size="sm"
-                      onClick={() =>
-                        item.product && handleAddToCart(item.product)
-                      }
+                      onClick={() => handleAddToCart(item)}
                       className="bg-logo-gold hover:bg-logo-gold/90"
-                      disabled={!item.product}
                     >
                       <ShoppingCart size={16} className="mr-1" />
                       {t("addToCart") || "Add to Cart"}

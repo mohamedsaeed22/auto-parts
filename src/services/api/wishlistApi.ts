@@ -1,20 +1,10 @@
 import { api } from "./baseApi";
+import { Product } from "./types";
 
-export interface WishlistItem {
-  id: number;
-  product_id: number;
-  user_id: number;
-  created_at: string;
-  updated_at: string;
-  product?: {
-    id: number;
-    name: string;
-    description: string;
-    price: number;
-    image: string;
-    category_id: number;
-    brand_id: number;
-  };
+export interface WishlistItem extends Product {
+  // The item is now directly a Product with additional fields
+  in_favorites: boolean;
+  in_wishlist: boolean;
 }
 
 export interface WishlistResponse {
