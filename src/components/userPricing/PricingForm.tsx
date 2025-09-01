@@ -107,7 +107,6 @@ export function PricingForm({
                 {t("auth.status.loginRequired")}
               </p>
             </div>
-           
           </div>
         ) : !isRegistrationComplete ? (
           <div className="flex items-center gap-3 text-orange-700 bg-orange-50 border-orange-200">

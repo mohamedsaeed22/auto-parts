@@ -22,7 +22,7 @@ export function useUserPricingForm() {
   const [formImagePreview, setFormImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSendingToBackend, setIsSendingToBackend] = useState(false);
-  
+
   const router = useRouter();
   const { currentLocale } = useLocale();
   const { t } = useTranslation("userPricing");
