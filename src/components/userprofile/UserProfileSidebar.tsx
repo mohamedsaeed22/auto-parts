@@ -38,18 +38,18 @@ export default function UserProfileSidebar({
       labelKey: "sidebar.settings",
       icon: <Settings size={20} />,
     },
-    {
-      key: "requests",
-      labelKey: "sidebar.requests",
-      icon: <FileText size={20} />,
-    },
-    { key: "overview", labelKey: "sidebar.overview", icon: <User size={20} /> },
-    { key: "points", labelKey: "sidebar.points", icon: <Gift size={20} /> },
-    {
-      key: "notifications",
-      labelKey: "sidebar.notifications",
-      icon: <Bell size={20} />,
-    },
+    // {
+    //   key: "requests",
+    //   labelKey: "sidebar.requests",
+    //   icon: <FileText size={20} />,
+    // },
+    // { key: "overview", labelKey: "sidebar.overview", icon: <User size={20} /> },
+    // { key: "points", labelKey: "sidebar.points", icon: <Gift size={20} /> },
+    // {
+    //   key: "notifications",
+    //   labelKey: "sidebar.notifications",
+    //   icon: <Bell size={20} />,
+    // },
     // { key: "wishlist", labelKey: "sidebar.wishlist", icon: <Heart size={20} /> },
   ];
 

@@ -150,7 +150,7 @@ export default function LoginForm({
         </Button>
       </form>
 
-      <div className="text-center">
+      {/* <div className="text-center">
         <p className="text-sm text-neutral-600">
           {t("login.noAccount")}{" "}
           <button
@@ -161,7 +161,7 @@ export default function LoginForm({
             {t("login.createAccount")}
           </button>
         </p>
-      </div>
+      </div> */}
 
       {/* Separator */}
       <div className="relative">
