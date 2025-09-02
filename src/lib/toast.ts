@@ -43,6 +43,21 @@ export const showError = (message: string) => {
   return null;
 };
 
+// Warning toast
+export const showWarning = (message: string) => {
+  if (shouldShowToast(message)) {
+    return toast(message, {
+      icon: '⚠️',
+      style: {
+        background: '#fff7ed',
+        color: '#9a3412',
+        border: '1px solid #fdba74'
+      }
+    });
+  }
+  return null;
+};
+
 // Loading toast
 export const showLoading = (message: string) => {
   if (shouldShowToast(message)) {
