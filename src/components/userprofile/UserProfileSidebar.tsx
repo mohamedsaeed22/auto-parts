@@ -1,25 +1,32 @@
-import { User, MapPin, ShoppingBag, Settings, Bell, Gift } from "lucide-react";
+import {
+  User,
+  MapPin,
+  ShoppingBag,
+  Settings,
+  Bell,
+  Gift,
+  FileText,
+} from "lucide-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { ProfilePage } from "@/app/[locale]/userprofile/page";
+import { ProfilePageType } from "@/app/[locale]/userprofile/page";
 
 export default function UserProfileSidebar({
   activePage,
   onPageChange,
 }: {
-  activePage: ProfilePage;
-  onPageChange: (page: ProfilePage) => void;
+  activePage: ProfilePageType;
+  onPageChange: (page: ProfilePageType) => void;
 }) {
   const { t, i18n } = useTranslation("userProfile");
   const isRTL = i18n.language === "ar";
 
   const menu = [
-    { key: "overview", labelKey: "sidebar.overview", icon: <User size={20} /> },
-    { key: "points", labelKey: "sidebar.points", icon: <Gift size={20} /> },
+    { key: "profile", labelKey: "sidebar.profile", icon: <User size={20} /> },
     {
-      key: "notifications",
-      labelKey: "sidebar.notifications",
-      icon: <Bell size={20} />,
+      key: "addresses",
+      labelKey: "sidebar.addresses",
+      icon: <MapPin size={20} />,
     },
     {
       key: "orders",
@@ -27,16 +34,23 @@ export default function UserProfileSidebar({
       icon: <ShoppingBag size={20} />,
     },
     {
-      key: "addresses",
-      labelKey: "sidebar.addresses",
-      icon: <MapPin size={20} />,
-    },
-    // { key: "wishlist", labelKey: "sidebar.wishlist", icon: <Heart size={20} /> },
-    {
       key: "settings",
       labelKey: "sidebar.settings",
       icon: <Settings size={20} />,
     },
+    {
+      key: "requests",
+      labelKey: "sidebar.requests",
+      icon: <FileText size={20} />,
+    },
+    { key: "overview", labelKey: "sidebar.overview", icon: <User size={20} /> },
+    { key: "points", labelKey: "sidebar.points", icon: <Gift size={20} /> },
+    {
+      key: "notifications",
+      labelKey: "sidebar.notifications",
+      icon: <Bell size={20} />,
+    },
+    // { key: "wishlist", labelKey: "sidebar.wishlist", icon: <Heart size={20} /> },
   ];
 
   // Responsive: show sidebar on lg+, show top bar on mobile
@@ -61,10 +75,12 @@ export default function UserProfileSidebar({
                       ? "bg-yellow-100 text-yellow-800"
                       : "hover:bg-gray-100 text-gray-700"
                   }`}
-                  onClick={() => onPageChange(item.key as ProfilePage)}
+                  onClick={() => onPageChange(item.key as ProfilePageType)}
                 >
                   <span>{item.icon}</span>
-                  <span className={`flex-1 ${isRTL ? "text-right" : "text-left"}`}>
+                  <span
+                    className={`flex-1 ${isRTL ? "text-right" : "text-left"}`}
+                  >
                     {t(item.labelKey)}
                   </span>
                 </button>
@@ -87,7 +103,7 @@ export default function UserProfileSidebar({
                 ? "bg-yellow-100 text-yellow-800"
                 : "hover:bg-gray-100 text-gray-700"
             }`}
-            onClick={() => onPageChange(item.key as ProfilePage)}
+            onClick={() => onPageChange(item.key as ProfilePageType)}
           >
             <span>{item.icon}</span>
             <span className="text-xs mt-1">{t(item.labelKey)}</span>

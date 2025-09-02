@@ -1,12 +1,14 @@
 {
   "sidebar": {
+    "profile": "الملف الشخصي",
     "overview": "الملف الشخصي",
     "points": "نقاطي",
     "notifications": "الإشعارات",
     "orders": "الطلبات",
     "addresses": "العناوين",
     "wishlist": "المفضلة",
-    "settings": "الإعدادات"
+    "settings": "الإعدادات",
+    "requests": "الطلبات"
   },
   "profileOverview": {
     "title": "الملف الشخصي",
@@ -26,6 +28,38 @@
       "favoriteProducts": "المنتجات المفضلة",
       "savedAddresses": "العناوين المحفوظة"
     }
+  },
+  "profile": {
+    "title": "الملف الشخصي",
+    "edit": "تعديل",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "userCode": "رمز المستخدم",
+    "noEmail": "لا يوجد بريد إلكتروني",
+    "type": "النوع",
+    "shop": "متجر",
+    "workshop": "ورشة عمل",
+    "managerName": "اسم المدير",
+    "address": "العنوان",
+    "city": "المدينة",
+    "state": "الولاية",
+    "zip": "الرمز البريدي",
+    "taxNumber": "الرقم الضريبي",
+    "latitude": "خط العرض",
+    "longitude": "خط الطول",
+    "commercialRegister": "السجل التجاري",
+    "selectedFile": "المحدد",
+    "currentFile": "الحالي",
+    "language": "اللغة",
+    "registrationComplete": "اكتمل التسجيل",
+    "registrationIncomplete": "التسجيل غير مكتمل",
+    "googleUser": "مستخدم جوجل",
+    "regularUser": "مستخدم عادي"
+  },
+  "requests": {
+    "title": "الطلبات",
+    "comingSoon": "قريباً",
+    "description": "ستكون ميزة الطلبات متاحة قريباً."
   },
   "settings": {
     "title": "الإعدادات",
