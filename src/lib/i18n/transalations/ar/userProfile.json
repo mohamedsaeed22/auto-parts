@@ -67,6 +67,8 @@
     "save": "حفظ",
     "cancel": "إلغاء",
     "tabs": {
+      "company": "الشركة",
+      "legal": "القانونية",
       "account": "الحساب",
       "privacy": "الخصوصية",
       "security": "الأمان",
@@ -117,6 +119,31 @@
       "riyadh": "الرياض (GMT+3)",
       "dubai": "دبي (GMT+4)",
       "london": "لندن (GMT+0)"
+    },
+    "company": {
+      "title": "معلومات الشركة",
+      "name": "اسم الشركة",
+      "email": "البريد الإلكتروني",
+      "phone": "رقم الجوال",
+      "address": "العنوان",
+      "website": "الموقع الإلكتروني",
+      "description": "الوصف",
+      "noAddress": "لا يوجد عنوان"
+    },
+    "support": {
+      "title": "معلومات الدعم",
+      "email": "بريد الدعم",
+      "phone": "هاتف الدعم"
+    },
+    "social": {
+      "title": "وسائل التواصل الاجتماعي"
+    },
+    "legal": {
+      "termsOfService": "شروط الخدمة",
+      "privacyPolicy": "سياسة الخصوصية",
+      "refundPolicy": "سياسة الاسترداد",
+      "shippingPolicy": "سياسة الشحن",
+      "noContent": "لا يوجد محتوى متاح"
     }
   },
   "addresses": {

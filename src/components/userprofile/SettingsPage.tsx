@@ -1,16 +1,47 @@
 "use client";
 
 import { useState } from "react";
-import { Lock, Bell, Globe, Shield, Save, X } from "lucide-react";
+import {
+  Lock,
+  Bell,
+  Globe,
+  Shield,
+  Save,
+  X,
+  Building,
+  FileText,
+  Mail,
+  Phone,
+  MapPin,
+  Globe2,
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  Loader2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import {
+  useGetCompanySettingsQuery,
+  useGetLegalPagesQuery,
+  useGetTermsOfServiceQuery,
+  useGetPrivacyPolicyQuery,
+  useGetRefundPolicyQuery,
+  useGetShippingPolicyQuery,
+} from "@/services/api";
 
 export default function SettingsPage() {
   const { t, i18n } = useTranslation("userProfile");
   const isRTL = i18n.language === "ar";
 
-  const [activeTab, setActiveTab] = useState("account");
-  const [settings, setSettings] = useState({
+  const [activeTab, setActiveTab] = useState("company");
+  const [selectedLegalPage, setSelectedLegalPage] = useState<string | null>(
+    null
+  );
+
+  // User Settings State
+  const [userSettings, setUserSettings] = useState({
     account: {
       emailNotifications: true,
       smsNotifications: false,
@@ -37,24 +68,423 @@ export default function SettingsPage() {
   });
 
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState(settings);
+  const [formData, setFormData] = useState(userSettings);
+
+  // API Queries
+  const { data: companySettingsResponse, isLoading: isLoadingCompany } =
+    useGetCompanySettingsQuery();
+  const { data: legalPagesResponse, isLoading: isLoadingLegal } =
+    useGetLegalPagesQuery();
+  const { data: termsResponse, isLoading: isLoadingTerms } =
+    useGetTermsOfServiceQuery();
+  const { data: privacyResponse, isLoading: isLoadingPrivacy } =
+    useGetPrivacyPolicyQuery();
+  const { data: refundResponse, isLoading: isLoadingRefund } =
+    useGetRefundPolicyQuery();
+  const { data: shippingResponse, isLoading: isLoadingShipping } =
+    useGetShippingPolicyQuery();
+
+  const companySettings = companySettingsResponse?.data;
+  const legalPages = legalPagesResponse?.data;
 
   const handleSave = () => {
-    setSettings(formData);
+    setUserSettings(formData);
     setIsEditing(false);
   };
 
   const handleCancel = () => {
-    setFormData(settings);
+    setFormData(userSettings);
     setIsEditing(false);
   };
 
   const tabs = [
-    { id: "account", labelKey: "settings.tabs.account", icon: Bell },
-    { id: "privacy", labelKey: "settings.tabs.privacy", icon: Shield },
-    { id: "security", labelKey: "settings.tabs.security", icon: Lock },
-    { id: "language", labelKey: "settings.tabs.language", icon: Globe },
+    { id: "company", labelKey: "settings.tabs.company", icon: Building },
+    { id: "legal", labelKey: "settings.tabs.legal", icon: FileText },
+    // { id: "account", labelKey: "settings.tabs.account", icon: Bell },
+    // { id: "privacy", labelKey: "settings.tabs.privacy", icon: Shield },
+    // { id: "security", labelKey: "settings.tabs.security", icon: Lock },
+    // { id: "language", labelKey: "settings.tabs.language", icon: Globe },
   ];
+
+  const renderCompanySettings = () => {
+    if (isLoadingCompany) {
+      return (
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      );
+    }
+
+    if (!companySettings) {
+      return (
+        <div className="text-center py-8">
+          <p className="text-gray-500">Failed to load company settings.</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-8">
+        {/* Company Information */}
+        <div className="bg-white p-6 rounded-lg border">
+          <h3
+            className={`text-lg font-semibold mb-4 ${
+              isRTL ? "text-right" : "text-left"
+            }`}
+          >
+            {t("settings.company.title", "Company Information")}
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex items-center gap-3">
+              <Building size={20} className="text-gray-500" />
+              <div>
+                <p className="text-sm text-gray-600">
+                  {t("settings.company.name", "Company Name")}
+                </p>
+                <p className="font-medium">
+                  {companySettings.company_info.name}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Mail size={20} className="text-gray-500" />
+              <div>
+                <p className="text-sm text-gray-600">
+                  {t("settings.company.email", "Email")}
+                </p>
+                <p className="font-medium">
+                  {companySettings.company_info.email}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Phone size={20} className="text-gray-500" />
+              <div>
+                <p className="text-sm text-gray-600">
+                  {t("settings.company.phone", "Phone")}
+                </p>
+                <p className="font-medium">
+                  {companySettings.company_info.phone}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <MapPin size={20} className="text-gray-500" />
+              <div>
+                <p className="text-sm text-gray-600">
+                  {t("settings.company.address", "Address")}
+                </p>
+                <p className="font-medium">
+                  {companySettings.company_info.address ||
+                    t("settings.company.noAddress", "No address")}
+                </p>
+              </div>
+            </div>
+            {companySettings.company_info.website && (
+              <div className="flex items-center gap-3">
+                <Globe2 size={20} className="text-gray-500" />
+                <div>
+                  <p className="text-sm text-gray-600">
+                    {t("settings.company.website", "Website")}
+                  </p>
+                  <a
+                    href={companySettings.company_info.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-blue-600 hover:underline"
+                  >
+                    {companySettings.company_info.website}
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+          {companySettings.company_info.description && (
+            <div className="mt-4">
+              <p className="text-sm text-gray-600 mb-2">
+                {t("settings.company.description", "Description")}
+              </p>
+              <div
+                className="text-sm text-gray-700"
+                dangerouslySetInnerHTML={{
+                  __html: companySettings.company_info.description,
+                }}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Support Information */}
+        {(companySettings.support_info.email ||
+          companySettings.support_info.phone) && (
+          <div className="bg-white p-6 rounded-lg border">
+            <h3
+              className={`text-lg font-semibold mb-4 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
+              {t("settings.support.title", "Support Information")}
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {companySettings.support_info.email && (
+                <div className="flex items-center gap-3">
+                  <Mail size={20} className="text-gray-500" />
+                  <div>
+                    <p className="text-sm text-gray-600">
+                      {t("settings.support.email", "Support Email")}
+                    </p>
+                    <p className="font-medium">
+                      {companySettings.support_info.email}
+                    </p>
+                  </div>
+                </div>
+              )}
+              {companySettings.support_info.phone && (
+                <div className="flex items-center gap-3">
+                  <Phone size={20} className="text-gray-500" />
+                  <div>
+                    <p className="text-sm text-gray-600">
+                      {t("settings.support.phone", "Support Phone")}
+                    </p>
+                    <p className="font-medium">
+                      {companySettings.support_info.phone}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Social Media */}
+        {(companySettings.social_media.facebook ||
+          companySettings.social_media.twitter ||
+          companySettings.social_media.instagram ||
+          companySettings.social_media.linkedin) && (
+          <div className="bg-white p-6 rounded-lg border">
+            <h3
+              className={`text-lg font-semibold mb-4 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
+              {t("settings.social.title", "Social Media")}
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {companySettings.social_media.facebook && (
+                <a
+                  href={companySettings.social_media.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-blue-600 hover:text-blue-700"
+                >
+                  <Facebook size={20} />
+                  <span>Facebook</span>
+                </a>
+              )}
+              {companySettings.social_media.twitter && (
+                <a
+                  href={companySettings.social_media.twitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-blue-400 hover:text-blue-500"
+                >
+                  <Twitter size={20} />
+                  <span>Twitter</span>
+                </a>
+              )}
+              {companySettings.social_media.instagram && (
+                <a
+                  href={companySettings.social_media.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-pink-600 hover:text-pink-700"
+                >
+                  <Instagram size={20} />
+                  <span>Instagram</span>
+                </a>
+              )}
+              {companySettings.social_media.linkedin && (
+                <a
+                  href={companySettings.social_media.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-blue-700 hover:text-blue-800"
+                >
+                  <Linkedin size={20} />
+                  <span>LinkedIn</span>
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderLegalPages = () => {
+    if (isLoadingLegal) {
+      return (
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      );
+    }
+
+    if (!legalPages) {
+      return (
+        <div className="text-center py-8">
+          <p className="text-gray-500">Failed to load legal pages.</p>
+        </div>
+      );
+    }
+
+    const legalPageItems = [
+      {
+        key: "terms_of_service",
+        label: t("settings.legal.termsOfService", "Terms of Service"),
+        icon: FileText,
+      },
+      {
+        key: "privacy_policy",
+        label: t("settings.legal.privacyPolicy", "Privacy Policy"),
+        icon: Shield,
+      },
+      {
+        key: "refund_policy",
+        label: t("settings.legal.refundPolicy", "Refund Policy"),
+        icon: Lock,
+      },
+      {
+        key: "shipping_policy",
+        label: t("settings.legal.shippingPolicy", "Shipping Policy"),
+        icon: MapPin,
+      },
+    ];
+
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {legalPageItems.map((item) => (
+            <div
+              key={item.key}
+              className={`bg-white p-4 rounded-lg border cursor-pointer hover:border-blue-300 transition-colors ${
+                selectedLegalPage === item.key
+                  ? "border-blue-500 bg-blue-50"
+                  : ""
+              }`}
+              onClick={() =>
+                setSelectedLegalPage(
+                  selectedLegalPage === item.key ? null : item.key
+                )
+              }
+            >
+              <div
+                className={`flex items-center gap-3 ${
+                  isRTL ? "flex-row-reverse" : ""
+                }`}
+              >
+                <item.icon size={20} className="text-gray-500" />
+                <div className="flex-1">
+                  <h4 className="font-medium">{item.label}</h4>
+                  <p className="text-sm text-gray-600">
+                    {legalPages[item.key as keyof typeof legalPages] ||
+                      t("settings.legal.noContent", "No content available")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Legal Page Content */}
+        {selectedLegalPage && (
+          <div className="bg-white p-6 rounded-lg border">
+            <div
+              className={`flex justify-between items-center mb-4 ${
+                isRTL ? "flex-row-reverse" : ""
+              }`}
+            >
+              <h3 className="text-lg font-semibold">
+                {
+                  legalPageItems.find((item) => item.key === selectedLegalPage)
+                    ?.label
+                }
+              </h3>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSelectedLegalPage(null)}
+              >
+                <X size={16} />
+              </Button>
+            </div>
+            <div className="prose max-w-none">
+              {selectedLegalPage === "terms_of_service" && (
+                <div>
+                  {isLoadingTerms ? (
+                    <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                  ) : (
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          termsResponse?.data?.content ||
+                          t("settings.legal.noContent", "No content available"),
+                      }}
+                    />
+                  )}
+                </div>
+              )}
+              {selectedLegalPage === "privacy_policy" && (
+                <div>
+                  {isLoadingPrivacy ? (
+                    <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                  ) : (
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          privacyResponse?.data?.content ||
+                          t("settings.legal.noContent", "No content available"),
+                      }}
+                    />
+                  )}
+                </div>
+              )}
+              {selectedLegalPage === "refund_policy" && (
+                <div>
+                  {isLoadingRefund ? (
+                    <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                  ) : (
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          refundResponse?.data?.content ||
+                          t("settings.legal.noContent", "No content available"),
+                      }}
+                    />
+                  )}
+                </div>
+              )}
+              {selectedLegalPage === "shipping_policy" && (
+                <div>
+                  {isLoadingShipping ? (
+                    <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                  ) : (
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          shippingResponse?.data?.content ||
+                          t("settings.legal.noContent", "No content available"),
+                      }}
+                    />
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const renderAccountSettings = () => (
     <div className="space-y-6">
@@ -63,7 +493,6 @@ export default function SettingsPage() {
           className={`text-lg font-semibold mb-4 ${
             isRTL ? "text-right" : "text-left"
           }`}
-          dir={isRTL ? "rtl" : "ltr"}
         >
           {t("settings.account.title")}
         </h3>
@@ -75,10 +504,7 @@ export default function SettingsPage() {
                 isRTL ? "flex-row-reverse" : ""
               }`}
             >
-              <div
-                className={`${isRTL ? "text-right" : "text-left"}`}
-                dir={isRTL ? "rtl" : "ltr"}
-              >
+              <div className={`${isRTL ? "text-right" : "text-left"}`}>
                 <div className="font-medium">
                   {key === "emailNotifications" &&
                     t("settings.account.emailNotifications")}
@@ -112,6 +538,7 @@ export default function SettingsPage() {
                     })
                   }
                   className="sr-only peer"
+                  disabled={!isEditing}
                 />
                 <div
                   className={`w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer ${
@@ -120,7 +547,9 @@ export default function SettingsPage() {
                       : "peer-checked:after:translate-x-full"
                   } peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] ${
                     isRTL ? "after:right-[2px]" : "after:left-[2px]"
-                  } after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600`}
+                  } after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 ${
+                    !isEditing ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 ></div>
               </label>
             </div>
@@ -137,7 +566,6 @@ export default function SettingsPage() {
           className={`text-lg font-semibold mb-4 ${
             isRTL ? "text-right" : "text-left"
           }`}
-          dir={isRTL ? "rtl" : "ltr"}
         >
           {t("settings.privacy.title")}
         </h3>
@@ -147,7 +575,6 @@ export default function SettingsPage() {
               className={`block text-sm font-medium text-gray-700 mb-2 ${
                 isRTL ? "text-right" : "text-left"
               }`}
-              dir={isRTL ? "rtl" : "ltr"}
             >
               {t("settings.privacy.profileVisibility")}
             </label>
@@ -166,6 +593,7 @@ export default function SettingsPage() {
                 isRTL ? "text-right" : "text-left"
               }`}
               dir={isRTL ? "rtl" : "ltr"}
+              disabled={!isEditing}
             >
               <option value="public">{t("settings.privacy.public")}</option>
               <option value="friends">{t("settings.privacy.friends")}</option>
@@ -182,10 +610,7 @@ export default function SettingsPage() {
                   isRTL ? "flex-row-reverse" : ""
                 }`}
               >
-                <div
-                  className={`${isRTL ? "text-right" : "text-left"}`}
-                  dir={isRTL ? "rtl" : "ltr"}
-                >
+                <div className={`${isRTL ? "text-right" : "text-left"}`}>
                   <div className="font-medium">
                     {key === "showEmail" && t("settings.privacy.showEmail")}
                     {key === "showPhone" && t("settings.privacy.showPhone")}
@@ -206,6 +631,7 @@ export default function SettingsPage() {
                       })
                     }
                     className="sr-only peer"
+                    disabled={!isEditing}
                   />
                   <div
                     className={`w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer ${
@@ -214,7 +640,9 @@ export default function SettingsPage() {
                         : "peer-checked:after:translate-x-full"
                     } peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] ${
                       isRTL ? "after:right-[2px]" : "after:left-[2px]"
-                    } after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600`}
+                    } after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 ${
+                      !isEditing ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
                   ></div>
                 </label>
               </div>
@@ -231,7 +659,6 @@ export default function SettingsPage() {
           className={`text-lg font-semibold mb-4 ${
             isRTL ? "text-right" : "text-left"
           }`}
-          dir={isRTL ? "rtl" : "ltr"}
         >
           {t("settings.security.title")}
         </h3>
@@ -243,10 +670,7 @@ export default function SettingsPage() {
                 isRTL ? "flex-row-reverse" : ""
               }`}
             >
-              <div
-                className={`${isRTL ? "text-right" : "text-left"}`}
-                dir={isRTL ? "rtl" : "ltr"}
-              >
+              <div className={`${isRTL ? "text-right" : "text-left"}`}>
                 <div className="font-medium">
                   {key === "twoFactorAuth" &&
                     t("settings.security.twoFactorAuth")}
@@ -277,6 +701,7 @@ export default function SettingsPage() {
                     })
                   }
                   className="sr-only peer"
+                  disabled={!isEditing}
                 />
                 <div
                   className={`w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer ${
@@ -285,7 +710,9 @@ export default function SettingsPage() {
                       : "peer-checked:after:translate-x-full"
                   } peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] ${
                     isRTL ? "after:right-[2px]" : "after:left-[2px]"
-                  } after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600`}
+                  } after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 ${
+                    !isEditing ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 ></div>
               </label>
             </div>
@@ -302,7 +729,6 @@ export default function SettingsPage() {
           className={`text-lg font-semibold mb-4 ${
             isRTL ? "text-right" : "text-left"
           }`}
-          dir={isRTL ? "rtl" : "ltr"}
         >
           {t("settings.language.title")}
         </h3>
@@ -312,7 +738,6 @@ export default function SettingsPage() {
               className={`block text-sm font-medium text-gray-700 mb-2 ${
                 isRTL ? "text-right" : "text-left"
               }`}
-              dir={isRTL ? "rtl" : "ltr"}
             >
               {t("settings.language.language")}
             </label>
@@ -328,6 +753,7 @@ export default function SettingsPage() {
                 isRTL ? "text-right" : "text-left"
               }`}
               dir={isRTL ? "rtl" : "ltr"}
+              disabled={!isEditing}
             >
               <option value="ar">{t("settings.language.arabic")}</option>
               <option value="en">{t("settings.language.english")}</option>
@@ -339,7 +765,6 @@ export default function SettingsPage() {
               className={`block text-sm font-medium text-gray-700 mb-2 ${
                 isRTL ? "text-right" : "text-left"
               }`}
-              dir={isRTL ? "rtl" : "ltr"}
             >
               {t("settings.language.currency")}
             </label>
@@ -355,6 +780,7 @@ export default function SettingsPage() {
                 isRTL ? "text-right" : "text-left"
               }`}
               dir={isRTL ? "rtl" : "ltr"}
+              disabled={!isEditing}
             >
               <option value="SAR">{t("settings.language.sar")}</option>
               <option value="USD">{t("settings.language.usd")}</option>
@@ -367,7 +793,6 @@ export default function SettingsPage() {
               className={`block text-sm font-medium text-gray-700 mb-2 ${
                 isRTL ? "text-right" : "text-left"
               }`}
-              dir={isRTL ? "rtl" : "ltr"}
             >
               {t("settings.language.timezone")}
             </label>
@@ -383,6 +808,7 @@ export default function SettingsPage() {
                 isRTL ? "text-right" : "text-left"
               }`}
               dir={isRTL ? "rtl" : "ltr"}
+              disabled={!isEditing}
             >
               <option value="Asia/Riyadh">
                 {t("settings.language.riyadh")}
@@ -407,11 +833,10 @@ export default function SettingsPage() {
       >
         <h2
           className={`text-2xl font-bold ${isRTL ? "text-right" : "text-left"}`}
-          dir={isRTL ? "rtl" : "ltr"}
         >
           {t("settings.title")}
         </h2>
-        {!isEditing ? (
+        {activeTab === "account" && !isEditing ? (
           <Button
             onClick={() => setIsEditing(true)}
             className={`flex items-center gap-2 ${
@@ -421,7 +846,7 @@ export default function SettingsPage() {
             <Save size={16} />
             {t("settings.edit")}
           </Button>
-        ) : (
+        ) : activeTab === "account" && isEditing ? (
           <div className={`flex gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
             <Button
               onClick={handleSave}
@@ -443,7 +868,7 @@ export default function SettingsPage() {
               {t("settings.cancel")}
             </Button>
           </div>
-        )}
+        ) : null}
       </div>
 
       {/* Tabs */}
@@ -476,6 +901,8 @@ export default function SettingsPage() {
 
       {/* Tab Content */}
       <div className="min-h-[400px]">
+        {activeTab === "company" && renderCompanySettings()}
+        {activeTab === "legal" && renderLegalPages()}
         {activeTab === "account" && renderAccountSettings()}
         {activeTab === "privacy" && renderPrivacySettings()}
         {activeTab === "security" && renderSecuritySettings()}

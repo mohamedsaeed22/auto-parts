@@ -95,6 +95,8 @@
     "save": "Save",
     "cancel": "Cancel",
     "tabs": {
+      "company": "Company",
+      "legal": "Legal",
       "account": "Account",
       "privacy": "Privacy",
       "security": "Security",
@@ -145,6 +147,31 @@
       "riyadh": "Riyadh (GMT+3)",
       "dubai": "Dubai (GMT+4)",
       "london": "London (GMT+0)"
+    },
+    "company": {
+      "title": "Company Information",
+      "name": "Company Name",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "website": "Website",
+      "description": "Description",
+      "noAddress": "No address"
+    },
+    "support": {
+      "title": "Support Information",
+      "email": "Support Email",
+      "phone": "Support Phone"
+    },
+    "social": {
+      "title": "Social Media"
+    },
+    "legal": {
+      "termsOfService": "Terms of Service",
+      "privacyPolicy": "Privacy Policy",
+      "refundPolicy": "Refund Policy",
+      "shippingPolicy": "Shipping Policy",
+      "noContent": "No content available"
     }
   },
   "addresses": {

@@ -94,8 +94,8 @@ export {
 
 // Settings Hooks
 export {
-  useGetSettingsQuery,
-  useGetLegalContentQuery,
+  useGetCompanySettingsQuery,
+  useGetLegalPagesQuery,
   useGetTermsOfServiceQuery,
   useGetPrivacyPolicyQuery,
   useGetRefundPolicyQuery,
