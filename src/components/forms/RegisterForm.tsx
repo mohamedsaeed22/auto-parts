@@ -13,8 +13,8 @@ import {
   type LocationData,
   registrationDefaultValues,
 } from "@/lib/validations/authSchema";
-import LocationPicker from "../LocationPicker";
-import { UserTypeSelector } from "../userPricing/UserTypeSelector";
+import LocationPicker from "../common/LocationPicker";
+import { UserTypeSelector } from "../ecommerce/userPricing/UserTypeSelector";
 import { useFormErrorTranslation } from "@/hooks/useFormErrorTranslation";
 
 interface RegisterFormProps {

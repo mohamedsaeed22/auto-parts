@@ -1,7 +1,7 @@
 import { User, ShoppingCart, Heart, Bookmark } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import LoginDialog from "../LoginDialog";
+import LoginDialog from "@/components/forms/LoginDialog";
 import UserDropdown from "./UserDropdown";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";

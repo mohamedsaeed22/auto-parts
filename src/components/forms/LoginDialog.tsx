@@ -20,7 +20,9 @@ import {
 } from "@/lib/validations/authSchema";
 
 // Import separated auth components
-import { LoginForm, RegisterForm, OtpForm } from "./auth";
+import LoginForm from "./LoginForm";
+import RegisterForm from "./RegisterForm";
+import OtpForm from "./OtpForm";
 import { useSendOtpMutation, useVerifyOtpMutation } from "@/services/hooks";
 import { storage } from "@/lib/storage";
 import { showSuccess, showError, showPromise } from "@/lib/toast";

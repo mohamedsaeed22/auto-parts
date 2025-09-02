@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Cairo } from "next/font/google";
 import "../globals.css";
-import Footer from "@/components/Footer";
-import Header from "@/components/header/Header";
-import Cart from "@/components/Cart";
-import WhatsAppButton from "@/components/WhatsAppButton";
+import Footer from "@/components/layout/Footer";
+import Header from "@/components/layout/header/Header";
+import Cart from "@/components/ecommerce/Cart";
+import WhatsAppButton from "@/components/common/WhatsAppButton";
 import { Providers } from "@/store/providers";
 import { Locale } from "@/lib/types";
 import { getDirection } from "@/lib/utils/index";

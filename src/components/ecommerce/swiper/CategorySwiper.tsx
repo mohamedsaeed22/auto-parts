@@ -4,31 +4,44 @@ import Image from "next/image";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
-import ProductCard from "../product/ProductCard";
+import ProductCard from "../ProductCard";
 import { useTranslation } from "react-i18next";
-import { SectionProduct } from "@/services/api/sectionsApi";
-import { AlertCircle } from "lucide-react";
+import { useGetProductsMutation } from "@/services/hooks";
+import { Product } from "@/services/api/types";
+import { Loader2, AlertCircle } from "lucide-react";
 
-interface SectionSwiperProps {
-  section: {
-    id: number;
-    title: string;
-    image: string;
-    products_count: number;
-    products: SectionProduct[];
-  };
+interface CategoryProps {
+  title: string;
+  backgroundImage: string;
+  categoryId?: number; // Optional category ID to filter products
 }
 
-const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
+const CategorySwiper: React.FC<CategoryProps> = ({
+  title,
+  backgroundImage,
+  categoryId,
+}) => {
   const { t, i18n } = useTranslation("product");
   const isRTL = i18n.language === "ar";
   const swiperRef = useRef<SwiperType | null>(null);
 
-  // Extract products from section
-  const products = section.products || [];
+  // API hook to fetch products
+  const [getProducts, { data: productsResponse, isLoading, error }] =
+    useGetProductsMutation();
+
+  // Extract products from response
+  const products = productsResponse?.data?.items || [];
+
+  // Fetch products on component mount
+  React.useEffect(() => {
+    const filters = categoryId
+      ? { category_id: categoryId, per_page: 10 }
+      : { per_page: 10 };
+    getProducts(filters);
+  }, [categoryId, getProducts]);
 
   // Loading component
-  if (!products || products.length === 0) {
+  if (isLoading) {
     return (
       <section
         className="relative pt-16 pb-11 overflow-hidden rounded-lg"
@@ -37,8 +50,91 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
-            src={section.image}
-            alt={section.title}
+            src={backgroundImage}
+            alt={title}
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="relative mt-60">
+            <div className="flex items-center justify-center min-h-[300px]">
+              <div className="flex flex-col items-center gap-4">
+                <Loader2 className="h-8 w-8 animate-spin text-white" />
+                <p className="text-white">
+                  {t("loadingProducts") || "Loading products..."}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Error component
+  if (error) {
+    return (
+      <section
+        className="relative pt-16 pb-11 overflow-hidden rounded-lg"
+        dir={isRTL ? "rtl" : "ltr"}
+      >
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src={backgroundImage}
+            alt={title}
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="relative mt-60">
+            <div className="flex items-center justify-center min-h-[300px]">
+              <div className="text-center">
+                <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  {t("errorLoadingProducts") || "Error loading products"}
+                </h3>
+                <p className="text-white/80 mb-4">
+                  {t("errorLoadingProductsDesc") ||
+                    "There was an error loading the products. Please try again."}
+                </p>
+                <button
+                  onClick={() => {
+                    const filters = categoryId
+                      ? { category_id: categoryId, per_page: 10 }
+                      : { per_page: 10 };
+                    getProducts(filters);
+                  }}
+                  className="px-4 py-2 bg-white text-black rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  {t("tryAgain") || "Try Again"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // No products found
+  if (products.length === 0) {
+    return (
+      <section
+        className="relative pt-16 pb-11 overflow-hidden rounded-lg"
+        dir={isRTL ? "rtl" : "ltr"}
+      >
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src={backgroundImage}
+            alt={title}
             fill
             className="object-cover"
             priority
@@ -57,7 +153,7 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
                 </h3>
                 <p className="text-white/80">
                   {t("noProductsFoundDesc") ||
-                    "No products are available in this section."}
+                    "No products are available in this category."}
                 </p>
               </div>
             </div>
@@ -75,8 +171,8 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src={section.image}
-          alt={section.title}
+          src={backgroundImage}
+          alt={title}
           fill
           className="object-cover"
           priority
@@ -92,7 +188,7 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
               isRTL ? "right-4" : "left-4"
             }`}
             onClick={() => swiperRef.current?.slidePrev()}
-            aria-label={t("section.previousSlide")}
+            aria-label={t("category.previousSlide")}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -148,24 +244,13 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
               dynamicBullets: true,
             }}
             modules={[Autoplay, Pagination, Navigation]}
-            className="section-swiper"
+            className="category-swiper"
             dir={isRTL ? "rtl" : "ltr"}
           >
-            {products.map((product: SectionProduct) => (
+            {products.map((product: Product) => (
               <SwiperSlide key={product.id}>
                 <div>
-                  <ProductCard
-                    product={{
-                      id: product.id,
-                      name: product.name,
-                      price: parseFloat(product.price),
-                      final_price: product.final_price,
-                      primary_image: product.primary_image,
-                      description: product.hover_text,
-                      product_identifier: product.product_identifier,
-                      is_active: product.is_active,
-                    }}
-                  />
+                  <ProductCard product={product} />
                 </div>
               </SwiperSlide>
             ))}
@@ -177,7 +262,7 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
               isRTL ? "left-4" : "right-4"
             }`}
             onClick={() => swiperRef.current?.slideNext()}
-            aria-label={t("section.nextSlide")}
+            aria-label={t("category.nextSlide")}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -203,7 +288,7 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
         {/* View All Button */}
         <div className="text-center mt-8">
           <button className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors">
-            {t("section.viewAllProducts", { section: section.title })}
+            {t("category.viewAllProducts", { category: title })}
           </button>
         </div>
       </div>
@@ -211,4 +296,4 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
   );
 };
 
-export default SectionSwiper;
+export default CategorySwiper;

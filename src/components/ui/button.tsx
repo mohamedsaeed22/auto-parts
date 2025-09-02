@@ -1,9 +1,7 @@
-"use client";
-
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import { useTranslation } from "react-i18next";
+import { LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -38,35 +36,65 @@ const buttonVariants = cva(
   }
 );
 
-function Button({
-  className,
-  variant,
-  size,
-  asChild = false,
-  children,
-  ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean;
-  }) {
-  const { i18n } = useTranslation();
-  const isRTL = i18n.language === "ar";
-  const Comp = asChild ? Slot : "button";
-
-  return (
-    <Comp
-      data-slot="button"
-      dir={isRTL ? "rtl" : "ltr"}
-      className={cn(
-        buttonVariants({ variant, size }),
-        isRTL && "flex-row-reverse",
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </Comp>
-  );
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+  loading?: boolean;
+  icon?: LucideIcon;
+  iconPosition?: "left" | "right";
+  fullWidth?: boolean;
 }
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      loading = false,
+      icon: Icon,
+      iconPosition = "left",
+      fullWidth = false,
+      disabled,
+      children,
+      ...props
+    },
+    ref
+  ) => {
+    const Comp = asChild ? Slot : "button";
+    const isDisabled = disabled || loading;
+
+    return (
+      <Comp
+        className={cn(
+          buttonVariants({ variant, size }),
+          fullWidth && "w-full",
+          loading && "cursor-not-allowed",
+          className
+        )}
+        ref={ref}
+        disabled={isDisabled}
+        {...props}
+      >
+        {loading ? (
+          <>
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current" />
+            {children && <span className="ml-2">{children}</span>}
+          </>
+        ) : (
+          <>
+            {Icon && iconPosition === "left" && <Icon className="h-4 w-4" />}
+            {children}
+            {Icon && iconPosition === "right" && <Icon className="h-4 w-4" />}
+          </>
+        )}
+      </Comp>
+    );
+  }
+);
+
+Button.displayName = "Button";
 
 export { Button, buttonVariants };

@@ -3,7 +3,7 @@ import { X, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
-import LoginDialog from "../LoginDialog";
+import LoginDialog from "@/components/forms/LoginDialog";
 
 interface NavLink {
   href: string;

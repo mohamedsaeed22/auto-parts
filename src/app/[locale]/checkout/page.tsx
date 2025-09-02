@@ -14,7 +14,7 @@ import {
   OrderSummary,
   EmptyCart,
   OrderComplete,
-} from "@/components/checkout";
+} from "@/components/ecommerce/checkout";
 
 const CheckoutPage = () => {
   const router = useRouter();
