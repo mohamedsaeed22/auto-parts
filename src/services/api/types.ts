@@ -271,6 +271,10 @@ export interface Address {
   updated_at: string;
 }
 
+export interface AddressesResponse {
+  addresses: Address[];
+}
+
 export interface CreateAddressRequest {
   address_type: "home" | "office" | "other";
   name: string;
@@ -411,6 +415,45 @@ export interface Section {
 }
 
 // Settings Types
+export interface CompanyInfo {
+  name: string;
+  description: string;
+  logo: string;
+  email: string;
+  phone: string;
+  address: string;
+  website: string | null;
+}
+
+export interface SupportInfo {
+  email: string | null;
+  phone: string | null;
+}
+
+export interface SocialMedia {
+  facebook: string | null;
+  twitter: string | null;
+  instagram: string | null;
+  linkedin: string | null;
+}
+
+export interface CompanySettings {
+  company_info: CompanyInfo;
+  support_info: SupportInfo;
+  social_media: SocialMedia;
+}
+
+export interface LegalPages {
+  terms_of_service: string;
+  privacy_policy: string;
+  refund_policy: string;
+  shipping_policy: string;
+}
+
+export interface LegalPageContent {
+  content: string;
+}
+
 export interface AppSettings {
   app_name: string;
   app_version: string;

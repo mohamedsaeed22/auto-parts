@@ -1,49 +1,54 @@
 import { api } from "./baseApi";
-import type { ApiResponse, AppSettings, LegalContent } from "./types";
+import type {
+  ApiResponse,
+  CompanySettings,
+  LegalPages,
+  LegalPageContent,
+} from "./types";
 
 export const settingsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    // Get App Settings
-    getSettings: builder.query<ApiResponse<AppSettings>, void>({
+    // Get Company Settings
+    getCompanySettings: builder.query<ApiResponse<CompanySettings>, void>({
       query: () => "/settings",
       providesTags: ["Settings"],
     }),
 
     // Get Legal Pages
-    getLegalContent: builder.query<ApiResponse<LegalContent>, void>({
+    getLegalPages: builder.query<ApiResponse<LegalPages>, void>({
       query: () => "/settings/legal",
-      providesTags: ["Settings"],
+      providesTags: ["LegalPages"],
     }),
 
     // Get Terms of Service
-    getTermsOfService: builder.query<ApiResponse<{ content: string }>, void>({
+    getTermsOfService: builder.query<ApiResponse<LegalPageContent>, void>({
       query: () => "/settings/legal/terms_of_service",
-      providesTags: ["Settings"],
+      providesTags: ["LegalPages"],
     }),
 
     // Get Privacy Policy
-    getPrivacyPolicy: builder.query<ApiResponse<{ content: string }>, void>({
+    getPrivacyPolicy: builder.query<ApiResponse<LegalPageContent>, void>({
       query: () => "/settings/legal/privacy_policy",
-      providesTags: ["Settings"],
+      providesTags: ["LegalPages"],
     }),
 
     // Get Refund Policy
-    getRefundPolicy: builder.query<ApiResponse<{ content: string }>, void>({
+    getRefundPolicy: builder.query<ApiResponse<LegalPageContent>, void>({
       query: () => "/settings/legal/refund_policy",
-      providesTags: ["Settings"],
+      providesTags: ["LegalPages"],
     }),
 
     // Get Shipping Policy
-    getShippingPolicy: builder.query<ApiResponse<{ content: string }>, void>({
+    getShippingPolicy: builder.query<ApiResponse<LegalPageContent>, void>({
       query: () => "/settings/legal/shipping_policy",
-      providesTags: ["Settings"],
+      providesTags: ["LegalPages"],
     }),
   }),
 });
 
 export const {
-  useGetSettingsQuery,
-  useGetLegalContentQuery,
+  useGetCompanySettingsQuery,
+  useGetLegalPagesQuery,
   useGetTermsOfServiceQuery,
   useGetPrivacyPolicyQuery,
   useGetRefundPolicyQuery,

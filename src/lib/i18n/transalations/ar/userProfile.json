@@ -124,7 +124,8 @@
     "addAddress": "إضافة عنوان جديد",
     "editAddress": "تعديل العنوان",
     "home": "المنزل",
-    "work": "العمل",
+    "office": "المكتب",
+    "other": "أخرى",
     "default": "افتراضي",
     "setDefault": "تعيين كافتراضي",
     "name": "الاسم",
@@ -139,7 +140,9 @@
     "delete": "حذف",
     "confirmDelete": "هل أنت متأكد من حذف هذا العنوان؟",
     "add": "إضافة",
-    "update": "تحديث"
+    "update": "تحديث",
+    "noAddresses": "لا توجد عناوين بعد",
+    "addFirstAddress": "أضف عنوانك الأول للبدء."
   },
   "orders": {
     "title": "طلباتي",
