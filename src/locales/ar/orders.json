@@ -1,0 +1,45 @@
+{
+  "title": "طلباتي",
+  "orderNumber": "رقم الطلب",
+  "date": "التاريخ",
+  "status": "الحالة",
+  "paymentStatus": "حالة الدفع",
+  "deliveryAddress": "عنوان التوصيل",
+  "paymentMethod": "طريقة الدفع",
+  "quantity": "الكمية",
+  "subtotal": "المجموع الفرعي",
+  "discount": "الخصم",
+  "total": "المجموع الكلي",
+  "currency": "{{value}} ج.م",
+  "cancel": "إلغاء الطلب",
+  "confirmCancel": "هل أنت متأكد من إلغاء هذا الطلب؟",
+  "noOrders": "لم تقم بإجراء أي طلبات حتى الآن",
+  "continueShopping": "مواصلة التسوق",
+  "retry": "إعادة المحاولة",
+  "previous": "السابق",
+  "next": "التالي",
+  "page": "الصفحة {{current}} من {{total}}",
+  "statuses": {
+    "pending": "قيد الانتظار",
+    "processing": "قيد المعالجة",
+    "shipped": "تم الشحن",
+    "delivered": "تم التوصيل",
+    "cancelled": "ملغي"
+  },
+  "paymentStatuses": {
+    "pending": "قيد الانتظار",
+    "paid": "تم الدفع",
+    "failed": "فشل الدفع"
+  },
+  "paymentMethods": {
+    "cash": "الدفع عند الاستلام",
+    "card": "بطاقة ائتمان/خصم"
+  },
+  "errors": {
+    "loadingFailed": "فشل تحميل الطلبات",
+    "cancelFailed": "فشل إلغاء الطلب"
+  },
+  "success": {
+    "cancelled": "تم إلغاء الطلب بنجاح"
+  }
+}

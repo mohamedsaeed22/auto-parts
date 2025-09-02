@@ -1,0 +1,44 @@
+{
+  "returnRequest": "Return Request",
+  "reason": "Reason",
+  "details": "Details",
+  "selectReason": "Select a reason",
+  "detailsPlaceholder": "Please provide more details about your return request...",
+  "submit": "Submit Request",
+  "cancel": "Cancel",
+  "confirmCancel": "Are you sure you want to cancel this return request?",
+  "quantity": "Quantity",
+  "currency": "${{value}}",
+  "reasons": {
+    "defective": "Product is defective",
+    "wrongItem": "Received wrong item",
+    "notAsDescribed": "Item not as described",
+    "damaged": "Product arrived damaged",
+    "other": "Other reason"
+  },
+  "status": {
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "completed": "Completed"
+  },
+  "empty": {
+    "title": "No Return Requests",
+    "description": "You haven't made any return requests yet. Check your orders to initiate a return.",
+    "action": "View Orders"
+  },
+  "error": {
+    "title": "Error Loading Returns",
+    "description": "There was a problem loading your return requests. Please try again later."
+  },
+  "success": {
+    "created": "Return request submitted successfully",
+    "cancelled": "Return request cancelled successfully"
+  },
+  "validation": {
+    "reasonRequired": "Please select a reason",
+    "reasonLength": "Reason must be less than 255 characters",
+    "detailsMin": "Details must be at least 10 characters",
+    "detailsMax": "Details must be less than 1000 characters"
+  }
+}

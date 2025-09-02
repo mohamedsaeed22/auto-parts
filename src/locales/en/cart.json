@@ -1,0 +1,23 @@
+{
+  "title": "Shopping Cart",
+  "empty": "Your cart is empty",
+  "continueShopping": "Continue Shopping",
+  "clearCart": "Clear Cart",
+  "subtotal": "Subtotal",
+  "discount": "Discount",
+  "total": "Total",
+  "checkout": "Proceed to Checkout",
+  "currency": "${{value}}",
+  "retry": "Try Again",
+  "errors": {
+    "loadingFailed": "Failed to load cart items",
+    "updateFailed": "Failed to update cart item",
+    "removeFailed": "Failed to remove cart item",
+    "clearFailed": "Failed to clear cart"
+  },
+  "success": {
+    "updated": "Cart updated successfully",
+    "removed": "Item removed from cart",
+    "cleared": "Cart cleared successfully"
+  }
+}

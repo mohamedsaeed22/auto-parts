@@ -1,0 +1,48 @@
+{
+  "deliveryAddress": "عنوان التوصيل",
+  "paymentMethod": "طريقة الدفع",
+  "orderSummary": "ملخص الطلب",
+  "subtotal": "المجموع الفرعي",
+  "discount": "الخصم",
+  "total": "المجموع الكلي",
+  "currency": "{{value}} ج.م",
+  "placeOrder": "تأكيد الطلب",
+  "continueShopping": "مواصلة التسوق",
+  "retry": "إعادة المحاولة",
+  "address": {
+    "title": "عناوين التوصيل",
+    "addTitle": "إضافة عنوان جديد",
+    "editTitle": "تعديل العنوان",
+    "add": "إضافة عنوان",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "default": "الافتراضي",
+    "makeDefault": "تعيين كعنوان افتراضي",
+    "name": "الاسم الكامل",
+    "phone": "رقم الهاتف",
+    "address": "العنوان",
+    "city": "المدينة",
+    "state": "المحافظة",
+    "update": "تحديث العنوان",
+    "noAddresses": "لا توجد عناوين",
+    "confirmDelete": "هل أنت متأكد من حذف هذا العنوان؟"
+  },
+  "paymentMethods": {
+    "cash": "الدفع عند الاستلام",
+    "card": "بطاقة ائتمان/خصم"
+  },
+  "errors": {
+    "emptyCart": "سلة التسوق فارغة",
+    "loadingAddressesFailed": "فشل تحميل العناوين",
+    "addAddressFailed": "فشل إضافة العنوان",
+    "updateAddressFailed": "فشل تحديث العنوان",
+    "deleteAddressFailed": "فشل حذف العنوان",
+    "checkoutFailed": "فشل تأكيد الطلب"
+  },
+  "success": {
+    "addressAdded": "تمت إضافة العنوان بنجاح",
+    "addressUpdated": "تم تحديث العنوان بنجاح",
+    "addressDeleted": "تم حذف العنوان بنجاح",
+    "orderPlaced": "تم تأكيد الطلب بنجاح"
+  }
+}

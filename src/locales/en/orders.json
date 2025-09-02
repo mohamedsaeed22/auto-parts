@@ -1,0 +1,45 @@
+{
+  "title": "My Orders",
+  "orderNumber": "Order Number",
+  "date": "Date",
+  "status": "Status",
+  "paymentStatus": "Payment Status",
+  "deliveryAddress": "Delivery Address",
+  "paymentMethod": "Payment Method",
+  "quantity": "Quantity",
+  "subtotal": "Subtotal",
+  "discount": "Discount",
+  "total": "Total",
+  "currency": "${{value}}",
+  "cancel": "Cancel Order",
+  "confirmCancel": "Are you sure you want to cancel this order?",
+  "noOrders": "You haven't placed any orders yet",
+  "continueShopping": "Continue Shopping",
+  "retry": "Try Again",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page {{current}} of {{total}}",
+  "statuses": {
+    "pending": "Pending",
+    "processing": "Processing",
+    "shipped": "Shipped",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled"
+  },
+  "paymentStatuses": {
+    "pending": "Pending",
+    "paid": "Paid",
+    "failed": "Failed"
+  },
+  "paymentMethods": {
+    "cash": "Cash on Delivery",
+    "card": "Credit/Debit Card"
+  },
+  "errors": {
+    "loadingFailed": "Failed to load orders",
+    "cancelFailed": "Failed to cancel order"
+  },
+  "success": {
+    "cancelled": "Order cancelled successfully"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "title": "الملف الشخصي",
+  "personalInfo": "المعلومات الشخصية",
+  "security": "الأمان",
+  "name": "الاسم",
+  "email": "البريد الإلكتروني",
+  "phone": "رقم الهاتف",
+  "currentPassword": "كلمة المرور الحالية",
+  "newPassword": "كلمة المرور الجديدة",
+  "confirmPassword": "تأكيد كلمة المرور",
+  "uploadAvatar": "تحميل الصورة الشخصية",
+  "saveChanges": "حفظ التغييرات",
+  "updatePassword": "تحديث كلمة المرور",
+  "errors": {
+    "loadingFailed": "فشل تحميل الملف الشخصي",
+    "updateFailed": "فشل تحديث الملف الشخصي",
+    "passwordUpdateFailed": "فشل تحديث كلمة المرور",
+    "avatarDeleteFailed": "فشل حذف الصورة الشخصية"
+  },
+  "success": {
+    "updated": "تم تحديث الملف الشخصي بنجاح",
+    "passwordUpdated": "تم تحديث كلمة المرور بنجاح",
+    "avatarDeleted": "تم حذف الصورة الشخصية بنجاح"
+  },
+  "validation": {
+    "nameRequired": "الاسم مطلوب",
+    "nameMin": "يجب أن يكون الاسم 3 أحرف على الأقل",
+    "nameMax": "يجب أن يكون الاسم أقل من 255 حرفاً",
+    "phoneMin": "يجب أن يكون رقم الهاتف 10 أرقام على الأقل",
+    "phoneMax": "يجب أن يكون رقم الهاتف أقل من 20 رقماً",
+    "currentPasswordRequired": "كلمة المرور الحالية مطلوبة",
+    "currentPasswordMin": "يجب أن تكون كلمة المرور الحالية 8 أحرف على الأقل",
+    "newPasswordRequired": "كلمة المرور الجديدة مطلوبة",
+    "newPasswordMin": "يجب أن تكون كلمة المرور الجديدة 8 أحرف على الأقل",
+    "passwordsDoNotMatch": "كلمات المرور غير متطابقة"
+  }
+}
