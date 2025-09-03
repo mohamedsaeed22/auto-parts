@@ -287,74 +287,8 @@ export interface CreateAddressRequest {
 
 export type UpdateAddressRequest = CreateAddressRequest;
 
-// Order Types
-export interface Order {
-  id: number;
-  order_number: string;
-  status:
-    | "pending"
-    | "paid"
-    | "processing"
-    | "shipped"
-    | "completed"
-    | "cancelled"
-    | "refunded";
-  payment_status: "pending" | "paid" | "failed" | "refunded";
-  payment_method:
-    | "cash"
-    | "credit_card"
-    | "paypal"
-    | "stripe"
-    | "bank_transfer";
-  subtotal: number;
-  discount: number;
-  total: number;
-  notes?: string;
-  address: Address;
-  items: OrderItem[];
-  created_at: string;
-  updated_at: string;
-}
-
-export interface OrderItem {
-  id: number;
-  product_id: number;
-  quantity: number;
-  price: number;
-  total: number;
-  product: Product;
-}
-
-export interface CreateOrderRequest {
-  payment_method:
-    | "cash"
-    | "credit_card"
-    | "paypal"
-    | "stripe"
-    | "bank_transfer";
-  address_id: number;
-  coupon_code?: string;
-  notes?: string;
-}
-
-export interface OrdersRequest {
-  status?: string;
-  payment_status?: string;
-  date_from?: string;
-  date_to?: string;
-  per_page?: number;
-  page?: number;
-  sort_by?: string;
-  sort_direction?: "asc" | "desc";
-}
-
-export interface OrderStatistics {
-  total_orders: number;
-  pending_orders: number;
-  completed_orders: number;
-  cancelled_orders: number;
-  total_amount: number;
-}
+// Order Types - REMOVED due to conflicts with ordersApi
+// These types are now defined in ordersApi.ts with the correct structure
 
 // Request Types (Custom Requests) - REMOVED due to conflicts with requestsApi
 // These types are now defined in requestsApi.ts with the correct structure

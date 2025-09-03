@@ -49,22 +49,22 @@ The Brands component now displays all brands from the `/api/brands` endpoint wit
       {
         "id": 1,
         "name": "هوندا",
-        "image": "https://iseek.name/storage/brands/01K3997PTQ0MRGP0BYA9TQ2KCA.png"
+        "image": "https://brave.iseek.name/storage/brands/01K3997PTQ0MRGP0BYA9TQ2KCA.png"
       },
       {
         "id": 2,
         "name": "Brand 2",
-        "image": "https://iseek.name/storage/brands/01K3998J7FG8C76K98JVKH0YY1.png"
+        "image": "https://brave.iseek.name/storage/brands/01K3998J7FG8C76K98JVKH0YY1.png"
       },
       {
         "id": 3,
         "name": "Brand 3",
-        "image": "https://iseek.name/storage/brands/01K3999GAB5K0RGMGV17ZTCZF1.png"
+        "image": "https://brave.iseek.name/storage/brands/01K3999GAB5K0RGMGV17ZTCZF1.png"
       },
       {
         "id": 4,
         "name": "Brand 4",
-        "image": "https://iseek.name/storage/brands/01K399A2XAEBJWGRNFF83RYK71.png"
+        "image": "https://brave.iseek.name/storage/brands/01K399A2XAEBJWGRNFF83RYK71.png"
       }
     ],
     "pagination": {

@@ -228,22 +228,84 @@
     "orderNumber": "Order #",
     "date": "Date",
     "status": "Status",
+    "paymentStatus": "Payment Status",
     "total": "Total",
     "items": "Items",
+    "item": "item",
     "trackingNumber": "Tracking Number",
     "viewDetails": "View Details",
     "downloadInvoice": "Download Invoice",
     "trackOrder": "Track Order",
+    "reorder": "Reorder",
+    "export": "Export",
+    "loading": "Loading orders...",
+    "shippingAddress": "Shipping Address",
+    "pricingSummary": "Pricing Summary",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "shipping": "Shipping",
+    "grandTotal": "Grand Total",
+    "couponApplied": "Coupon Applied",
+    "saved": "You saved",
+    "products": "Order Products",
+    "notes": "Order Notes",
     "statuses": {
       "pending": "Pending",
+      "paid": "Paid",
       "processing": "Processing",
       "shipped": "Shipped",
-      "delivered": "Delivered",
-      "cancelled": "Cancelled"
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "refunded": "Refunded"
+    },
+    "paymentStatuses": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "failed": "Failed",
+      "refunded": "Refunded"
     },
     "quantity": "Qty",
     "price": "Price",
-    "sar": "SAR"
+    "sar": "SAR",
+    "stats": {
+      "totalOrders": "Total Orders",
+      "completedOrders": "Completed",
+      "pendingOrders": "Pending",
+      "totalSpent": "Total Spent"
+    },
+    "filters": {
+      "title": "Filters",
+      "status": "Order Status",
+      "allStatuses": "All Statuses",
+      "paymentStatus": "Payment Status",
+      "allPaymentStatuses": "All Payment Statuses",
+      "dateFrom": "Date From",
+      "dateTo": "Date To",
+      "sortBy": "Sort By",
+      "sortDirection": "Sort Direction",
+      "perPage": "Per Page",
+      "clear": "Clear Filters",
+      "apply": "Apply Filters",
+      "loading": "Loading...",
+      "createdAt": "Created Date",
+      "orderNumber": "Order Number",
+      "descending": "Descending",
+      "ascending": "Ascending"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "showing": "Showing {{from}}-{{to}} of {{total}} results"
+    },
+    "empty": {
+      "title": "No Orders Found",
+      "description": "You haven't placed any orders yet."
+    },
+    "error": {
+      "title": "Error Loading Orders",
+      "description": "Failed to load orders. Please try again.",
+      "retry": "Retry"
+    }
   },
   "points": {
     "title": "My Points",

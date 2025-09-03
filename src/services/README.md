@@ -233,7 +233,7 @@ import type {
 
 The base API is configured with:
 
-- Base URL: `https://iseek.name/api`
+- Base URL: `https://brave.iseek.name/api`
 - Automatic token attachment from auth state
 - Form data handling for file uploads
 - Automatic cache invalidation with tags

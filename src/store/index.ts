@@ -14,6 +14,7 @@ import cartReducer from "./slices/cartSlice";
 import localeReducer from "./slices/localeSlice";
 import { api } from "../services/api";
 import { requestsApi } from "../services/api/requestsApi";
+import { ordersApi } from "../services/api/ordersApi";
 
 // Persist configuration
 const persistConfig = {
@@ -30,13 +31,14 @@ export const store = configureStore({
     locale: localeReducer,
     [api.reducerPath]: api.reducer,
     [requestsApi.reducerPath]: requestsApi.reducer,
+    [ordersApi.reducerPath]: ordersApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(api.middleware, requestsApi.middleware),
+    }).concat(api.middleware, requestsApi.middleware, ordersApi.middleware),
   devTools: process.env.NODE_ENV !== "production",
 });
 

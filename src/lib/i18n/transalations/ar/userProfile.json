@@ -228,22 +228,84 @@
     "orderNumber": "طلب رقم",
     "date": "التاريخ",
     "status": "الحالة",
+    "paymentStatus": "حالة الدفع",
     "total": "المجموع",
     "items": "المنتجات",
+    "item": "منتج",
     "trackingNumber": "رقم التتبع",
     "viewDetails": "عرض التفاصيل",
     "downloadInvoice": "تحميل الفاتورة",
     "trackOrder": "تتبع الطلب",
+    "reorder": "إعادة طلب",
+    "export": "تصدير",
+    "loading": "جاري تحميل الطلبات...",
+    "shippingAddress": "عنوان الشحن",
+    "pricingSummary": "ملخص التسعير",
+    "subtotal": "المجموع الفرعي",
+    "discount": "الخصم",
+    "shipping": "الشحن",
+    "grandTotal": "المجموع الكلي",
+    "couponApplied": "تم تطبيق الكوبون",
+    "saved": "لقد وفرت",
+    "products": "منتجات الطلب",
+    "notes": "ملاحظات الطلب",
     "statuses": {
       "pending": "في الانتظار",
+      "paid": "مدفوع",
       "processing": "قيد المعالجة",
       "shipped": "تم الشحن",
-      "delivered": "تم التوصيل",
-      "cancelled": "ملغى"
+      "completed": "مكتمل",
+      "cancelled": "ملغى",
+      "refunded": "مسترد"
+    },
+    "paymentStatuses": {
+      "pending": "في الانتظار",
+      "paid": "مدفوع",
+      "failed": "فشل",
+      "refunded": "مسترد"
     },
     "quantity": "الكمية",
     "price": "السعر",
-    "sar": "ريال"
+    "sar": "ريال",
+    "stats": {
+      "totalOrders": "إجمالي الطلبات",
+      "completedOrders": "مكتملة",
+      "pendingOrders": "قيد الانتظار",
+      "totalSpent": "إجمالي الإنفاق"
+    },
+    "filters": {
+      "title": "المرشحات",
+      "status": "حالة الطلب",
+      "allStatuses": "جميع الحالات",
+      "paymentStatus": "حالة الدفع",
+      "allPaymentStatuses": "جميع حالات الدفع",
+      "dateFrom": "التاريخ من",
+      "dateTo": "التاريخ إلى",
+      "sortBy": "ترتيب حسب",
+      "sortDirection": "اتجاه الترتيب",
+      "perPage": "لكل صفحة",
+      "clear": "مسح المرشحات",
+      "apply": "تطبيق المرشحات",
+      "loading": "جاري التحميل...",
+      "createdAt": "تاريخ الإنشاء",
+      "orderNumber": "رقم الطلب",
+      "descending": "تنازلي",
+      "ascending": "تصاعدي"
+    },
+    "pagination": {
+      "previous": "السابق",
+      "next": "التالي",
+      "showing": "عرض {{from}}-{{to}} من {{total}} نتيجة"
+    },
+    "empty": {
+      "title": "لا توجد طلبات",
+      "description": "لم تقم بإنشاء أي طلبات بعد."
+    },
+    "error": {
+      "title": "خطأ في تحميل الطلبات",
+      "description": "فشل في تحميل الطلبات. يرجى المحاولة مرة أخرى.",
+      "retry": "إعادة المحاولة"
+    }
   },
   "points": {
     "title": "نقاطي",

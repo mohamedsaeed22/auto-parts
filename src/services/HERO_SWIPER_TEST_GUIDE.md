@@ -47,17 +47,17 @@ The HeroSwiper component now fetches and displays banners from the `/api/banners
     "items": [
       {
         "id": 3,
-        "image": "https://iseek.name/storage/banners/01K3995EDSNYXH38PNJB8TYKF3.webp",
+        "image": "https://brave.iseek.name/storage/banners/01K3995EDSNYXH38PNJB8TYKF3.webp",
         "link": null
       },
       {
         "id": 2,
-        "image": "https://iseek.name/storage/banners/01K39953EQ9NCCJJVSNHH0KGB0.webp",
+        "image": "https://brave.iseek.name/storage/banners/01K39953EQ9NCCJJVSNHH0KGB0.webp",
         "link": "https://auto-parts-eta.vercel.app/"
       },
       {
         "id": 1,
-        "image": "https://iseek.name/storage/banners/01K37RBC5081P4GDDQ9ZS4Z5C5.png",
+        "image": "https://brave.iseek.name/storage/banners/01K37RBC5081P4GDDQ9ZS4Z5C5.png",
         "link": "http://ecommerce-banha.test/admin"
       }
     ],

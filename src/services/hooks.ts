@@ -70,12 +70,7 @@ export {
 } from "./api/favouritesApi";
 
 // Orders Hooks
-export {
-  useGetOrdersQuery,
-  useCreateOrderMutation,
-  useGetOrderQuery,
-  useGetOrderStatisticsQuery,
-} from "./api/ordersApi";
+export { useGetOrdersQuery } from "./api/ordersApi";
 
 // Addresses Hooks
 export {
