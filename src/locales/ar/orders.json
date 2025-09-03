@@ -19,21 +19,81 @@
   "previous": "السابق",
   "next": "التالي",
   "page": "الصفحة {{current}} من {{total}}",
+  "export": "تصدير",
+  "loading": "جاري تحميل الطلبات...",
+  "viewDetails": "عرض التفاصيل",
+  "reorder": "إعادة الطلب",
+  "downloadInvoice": "تحميل الفاتورة",
+  "items": "العناصر",
+  "item": "عنصر",
+  "shippingAddress": "عنوان الشحن",
+  "pricingSummary": "ملخص الأسعار",
+  "shipping": "الشحن",
+  "grandTotal": "المجموع الإجمالي",
+  "couponApplied": "تم تطبيق الكوبون",
+  "saved": "لقد وفرت",
+  "products": "المنتجات",
+  "trackingNumber": "رقم التتبع",
+  "notes": "ملاحظات",
   "statuses": {
     "pending": "قيد الانتظار",
     "processing": "قيد المعالجة",
     "shipped": "تم الشحن",
     "delivered": "تم التوصيل",
-    "cancelled": "ملغي"
+    "cancelled": "ملغي",
+    "paid": "تم الدفع",
+    "completed": "مكتمل",
+    "refunded": "مسترد"
   },
   "paymentStatuses": {
     "pending": "قيد الانتظار",
     "paid": "تم الدفع",
-    "failed": "فشل الدفع"
+    "failed": "فشل الدفع",
+    "refunded": "مسترد"
   },
   "paymentMethods": {
     "cash": "الدفع عند الاستلام",
     "card": "بطاقة ائتمان/خصم"
+  },
+  "filters": {
+    "title": "المرشحات",
+    "status": "الحالة",
+    "allStatuses": "جميع الحالات",
+    "paymentStatus": "حالة الدفع",
+    "allPaymentStatuses": "جميع حالات الدفع",
+    "dateFrom": "التاريخ من",
+    "dateTo": "التاريخ إلى",
+    "sortBy": "ترتيب حسب",
+    "createdAt": "تاريخ الإنشاء",
+    "orderNumber": "رقم الطلب",
+    "total": "المجموع",
+    "sortDirection": "اتجاه الترتيب",
+    "descending": "تنازلي",
+    "ascending": "تصاعدي",
+    "perPage": "لكل صفحة",
+    "clear": "مسح المرشحات",
+    "loading": "جاري التحميل...",
+    "apply": "تطبيق المرشحات"
+  },
+  "stats": {
+    "totalOrders": "إجمالي الطلبات",
+    "completedOrders": "الطلبات المكتملة",
+    "pendingOrders": "الطلبات المعلقة",
+    "totalSpent": "إجمالي الإنفاق"
+  },
+  "pagination": {
+    "previous": "السابق",
+    "next": "التالي",
+    "showing": "عرض {{from}} إلى {{to}} من {{total}} نتيجة"
+  },
+  "error": {
+    "title": "فشل في تحميل الطلبات",
+    "description": "يرجى تحديث الصفحة أو الاتصال بالدعم إذا استمرت المشكلة.",
+    "retry": "إعادة المحاولة"
+  },
+  "empty": {
+    "title": "لم يتم العثور على طلبات",
+    "description": "حاول تعديل المرشحات أو تحقق مرة أخرى لاحقاً للحصول على طلبات جديدة."
   },
   "errors": {
     "loadingFailed": "فشل تحميل الطلبات",

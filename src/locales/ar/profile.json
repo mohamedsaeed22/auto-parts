@@ -57,5 +57,12 @@
     "newPasswordRequired": "كلمة المرور الجديدة مطلوبة",
     "newPasswordMin": "يجب أن تكون كلمة المرور الجديدة 8 أحرف على الأقل",
     "passwordsDoNotMatch": "كلمات المرور غير متطابقة"
+  },
+  "sidebar": {
+    "profile": "الملف الشخصي",
+    "addresses": "العناوين",
+    "orders": "الطلبات",
+    "requests": "الطلبات",
+    "settings": "الإعدادات"
   }
 }

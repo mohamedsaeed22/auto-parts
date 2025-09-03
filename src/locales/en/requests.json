@@ -1,0 +1,43 @@
+{
+  "title": "Requests",
+  "create": "Create Request",
+  "id": "ID",
+  "createdAt": "Created",
+  "submittedAt": "Submitted",
+  "price": "Price",
+  "status": {
+    "draft": "Draft",
+    "pending": "Pending",
+    "submitted": "Submitted",
+    "accepted": "Accepted",
+    "rejected": "Rejected"
+  },
+  "filters": {
+    "title": "Filters",
+    "status": "Status",
+    "allStatuses": "All Statuses",
+    "dateFrom": "Date From",
+    "dateTo": "Date To",
+    "perPage": "Per Page",
+    "clear": "Clear Filters"
+  },
+  "items": {
+    "title": "Request Items",
+    "quantity": "Qty",
+    "created": "Created",
+    "partImage": "Part",
+    "orderImage": "Order",
+    "formImage": "Form"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "error": {
+    "title": "Error Loading Requests",
+    "retry": "Retry"
+  },
+  "empty": {
+    "title": "No Requests Found"
+  }
+}

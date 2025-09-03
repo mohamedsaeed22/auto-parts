@@ -57,5 +57,12 @@
     "newPasswordRequired": "New password is required",
     "newPasswordMin": "New password must be at least 8 characters",
     "passwordsDoNotMatch": "Passwords do not match"
+  },
+  "sidebar": {
+    "profile": "Profile",
+    "addresses": "Addresses",
+    "orders": "Orders",
+    "requests": "Requests",
+    "settings": "Settings"
   }
 }
