@@ -356,35 +356,8 @@ export interface OrderStatistics {
   total_amount: number;
 }
 
-// Request Types (Custom Requests)
-export interface RequestItem {
-  part_name: string;
-  quantity: number;
-  chassis_number: string;
-  part_image_path?: File;
-  order_image_path?: File;
-  form_image_path?: File;
-}
-
-export interface CustomRequest {
-  id: number;
-  status: "draft" | "pending" | "submitted" | "accepted" | "rejected";
-  items: RequestItem[];
-  created_at: string;
-  updated_at: string;
-}
-
-export interface CreateRequestRequest {
-  items: RequestItem[];
-}
-
-export interface RequestsRequest {
-  status?: "draft" | "pending" | "submitted" | "accepted" | "rejected";
-  date_from?: string;
-  date_to?: string;
-  per_page?: number;
-  page?: number;
-}
+// Request Types (Custom Requests) - REMOVED due to conflicts with requestsApi
+// These types are now defined in requestsApi.ts with the correct structure
 
 // Banner & Offer Types
 export interface Banner {

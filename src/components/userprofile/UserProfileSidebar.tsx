@@ -1,12 +1,4 @@
-import {
-  User,
-  MapPin,
-  ShoppingBag,
-  Settings,
-  Bell,
-  Gift,
-  FileText,
-} from "lucide-react";
+import { User, FileText, MapPin, ShoppingBag, Settings } from "lucide-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ProfilePageType } from "@/app/[locale]/userprofile/page";
@@ -34,23 +26,15 @@ export default function UserProfileSidebar({
       icon: <ShoppingBag size={20} />,
     },
     {
+      key: "requests",
+      labelKey: "sidebar.requests",
+      icon: <FileText size={20} />,
+    },
+    {
       key: "settings",
       labelKey: "sidebar.settings",
       icon: <Settings size={20} />,
     },
-    // {
-    //   key: "requests",
-    //   labelKey: "sidebar.requests",
-    //   icon: <FileText size={20} />,
-    // },
-    // { key: "overview", labelKey: "sidebar.overview", icon: <User size={20} /> },
-    // { key: "points", labelKey: "sidebar.points", icon: <Gift size={20} /> },
-    // {
-    //   key: "notifications",
-    //   labelKey: "sidebar.notifications",
-    //   icon: <Bell size={20} />,
-    // },
-    // { key: "wishlist", labelKey: "sidebar.wishlist", icon: <Heart size={20} /> },
   ];
 
   // Responsive: show sidebar on lg+, show top bar on mobile

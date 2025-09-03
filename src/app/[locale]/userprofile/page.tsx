@@ -2,26 +2,18 @@
 
 import { useState } from "react";
 import UserProfileSidebar from "@/components/userprofile/UserProfileSidebar";
-import ProfileOverview from "@/components/userprofile/ProfileOverview";
 import ProfilePageComponent from "@/components/userprofile/ProfilePage";
 import AddressesPage from "@/components/userprofile/AddressesPage";
 import OrdersPage from "@/components/userprofile/OrdersPage";
-import WishlistPage from "@/components/userprofile/WishlistPage";
 import SettingsPage from "@/components/userprofile/SettingsPage";
-import NotificationsPage from "@/components/userprofile/NotificationsPage";
-import PointsPage from "@/components/userprofile/PointsPage";
 import RequestsPage from "@/components/userprofile/RequestsPage";
 import { ProtectedPageGuard } from "@/components/auth/AuthGuard";
 
 export type ProfilePageType =
   | "profile"
-  | "overview"
   | "addresses"
   | "orders"
-  | "wishlist"
-  | "points"
   | "settings"
-  | "notifications"
   | "requests";
 
 export default function UserProfilePage() {
@@ -31,20 +23,12 @@ export default function UserProfilePage() {
     switch (activePage) {
       case "profile":
         return <ProfilePageComponent />;
-      case "overview":
-        return <ProfileOverview />;
       case "addresses":
         return <AddressesPage />;
       case "orders":
         return <OrdersPage />;
-      case "wishlist":
-        return <WishlistPage />;
-      case "points":
-        return <PointsPage />;
       case "settings":
         return <SettingsPage />;
-      case "notifications":
-        return <NotificationsPage />;
       case "requests":
         return <RequestsPage />;
       default:

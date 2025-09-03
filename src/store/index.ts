@@ -13,6 +13,7 @@ import storage from "redux-persist/lib/storage";
 import cartReducer from "./slices/cartSlice";
 import localeReducer from "./slices/localeSlice";
 import { api } from "../services/api";
+import { requestsApi } from "../services/api/requestsApi";
 
 // Persist configuration
 const persistConfig = {
@@ -28,13 +29,14 @@ export const store = configureStore({
     cart: persistedCartReducer,
     locale: localeReducer,
     [api.reducerPath]: api.reducer,
+    [requestsApi.reducerPath]: requestsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(api.middleware),
+    }).concat(api.middleware, requestsApi.middleware),
   devTools: process.env.NODE_ENV !== "production",
 });
 

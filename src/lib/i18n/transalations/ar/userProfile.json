@@ -57,9 +57,61 @@
     "regularUser": "مستخدم عادي"
   },
   "requests": {
-    "title": "الطلبات",
+    "title": "طلبات التسعير",
+    "create": "إنشاء طلب",
     "comingSoon": "قريباً",
-    "description": "ستكون ميزة الطلبات متاحة قريباً."
+    "description": "ستكون ميزة الطلبات متاحة قريباً.",
+    "filters": {
+      "title": "المرشحات",
+      "status": "الحالة",
+      "allStatuses": "جميع الحالات",
+      "dateFrom": "التاريخ من",
+      "dateTo": "التاريخ إلى",
+      "perPage": "لكل صفحة",
+      "clear": "مسح المرشحات",
+      "results": "عرض {{from}}-{{to}} من {{total}} نتيجة"
+    },
+    "status": {
+      "draft": "مسودة",
+      "pending": "قيد الانتظار",
+      "submitted": "تم الإرسال",
+      "accepted": "مقبول",
+      "rejected": "مرفوض"
+    },
+    "id": "الرقم",
+    "userType": "النوع",
+    "createdAt": "تاريخ الإنشاء",
+    "submittedAt": "تاريخ الإرسال",
+    "price": "السعر",
+    "items": {
+      "title": "عناصر الطلب",
+      "quantity": "الكمية",
+      "created": "تاريخ الإنشاء",
+      "partImage": "الصورة",
+      "orderImage": "الطلب",
+      "formImage": "النموذج"
+    },
+    "actions": {
+      "submit": "إرسال",
+      "download": "تحميل",
+      "view": "عرض",
+      "edit": "تعديل",
+      "delete": "حذف"
+    },
+    "pagination": {
+      "previous": "السابق",
+      "next": "التالي",
+      "showing": "عرض {{from}}-{{to}} من {{total}} نتيجة"
+    },
+    "empty": {
+      "title": "لا توجد طلبات",
+      "description": "لا توجد طلبات تطابق المرشحات الحالية."
+    },
+    "error": {
+      "title": "خطأ في تحميل الطلبات",
+      "description": "فشل في تحميل الطلبات. يرجى المحاولة مرة أخرى.",
+      "retry": "إعادة المحاولة"
+    }
   },
   "settings": {
     "title": "الإعدادات",

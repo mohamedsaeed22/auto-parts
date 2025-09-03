@@ -1,10 +1,12 @@
 {
   "sidebar": {
+    "profile": "Profile",
     "overview": "Profile",
     "points": "My Points",
     "notifications": "Notifications",
     "orders": "Orders",
     "addresses": "Addresses",
+    "requests": "Requests",
     "wishlist": "Wishlist",
     "settings": "Settings"
   },
@@ -56,38 +58,60 @@
   },
   "requests": {
     "title": "Requests",
+    "create": "Create Request",
     "comingSoon": "Coming Soon",
-    "description": "The requests feature will be available soon."
-  },
-  "settings": {
-    "save": "Save",
-    "cancel": "Cancel",
-    "userCode": "User Code",
-    "noEmail": "No email",
-    "type": "Type",
-    "shop": "Shop",
-    "workshop": "Workshop",
-    "managerName": "Manager Name",
-    "address": "Address",
-    "city": "City",
-    "state": "State",
-    "zip": "ZIP Code",
-    "taxNumber": "Tax Number",
-    "latitude": "Latitude",
-    "longitude": "Longitude",
-    "commercialRegister": "Commercial Register",
-    "selectedFile": "Selected",
-    "currentFile": "Current",
-    "language": "Language",
-    "registrationComplete": "Registration Complete",
-    "registrationIncomplete": "Registration Incomplete",
-    "googleUser": "Google User",
-    "regularUser": "Regular User"
-  },
-  "requests": {
-    "title": "Requests",
-    "comingSoon": "Coming Soon",
-    "description": "The requests feature will be available soon."
+    "description": "The requests feature will be available soon.",
+    "filters": {
+      "title": "Filters",
+      "status": "Status",
+      "allStatuses": "All Statuses",
+      "dateFrom": "Date From",
+      "dateTo": "Date To",
+      "perPage": "Per Page",
+      "clear": "Clear Filters",
+      "results": "Showing {{from}}-{{to}} of {{total}} results"
+    },
+    "status": {
+      "draft": "Draft",
+      "pending": "Pending",
+      "submitted": "Submitted",
+      "accepted": "Accepted",
+      "rejected": "Rejected"
+    },
+    "id": "ID",
+    "userType": "Type",
+    "createdAt": "Created",
+    "submittedAt": "Submitted",
+    "price": "Price",
+    "items": {
+      "title": "Request Items",
+      "quantity": "Qty",
+      "created": "Created",
+      "partImage": "Part",
+      "orderImage": "Order",
+      "formImage": "Form"
+    },
+    "actions": {
+      "submit": "Submit",
+      "download": "Download",
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "showing": "Showing {{from}}-{{to}} of {{total}} results"
+    },
+    "empty": {
+      "title": "No Requests Found",
+      "description": "No requests match your current filters."
+    },
+    "error": {
+      "title": "Error Loading Requests",
+      "description": "Failed to load requests. Please try again.",
+      "retry": "Retry"
+    }
   },
   "settings": {
     "title": "Settings",
