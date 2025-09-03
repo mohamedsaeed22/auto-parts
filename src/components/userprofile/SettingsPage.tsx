@@ -834,15 +834,13 @@ export default function SettingsPage() {
   );
 
   return (
-    <div className="p-8" dir={isRTL ? "rtl" : "ltr"}>
+    <div className="p-4 sm:p-6 lg:p-8" dir={isRTL ? "rtl" : "ltr"}>
       <div
-        className={`flex justify-between items-center mb-6 ${
-          isRTL ? "flex-row-reverse" : ""
+        className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 ${
+          isRTL ? "sm:flex-row-reverse" : ""
         }`}
       >
-        <h2
-          className={`text-2xl font-bold ${isRTL ? "text-right" : "text-left"}`}
-        >
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
           {t("settings.title")}
         </h2>
         {activeTab === "account" && !isEditing ? (

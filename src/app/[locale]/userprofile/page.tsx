@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import UserProfileSidebar from "@/components/userprofile/UserProfileSidebar";
 import ProfilePageComponent from "@/components/userprofile/ProfilePage";
 import AddressesPage from "@/components/userprofile/AddressesPage";
@@ -18,6 +18,13 @@ export type ProfilePageType =
 
 export default function UserProfilePage() {
   const [activePage, setActivePage] = useState<ProfilePageType>("profile");
+
+  // Ensure profile is always selected by default
+  useEffect(() => {
+    if (!activePage) {
+      setActivePage("profile");
+    }
+  }, [activePage]);
 
   const renderActivePage = () => {
     switch (activePage) {

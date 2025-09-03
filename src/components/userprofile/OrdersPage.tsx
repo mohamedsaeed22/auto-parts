@@ -229,20 +229,25 @@ export default function OrdersPage() {
   const pagination = ordersResponse?.data?.pagination;
 
   return (
-    <div className="p-8" dir={isRTL ? "rtl" : "ltr"}>
+    <div className="p-4 sm:p-6 lg:p-8" dir={isRTL ? "rtl" : "ltr"}>
       {/* Header */}
       <div
-        className={`flex justify-between items-center mb-6 ${
-          isRTL ? "flex-row-reverse" : ""
+        className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 ${
+          isRTL ? "sm:flex-row-reverse" : ""
         }`}
       >
-        <h2
-          className={`text-2xl font-bold ${isRTL ? "text-right" : "text-left"}`}
-        >
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
           {t("orders.title")}
         </h2>
-        <div className={`flex gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
-          <Button variant="outline" className="flex items-center gap-2">
+        <div
+          className={`flex gap-2 w-full sm:w-auto ${
+            isRTL ? "flex-row-reverse" : ""
+          }`}
+        >
+          <Button
+            variant="outline"
+            className="flex items-center gap-2 w-full sm:w-auto"
+          >
             <Download size={16} />
             {t("orders.export")}
           </Button>
@@ -250,17 +255,19 @@ export default function OrdersPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+      <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 mb-6">
         <div
           className={`flex items-center gap-2 mb-4 ${
             isRTL ? "flex-row-reverse" : ""
           }`}
         >
           <Filter size={20} className="text-gray-600" />
-          <h3 className="font-medium">{t("orders.filters.title")}</h3>
+          <h3 className="font-medium text-gray-900">
+            {t("orders.filters.title")}
+          </h3>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Status Filter */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">

@@ -13,6 +13,9 @@ export default function UserProfileSidebar({
   const { t, i18n } = useTranslation("userProfile");
   const isRTL = i18n.language === "ar";
 
+  // Ensure profile is selected by default if no activePage is set
+  const currentActivePage = activePage || "profile";
+
   const menu = [
     { key: "profile", labelKey: "sidebar.profile", icon: <User size={20} /> },
     {
@@ -54,13 +57,20 @@ export default function UserProfileSidebar({
             {menu.map((item) => (
               <li key={item.key}>
                 <button
-                  className={`w-full flex items-center gap-3 px-4 py-2 rounded-md transition-colors font-medium ${
-                    activePage === item.key
-                      ? "bg-primary-100 text-primary-800"
-                      : "hover:bg-gray-100 text-gray-700"
+                  className={`w-full flex items-center gap-3 px-4 py-2 rounded-md transition-all duration-200 font-medium relative ${
+                    currentActivePage === item.key
+                      ? "bg-primary text-white shadow-md transform scale-[1.02]"
+                      : "hover:bg-gray-100 text-gray-700 hover:text-primary-600 hover:scale-[1.01]"
                   }`}
                   onClick={() => onPageChange(item.key as ProfilePageType)}
                 >
+                  {currentActivePage === item.key && (
+                    <div
+                      className={`absolute top-0 bottom-0 w-1  rounded-full ${
+                        isRTL ? "right-0" : "left-0"
+                      }`}
+                    />
+                  )}
                   <span>{item.icon}</span>
                   <span
                     className={`flex-1 ${isRTL ? "text-right" : "text-left"}`}
@@ -82,10 +92,10 @@ export default function UserProfileSidebar({
         {menu.map((item) => (
           <button
             key={item.key}
-            className={`flex flex-col items-center justify-center min-w-[70px] px-2 py-2 rounded-md transition-colors font-medium ${
-              activePage === item.key
-                ? "bg-primary-100 text-primary-800"
-                : "hover:bg-gray-100 text-gray-700"
+            className={`flex flex-col items-center justify-center min-w-[70px] px-2 py-2 rounded-md transition-all duration-200 font-medium ${
+              currentActivePage === item.key
+                ? "bg-primary text-white shadow-md transform scale-105"
+                : "hover:bg-gray-100 text-gray-700 hover:text-primary-600 hover:scale-105"
             }`}
             onClick={() => onPageChange(item.key as ProfilePageType)}
           >

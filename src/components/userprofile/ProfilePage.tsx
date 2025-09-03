@@ -181,23 +181,29 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="p-8" dir={isRTL ? "rtl" : "ltr"}>
-      <div className="flex justify-between items-center mb-6">
-        <h2
-          className={`text-2xl font-bold ${isRTL ? "text-right" : "text-left"}`}
-        >
+    <div className="p-4 sm:p-6 lg:p-8" dir={isRTL ? "rtl" : "ltr"}>
+      <div
+        className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 ${
+          isRTL ? "sm:flex-row-reverse" : ""
+        }`}
+      >
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
           {t("profile.title", "Profile")}
         </h2>
         {!isEditing ? (
           <Button
             onClick={() => setIsEditing(true)}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 w-full sm:w-auto"
           >
             <Edit size={16} />
             {t("profile.edit", "Edit")}
           </Button>
         ) : (
-          <div className="flex gap-2">
+          <div
+            className={`flex flex-col sm:flex-row gap-2 w-full sm:w-auto ${
+              isRTL ? "sm:flex-row-reverse" : ""
+            }`}
+          >
             <Button
               onClick={handleSave}
               className="flex items-center gap-2"
@@ -223,36 +229,48 @@ export default function ProfilePage() {
       </div>
 
       {/* Language Selection */}
-      <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-        <div className="flex items-center gap-3 mb-3">
+      <div className="mb-6 p-4 sm:p-6 bg-gray-50 rounded-lg border border-gray-200">
+        <div
+          className={`flex items-center gap-3 mb-4 ${
+            isRTL ? "flex-row-reverse" : ""
+          }`}
+        >
           <Globe2 size={20} className="text-gray-600" />
           <h3 className="font-medium text-gray-700">
             {t("profile.language", "Language")}
           </h3>
         </div>
-        <div className="flex gap-2">
+        <div
+          className={`flex flex-col sm:flex-row gap-2 ${
+            isRTL ? "sm:flex-row-reverse" : ""
+          }`}
+        >
           <Button
             variant={i18n.language === "ar" ? "default" : "outline"}
             size="sm"
             onClick={() => handleLanguageChange("ar")}
+            className="flex items-center gap-2"
           >
+            <span className="text-lg">🇸🇦</span>
             العربية
           </Button>
           <Button
             variant={i18n.language === "en" ? "default" : "outline"}
             size="sm"
             onClick={() => handleLanguageChange("en")}
+            className="flex items-center gap-2"
           >
+            <span className="text-lg">🇺🇸</span>
             English
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Profile Picture */}
         <div className="md:col-span-2 flex justify-center mb-6">
           <div className="relative">
-            <div className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
+            <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden border-4 border-white shadow-lg">
               {profile.avatar ? (
                 <img
                   src={profile.avatar}
@@ -260,11 +278,15 @@ export default function ProfilePage() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <User size={48} className="text-gray-400" />
+                <User size={32} className="text-gray-400 sm:w-12 sm:h-12" />
               )}
             </div>
             {isEditing && (
-              <label className="absolute bottom-0 right-0 rounded-full w-8 h-8 p-0 bg-primary text-white flex items-center justify-center cursor-pointer hover:bg-primary/90">
+              <label
+                className={`absolute rounded-full w-8 h-8 p-0 bg-primary text-white flex items-center justify-center cursor-pointer hover:bg-primary/90 shadow-lg transition-all duration-200 ${
+                  isRTL ? "bottom-0 left-0" : "bottom-0 right-0"
+                }`}
+              >
                 <Upload size={12} />
                 <input
                   type="file"
@@ -290,7 +312,11 @@ export default function ProfilePage() {
         {/* Basic Information */}
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              className={`block text-sm font-medium text-gray-700 mb-2 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
               {t("profile.name", "Name")} *
             </label>
             {isEditing ? (
@@ -299,12 +325,19 @@ export default function ProfilePage() {
                 name="name"
                 value={formData.name || ""}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+                dir={isRTL ? "rtl" : "ltr"}
               />
             ) : (
-              <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2">
+              <div
+                className={`px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 ${
+                  isRTL ? "flex-row-reverse" : ""
+                }`}
+              >
                 <User size={16} className="text-gray-400" />
-                {profile.name}
+                <span className={isRTL ? "text-right" : "text-left"}>
+                  {profile.name}
+                </span>
               </div>
             )}
           </div>
@@ -526,35 +559,51 @@ export default function ProfilePage() {
 
       {/* Commercial Register Upload */}
       {isEditing && (
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="mt-6 p-4 sm:p-6 bg-gray-50 rounded-lg border border-gray-200">
+          <label
+            className={`block text-sm font-medium text-gray-700 mb-2 ${
+              isRTL ? "text-right" : "text-left"
+            }`}
+          >
             {t("profile.commercialRegister", "Commercial Register")}
           </label>
           <input
             type="file"
             onChange={(e) => handleFileChange(e, "commercial_register")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
             accept="image/*,.pdf"
           />
           {selectedCommercialRegister && (
-            <p className="text-sm text-gray-600 mt-1">
+            <p
+              className={`text-sm text-gray-600 mt-2 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
               {t("profile.selectedFile", "Selected")}:{" "}
-              {selectedCommercialRegister.name}
+              <span className="font-medium">
+                {selectedCommercialRegister.name}
+              </span>
             </p>
           )}
           {profile.commercial_register && (
-            <p className="text-sm text-gray-500 mt-1">
+            <p
+              className={`text-sm text-gray-500 mt-1 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
               {t("profile.currentFile", "Current")}:{" "}
-              {profile.commercial_register.split("/").pop()}
+              <span className="font-medium">
+                {profile.commercial_register.split("/").pop()}
+              </span>
             </p>
           )}
         </div>
       )}
 
       {/* Account Status */}
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-success-50 p-4 rounded-lg text-center border border-success-200">
-          <div className="text-2xl font-bold text-success-600">
+      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="bg-success-50 p-4 sm:p-6 rounded-lg text-center border border-success-200 shadow-sm">
+          <div className="text-2xl sm:text-3xl font-bold text-success-600 mb-2">
             {profile.is_registration_complete ? "✓" : "✗"}
           </div>
           <div className="text-sm text-success-700">
@@ -563,8 +612,8 @@ export default function ProfilePage() {
               : t("profile.registrationIncomplete", "Registration Incomplete")}
           </div>
         </div>
-        <div className="bg-primary-50 p-4 rounded-lg text-center border border-primary-200">
-          <div className="text-2xl font-bold text-primary-600">
+        <div className="bg-primary-50 p-4 sm:p-6 rounded-lg text-center border border-primary-200 shadow-sm">
+          <div className="text-2xl sm:text-3xl font-bold text-primary-600 mb-2">
             {profile.is_google_user ? "✓" : "✗"}
           </div>
           <div className="text-sm text-primary-700">

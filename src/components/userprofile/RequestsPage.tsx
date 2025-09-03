@@ -175,35 +175,43 @@ export default function RequestsPage() {
   }
 
   return (
-    <div className="p-8" dir={isRTL ? "rtl" : "ltr"}>
+    <div className="p-4 sm:p-6 lg:p-8" dir={isRTL ? "rtl" : "ltr"}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
+      <div
+        className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 ${
+          isRTL ? "sm:flex-row-reverse" : ""
+        }`}
+      >
+        <div
+          className={`flex items-center gap-3 ${
+            isRTL ? "flex-row-reverse" : ""
+          }`}
+        >
           <FileText size={24} className="text-primary" />
-          <h2
-            className={`text-2xl font-bold ${
-              isRTL ? "text-right" : "text-left"
-            }`}
-          >
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
             {t("requests.title", "Requests")}
           </h2>
         </div>
-        <Button className="flex items-center gap-2">
+        <Button className="flex items-center gap-2 w-full sm:w-auto">
           <Plus size={16} />
           {t("requests.create", "Create Request")}
         </Button>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg border p-6 mb-6">
-        <div className="flex items-center gap-3 mb-4">
+      <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 mb-6">
+        <div
+          className={`flex items-center gap-3 mb-4 ${
+            isRTL ? "flex-row-reverse" : ""
+          }`}
+        >
           <Filter size={20} className="text-gray-600" />
-          <h3 className="font-medium text-gray-700">
+          <h3 className="font-medium text-gray-900">
             {t("requests.filters.title", "Filters")}
           </h3>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Status Filter */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
