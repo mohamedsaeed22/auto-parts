@@ -168,7 +168,14 @@ export default function ProfilePage() {
   if (!profile) {
     return (
       <div className="p-8 text-center">
-        <p className="text-gray-500">Failed to load profile data.</p>
+        <div className="text-red-600 mb-2">Failed to load profile data</div>
+        <p className="text-gray-600 mb-4">
+          Please try refreshing the page or contact support if the problem
+          persists.
+        </p>
+        <Button onClick={() => refetch()} variant="outline">
+          Retry
+        </Button>
       </div>
     );
   }
@@ -275,7 +282,7 @@ export default function ProfilePage() {
           <label className="block text-sm font-medium text-gray-700 mb-2">
             {t("profile.userCode", "User Code")}
           </label>
-          <div className="px-3 py-2 bg-blue-50 text-blue-700 rounded-md font-mono text-center">
+          <div className="px-3 py-2 bg-primary-50 text-primary-700 rounded-md font-mono text-center border border-primary-200">
             {profile.code}
           </div>
         </div>
@@ -292,7 +299,7 @@ export default function ProfilePage() {
                 name="name"
                 value={formData.name || ""}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               />
             ) : (
               <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2">
@@ -312,7 +319,7 @@ export default function ProfilePage() {
                 name="email"
                 value={formData.email || ""}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 placeholder="Enter email (optional)"
               />
             ) : (
@@ -333,7 +340,7 @@ export default function ProfilePage() {
                 name="phone"
                 value={formData.phone || ""}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               />
             ) : (
               <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2">
@@ -352,7 +359,7 @@ export default function ProfilePage() {
                 name="type"
                 value={formData.type || ""}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="shop">{t("profile.shop", "Shop")}</option>
                 <option value="workshop">
@@ -382,7 +389,7 @@ export default function ProfilePage() {
                 name="manager_name"
                 value={formData.manager_name || ""}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               />
             ) : (
               <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2">
@@ -402,7 +409,7 @@ export default function ProfilePage() {
                 name="address"
                 value={formData.address || ""}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               />
             ) : (
               <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2">
@@ -422,7 +429,7 @@ export default function ProfilePage() {
                 name="city"
                 value={formData.city || ""}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               />
             ) : (
               <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2">
@@ -442,7 +449,7 @@ export default function ProfilePage() {
                 name="state"
                 value={formData.state || ""}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               />
             ) : (
               <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2">
@@ -465,7 +472,7 @@ export default function ProfilePage() {
                 name="zip"
                 value={formData.zip || ""}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               />
             ) : (
               <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2">
@@ -485,7 +492,7 @@ export default function ProfilePage() {
                 name="tax_number"
                 value={formData.tax_number || ""}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               />
             ) : (
               <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2">
@@ -526,7 +533,7 @@ export default function ProfilePage() {
           <input
             type="file"
             onChange={(e) => handleFileChange(e, "commercial_register")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             accept="image/*,.pdf"
           />
           {selectedCommercialRegister && (
@@ -546,21 +553,21 @@ export default function ProfilePage() {
 
       {/* Account Status */}
       <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-green-50 p-4 rounded-lg text-center">
-          <div className="text-2xl font-bold text-green-600">
+        <div className="bg-success-50 p-4 rounded-lg text-center border border-success-200">
+          <div className="text-2xl font-bold text-success-600">
             {profile.is_registration_complete ? "✓" : "✗"}
           </div>
-          <div className="text-sm text-green-700">
+          <div className="text-sm text-success-700">
             {profile.is_registration_complete
               ? t("profile.registrationComplete", "Registration Complete")
               : t("profile.registrationIncomplete", "Registration Incomplete")}
           </div>
         </div>
-        <div className="bg-blue-50 p-4 rounded-lg text-center">
-          <div className="text-2xl font-bold text-blue-600">
+        <div className="bg-primary-50 p-4 rounded-lg text-center border border-primary-200">
+          <div className="text-2xl font-bold text-primary-600">
             {profile.is_google_user ? "✓" : "✗"}
           </div>
-          <div className="text-sm text-blue-700">
+          <div className="text-sm text-primary-700">
             {profile.is_google_user
               ? t("profile.googleUser", "Google User")
               : t("profile.regularUser", "Regular User")}

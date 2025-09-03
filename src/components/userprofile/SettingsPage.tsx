@@ -118,7 +118,16 @@ export default function SettingsPage() {
     if (!companySettings) {
       return (
         <div className="text-center py-8">
-          <p className="text-gray-500">Failed to load company settings.</p>
+          <div className="text-red-600 mb-2">
+            Failed to load company settings
+          </div>
+          <p className="text-gray-600 mb-4">
+            Please try refreshing the page or contact support if the problem
+            persists.
+          </p>
+          <Button onClick={() => refetchCompany()} variant="outline">
+            Retry
+          </Button>
         </div>
       );
     }

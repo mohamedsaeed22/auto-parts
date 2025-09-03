@@ -41,6 +41,7 @@ export default function AddressesPage() {
   const {
     data: addressesResponse,
     isLoading,
+    error,
     refetch,
   } = useGetAddressesQuery();
   const [createAddress, { isLoading: isCreating }] = useCreateAddressMutation();
@@ -168,6 +169,21 @@ export default function AddressesPage() {
     return (
       <div className="p-8 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-8 text-center">
+        <div className="text-red-600 mb-2">Failed to load addresses</div>
+        <p className="text-gray-600 mb-4">
+          Please try refreshing the page or contact support if the problem
+          persists.
+        </p>
+        <Button onClick={() => refetch()} variant="outline">
+          Retry
+        </Button>
       </div>
     );
   }

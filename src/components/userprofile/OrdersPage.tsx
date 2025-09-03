@@ -18,6 +18,7 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -504,7 +505,7 @@ export default function OrdersPage() {
       {/* Loading State */}
       {isLoading && (
         <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
           <p className="mt-2 text-gray-600">{t("orders.loading")}</p>
         </div>
       )}

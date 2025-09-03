@@ -56,7 +56,7 @@ export default function UserProfileSidebar({
                 <button
                   className={`w-full flex items-center gap-3 px-4 py-2 rounded-md transition-colors font-medium ${
                     activePage === item.key
-                      ? "bg-yellow-100 text-yellow-800"
+                      ? "bg-primary-100 text-primary-800"
                       : "hover:bg-gray-100 text-gray-700"
                   }`}
                   onClick={() => onPageChange(item.key as ProfilePageType)}
@@ -84,7 +84,7 @@ export default function UserProfileSidebar({
             key={item.key}
             className={`flex flex-col items-center justify-center min-w-[70px] px-2 py-2 rounded-md transition-colors font-medium ${
               activePage === item.key
-                ? "bg-yellow-100 text-yellow-800"
+                ? "bg-primary-100 text-primary-800"
                 : "hover:bg-gray-100 text-gray-700"
             }`}
             onClick={() => onPageChange(item.key as ProfilePageType)}
