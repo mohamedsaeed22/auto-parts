@@ -25,6 +25,7 @@ import {
 import { useLocale } from "@/hooks/useLocale";
 import { showSuccess, showError } from "@/lib/toast";
 import { Loader2 } from "lucide-react";
+import Image from "next/image";
 
 interface ProfileData {
   id: number;
@@ -184,7 +185,7 @@ export default function ProfilePage() {
     <div className="p-4 sm:p-6 lg:p-8" dir={isRTL ? "rtl" : "ltr"}>
       <div
         className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 ${
-          isRTL ? "sm:flex-row-reverse" : ""
+          isRTL ? "sm:flex-row" : ""
         }`}
       >
         <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
@@ -232,7 +233,7 @@ export default function ProfilePage() {
       <div className="mb-6 p-4 sm:p-6 bg-gray-50 rounded-lg border border-gray-200">
         <div
           className={`flex items-center gap-3 mb-4 ${
-            isRTL ? "flex-row-reverse" : ""
+            isRTL ? "flex-row" : ""
           }`}
         >
           <Globe2 size={20} className="text-gray-600" />
@@ -242,7 +243,7 @@ export default function ProfilePage() {
         </div>
         <div
           className={`flex flex-col sm:flex-row gap-2 ${
-            isRTL ? "sm:flex-row-reverse" : ""
+            isRTL ? "sm:flex-row" : ""
           }`}
         >
           <Button
@@ -272,10 +273,13 @@ export default function ProfilePage() {
           <div className="relative">
             <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden border-4 border-white shadow-lg">
               {profile.avatar ? (
-                <img
+                <Image
                   src={profile.avatar}
                   alt="Profile"
                   className="w-full h-full object-cover"
+                  width={100}
+                  height={100}
+                  loading="lazy"
                 />
               ) : (
                 <User size={32} className="text-gray-400 sm:w-12 sm:h-12" />
