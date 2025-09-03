@@ -22,6 +22,7 @@ import {
   useUpdateProfileMutation,
   useChangeLanguageMutation,
 } from "@/services/api";
+import { useLocale } from "@/hooks/useLocale";
 import { showSuccess, showError } from "@/lib/toast";
 import { Loader2 } from "lucide-react";
 
@@ -64,6 +65,7 @@ export default function ProfilePage() {
   } = useGetProfileQuery();
   const [updateProfile] = useUpdateProfileMutation();
   const [changeLanguage] = useChangeLanguageMutation();
+  const { changeLocale } = useLocale();
 
   const profile = profileResponse?.data?.user as ProfileData | undefined;
 
@@ -143,10 +145,13 @@ export default function ProfilePage() {
 
   const handleLanguageChange = async (locale: "ar" | "en") => {
     try {
+      // First, update the frontend language immediately (like header does)
+      changeLocale(locale);
+
+      // Then, update the user's language preference in the backend
       await changeLanguage({ locale }).unwrap();
+
       showSuccess("Language changed successfully!");
-      // Reload the page to apply language change
-      window.location.reload();
     } catch (error) {
       showError("Failed to change language. Please try again.");
     }
