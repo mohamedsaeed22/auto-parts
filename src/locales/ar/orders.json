@@ -101,5 +101,20 @@
   },
   "success": {
     "cancelled": "تم إلغاء الطلب بنجاح"
-  }
+  },
+  "orderDetails": "تفاصيل الطلب",
+  "orderDate": "تاريخ الطلب",
+  "orderSummary": "ملخص الطلب",
+  "customerName": "اسم العميل",
+  "phone": "الهاتف",
+  "address": "العنوان",
+  "apartment": "الشقة",
+  "sku": "رمز المنتج",
+  "unitPrice": "سعر الوحدة",
+  "pricingDetails": "تفاصيل الأسعار",
+  "tax": "الضريبة",
+  "couponCode": "رمز الكوبون",
+  "savedAmount": "المبلغ المحفوظ",
+  "loadingDetails": "جاري تحميل تفاصيل الطلب...",
+  "errorLoadingDetails": "فشل في تحميل تفاصيل الطلب"
 }

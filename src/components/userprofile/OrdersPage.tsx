@@ -706,7 +706,7 @@ export default function OrdersPage() {
           setSelectedOrder(null);
         }}
         isRTL={isRTL}
-      />
+       />
     </div>
   );
 }

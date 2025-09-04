@@ -101,5 +101,20 @@
   },
   "success": {
     "cancelled": "Order cancelled successfully"
-  }
+  },
+  "orderDetails": "Order Details",
+  "orderDate": "Order Date",
+  "orderSummary": "Order Summary",
+  "customerName": "Customer Name",
+  "phone": "Phone",
+  "address": "Address",
+  "apartment": "Apartment",
+  "sku": "SKU",
+  "unitPrice": "Unit Price",
+  "pricingDetails": "Pricing Details",
+  "tax": "Tax",
+  "couponCode": "Coupon Code",
+  "savedAmount": "Saved Amount",
+  "loadingDetails": "Loading order details...",
+  "errorLoadingDetails": "Failed to load order details"
 }

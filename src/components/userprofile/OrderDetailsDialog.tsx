@@ -10,6 +10,12 @@ import {
   Hash,
   CalendarDays,
   Loader2,
+  Package,
+  Truck,
+  CreditCard,
+  Clock,
+  CheckCircle,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,6 +34,7 @@ interface OrderDetailsDialogProps {
   isOpen: boolean;
   onClose: () => void;
   isRTL: boolean;
+  width?: string;
 }
 
 export default function OrderDetailsDialog({
@@ -35,10 +42,12 @@ export default function OrderDetailsDialog({
   isOpen,
   onClose,
   isRTL,
+  width = "max-w-4xl",
 }: OrderDetailsDialogProps) {
-  const { t } = useTranslation("userProfile");
+  const { t, i18n } = useTranslation("orders");
+  const currentLocale = i18n.language;
+  const isCurrentRTL = currentLocale === "ar";
 
-  // Use the API hook instead of manual fetch
   const {
     data: orderDetailsResponse,
     isLoading,
@@ -50,31 +59,59 @@ export default function OrderDetailsDialog({
   const orderDetails = orderDetailsResponse?.data?.order;
 
   const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat(isRTL ? "ar-SA" : "en-US", {
+    return new Intl.NumberFormat(isCurrentRTL ? "ar-SA" : "en-US", {
       style: "currency",
       currency: currency || "USD",
     }).format(amount);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(isRTL ? "ar-SA" : "en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    return new Date(dateString).toLocaleDateString(
+      isCurrentRTL ? "ar-SA" : "en-US",
+      {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }
+    );
   };
 
-  // Handle reorder
+  // Get status icon and color
+  const getStatusIcon = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "pending":
+        return { icon: Clock, color: "text-amber-600", bg: "bg-amber-50" };
+      case "processing":
+        return { icon: Package, color: "text-blue-600", bg: "bg-blue-50" };
+      case "shipped":
+        return { icon: Truck, color: "text-purple-600", bg: "bg-purple-50" };
+      case "delivered":
+      case "completed":
+        return {
+          icon: CheckCircle,
+          color: "text-green-600",
+          bg: "bg-green-50",
+        };
+      case "cancelled":
+        return { icon: X, color: "text-red-600", bg: "bg-red-50" };
+      case "paid":
+        return {
+          icon: CreditCard,
+          color: "text-emerald-600",
+          bg: "bg-emerald-50",
+        };
+      default:
+        return { icon: Clock, color: "text-gray-600", bg: "bg-gray-50" };
+    }
+  };
+
   const handleReorder = (orderData: DetailedOrder) => {
-    // Add to cart logic would go here
     console.log("Reorder:", orderData);
   };
 
-  // Handle download invoice
   const handleDownloadInvoice = (orderData: DetailedOrder) => {
-    // Download invoice logic would go here
     console.log("Download invoice:", orderData);
   };
 
@@ -82,350 +119,377 @@ export default function OrderDetailsDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold">
-            {t("orders.orderDetails")} - {order.order_number}
+      <DialogContent className={`${width} max-h-[90vh] overflow-y-auto`}>
+        <DialogHeader className="border-b border-gray-200 pb-4">
+          <DialogTitle className="text-2xl font-bold text-[#272627] flex items-center gap-3">
+            <div className="w-2 h-8 bg-[#b3984a] rounded-full"></div>
+            {t("orderDetails")} - {order.order_number}
           </DialogTitle>
         </DialogHeader>
 
         {isLoading ? (
-          <div className="text-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
-            <p className="mt-2 text-gray-600">{t("orders.loadingDetails")}</p>
+          <div className="text-center py-16">
+            <Loader2 className="h-12 w-12 animate-spin text-[#b3984a] mx-auto mb-4" />
+            <p className="text-lg text-gray-600">{t("loadingDetails")}</p>
           </div>
         ) : error ? (
-          <div className="text-center py-8 text-red-600">
-            <p className="mb-2">{t("orders.errorLoadingDetails")}</p>
-            <p className="text-sm text-gray-600">
-              {error?.data?.message ||
-                "An error occurred while loading order details"}
+          <div className="text-center py-16 text-[#e62626]">
+            <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <X size={24} className="text-[#e62626]" />
+            </div>
+            <p className="text-lg font-semibold mb-2">
+              {t("errorLoadingDetails")}
+            </p>
+            <p className="text-gray-600">
+              {error &&
+              "data" in error &&
+              error.data &&
+              typeof error.data === "object" &&
+              "message" in error.data
+                ? String(error.data.message)
+                : "An error occurred while loading order details"}
             </p>
           </div>
         ) : orderDetails ? (
-          <div className="space-y-6">
-            {/* Order Header */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Hash size={16} className="text-gray-600" />
-                    <span className="font-medium">
-                      {t("orders.orderNumber")}
-                    </span>
+          <div className="space-y-8 py-4">
+            {/* Order Header Card */}
+            <div className="bg-gradient-to-r from-[#fdfbf7] to-[#f9f5ed] border border-[#f3e9d8] rounded-xl p-6">
+              <div className="flex flex-wrap items-center justify-between gap-6 mb-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-[#b3984a] rounded-lg flex items-center justify-center">
+                    <Hash size={24} className="text-white" />
                   </div>
-                  <p className="text-lg font-mono">
-                    {orderDetails.order_number}
-                  </p>
+                  <div>
+                    <div className="text-sm text-gray-600 mb-1">
+                      {t("orderNumber")}
+                    </div>
+                    <div className="text-2xl font-bold text-[#272627] font-mono">
+                      {orderDetails.order_number}
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <CalendarDays size={16} className="text-gray-600" />
-                    <span className="font-medium">{t("orders.orderDate")}</span>
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <div className="text-sm text-gray-600 mb-1">
+                      {t("orderDate")}
+                    </div>
+                    <div className="text-lg font-semibold text-[#272627]">
+                      {formatDate(orderDetails.created_at)}
+                    </div>
                   </div>
-                  <p>{formatDate(orderDetails.created_at)}</p>
                 </div>
               </div>
-            </div>
 
-            {/* Status Information */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <div className="text-sm text-gray-600 mb-1">
-                  {t("orders.status")}
+              {/* Status Pills */}
+              <div className="flex flex-wrap gap-3">
+                {(() => {
+                  const statusInfo = getStatusIcon(orderDetails.status);
+                  const StatusIcon = statusInfo.icon;
+                  return (
+                    <div
+                      className={`${statusInfo.bg} ${statusInfo.color} px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2`}
+                    >
+                      <StatusIcon size={16} />
+                      {t("status")}: {orderDetails.status}
+                    </div>
+                  );
+                })()}
+
+                <div className="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
+                  <CreditCard size={16} />
+                  {t("paymentStatus")}: {orderDetails.payment_status}
                 </div>
-                <div className="font-medium text-blue-700 capitalize">
-                  {orderDetails.status}
-                </div>
-              </div>
-              <div className="bg-green-50 p-4 rounded-lg">
-                <div className="text-sm text-gray-600 mb-1">
-                  {t("orders.paymentStatus")}
-                </div>
-                <div className="font-medium text-green-700 capitalize">
-                  {orderDetails.payment_status}
-                </div>
-              </div>
-              <div className="bg-purple-50 p-4 rounded-lg">
-                <div className="text-sm text-gray-600 mb-1">
-                  {t("orders.paymentMethod")}
-                </div>
-                <div className="font-medium text-purple-700 capitalize">
+
+                <div className="bg-purple-50 text-purple-700 px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
+                  <Package size={16} />
                   {orderDetails.payment_method}
                 </div>
               </div>
             </div>
 
-            {/* Shipping Address */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <div className="flex items-center gap-2 mb-3">
-                <MapPin size={18} className="text-gray-600" />
-                <h3 className="font-medium text-lg">
-                  {t("orders.shippingAddress")}
-                </h3>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <User size={14} className="text-gray-600" />
-                    <span className="text-sm text-gray-600">
-                      {t("orders.customerName")}
-                    </span>
-                  </div>
-                  <p className="font-medium">
-                    {orderDetails.address.first_name}{" "}
-                    {orderDetails.address.last_name}
-                  </p>
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Phone size={14} className="text-gray-600" />
-                    <span className="text-sm text-gray-600">
-                      {t("orders.phone")}
-                    </span>
-                  </div>
-                  <p className="font-medium">{orderDetails.address.phone}</p>
-                </div>
-                <div className="md:col-span-2">
+            {/* Order Summary Card */}
+            <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+              <h3 className="text-xl font-bold text-[#272627] mb-6 flex items-center gap-3">
+                <div className="w-1 h-6 bg-[#b3984a] rounded-full"></div>
+                {t("orderSummary")}
+              </h3>
+
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 items-center mb-6">
+                <div className="text-center p-4 bg-gray-50 rounded-lg">
                   <div className="text-sm text-gray-600 mb-1">
-                    {t("orders.address")}
+                    {t("subtotal")}
                   </div>
-                  <p className="font-medium">
-                    {orderDetails.address.address}
-                    {orderDetails.address.apartment &&
-                      `, ${t("orders.apartment")} ${
-                        orderDetails.address.apartment
-                      }`}
-                    <br />
-                    {orderDetails.address.city}
-                    {orderDetails.address.state &&
-                      `, ${orderDetails.address.state}`}
-                    {orderDetails.address.country &&
-                      `, ${orderDetails.address.country}`}
-                    {orderDetails.address.zip_code &&
-                      ` ${orderDetails.address.zip_code}`}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Products */}
-            <div>
-              <h3 className="font-medium text-lg mb-3">
-                {t("orders.products")}
-              </h3>
-              <div className="space-y-3">
-                {orderDetails.products.map((product) => (
-                  <div
-                    key={product.id}
-                    className="border border-gray-200 rounded-lg p-4"
-                  >
-                    <div className="flex items-start gap-4">
-                      <Image
-                        src={`https://brave.iseek.name/storage/${product.product_image}`}
-                        alt={product.product_name}
-                        width={80}
-                        height={80}
-                        className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
-                      />
-                      <div className="flex-1">
-                        <h4 className="font-medium text-lg mb-2">
-                          {product.product_name}
-                        </h4>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                          <div>
-                            <span className="text-gray-600">
-                              {t("orders.sku")}:
-                            </span>
-                            <span className="ml-2 font-medium">
-                              {product.product_sku}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="text-gray-600">
-                              {t("orders.quantity")}:
-                            </span>
-                            <span className="ml-2 font-medium">
-                              {product.quantity}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="text-gray-600">
-                              {t("orders.unitPrice")}:
-                            </span>
-                            <span className="ml-2 font-medium">
-                              {formatCurrency(
-                                product.final_unit_price,
-                                orderDetails.pricing.currency
-                              )}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="text-gray-600">
-                              {t("orders.total")}:
-                            </span>
-                            <span className="ml-2 font-medium text-blue-600">
-                              {formatCurrency(
-                                product.total,
-                                orderDetails.pricing.currency
-                              )}
-                            </span>
-                          </div>
-                        </div>
-                        {product.discount_amount > 0 && (
-                          <div className="mt-2 text-sm text-green-600">
-                            {t("orders.discount")}:{" "}
-                            {formatCurrency(
-                              product.discount_amount,
-                              orderDetails.pricing.currency
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Pricing Details */}
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h3 className="font-medium text-lg mb-3 text-blue-800">
-                {t("orders.pricingDetails")}
-              </h3>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span>{t("orders.subtotal")}:</span>
-                  <span>
+                  <div className="text-lg font-bold text-[#272627]">
                     {formatCurrency(
                       orderDetails.pricing.subtotal,
                       orderDetails.pricing.currency
                     )}
-                  </span>
+                  </div>
                 </div>
+
                 {orderDetails.pricing.discount_amount > 0 && (
-                  <div className="flex justify-between text-green-600">
-                    <span>{t("orders.discount")}:</span>
-                    <span>
+                  <div className="text-center p-4 bg-green-50 rounded-lg">
+                    <div className="text-sm text-gray-600 mb-1">
+                      {t("discount")}
+                    </div>
+                    <div className="text-lg font-bold text-green-600">
                       -
                       {formatCurrency(
                         orderDetails.pricing.discount_amount,
                         orderDetails.pricing.currency
                       )}
-                    </span>
+                    </div>
                   </div>
                 )}
-                <div className="flex justify-between">
-                  <span>{t("orders.shipping")}:</span>
-                  <span>
+
+                <div className="text-center p-4 bg-gray-50 rounded-lg">
+                  <div className="text-sm text-gray-600 mb-1">
+                    {t("shipping")}
+                  </div>
+                  <div className="text-lg font-bold text-[#272627]">
                     {formatCurrency(
                       orderDetails.pricing.shipping_cost,
                       orderDetails.pricing.currency
                     )}
-                  </span>
+                  </div>
                 </div>
+
                 {orderDetails.pricing.tax_amount > 0 && (
-                  <div className="flex justify-between">
-                    <span>{t("orders.tax")}:</span>
-                    <span>
+                  <div className="text-center p-4 bg-gray-50 rounded-lg">
+                    <div className="text-sm text-gray-600 mb-1">{t("tax")}</div>
+                    <div className="text-lg font-bold text-[#272627]">
                       {formatCurrency(
                         orderDetails.pricing.tax_amount,
                         orderDetails.pricing.currency
                       )}
-                    </span>
+                    </div>
                   </div>
                 )}
-                <hr className="my-2" />
-                <div className="flex justify-between text-lg font-bold text-blue-800">
-                  <span>{t("orders.grandTotal")}:</span>
-                  <span>
+
+                <div className="text-center p-6 bg-gradient-to-br from-[#b3984a] to-[#a28a3e] rounded-lg text-white shadow-lg">
+                  <div className="text-sm font-medium mb-1">{t("total")}</div>
+                  <div className="text-2xl font-bold">
                     {formatCurrency(
                       orderDetails.pricing.grand_total,
                       orderDetails.pricing.currency
                     )}
-                  </span>
+                  </div>
                 </div>
               </div>
+
+              {/* Coupon Row */}
+              {orderDetails.coupon?.code && (
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <Percent size={20} className="text-green-600" />
+                      </div>
+                      <div>
+                        <span className="font-semibold text-green-800">
+                          {t("couponApplied")}:{" "}
+                        </span>
+                        <span className="font-mono font-bold text-green-700">
+                          {orderDetails.coupon.code}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm text-green-600">
+                        {t("savedAmount")}
+                      </div>
+                      <div className="text-xl font-bold text-green-700">
+                        -
+                        {formatCurrency(
+                          orderDetails.coupon.discount,
+                          orderDetails.pricing.currency
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Coupon Information */}
-            {orderDetails.coupon?.code && (
-              <div className="bg-green-50 p-4 rounded-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <Percent size={18} className="text-green-600" />
-                  <h3 className="font-medium text-lg text-green-800">
-                    {t("orders.couponApplied")}
-                  </h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <span className="text-sm text-gray-600">
-                      {t("orders.couponCode")}:
-                    </span>
-                    <span className="ml-2 font-medium font-mono">
-                      {orderDetails.coupon.code}
+            {/* Products and Details Grid */}
+            <div className="space-y-6">
+              {/* Shipping Address - Full Width */}
+              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                <h3 className="text-xl font-bold text-[#272627] mb-6 flex items-center gap-3">
+                  <div className="w-8 h-8 bg-[#b3984a] rounded-lg flex items-center justify-center">
+                    <MapPin size={20} className="text-white" />
+                  </div>
+                  {t("shippingAddress")}
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                    <User size={18} className="text-[#b3984a]" />
+                    <span className="font-semibold text-[#272627]">
+                      {orderDetails.address.first_name}{" "}
+                      {orderDetails.address.last_name}
                     </span>
                   </div>
-                  <div>
-                    <span className="text-sm text-gray-600">
-                      {t("orders.savedAmount")}:
+                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                    <Phone size={18} className="text-[#b3984a]" />
+                    <span className="font-medium text-[#272627]">
+                      {orderDetails.address.phone}
                     </span>
-                    <span className="ml-2 font-medium text-green-600">
-                      {formatCurrency(
-                        orderDetails.coupon.discount,
-                        orderDetails.pricing.currency
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                    <MapPin size={18} className="text-[#b3984a] mt-1" />
+                    <div className="text-sm text-[#272627]">
+                      <p className="font-medium">
+                        {orderDetails.address.address}
+                      </p>
+                      {orderDetails.address.apartment && (
+                        <p>
+                          {t("apartment")} {orderDetails.address.apartment}
+                        </p>
                       )}
-                    </span>
+                      <p>
+                        {orderDetails.address.city}
+                        {orderDetails.address.state &&
+                          `, ${orderDetails.address.state}`}
+                        {orderDetails.address.country &&
+                          `, ${orderDetails.address.country}`}
+                        {orderDetails.address.zip_code &&
+                          ` ${orderDetails.address.zip_code}`}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
-            )}
 
-            {/* Additional Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {orderDetails.tracking_number && (
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <div className="text-sm text-gray-600 mb-1">
-                    {t("orders.trackingNumber")}
+              {/* Products - Full Width Rows */}
+              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                <h3 className="text-xl font-bold text-[#272627] mb-6 flex items-center gap-3">
+                  <div className="w-8 h-8 bg-[#b3984a] rounded-lg flex items-center justify-center">
+                    <Package size={20} className="text-white" />
                   </div>
-                  <div className="font-mono text-blue-600">
-                    {orderDetails.tracking_number}
-                  </div>
+                  {t("products")} ({orderDetails.products.length})
+                </h3>
+
+                <div className="space-y-4">
+                  {orderDetails.products.map((product) => (
+                    <div
+                      key={product.id}
+                      className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex items-center gap-4">
+                        <Image
+                          src={`https://brave.iseek.name/storage/${product.product_image}`}
+                          alt={product.product_name}
+                          width={64}
+                          height={64}
+                          className="w-16 h-16 object-cover rounded-lg flex-shrink-0 border border-gray-200"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold text-[#272627] mb-2 truncate">
+                            {product.product_name}
+                          </h4>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+                            <span>
+                              <span className="font-medium">SKU:</span>{" "}
+                              {product.product_sku}
+                            </span>
+                            <span>
+                              <span className="font-medium">Qty:</span>{" "}
+                              {product.quantity}
+                            </span>
+                            <span>
+                              <span className="font-medium">Price:</span>{" "}
+                              {formatCurrency(
+                                product.final_unit_price,
+                                orderDetails.pricing.currency
+                              )}
+                            </span>
+                            {product.discount_amount > 0 && (
+                              <span className="text-green-600 font-medium">
+                                -
+                                {formatCurrency(
+                                  product.discount_amount,
+                                  orderDetails.pricing.currency
+                                )}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-lg font-bold text-[#b3984a]">
+                            {formatCurrency(
+                              product.total,
+                              orderDetails.pricing.currency
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              )}
-              {orderDetails.notes && (
-                <div className="bg-yellow-50 p-4 rounded-lg">
-                  <div className="text-sm text-gray-600 mb-1">
-                    {t("orders.notes")}
+              </div>
+
+              {/* Additional Info - Full Width */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {orderDetails.tracking_number && (
+                  <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <Truck size={20} className="text-blue-600" />
+                      </div>
+                      <span className="font-semibold text-[#272627]">
+                        {t("trackingNumber")}
+                      </span>
+                    </div>
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <span className="font-mono text-blue-700 text-lg">
+                        {orderDetails.tracking_number}
+                      </span>
+                    </div>
                   </div>
-                  <div>{orderDetails.notes}</div>
-                </div>
-              )}
+                )}
+
+                {orderDetails.notes && (
+                  <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                    <span className="font-semibold text-[#272627] block mb-4">
+                      {t("notes")}
+                    </span>
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                      <span className="text-amber-800">
+                        {orderDetails.notes}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Order Actions */}
-            {/* <div className="flex gap-2 pt-4 border-t">
+            {/* Action Buttons */}
+            <div className="flex gap-4 pt-6 border-t border-gray-200">
               <Button
                 variant="outline"
                 onClick={() => handleReorder(orderDetails)}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 flex-1 h-12 text-[#272627] border-[#b3984a] hover:bg-[#b3984a] hover:text-white transition-colors"
               >
-                <ShoppingCart size={16} />
-                {t("orders.reorder")}
+                <ShoppingCart size={18} />
+                {t("reorder")}
               </Button>
               <Button
                 variant="outline"
                 onClick={() => handleDownloadInvoice(orderDetails)}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 flex-1 h-12 text-[#272627] border-[#b3984a] hover:bg-[#b3984a] hover:text-white transition-colors"
               >
-                <Download size={16} />
-                {t("orders.downloadInvoice")}
+                <Download size={18} />
+                {t("downloadInvoice")}
               </Button>
-            </div> */}
+            </div>
           </div>
         ) : (
-          <div className="text-center py-8 text-gray-600">
-            {t("orders.errorLoadingDetails")}
+          <div className="text-center py-16 text-gray-600">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <X size={24} className="text-gray-400" />
+            </div>
+            <p className="text-lg">{t("errorLoadingDetails")}</p>
           </div>
         )}
       </DialogContent>
