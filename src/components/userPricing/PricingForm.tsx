@@ -97,9 +97,9 @@ export function PricingForm({
       </div>
 
       {/* Authentication Status Section */}
-      <div className="mb-6 p-4 rounded-lg border">
+      <>
         {!isAuthenticated ? (
-          <div className="flex items-center gap-3 text-amber-700 bg-amber-50 border-amber-200">
+          <div className="mb-6 p-4 rounded-lg border flex items-center gap-3 text-amber-700 bg-amber-50 border-amber-200">
             <AlertCircle size={20} />
             <div className="flex-1">
               <p className="font-medium">{t("auth.loginRequired")}</p>
@@ -109,7 +109,7 @@ export function PricingForm({
             </div>
           </div>
         ) : !isRegistrationComplete ? (
-          <div className="flex items-center gap-3 text-orange-700 bg-orange-50 border-orange-200">
+          <div className="mb-6 p-4 rounded-lg border flex items-center gap-3 text-orange-700 bg-orange-50 border-orange-200">
             <AlertCircle size={20} />
             <div className="flex-1">
               <p className="font-medium">
@@ -127,18 +127,8 @@ export function PricingForm({
               {t("auth.buttons.completeRegistration")}
             </Button>
           </div>
-        ) : (
-          <div className="flex items-center gap-3 text-green-700 bg-green-50 border-green-200">
-            <CheckCircle size={20} />
-            <div>
-              <p className="font-medium">Ready to submit</p>
-              <p className="text-sm text-green-600">
-                {t("auth.status.readyToSubmit")}
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
+        ) : null}
+      </>
 
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
         {/* Remove User Type Selection section */}
