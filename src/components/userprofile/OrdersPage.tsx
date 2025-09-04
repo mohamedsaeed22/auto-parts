@@ -233,8 +233,8 @@ export default function OrdersPage() {
     console.log("Download invoice:", order);
   };
 
-  const orders = ordersResponse?.data?.items || [];
-  const pagination = ordersResponse?.data?.pagination;
+  const orders = ordersResponse?.data?.data?.items || [];
+  const pagination = ordersResponse?.data?.data?.pagination;
 
   return (
     <div className="p-4 sm:p-6 lg:p-8" dir={isRTL ? "rtl" : "ltr"}>

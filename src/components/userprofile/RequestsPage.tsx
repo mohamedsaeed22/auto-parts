@@ -11,11 +11,7 @@ import {
   DollarSign,
   ChevronLeft,
   ChevronRight,
-  Eye,
-  Edit,
-  Trash2,
   Plus,
-  Download,
   CheckCircle,
   XCircle,
   PlayCircle,
@@ -33,6 +29,12 @@ import {
 } from "@/components/ui/select";
 import { useGetRequestsQuery } from "@/services/api";
 import { Loader2 } from "lucide-react";
+import type {
+  RequestResponse,
+  RequestItemResponse,
+} from "@/services/api/requestsApi";
+import { useAuth } from "@/hooks/useAuth";
+import Image from "next/image";
 
 const statusColors = {
   draft: "bg-gray-100 text-gray-800 border-gray-200",
@@ -53,6 +55,7 @@ const statusIcons = {
 export default function RequestsPage() {
   const { t, i18n } = useTranslation("userProfile");
   const isRTL = i18n.language === "ar";
+  const { user } = useAuth();
 
   const [filters, setFilters] = useState<{
     status: "all" | "draft" | "pending" | "submitted" | "accepted" | "rejected";
@@ -68,8 +71,6 @@ export default function RequestsPage() {
     page: 1,
   });
 
-  const [searchTerm, setSearchTerm] = useState("");
-
   const {
     data: requestsResponse,
     isLoading,
@@ -77,7 +78,7 @@ export default function RequestsPage() {
     refetch,
   } = useGetRequestsQuery(filters);
 
-  const requests = requestsResponse?.data?.requests || [];
+  const requests: RequestResponse[] = requestsResponse?.data?.requests || [];
   const pagination = requestsResponse?.data?.pagination;
 
   const handleFilterChange = (key: string, value: string) => {
@@ -120,7 +121,6 @@ export default function RequestsPage() {
       per_page: 10,
       page: 1,
     });
-    setSearchTerm("");
   };
 
   const formatDate = (dateString: string) => {
@@ -143,6 +143,21 @@ export default function RequestsPage() {
     };
     return statusLabels[status as keyof typeof statusLabels] || status;
   };
+
+  // Get user type from auth or request data
+  const getUserType = (): "shop" | "workshop" => {
+    if (user?.type) {
+      return user.type as "shop" | "workshop";
+    }
+    // Fallback to first request's user type if available
+    if (requests.length > 0) {
+      return requests[0].user_type;
+    }
+    return "shop"; // Default fallback
+  };
+
+  const userType = getUserType();
+  const isWorkshop = userType === "workshop";
 
   if (isLoading) {
     return (
@@ -180,12 +195,8 @@ export default function RequestsPage() {
       <div
         className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6  `}
       >
-        <div
-          className={`flex items-center gap-3 ${
-            isRTL ? "flex-row" : ""
-          }`}
-        >
-           <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+        <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
             {t("requests.title", "Requests")}
           </h2>
         </div>
@@ -331,7 +342,7 @@ export default function RequestsPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          {requests.map((request) => (
+          {requests.map((request: RequestResponse) => (
             <div key={request.id} className="bg-white rounded-lg border p-6">
               {/* Request Header */}
               <div className="flex items-center justify-between mb-4">
@@ -344,6 +355,16 @@ export default function RequestsPage() {
                       #{request.id}
                     </span>
                   </div>
+                  {isWorkshop && request.workshop_code && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-gray-500">
+                        {t("requests.workshopCode", "Workshop Code")}:
+                      </span>
+                      <span className="font-mono text-gray-900 bg-gray-100 px-2 py-1 rounded">
+                        {request.workshop_code}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -405,9 +426,15 @@ export default function RequestsPage() {
                   {request.items.length})
                 </h4>
                 <div className="space-y-3">
-                  {request.items.map((item) => (
+                  {request.items.map((item: RequestItemResponse) => (
                     <div key={item.id} className="bg-gray-50 rounded-lg p-4">
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      <div
+                        className={`grid gap-4 ${
+                          isWorkshop
+                            ? "grid-cols-1 md:grid-cols-4"
+                            : "grid-cols-1 md:grid-cols-3"
+                        }`}
+                      >
                         <div className="flex items-center gap-2">
                           <Package size={16} className="text-gray-400" />
                           <span className="text-sm font-medium">
@@ -420,12 +447,14 @@ export default function RequestsPage() {
                           </span>
                           <span className="font-medium">{item.quantity}</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Car size={16} className="text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {item.chassis_number}
-                          </span>
-                        </div>
+                        {isWorkshop && item.chassis_number && (
+                          <div className="flex items-center gap-2">
+                            <Car size={16} className="text-gray-400" />
+                            <span className="text-sm text-gray-600">
+                              {item.chassis_number}
+                            </span>
+                          </div>
+                        )}
                         <div className="flex items-center gap-2">
                           <span className="text-sm text-gray-500">
                             {t("requests.items.created", "Created")}:
@@ -436,49 +465,56 @@ export default function RequestsPage() {
                         </div>
                       </div>
 
-                      {/* Item Images */}
-                      {(item.part_image_url ||
-                        item.order_image_url ||
-                        item.form_image_url) && (
-                        <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-200">
-                          {item.part_image_url && (
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs text-gray-500">
-                                {t("requests.items.partImage", "Part")}:
-                              </span>
-                              <img
-                                src={item.part_image_url}
-                                alt="Part"
-                                className="w-12 h-12 object-cover rounded border"
-                              />
-                            </div>
-                          )}
-                          {item.order_image_url && (
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs text-gray-500">
-                                {t("requests.items.orderImage", "Order")}:
-                              </span>
-                              <img
-                                src={item.order_image_url}
-                                alt="Order"
-                                className="w-12 h-12 object-cover rounded border"
-                              />
-                            </div>
-                          )}
-                          {item.form_image_url && (
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs text-gray-500">
-                                {t("requests.items.formImage", "Form")}:
-                              </span>
-                              <img
-                                src={item.form_image_url}
-                                alt="Form"
-                                className="w-12 h-12 object-cover rounded border"
-                              />
-                            </div>
-                          )}
-                        </div>
-                      )}
+                      {/* Item Images - Only show for workshop users */}
+                      {isWorkshop &&
+                        (item.part_image_url ||
+                          item.order_image_url ||
+                          item.form_image_url) && (
+                          <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-200">
+                            {item.part_image_url && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-gray-500">
+                                  {t("requests.items.partImage", "Part")}:
+                                </span>
+                                <Image
+                                  src={item.part_image_url}
+                                  alt="Part"
+                                  width={48}
+                                  height={48}
+                                  className="w-12 h-12 object-cover rounded border"
+                                />
+                              </div>
+                            )}
+                            {item.order_image_url && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-gray-500">
+                                  {t("requests.items.orderImage", "Order")}:
+                                </span>
+                                <Image
+                                  src={item.order_image_url}
+                                  alt="Order"
+                                  width={48}
+                                  height={48}
+                                  className="w-12 h-12 object-cover rounded border"
+                                />
+                              </div>
+                            )}
+                            {item.form_image_url && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-gray-500">
+                                  {t("requests.items.formImage", "Form")}:
+                                </span>
+                                <Image
+                                  src={item.form_image_url}
+                                  alt="Form"
+                                  width={48}
+                                  height={48}
+                                  className="w-12 h-12 object-cover rounded border"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        )}
                     </div>
                   ))}
                 </div>

@@ -16,13 +16,34 @@ export interface CreateRequestRequest {
   items: RequestItem[];
 }
 
-// Request response interface
-export interface RequestResponse {
-  id: string;
-  status: string;
-  items: RequestItem[];
+// Request item response interface (from API)
+export interface RequestItemResponse {
+  id: number;
+  request_id: number;
+  part_name: string;
+  quantity: number;
+  chassis_number: string | null;
+  part_image_url: string | null;
+  order_image_url: string | null;
+  form_image_url: string | null;
   created_at: string;
   updated_at: string;
+}
+
+// Request response interface (from API)
+export interface RequestResponse {
+  id: number;
+  user_id: number;
+  user_type: "shop" | "workshop";
+  user_type_label: string;
+  status: "draft" | "pending" | "submitted" | "accepted" | "rejected";
+  submitted_at: string | null;
+  workshop_code: string | null;
+  price: number | null;
+  created_at: string;
+  updated_at: string;
+  items: RequestItemResponse[];
+  can_be_submitted: boolean;
 }
 
 // Requests list request interface
@@ -34,15 +55,20 @@ export interface RequestsRequest {
   page?: number;
 }
 
+// Pagination interface
+export interface PaginationResponse {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+  from: number;
+  to: number;
+}
+
 // Requests list response interface
 export interface RequestsResponse {
-  data: RequestResponse[];
-  meta: {
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-  };
+  requests: RequestResponse[];
+  pagination: PaginationResponse;
 }
 
 export const requestsApi = api.injectEndpoints({

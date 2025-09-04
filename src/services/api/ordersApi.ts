@@ -1,20 +1,5 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { storage } from "@/lib/storage";
-
-// Base query without locale injection for orders
-const baseQueryWithoutLocale = fetchBaseQuery({
-  baseUrl: "https://brave.iseek.name",
-  prepareHeaders: (headers) => {
-    // Get token from storage utility (same as baseApi)
-    const token = storage.getToken();
-
-    if (token) {
-      headers.set("authorization", `Bearer ${token}`);
-    }
-
-    return headers;
-  },
-});
+import { api } from "./baseApi";
+import type { ApiResponse } from "./types";
 
 // Order item interface
 export interface OrderProduct {
@@ -270,13 +255,10 @@ export interface OrdersRequest {
   page?: number;
 }
 
-// Create orders API
-export const ordersApi = createApi({
-  reducerPath: "ordersApi",
-  baseQuery: baseQueryWithoutLocale,
-  tagTypes: ["Orders"],
+// Create orders API using injectEndpoints
+export const ordersApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getOrders: builder.query<OrdersResponse, OrdersRequest>({
+    getOrders: builder.query<ApiResponse<OrdersResponse>, OrdersRequest>({
       query: (params) => {
         const searchParams = new URLSearchParams();
 
@@ -307,12 +289,12 @@ export const ordersApi = createApi({
         }
 
         const queryString = searchParams.toString();
-        return `/api/orders${queryString ? `?${queryString}` : ""}`;
+        return `/orders${queryString ? `?${queryString}` : ""}`;
       },
       providesTags: ["Orders"],
     }),
-    getOrderDetails: builder.query<OrderDetailsResponse, string>({
-      query: (orderNumber) => `/api/orders/${orderNumber}`,
+    getOrderDetails: builder.query<ApiResponse<OrderDetailsResponse>, string>({
+      query: (orderNumber) => `/orders/${orderNumber}`,
       providesTags: (result, error, orderNumber) => [
         { type: "Orders", id: orderNumber },
       ],
