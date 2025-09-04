@@ -131,12 +131,14 @@ export default function SettingsPage() {
     return (
       <div className="space-y-8">
         {/* Company Information */}
-        <div className="bg-white p-6 rounded-lg border">
-          <h3 className={`text-lg font-semibold mb-4 `}>
-            {t("settings.company.title", "Company Information")}
-          </h3>
+        <div
+          className={`bg-white ${
+            isRTL ? "text-right" : "text-left"
+          }`}
+        >
+         
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 p-4 border rounded-lg">
               <Building size={20} className="text-gray-500" />
               <div>
                 <p className="text-sm text-gray-600">
@@ -147,7 +149,7 @@ export default function SettingsPage() {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 p-4 border rounded-lg">
               <Mail size={20} className="text-gray-500" />
               <div>
                 <p className="text-sm text-gray-600">
@@ -158,7 +160,7 @@ export default function SettingsPage() {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 p-4 border rounded-lg">
               <Phone size={20} className="text-gray-500" />
               <div>
                 <p className="text-sm text-gray-600">
@@ -169,7 +171,7 @@ export default function SettingsPage() {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 p-4 border rounded-lg">
               <MapPin size={20} className="text-gray-500" />
               <div>
                 <p className="text-sm text-gray-600">
@@ -181,38 +183,7 @@ export default function SettingsPage() {
                 </p>
               </div>
             </div>
-            {companySettings.company_info.website && (
-              <div className="flex items-center gap-3">
-                <Globe2 size={20} className="text-gray-500" />
-                <div>
-                  <p className="text-sm text-gray-600">
-                    {t("settings.company.website", "Website")}
-                  </p>
-                  <a
-                    href={companySettings.company_info.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium text-blue-600 hover:underline"
-                  >
-                    {companySettings.company_info.website}
-                  </a>
-                </div>
-              </div>
-            )}
           </div>
-          {companySettings.company_info.description && (
-            <div className="mt-4">
-              <p className="text-sm text-gray-600 mb-2">
-                {t("settings.company.description", "Description")}
-              </p>
-              <div
-                className="text-sm text-gray-700"
-                dangerouslySetInnerHTML={{
-                  __html: companySettings.company_info.description,
-                }}
-              />
-            </div>
-          )}
         </div>
 
         {/* Support Information */}

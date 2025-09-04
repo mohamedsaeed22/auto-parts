@@ -8,7 +8,7 @@
     "addresses": "العناوين",
     "wishlist": "المفضلة",
     "settings": "الإعدادات",
-    "requests": "الطلبات"
+    "requests": "طلبات التسعير"
   },
   "profileOverview": {
     "title": "الملف الشخصي",
@@ -122,12 +122,8 @@
     "save": "حفظ",
     "cancel": "إلغاء",
     "tabs": {
-      "company": "الشركة",
-      "legal": "القانونية",
-      "account": "الحساب",
-      "privacy": "الخصوصية",
-      "security": "الأمان",
-      "language": "اللغة والمنطقة"
+      "company": "معلومات الشركة",
+      "legal": "سياسات الشركة"
     },
     "account": {
       "title": "إعدادات الإشعارات",
