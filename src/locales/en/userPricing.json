@@ -1,0 +1,78 @@
+{
+  "form": {
+    "title": "Part Request Form",
+    "subtitle": "Submit your part request for pricing",
+    "userType": {
+      "shop": "Shop",
+      "workshop": "Workshop"
+    },
+    "fields": {
+      "partName": {
+        "label": "Part Name",
+        "placeholder": "Enter the name of the required part"
+      },
+      "quantity": {
+        "label": "Quantity",
+        "placeholder": "Enter the required quantity"
+      },
+      "userCode": {
+        "label": "Workshop Code",
+        "placeholder": "workshop-125521",
+        "helpText": "You can change the code to get additional points"
+      },
+      "chassisNumber": {
+        "label": "Chassis Number",
+        "placeholder": "Enter chassis number",
+        "helpText": "Vehicle identification number"
+      }
+    },
+    "images": {
+      "title": "Required Images",
+      "required": "Required",
+      "partImage": "Part Image",
+      "requestImage": "Request Image",
+      "formImage": "Form Image"
+    },
+    "buttons": {
+      "addToList": "Add to List",
+      "saving": "Saving..."
+    },
+    "addNewItem": "Add New Item",
+    "addItem": "Add Item",
+    "itemsList": "Items List"
+  },
+  "savedForms": {
+    "title": "Saved Requests",
+    "count": "items",
+    "empty": {
+      "title": "No saved requests",
+      "description": "Add items to your list to see them here"
+    },
+    "buttons": {
+      "sendAll": "Send All Requests",
+      "sending": "Sending..."
+    }
+  },
+  "auth": {
+    "loginRequired": "Login Required",
+    "completeRegistrationRequired": "Complete Registration Required",
+    "status": {
+      "loginRequired": "Please login to submit requests",
+      "completeRegistration": "Please complete your registration to submit requests",
+      "backendLoginRequired": "Login required to send requests",
+      "backendCompleteRegistration": "Complete registration required to send requests",
+      "backendReady": "Ready to send requests"
+    },
+    "buttons": {
+      "login": "Login",
+      "completeRegistration": "Complete Registration"
+    }
+  },
+  "success": {
+    "requestSent": "Request sent successfully!"
+  },
+  "errors": {
+    "noDataToSend": "No data to send!",
+    "sendFailed": "Failed to send request. Please try again."
+  }
+}

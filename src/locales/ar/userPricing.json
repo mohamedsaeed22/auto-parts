@@ -1,0 +1,78 @@
+{
+  "form": {
+    "title": "نموذج طلب قطع الغيار",
+    "subtitle": "قدم طلبك للحصول على أسعار قطع الغيار",
+    "userType": {
+      "shop": "متجر",
+      "workshop": "ورشة"
+    },
+    "fields": {
+      "partName": {
+        "label": "اسم القطعة",
+        "placeholder": "أدخل اسم القطعة المطلوبة"
+      },
+      "quantity": {
+        "label": "الكمية",
+        "placeholder": "أدخل الكمية المطلوبة"
+      },
+      "userCode": {
+        "label": "كود الورشة",
+        "placeholder": "workshop-125521",
+        "helpText": "يمكنك تغيير الكود للحصول على نقاط إضافية"
+      },
+      "chassisNumber": {
+        "label": "رقم الشاسيه",
+        "placeholder": "أدخل رقم الشاسيه",
+        "helpText": "رقم تعريف المركبة"
+      }
+    },
+    "images": {
+      "title": "الصور المطلوبة",
+      "required": "مطلوب",
+      "partImage": "صورة القطعة",
+      "requestImage": "صورة الطلب",
+      "formImage": "صورة النموذج"
+    },
+    "buttons": {
+      "addToList": "إضافة إلى القائمة",
+      "saving": "جاري الحفظ..."
+    },
+    "addNewItem": "إضافة عنصر جديد",
+    "addItem": "إضافة عنصر",
+    "itemsList": "قائمة العناصر"
+  },
+  "savedForms": {
+    "title": "الطلبات المحفوظة",
+    "count": "عنصر",
+    "empty": {
+      "title": "لا توجد طلبات محفوظة",
+      "description": "أضف عناصر إلى قائمتك لرؤيتها هنا"
+    },
+    "buttons": {
+      "sendAll": "إرسال جميع الطلبات",
+      "sending": "جاري الإرسال..."
+    }
+  },
+  "auth": {
+    "loginRequired": "تسجيل الدخول مطلوب",
+    "completeRegistrationRequired": "إكمال التسجيل مطلوب",
+    "status": {
+      "loginRequired": "يرجى تسجيل الدخول لإرسال الطلبات",
+      "completeRegistration": "يرجى إكمال التسجيل لإرسال الطلبات",
+      "backendLoginRequired": "تسجيل الدخول مطلوب لإرسال الطلبات",
+      "backendCompleteRegistration": "إكمال التسجيل مطلوب لإرسال الطلبات",
+      "backendReady": "جاهز لإرسال الطلبات"
+    },
+    "buttons": {
+      "login": "تسجيل الدخول",
+      "completeRegistration": "إكمال التسجيل"
+    }
+  },
+  "success": {
+    "requestSent": "تم إرسال الطلب بنجاح!"
+  },
+  "errors": {
+    "noDataToSend": "لا توجد بيانات لإرسالها!",
+    "sendFailed": "فشل في إرسال الطلب. يرجى المحاولة مرة أخرى."
+  }
+}

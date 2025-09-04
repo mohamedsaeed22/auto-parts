@@ -1,85 +1,54 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { storage } from "@/lib/storage";
+import { api } from "./baseApi";
+import type { ApiResponse } from "./types";
 
+// Request item interface based on Postman API
 export interface RequestItem {
-  id: number;
-  request_id: number;
   part_name: string;
-  quantity: number;
-  chassis_number: string;
-  part_image_url: string | null;
-  order_image_url: string | null;
-  form_image_url: string | null;
-  created_at: string;
-  updated_at: string;
+  quantity: string;
+  chassis_number?: string;
+  part_image_path?: File;
+  order_image_path?: File;
+  form_image_path?: File;
 }
 
-export interface Request {
-  id: number;
-  user_id: number;
-  user_type: "shop" | "workshop";
-  user_type_label: string;
-  status: "draft" | "pending" | "submitted" | "accepted" | "rejected";
-  submitted_at: string | null;
-  workshop_code: string | null;
-  price: number | null;
-  created_at: string;
-  updated_at: string;
+// Request creation interface
+export interface CreateRequestRequest {
   items: RequestItem[];
-  can_be_submitted: boolean;
 }
 
-export interface RequestsResponse {
-  code: number;
-  message: string;
-  errors: string[];
-  data: {
-    requests: Request[];
-    pagination: {
-      current_page: number;
-      last_page: number;
-      per_page: number;
-      total: number;
-      from: number;
-      to: number;
-    };
-  };
+// Request response interface
+export interface RequestResponse {
+  id: string;
+  status: string;
+  items: RequestItem[];
+  created_at: string;
+  updated_at: string;
 }
 
+// Requests list request interface
 export interface RequestsRequest {
-  status?: "all" | "draft" | "pending" | "submitted" | "accepted" | "rejected";
+  status?: string;
   date_from?: string;
   date_to?: string;
   per_page?: number;
   page?: number;
 }
 
-// Create a simple base query without locale injection
-const baseQueryWithoutLocale = fetchBaseQuery({
-  baseUrl: "https://brave.iseek.name/api",
-  prepareHeaders: (headers) => {
-    // Get token from storage utility
-    const token = storage.getToken();
+// Requests list response interface
+export interface RequestsResponse {
+  data: RequestResponse[];
+  meta: {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+  };
+}
 
-    if (token) {
-      headers.set("authorization", `Bearer ${token}`);
-    }
-
-    // Set default content type
-    if (!headers.get("content-type")) {
-      headers.set("content-type", "application/json");
-    }
-
-    return headers;
-  },
-});
-
-export const requestsApi = createApi({
-  reducerPath: "requestsApi",
-  baseQuery: baseQueryWithoutLocale,
-  tagTypes: ["Requests"],
+export const requestsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getRequests: builder.query<RequestsResponse, RequestsRequest>({
+    // Get all requests
+    getRequests: builder.query<ApiResponse<RequestsResponse>, RequestsRequest>({
       query: (params: RequestsRequest) => {
         const searchParams = new URLSearchParams();
 
@@ -98,7 +67,58 @@ export const requestsApi = createApi({
       },
       providesTags: ["Requests"],
     }),
+
+    // Create new request
+    createRequest: builder.mutation<
+      ApiResponse<RequestResponse>,
+      CreateRequestRequest
+    >({
+      query: (data) => {
+        const formData = new FormData();
+
+        // Add items array to form data
+        data.items.forEach((item, index) => {
+          formData.append(`items[${index}][part_name]`, item.part_name);
+          formData.append(`items[${index}][quantity]`, item.quantity);
+
+          if (item.chassis_number) {
+            formData.append(
+              `items[${index}][chassis_number]`,
+              item.chassis_number
+            );
+          }
+
+          if (item.part_image_path) {
+            formData.append(
+              `items[${index}][part_image_path]`,
+              item.part_image_path
+            );
+          }
+
+          if (item.order_image_path) {
+            formData.append(
+              `items[${index}][order_image_path]`,
+              item.order_image_path
+            );
+          }
+
+          if (item.form_image_path) {
+            formData.append(
+              `items[${index}][form_image_path]`,
+              item.form_image_path
+            );
+          }
+        });
+
+        return {
+          url: "/requests",
+          method: "POST",
+          body: formData,
+        };
+      },
+      invalidatesTags: ["Requests"],
+    }),
   }),
 });
 
-export const { useGetRequestsQuery } = requestsApi;
+export const { useGetRequestsQuery, useCreateRequestMutation } = requestsApi;

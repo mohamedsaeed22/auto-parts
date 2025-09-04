@@ -82,7 +82,10 @@ export {
 } from "./api/addressesApi";
 
 // Requests Hooks
-export { useGetRequestsQuery } from "./api/requestsApi";
+export {
+  useGetRequestsQuery,
+  useCreateRequestMutation,
+} from "./api/requestsApi";
 
 // Settings Hooks
 export {

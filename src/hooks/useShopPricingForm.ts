@@ -4,8 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/hooks/useLocale";
 import { storage } from "@/lib/storage";
-import { showError } from "@/lib/toast";
+import { showError, showSuccess } from "@/lib/toast";
 import { useTranslation } from "react-i18next";
+import { useCreateRequestMutation } from "@/services/hooks";
+import type { RequestItem } from "@/services/api/requestsApi";
 import {
   shopPricingSchema,
   type ShopPricingFormData,
@@ -34,6 +36,9 @@ export function useShopPricingForm() {
   const router = useRouter();
   const { currentLocale } = useLocale();
   const { t } = useTranslation("userPricing");
+
+  // API mutation for creating requests
+  const [createRequest] = useCreateRequestMutation();
 
   const form = useForm<ShopPricingFormData>({
     resolver: zodResolver(shopPricingSchema),
@@ -155,47 +160,50 @@ export function useShopPricingForm() {
 
   const sendAllToBackend = async () => {
     // Check authentication before allowing backend operation
-    if (!handleAuthCheck("sendToBackend")) {
+    if (!handleAuthCheck()) {
       return;
     }
 
     if (savedForms.length === 0) {
-      alert("لا توجد بيانات لإرسالها!");
+      showError(t("errors.noDataToSend") || "لا توجد بيانات لإرسالها!");
       return;
     }
 
     setIsSendingToBackend(true);
 
     try {
-      // Prepare data for backend
-      const dataToSend = savedForms.map((form) => ({
-        id: form.id,
-        userType: form.userType,
-        userCode: form.userCode,
-        partName: form.partName,
-        hasPartImage: form.partImage !== undefined,
-        partImageName: form.partImage?.name || null,
-        hasRequestImage: form.requestImage !== undefined,
-        requestImageName: form.requestImage?.name || null,
-        hasFormImage: form.formImage !== undefined,
-        formImageName: form.formImage?.name || null,
-        quantity: form.quantity,
-        chassisNumber: form.chassisNumber,
-        submittedAt: form.submittedAt.toISOString(),
-      }));
+      // Prepare items array for shop (multiple items)
+      const items: RequestItem[] = [];
 
-      console.log("Sending shop data to backend:", dataToSend);
-      console.log("Full saved shop forms with images:", savedForms);
+      savedForms.forEach((form) => {
+        form.items.forEach((item) => {
+          items.push({
+            part_name: item.partName,
+            quantity: item.quantity,
+            // Shop doesn't need chassis_number, part_image_path, order_image_path, form_image_path
+          });
+        });
+      });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      console.log("Sending shop items to backend:", items);
+
+      // Send to API
+      const result = await createRequest({ items }).unwrap();
 
       // Clear saved forms after successful submission
       setSavedForms([]);
-      alert("تم إرسال جميع البيانات بنجاح!");
-    } catch (error) {
+      showSuccess(t("success.requestSent") || "تم إرسال الطلب بنجاح!");
+
+      console.log("Request created successfully:", result);
+    } catch (error: unknown) {
       console.error("Error sending data:", error);
-      alert("حدث خطأ أثناء الإرسال. حاول مرة أخرى.");
+      const errorMessage =
+        (error as { data?: { message?: string }; message?: string })?.data
+          ?.message ||
+        (error as { message?: string })?.message ||
+        t("errors.sendFailed") ||
+        "حدث خطأ أثناء الإرسال. حاول مرة أخرى.";
+      showError(errorMessage);
     } finally {
       setIsSendingToBackend(false);
     }

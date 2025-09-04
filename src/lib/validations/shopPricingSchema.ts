@@ -22,6 +22,22 @@ const optionalFileSchema = z
     return ACCEPTED_IMAGE_TYPES.includes(file.type);
   }, "نوع الملف يجب أن يكون JPG, PNG, أو GIF");
 
+// Shop item schema
+const shopItemSchema = z.object({
+  partName: z
+    .string()
+    .min(1, "اسم القطعة مطلوب")
+    .min(2, "اسم القطعة يجب أن يكون أكثر من حرف واحد")
+    .max(100, "اسم القطعة طويل جداً"),
+  quantity: z
+    .string()
+    .min(1, "الكمية مطلوبة")
+    .refine((val) => {
+      const num = parseInt(val);
+      return !isNaN(num) && num > 0;
+    }, "الكمية يجب أن تكون رقم موجب"),
+});
+
 // Shop-specific schema (only part name and quantity required)
 export const shopPricingSchema = z.object({
   userType: z.literal("shop"),
@@ -37,6 +53,8 @@ export const shopPricingSchema = z.object({
       const num = parseInt(val);
       return !isNaN(num) && num > 0;
     }, "الكمية يجب أن تكون رقم موجب"),
+  // Items array for shop (multiple items)
+  items: z.array(shopItemSchema).min(1, "يجب إضافة عنصر واحد على الأقل"),
   // Optional fields for shop (not shown in UI but kept for compatibility)
   userCode: z.string().optional(),
   chassisNumber: z.string().optional(),
@@ -53,6 +71,7 @@ export const shopDefaultValues: ShopPricingFormData = {
   userType: "shop",
   partName: "",
   quantity: "",
+  items: [],
   userCode: "",
   chassisNumber: "",
   partImage: undefined,
