@@ -33,10 +33,15 @@ import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import { useGetOrdersQuery } from "@/services/api/ordersApi";
 import type { Order, OrdersRequest } from "@/services/api/ordersApi";
+import OrderDetailsDialog from "./OrderDetailsDialog";
 
 export default function OrdersPage() {
   const { t, i18n } = useTranslation("userProfile");
   const isRTL = i18n.language === "ar";
+
+  // State for order details dialog
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
 
   // Filters state
   const [filters, setFilters] = useState<OrdersRequest>({
@@ -215,8 +220,8 @@ export default function OrdersPage() {
 
   // Handle view order details
   const handleViewDetails = (order: Order) => {
-    // View order details logic would go here
-    console.log("View details:", order);
+    setSelectedOrder(order);
+    setIsDetailsDialogOpen(true);
   };
 
   // Handle download invoice
@@ -534,9 +539,9 @@ export default function OrdersPage() {
         </div>
       )}
 
-      {/* Orders List */}
+      {/* Orders List - Simplified */}
       {!isLoading && !error && orders.length > 0 && (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {orders.map((order) => {
             const statusInfo = getStatusInfo(order.status);
             const paymentStatusInfo = getPaymentStatusInfo(
@@ -547,293 +552,80 @@ export default function OrdersPage() {
             return (
               <div
                 key={order.id}
-                className="border border-gray-200 rounded-lg p-6 bg-white"
+                className="border border-gray-200 rounded-lg p-4 bg-white hover:shadow-md transition-shadow"
               >
-                {/* Order Header */}
-                <div
-                  className={`flex justify-between items-start mb-4 ${
-                    isRTL ? "flex-row-reverse" : ""
-                  }`}
-                >
+                <div className="flex items-center justify-between">
+                  {/* Order Basic Info */}
+                  <div className="flex-1">
+                    <div className="flex items-center gap-4 mb-3">
+                      <div className="flex items-center gap-2">
+                        <StatusIcon size={16} className={statusInfo.color} />
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${statusInfo.bg} ${statusInfo.color}`}
+                        >
+                          {statusInfo.text}
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {formatDate(order.created_at)}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <div className="text-sm text-gray-600 mb-1">
+                          {t("orders.orderNumber")}
+                        </div>
+                        <div className="font-medium font-mono">
+                          {order.order_number}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-600 mb-1">
+                          {t("orders.total")}
+                        </div>
+                        <div className="font-medium text-lg text-blue-600">
+                          {formatCurrency(
+                            order.pricing.grand_total,
+                            order.pricing.currency
+                          )}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-600 mb-1">
+                          {t("orders.items")}
+                        </div>
+                        <div className="font-medium">
+                          {order.total_items} {t("orders.item")}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
                   <div
-                    className={`flex gap-2 ${isRTL ? "flex-row-reverse" : ""}`}
+                    className={`flex flex-col gap-2 ${isRTL ? "mr-4" : "ml-4"}`}
                   >
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => handleViewDetails(order)}
-                      className="flex items-center gap-2"
+                      className="flex items-center gap-2 min-w-[100px]"
                     >
                       <Eye size={14} />
                       {t("orders.viewDetails")}
                     </Button>
-                    <Button
+                    {/* <Button
                       size="sm"
                       variant="outline"
                       onClick={() => handleReorder(order)}
-                      className="flex items-center gap-2"
+                      className="flex items-center gap-2 min-w-[100px]"
                     >
                       <ShoppingCart size={14} />
                       {t("orders.reorder")}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleDownloadInvoice(order)}
-                      className="flex items-center gap-2"
-                    >
-                      <Download size={14} />
-                      {t("orders.downloadInvoice")}
-                    </Button>
-                  </div>
-                  <div className={isRTL ? "text-right" : "text-left"}>
-                    <div className="font-medium text-lg">
-                      {t("orders.orderNumber")} {order.order_number}
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      {t("orders.date")}: {formatDate(order.created_at)}
-                    </div>
+                    </Button> */}
                   </div>
                 </div>
-
-                {/* Order Info Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                  {/* Status */}
-                  <div className={isRTL ? "text-right" : "text-left"}>
-                    <div className="text-sm text-gray-600 mb-1">
-                      {t("orders.status")}
-                    </div>
-                    <div
-                      className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${statusInfo.bg} ${statusInfo.color}`}
-                    >
-                      <StatusIcon size={14} />
-                      {statusInfo.text}
-                    </div>
-                  </div>
-
-                  {/* Payment Status */}
-                  <div className={isRTL ? "text-right" : "text-left"}>
-                    <div className="text-sm text-gray-600 mb-1">
-                      {t("orders.paymentStatus")}
-                    </div>
-                    <div
-                      className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${paymentStatusInfo.bg} ${paymentStatusInfo.color}`}
-                    >
-                      {paymentStatusInfo.text}
-                    </div>
-                  </div>
-
-                  {/* Total */}
-                  <div className={isRTL ? "text-right" : "text-left"}>
-                    <div className="text-sm text-gray-600 mb-1">
-                      {t("orders.total")}
-                    </div>
-                    <div className="font-medium">
-                      {formatCurrency(
-                        order.pricing.grand_total,
-                        order.pricing.currency
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Items Count */}
-                  <div className={isRTL ? "text-right" : "text-left"}>
-                    <div className="text-sm text-gray-600 mb-1">
-                      {t("orders.items")}
-                    </div>
-                    <div className="font-medium">
-                      {order.total_items} {t("orders.item")}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Address Info */}
-                <div className="bg-gray-50 p-3 rounded-lg mb-4">
-                  <div
-                    className={`flex items-center gap-2 mb-2 ${
-                      isRTL ? "flex-row-reverse" : ""
-                    }`}
-                  >
-                    <MapPin size={16} className="text-gray-600" />
-                    <span className="text-sm font-medium text-gray-700">
-                      {t("orders.shippingAddress")}
-                    </span>
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    {order.address.first_name} {order.address.last_name} -{" "}
-                    {order.address.phone}
-                    <br />
-                    {order.address.address}, {order.address.city}{" "}
-                    {order.address.zip_code}
-                  </div>
-                </div>
-
-                {/* Pricing Summary */}
-                <div className="bg-blue-50 p-3 rounded-lg mb-4">
-                  <div
-                    className={`flex items-center gap-2 mb-2 ${
-                      isRTL ? "flex-row-reverse" : ""
-                    }`}
-                  >
-                    <DollarSign size={16} className="text-blue-600" />
-                    <span className="text-sm font-medium text-blue-700">
-                      {t("orders.pricingSummary")}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
-                    <div>
-                      <span className="text-gray-600">
-                        {t("orders.subtotal")}:
-                      </span>
-                      <span className="ml-2 font-medium">
-                        {formatCurrency(
-                          order.pricing.subtotal,
-                          order.pricing.currency
-                        )}
-                      </span>
-                    </div>
-                    {order.pricing.discount_amount > 0 && (
-                      <div>
-                        <span className="text-gray-600">
-                          {t("orders.discount")}:
-                        </span>
-                        <span className="ml-2 font-medium text-green-600">
-                          -
-                          {formatCurrency(
-                            order.pricing.discount_amount,
-                            order.pricing.currency
-                          )}
-                        </span>
-                      </div>
-                    )}
-                    <div>
-                      <span className="text-gray-600">
-                        {t("orders.shipping")}:
-                      </span>
-                      <span className="ml-2 font-medium">
-                        {formatCurrency(
-                          order.pricing.shipping_cost,
-                          order.pricing.currency
-                        )}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">
-                        {t("orders.grandTotal")}:
-                      </span>
-                      <span className="ml-2 font-medium text-blue-600">
-                        {formatCurrency(
-                          order.pricing.grand_total,
-                          order.pricing.currency
-                        )}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Coupon Info */}
-                {order.coupon.code && (
-                  <div className="bg-green-50 p-3 rounded-lg mb-4">
-                    <div
-                      className={`flex items-center gap-2 mb-2 ${
-                        isRTL ? "flex-row-reverse" : ""
-                      }`}
-                    >
-                      <Percent size={16} className="text-green-600" />
-                      <span className="text-sm font-medium text-green-700">
-                        {t("orders.couponApplied")}: {order.coupon.code}
-                      </span>
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      {t("orders.saved")}:{" "}
-                      {formatCurrency(
-                        order.coupon.discount,
-                        order.pricing.currency
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Order Products */}
-                <div className="space-y-3">
-                  <h4 className="font-medium text-gray-700">
-                    {t("orders.products")}
-                  </h4>
-                  {order.products.map((product) => (
-                    <div
-                      key={product.id}
-                      className={`flex items-center gap-4 p-3 bg-gray-50 rounded-lg ${
-                        isRTL ? "flex-row-reverse" : ""
-                      }`}
-                    >
-                      <Image
-                        src={`https://brave.iseek.name/storage/${product.product_image}`}
-                        alt={product.product_name}
-                        width={64}
-                        height={64}
-                        className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
-                      />
-                      <div
-                        className={`flex-1 ${
-                          isRTL ? "text-right" : "text-left"
-                        }`}
-                      >
-                        <div className="font-medium">
-                          {product.product_name}
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          {t("orders.quantity")}: {product.quantity} ×{" "}
-                          {formatCurrency(
-                            product.final_unit_price,
-                            order.pricing.currency
-                          )}
-                        </div>
-                        {product.discount_amount > 0 && (
-                          <div className="text-sm text-green-600">
-                            {t("orders.discount")}:{" "}
-                            {formatCurrency(
-                              product.discount_amount,
-                              order.pricing.currency
-                            )}
-                          </div>
-                        )}
-                      </div>
-                      <div className="font-medium">
-                        {formatCurrency(product.total, order.pricing.currency)}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Tracking Number */}
-                {order.tracking_number && (
-                  <div
-                    className={`mt-4 p-3 bg-blue-50 rounded-lg ${
-                      isRTL ? "text-right" : "text-left"
-                    }`}
-                  >
-                    <div className="text-sm text-gray-600 mb-1">
-                      {t("orders.trackingNumber")}
-                    </div>
-                    <div className="font-mono text-blue-600" dir="ltr">
-                      {order.tracking_number}
-                    </div>
-                  </div>
-                )}
-
-                {/* Notes */}
-                {order.notes && (
-                  <div
-                    className={`mt-4 p-3 bg-yellow-50 rounded-lg ${
-                      isRTL ? "text-right" : "text-left"
-                    }`}
-                  >
-                    <div className="text-sm text-gray-600 mb-1">
-                      {t("orders.notes")}
-                    </div>
-                    <div className="text-sm">{order.notes}</div>
-                  </div>
-                )}
               </div>
             );
           })}
@@ -904,6 +696,17 @@ export default function OrdersPage() {
           })}
         </div>
       )}
+
+      {/* Order Details Dialog */}
+      <OrderDetailsDialog
+        order={selectedOrder}
+        isOpen={isDetailsDialogOpen}
+        onClose={() => {
+          setIsDetailsDialogOpen(false);
+          setSelectedOrder(null);
+        }}
+        isRTL={isRTL}
+      />
     </div>
   );
 }

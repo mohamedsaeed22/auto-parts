@@ -13,13 +13,13 @@
     "rejected": "مرفوض"
   },
   "filters": {
-    "title": "المرشحات",
+    "title": "الفلتر",
     "status": "الحالة",
     "allStatuses": "جميع الحالات",
     "dateFrom": "التاريخ من",
     "dateTo": "التاريخ إلى",
     "perPage": "لكل صفحة",
-    "clear": "مسح المرشحات"
+    "clear": "مسح الفلتر"
   },
   "items": {
     "title": "عناصر الطلب",

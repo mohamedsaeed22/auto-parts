@@ -143,6 +143,113 @@ export interface OrdersResponse {
   };
 }
 
+// Order details response interface
+export interface OrderDetailsResponse {
+  code: number;
+  message: string;
+  errors: string[];
+  data: {
+    order: DetailedOrder;
+  };
+}
+
+// Detailed order interface for the API response
+export interface DetailedOrderProduct {
+  id: number;
+  product_id: number;
+  product_name: string;
+  product_sku: string;
+  product_image: string;
+  size: string | null;
+  price: number;
+  discount_percentage: number;
+  discount_amount: number;
+  final_unit_price: number;
+  quantity: number;
+  total: number;
+  line_total: number;
+  options: unknown[];
+  product: {
+    id: number;
+    name: string;
+    price: string;
+    discount_type: string | null;
+    discount_amount: string | null;
+    final_price: number;
+    discount_info: string;
+    offer: {
+      id: number;
+      image: string;
+      discount_type: string;
+      discount_amount: string;
+      discount_info: string;
+      products_count: number;
+    } | null;
+    primary_image: string;
+    images: string[];
+    description: string;
+    hover_text: string;
+    product_identifier: string;
+    in_favorites: boolean;
+    in_wishlist: boolean;
+  };
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DetailedOrder {
+  id: number;
+  order_number: string;
+  status: string;
+  payment_method: string;
+  payment_status: string;
+  address: {
+    first_name: string;
+    last_name: string;
+    phone: string;
+    address: string;
+    apartment: string | null;
+    city: string;
+    state: string | null;
+    country: string | null;
+    zip_code: string;
+  };
+  pricing: {
+    subtotal: number;
+    discount_amount: number;
+    tax_amount: number;
+    shipping_cost: number;
+    total: number;
+    grand_total: number;
+    currency: string;
+  };
+  coupon: {
+    code: string;
+    discount: number;
+    details: {
+      id: number;
+      code: string;
+      name: string;
+      description: string;
+      type: string;
+      value: number;
+      is_valid: boolean;
+      has_reached_limit: boolean;
+    };
+  } | null;
+  products: DetailedOrderProduct[];
+  notes: string | null;
+  tracking_number: string | null;
+  total_items: number;
+  paid_at: string | null;
+  shipped_at: string | null;
+  delivered_at: string | null;
+  created_at: string;
+  updated_at: string;
+  can_be_cancelled: boolean;
+  can_be_refunded: boolean;
+}
+
 // Orders request interface
 export interface OrdersRequest {
   status?:
@@ -204,7 +311,13 @@ export const ordersApi = createApi({
       },
       providesTags: ["Orders"],
     }),
+    getOrderDetails: builder.query<OrderDetailsResponse, string>({
+      query: (orderNumber) => `/api/orders/${orderNumber}`,
+      providesTags: (result, error, orderNumber) => [
+        { type: "Orders", id: orderNumber },
+      ],
+    }),
   }),
 });
 
-export const { useGetOrdersQuery } = ordersApi;
+export const { useGetOrdersQuery, useGetOrderDetailsQuery } = ordersApi;
