@@ -44,7 +44,7 @@ export default function OrderDetailsDialog({
   isRTL,
   width = "max-w-4xl",
 }: OrderDetailsDialogProps) {
-  const { t, i18n } = useTranslation("orders");
+  const { t, i18n } = useTranslation("userProfile");
   const currentLocale = i18n.language;
   const isCurrentRTL = currentLocale === "ar";
 
@@ -107,14 +107,6 @@ export default function OrderDetailsDialog({
     }
   };
 
-  const handleReorder = (orderData: DetailedOrder) => {
-    console.log("Reorder:", orderData);
-  };
-
-  const handleDownloadInvoice = (orderData: DetailedOrder) => {
-    console.log("Download invoice:", orderData);
-  };
-
   if (!order) return null;
 
   return (
@@ -123,14 +115,16 @@ export default function OrderDetailsDialog({
         <DialogHeader className="border-b border-gray-200 pb-4">
           <DialogTitle className="text-2xl font-bold text-[#272627] flex items-center gap-3">
             <div className="w-2 h-8 bg-[#b3984a] rounded-full"></div>
-            {t("orderDetails")} - {order.order_number}
+            {t("orders.orderDetails")} - {order.order_number}
           </DialogTitle>
         </DialogHeader>
 
         {isLoading ? (
           <div className="text-center py-16">
             <Loader2 className="h-12 w-12 animate-spin text-[#b3984a] mx-auto mb-4" />
-            <p className="text-lg text-gray-600">{t("loadingDetails")}</p>
+            <p className="text-lg text-gray-600">
+              {t("orders.loadingDetails")}
+            </p>
           </div>
         ) : error ? (
           <div className="text-center py-16 text-[#e62626]">
@@ -138,7 +132,7 @@ export default function OrderDetailsDialog({
               <X size={24} className="text-[#e62626]" />
             </div>
             <p className="text-lg font-semibold mb-2">
-              {t("errorLoadingDetails")}
+              {t("orders.errorLoadingDetails")}
             </p>
             <p className="text-gray-600">
               {error &&
@@ -161,7 +155,7 @@ export default function OrderDetailsDialog({
                   </div>
                   <div>
                     <div className="text-sm text-gray-600 mb-1">
-                      {t("orderNumber")}
+                      {t("orders.orderNumber")}
                     </div>
                     <div className="text-2xl font-bold text-[#272627] font-mono">
                       {orderDetails.order_number}
@@ -171,7 +165,7 @@ export default function OrderDetailsDialog({
                 <div className="flex items-center gap-4">
                   <div className="text-right">
                     <div className="text-sm text-gray-600 mb-1">
-                      {t("orderDate")}
+                      {t("orders.orderDate")}
                     </div>
                     <div className="text-lg font-semibold text-[#272627]">
                       {formatDate(orderDetails.created_at)}
@@ -190,14 +184,14 @@ export default function OrderDetailsDialog({
                       className={`${statusInfo.bg} ${statusInfo.color} px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2`}
                     >
                       <StatusIcon size={16} />
-                      {t("status")}: {orderDetails.status}
+                      {t("orders.status")}: {orderDetails.status}
                     </div>
                   );
                 })()}
 
                 <div className="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
                   <CreditCard size={16} />
-                  {t("paymentStatus")}: {orderDetails.payment_status}
+                  {t("orders.paymentStatus")}: {orderDetails.payment_status}
                 </div>
 
                 <div className="bg-purple-50 text-purple-700 px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
@@ -211,13 +205,13 @@ export default function OrderDetailsDialog({
             <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
               <h3 className="text-xl font-bold text-[#272627] mb-6 flex items-center gap-3">
                 <div className="w-1 h-6 bg-[#b3984a] rounded-full"></div>
-                {t("orderSummary")}
+                {t("orders.orderSummary")}
               </h3>
 
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4 items-center mb-6">
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
                   <div className="text-sm text-gray-600 mb-1">
-                    {t("subtotal")}
+                    {t("orders.subtotal")}
                   </div>
                   <div className="text-lg font-bold text-[#272627]">
                     {formatCurrency(
@@ -230,7 +224,7 @@ export default function OrderDetailsDialog({
                 {orderDetails.pricing.discount_amount > 0 && (
                   <div className="text-center p-4 bg-green-50 rounded-lg">
                     <div className="text-sm text-gray-600 mb-1">
-                      {t("discount")}
+                      {t("orders.discount")}
                     </div>
                     <div className="text-lg font-bold text-green-600">
                       -
@@ -244,7 +238,7 @@ export default function OrderDetailsDialog({
 
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
                   <div className="text-sm text-gray-600 mb-1">
-                    {t("shipping")}
+                    {t("orders.shipping")}
                   </div>
                   <div className="text-lg font-bold text-[#272627]">
                     {formatCurrency(
@@ -256,7 +250,9 @@ export default function OrderDetailsDialog({
 
                 {orderDetails.pricing.tax_amount > 0 && (
                   <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <div className="text-sm text-gray-600 mb-1">{t("tax")}</div>
+                    <div className="text-sm text-gray-600 mb-1">
+                      {t("orders.tax")}
+                    </div>
                     <div className="text-lg font-bold text-[#272627]">
                       {formatCurrency(
                         orderDetails.pricing.tax_amount,
@@ -266,8 +262,10 @@ export default function OrderDetailsDialog({
                   </div>
                 )}
 
-                <div className="text-center p-6 bg-gradient-to-br from-[#b3984a] to-[#a28a3e] rounded-lg text-white shadow-lg">
-                  <div className="text-sm font-medium mb-1">{t("total")}</div>
+                <div className="text-center p-6   rounded-lg">
+                  <div className="text-sm font-medium mb-1">
+                    {t("orders.total")}
+                  </div>
                   <div className="text-2xl font-bold">
                     {formatCurrency(
                       orderDetails.pricing.grand_total,
@@ -287,7 +285,7 @@ export default function OrderDetailsDialog({
                       </div>
                       <div>
                         <span className="font-semibold text-green-800">
-                          {t("couponApplied")}:{" "}
+                          {t("orders.couponApplied")}:{" "}
                         </span>
                         <span className="font-mono font-bold text-green-700">
                           {orderDetails.coupon.code}
@@ -296,7 +294,7 @@ export default function OrderDetailsDialog({
                     </div>
                     <div className="text-right">
                       <div className="text-sm text-green-600">
-                        {t("savedAmount")}
+                        {t("orders.savedAmount")}
                       </div>
                       <div className="text-xl font-bold text-green-700">
                         -
@@ -319,7 +317,7 @@ export default function OrderDetailsDialog({
                   <div className="w-8 h-8 bg-[#b3984a] rounded-lg flex items-center justify-center">
                     <MapPin size={20} className="text-white" />
                   </div>
-                  {t("shippingAddress")}
+                  {t("orders.shippingAddress")}
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -344,7 +342,8 @@ export default function OrderDetailsDialog({
                       </p>
                       {orderDetails.address.apartment && (
                         <p>
-                          {t("apartment")} {orderDetails.address.apartment}
+                          {t("orders.apartment")}{" "}
+                          {orderDetails.address.apartment}
                         </p>
                       )}
                       <p>
@@ -367,7 +366,7 @@ export default function OrderDetailsDialog({
                   <div className="w-8 h-8 bg-[#b3984a] rounded-lg flex items-center justify-center">
                     <Package size={20} className="text-white" />
                   </div>
-                  {t("products")} ({orderDetails.products.length})
+                  {t("orders.products")} ({orderDetails.products.length})
                 </h3>
 
                 <div className="space-y-4">
@@ -438,7 +437,7 @@ export default function OrderDetailsDialog({
                         <Truck size={20} className="text-blue-600" />
                       </div>
                       <span className="font-semibold text-[#272627]">
-                        {t("trackingNumber")}
+                        {t("orders.trackingNumber")}
                       </span>
                     </div>
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -452,7 +451,7 @@ export default function OrderDetailsDialog({
                 {orderDetails.notes && (
                   <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
                     <span className="font-semibold text-[#272627] block mb-4">
-                      {t("notes")}
+                      {t("orders.notes")}
                     </span>
                     <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                       <span className="text-amber-800">
@@ -463,33 +462,13 @@ export default function OrderDetailsDialog({
                 )}
               </div>
             </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-4 pt-6 border-t border-gray-200">
-              <Button
-                variant="outline"
-                onClick={() => handleReorder(orderDetails)}
-                className="flex items-center gap-2 flex-1 h-12 text-[#272627] border-[#b3984a] hover:bg-[#b3984a] hover:text-white transition-colors"
-              >
-                <ShoppingCart size={18} />
-                {t("reorder")}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => handleDownloadInvoice(orderDetails)}
-                className="flex items-center gap-2 flex-1 h-12 text-[#272627] border-[#b3984a] hover:bg-[#b3984a] hover:text-white transition-colors"
-              >
-                <Download size={18} />
-                {t("downloadInvoice")}
-              </Button>
-            </div>
           </div>
         ) : (
           <div className="text-center py-16 text-gray-600">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <X size={24} className="text-gray-400" />
             </div>
-            <p className="text-lg">{t("errorLoadingDetails")}</p>
+            <p className="text-lg">{t("orders.errorLoadingDetails")}</p>
           </div>
         )}
       </DialogContent>

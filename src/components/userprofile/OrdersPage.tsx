@@ -64,7 +64,10 @@ export default function OrdersPage() {
   } = useGetOrdersQuery(filters);
 
   // Handle filter changes
-  const handleFilterChange = (key: keyof OrdersRequest, value: any) => {
+  const handleFilterChange = (
+    key: keyof OrdersRequest,
+    value: string | number | null
+  ) => {
     setFilters((prev) => ({
       ...prev,
       [key]: value,
@@ -706,7 +709,7 @@ export default function OrdersPage() {
           setSelectedOrder(null);
         }}
         isRTL={isRTL}
-       />
+      />
     </div>
   );
 }
