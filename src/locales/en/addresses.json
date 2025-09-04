@@ -1,0 +1,18 @@
+{
+  "title": "My Addresses",
+  "addAddress": "Add Address",
+  "editAddress": "Edit Address",
+  "type": "Type",
+  "home": "Home",
+  "office": "Office",
+  "other": "Other",
+  "name": "Name",
+  "phone": "Phone",
+  "city": "City",
+  "address": "Address",
+  "postalCode": "Postal Code",
+  "default": "Default",
+  "save": "Save",
+  "cancel": "Cancel",
+  "noAddresses": "No addresses yet"
+}

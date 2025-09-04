@@ -2,6 +2,7 @@ import { api } from "./baseApi";
 import type {
   ApiResponse,
   Address,
+  AddressesResponse,
   CreateAddressRequest,
   UpdateAddressRequest,
 } from "./types";
@@ -9,7 +10,7 @@ import type {
 export const addressesApi = api.injectEndpoints({
   endpoints: (builder) => ({
     // Get All Addresses
-    getAddresses: builder.query<ApiResponse<Address[]>, void>({
+    getAddresses: builder.query<ApiResponse<AddressesResponse>, void>({
       query: () => "/addresses",
       providesTags: ["Addresses"],
     }),

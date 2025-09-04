@@ -1,0 +1,120 @@
+{
+  "title": "My Orders",
+  "orderNumber": "Order Number",
+  "date": "Date",
+  "status": "Status",
+  "paymentStatus": "Payment Status",
+  "deliveryAddress": "Delivery Address",
+  "paymentMethod": "Payment Method",
+  "quantity": "Quantity",
+  "subtotal": "Subtotal",
+  "discount": "Discount",
+  "total": "Total",
+  "currency": "${{value}}",
+  "cancel": "Cancel Order",
+  "confirmCancel": "Are you sure you want to cancel this order?",
+  "noOrders": "You haven't placed any orders yet",
+  "continueShopping": "Continue Shopping",
+  "retry": "Try Again",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page {{current}} of {{total}}",
+  "export": "Export",
+  "loading": "Loading orders...",
+  "viewDetails": "View Details",
+  "reorder": "Reorder",
+  "downloadInvoice": "Download Invoice",
+  "items": "Items",
+  "item": "item",
+  "shippingAddress": "Shipping Address",
+  "pricingSummary": "Pricing Summary",
+  "shipping": "Shipping",
+  "grandTotal": "Grand Total",
+  "couponApplied": "Coupon Applied",
+  "saved": "You Saved",
+  "products": "Products",
+  "trackingNumber": "Tracking Number",
+  "notes": "Notes",
+  "statuses": {
+    "pending": "Pending",
+    "processing": "Processing",
+    "shipped": "Shipped",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled",
+    "paid": "Paid",
+    "completed": "Completed",
+    "refunded": "Refunded"
+  },
+  "paymentStatuses": {
+    "pending": "Pending",
+    "paid": "Paid",
+    "failed": "Failed",
+    "refunded": "Refunded"
+  },
+  "paymentMethods": {
+    "cash": "Cash on Delivery",
+    "card": "Credit/Debit Card"
+  },
+  "filters": {
+    "title": "Filters",
+    "status": "Status",
+    "allStatuses": "All Statuses",
+    "paymentStatus": "Payment Status",
+    "allPaymentStatuses": "All Payment Statuses",
+    "dateFrom": "Date From",
+    "dateTo": "Date To",
+    "sortBy": "Sort By",
+    "createdAt": "Created At",
+    "orderNumber": "Order Number",
+    "total": "Total",
+    "sortDirection": "Sort Direction",
+    "descending": "Descending",
+    "ascending": "Ascending",
+    "perPage": "Per Page",
+    "clear": "Clear Filters",
+    "loading": "Loading...",
+    "apply": "Apply Filters"
+  },
+  "stats": {
+    "totalOrders": "Total Orders",
+    "completedOrders": "Completed Orders",
+    "pendingOrders": "Pending Orders",
+    "totalSpent": "Total Spent"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "showing": "Showing {{from}} to {{to}} of {{total}} results"
+  },
+  "error": {
+    "title": "Failed to load orders",
+    "description": "Please try refreshing the page or contact support if the problem persists.",
+    "retry": "Retry"
+  },
+  "empty": {
+    "title": "No orders found",
+    "description": "Try adjusting your filters or check back later for new orders."
+  },
+  "errors": {
+    "loadingFailed": "Failed to load orders",
+    "cancelFailed": "Failed to cancel order"
+  },
+  "success": {
+    "cancelled": "Order cancelled successfully"
+  },
+  "orderDetails": "Order Details",
+  "orderDate": "Order Date",
+  "orderSummary": "Order Summary",
+  "customerName": "Customer Name",
+  "phone": "Phone",
+  "address": "Address",
+  "apartment": "Apartment",
+  "sku": "SKU",
+  "unitPrice": "Unit Price",
+  "pricingDetails": "Pricing Details",
+  "tax": "Tax",
+  "couponCode": "Coupon Code",
+  "savedAmount": "Saved Amount",
+  "loadingDetails": "Loading order details...",
+  "errorLoadingDetails": "Failed to load order details"
+}

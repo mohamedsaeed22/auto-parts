@@ -32,16 +32,16 @@ The product details API now correctly handles the nested response structure:
       },
       "offer": {
         "id": 1,
-        "image": "https://iseek.name/storage/offers/01K37RCKVYVKH5BM6JSNZEF2W1.png",
+        "image": "https://brave.iseek.name/storage/offers/01K37RCKVYVKH5BM6JSNZEF2W1.png",
         "discount_type": "percentage",
         "discount_amount": "10.00",
         "discount_info": "10.00%",
         "products_count": 2
       },
-      "primary_image": "https://iseek.name/storage/products/01K399P2YQCS4TNGXY9K6HK57R.jpg",
+      "primary_image": "https://brave.iseek.name/storage/products/01K399P2YQCS4TNGXY9K6HK57R.jpg",
       "images": [
-        "https://iseek.name/storage/product-images/01K399P2Z27N5G4TXNGJC074KF.jpg",
-        "https://iseek.name/storage/product-images/01K399P2ZB0Z06EX0GJEPYW0G6.jpg"
+        "https://brave.iseek.name/storage/product-images/01K399P2Z27N5G4TXNGJC074KF.jpg",
+        "https://brave.iseek.name/storage/product-images/01K399P2ZB0Z06EX0GJEPYW0G6.jpg"
       ],
       "description": "<p>Product 1</p>",
       "hover_text": "Product Discount",

@@ -48,7 +48,7 @@ The OffersSwiper component now fetches and displays offers from the `/api/offers
     "items": [
       {
         "id": 1,
-        "image": "https://iseek.name/storage/offers/01K37RCKVYVKH5BM6JSNZEF2W1.png",
+        "image": "https://brave.iseek.name/storage/offers/01K37RCKVYVKH5BM6JSNZEF2W1.png",
         "discount_type": "percentage",
         "discount_amount": "10.00",
         "discount_info": "10.00%",
@@ -56,7 +56,7 @@ The OffersSwiper component now fetches and displays offers from the `/api/offers
       },
       {
         "id": 2,
-        "image": "https://iseek.name/storage/offers/offer2.png",
+        "image": "https://brave.iseek.name/storage/offers/offer2.png",
         "discount_type": "fixed",
         "discount_amount": "50.00",
         "discount_info": "$50.00",

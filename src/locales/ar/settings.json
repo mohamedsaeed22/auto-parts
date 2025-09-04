@@ -1,0 +1,77 @@
+{
+  "title": "الإعدادات",
+  "edit": "تعديل",
+  "save": "حفظ",
+  "cancel": "إلغاء",
+  "company": {
+    "title": "معلومات الشركة",
+    "name": "اسم الشركة",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "address": "العنوان",
+    "noAddress": "لا يوجد عنوان",
+    "website": "الموقع الإلكتروني",
+    "description": "الوصف"
+  },
+  "support": {
+    "title": "معلومات الدعم",
+    "email": "بريد الدعم",
+    "phone": "هاتف الدعم"
+  },
+  "social": {
+    "title": "وسائل التواصل الاجتماعي"
+  },
+  "legal": {
+    "termsOfService": "شروط الخدمة",
+    "privacyPolicy": "سياسة الخصوصية",
+    "refundPolicy": "سياسة الاسترداد",
+    "shippingPolicy": "سياسة الشحن",
+    "noContent": "لا يوجد محتوى متاح"
+  },
+  "account": {
+    "title": "إعدادات الحساب",
+    "emailNotifications": "إشعارات البريد الإلكتروني",
+    "smsNotifications": "إشعارات الرسائل النصية",
+    "marketingEmails": "رسائل التسويق",
+    "orderUpdates": "تحديثات الطلبات",
+    "newsletter": "النشرة الإخبارية",
+    "emailNotificationsDesc": "استلام إشعارات البريد الإلكتروني للتحديثات المهمة",
+    "smsNotificationsDesc": "استلام إشعارات الرسائل النصية للمسائل العاجلة",
+    "marketingEmailsDesc": "استلام رسائل التسويق والعروض",
+    "orderUpdatesDesc": "الإشعار بتغييرات حالة الطلبات",
+    "newsletterDesc": "استلام النشرة الإخبارية الشهرية مع رؤى الصناعة"
+  },
+  "privacy": {
+    "title": "إعدادات الخصوصية",
+    "profileVisibility": "رؤية الملف الشخصي",
+    "public": "عام",
+    "friends": "الأصدقاء فقط",
+    "private": "خاص",
+    "showEmail": "إظهار البريد الإلكتروني",
+    "showPhone": "إظهار الهاتف",
+    "allowSearch": "السماح بالبحث"
+  },
+  "security": {
+    "title": "إعدادات الأمان",
+    "twoFactorAuth": "المصادقة الثنائية",
+    "loginAlerts": "تنبيهات تسجيل الدخول",
+    "deviceManagement": "إدارة الأجهزة",
+    "twoFactorAuthDesc": "إضافة طبقة أمان إضافية لحسابك",
+    "loginAlertsDesc": "الإشعار بمحاولات تسجيل الدخول الجديدة",
+    "deviceManagementDesc": "إدارة الأجهزة التي يمكنها الوصول إلى حسابك"
+  },
+  "language": {
+    "title": "إعدادات اللغة والإقليم",
+    "language": "اللغة",
+    "arabic": "العربية",
+    "english": "الإنجليزية",
+    "currency": "العملة",
+    "sar": "الريال السعودي",
+    "usd": "الدولار الأمريكي",
+    "eur": "اليورو",
+    "timezone": "المنطقة الزمنية",
+    "riyadh": "آسيا/الرياض",
+    "dubai": "آسيا/دبي",
+    "london": "أوروبا/لندن"
+  }
+}

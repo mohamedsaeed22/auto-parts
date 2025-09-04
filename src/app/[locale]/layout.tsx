@@ -8,6 +8,7 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import { Providers } from "@/store/providers";
 import { Locale } from "@/lib/types";
 import { getDirection } from "@/lib/utils/index";
+import { cn } from "@/lib/utils";
 import LocaleProvider from "@/components/providers/LocaleProvider";
 // Import Swiper styles
 import "swiper/css";
@@ -37,7 +38,15 @@ export default async function LocaleLayout({
   params: Promise<{ locale: Locale }>;
 }>) {
   const { locale } = await params;
-  const ns = ["common", "header", "footer", "cart", "userPricing", "product"];
+  const ns = [
+    "common",
+    "header",
+    "footer",
+    "cart",
+    "userPricing",
+    "product",
+    "userProfile",
+  ];
   const { resources } = await serverSideTranslation(locale, ns);
   const direction = getDirection(locale);
 
@@ -45,14 +54,18 @@ export default async function LocaleLayout({
     <div
       lang={locale}
       dir={direction}
-      className={`min-h-screen ${cairo.variable}`}
+      className={cn(
+        "min-h-screen flex flex-col",
+        cairo.variable,
+        direction === "rtl" ? "text-right" : "text-left"
+      )}
     >
       <I18NProvider locale={locale} namespaces={ns} resources={resources}>
         <Providers>
           <NuqsAdapter>
             <LocaleProvider initialLocale={locale}>
               <Header />
-              {children}
+              <main className="flex-1">{children}</main>
               <Footer />
               <Cart />
               <WhatsAppButton />

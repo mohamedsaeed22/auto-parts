@@ -1,0 +1,77 @@
+{
+  "title": "Settings",
+  "edit": "Edit",
+  "save": "Save",
+  "cancel": "Cancel",
+  "company": {
+    "title": "Company Information",
+    "name": "Company Name",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "noAddress": "No address",
+    "website": "Website",
+    "description": "Description"
+  },
+  "support": {
+    "title": "Support Information",
+    "email": "Support Email",
+    "phone": "Support Phone"
+  },
+  "social": {
+    "title": "Social Media"
+  },
+  "legal": {
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy",
+    "refundPolicy": "Refund Policy",
+    "shippingPolicy": "Shipping Policy",
+    "noContent": "No content available"
+  },
+  "account": {
+    "title": "Account Settings",
+    "emailNotifications": "Email Notifications",
+    "smsNotifications": "SMS Notifications",
+    "marketingEmails": "Marketing Emails",
+    "orderUpdates": "Order Updates",
+    "newsletter": "Newsletter",
+    "emailNotificationsDesc": "Receive email notifications for important updates",
+    "smsNotificationsDesc": "Receive SMS notifications for urgent matters",
+    "marketingEmailsDesc": "Receive promotional emails and offers",
+    "orderUpdatesDesc": "Get notified about order status changes",
+    "newsletterDesc": "Receive our monthly newsletter with industry insights"
+  },
+  "privacy": {
+    "title": "Privacy Settings",
+    "profileVisibility": "Profile Visibility",
+    "public": "Public",
+    "friends": "Friends Only",
+    "private": "Private",
+    "showEmail": "Show Email",
+    "showPhone": "Show Phone",
+    "allowSearch": "Allow Search"
+  },
+  "security": {
+    "title": "Security Settings",
+    "twoFactorAuth": "Two-Factor Authentication",
+    "loginAlerts": "Login Alerts",
+    "deviceManagement": "Device Management",
+    "twoFactorAuthDesc": "Add an extra layer of security to your account",
+    "loginAlertsDesc": "Get notified of new login attempts",
+    "deviceManagementDesc": "Manage devices that can access your account"
+  },
+  "language": {
+    "title": "Language & Regional Settings",
+    "language": "Language",
+    "arabic": "Arabic",
+    "english": "English",
+    "currency": "Currency",
+    "sar": "Saudi Riyal",
+    "usd": "US Dollar",
+    "eur": "Euro",
+    "timezone": "Timezone",
+    "riyadh": "Asia/Riyadh",
+    "dubai": "Asia/Dubai",
+    "london": "Europe/London"
+  }
+}

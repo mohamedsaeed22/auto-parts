@@ -70,12 +70,7 @@ export {
 } from "./api/favouritesApi";
 
 // Orders Hooks
-export {
-  useGetOrdersQuery,
-  useCreateOrderMutation,
-  useGetOrderQuery,
-  useGetOrderStatisticsQuery,
-} from "./api/ordersApi";
+export { useGetOrdersQuery } from "./api/ordersApi";
 
 // Addresses Hooks
 export {
@@ -87,15 +82,12 @@ export {
 } from "./api/addressesApi";
 
 // Requests Hooks
-export {
-  useGetRequestsQuery,
-  useCreateRequestMutation,
-} from "./api/requestsApi";
+export { useGetRequestsQuery } from "./api/requestsApi";
 
 // Settings Hooks
 export {
-  useGetSettingsQuery,
-  useGetLegalContentQuery,
+  useGetCompanySettingsQuery,
+  useGetLegalPagesQuery,
   useGetTermsOfServiceQuery,
   useGetPrivacyPolicyQuery,
   useGetRefundPolicyQuery,

@@ -11,6 +11,7 @@ export * from "./cartApi";
 export * from "./ordersApi";
 export * from "./addressesApi";
 export * from "./requestsApi";
+export * from "./ordersApi";
 export * from "./settingsApi";
 export * from "./favouritesApi";
 export * from "./wishlistApi";

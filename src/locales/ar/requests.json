@@ -1,0 +1,43 @@
+{
+  "title": "الطلبات",
+  "create": "إنشاء طلب",
+  "id": "الرقم",
+  "createdAt": "تاريخ الإنشاء",
+  "submittedAt": "تاريخ التقديم",
+  "price": "السعر",
+  "status": {
+    "draft": "مسودة",
+    "pending": "قيد الانتظار",
+    "submitted": "مقدم",
+    "accepted": "مقبول",
+    "rejected": "مرفوض"
+  },
+  "filters": {
+    "title": "الفلتر",
+    "status": "الحالة",
+    "allStatuses": "جميع الحالات",
+    "dateFrom": "التاريخ من",
+    "dateTo": "التاريخ إلى",
+    "perPage": "لكل صفحة",
+    "clear": "مسح الفلتر"
+  },
+  "items": {
+    "title": "عناصر الطلب",
+    "quantity": "الكمية",
+    "created": "تاريخ الإنشاء",
+    "partImage": "القطعة",
+    "orderImage": "الطلب",
+    "formImage": "النموذج"
+  },
+  "pagination": {
+    "previous": "السابق",
+    "next": "التالي"
+  },
+  "error": {
+    "title": "خطأ في تحميل الطلبات",
+    "retry": "إعادة المحاولة"
+  },
+  "empty": {
+    "title": "لم يتم العثور على طلبات"
+  }
+}

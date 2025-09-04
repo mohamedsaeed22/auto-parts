@@ -1,0 +1,45 @@
+{
+  "reviews": "التقييمات",
+  "rating": "التقييم",
+  "comment": "التعليق",
+  "commentPlaceholder": "شارك رأيك حول هذا المنتج...",
+  "writeReview": "اكتب تقييماً",
+  "submitReview": "إرسال التقييم",
+  "updateReview": "تحديث التقييم",
+  "cancel": "إلغاء",
+  "edit": "تعديل",
+  "delete": "حذف",
+  "helpful": "مفيد",
+  "reportAbuse": "الإبلاغ عن إساءة",
+  "verifiedPurchase": "شراء موثق",
+  "noReviews": "لا توجد تقييمات بعد. كن أول من يقيم هذا المنتج!",
+  "previous": "السابق",
+  "next": "التالي",
+  "page": "الصفحة {{current}} من {{total}}",
+  "retry": "إعادة المحاولة",
+  "confirmDelete": "هل أنت متأكد من حذف هذا التقييم؟",
+  "confirmReport": "هل أنت متأكد من الإبلاغ عن هذا التقييم؟",
+  "errors": {
+    "loadingFailed": "فشل تحميل التقييمات",
+    "submitFailed": "فشل إرسال التقييم",
+    "updateFailed": "فشل تحديث التقييم",
+    "deleteFailed": "فشل حذف التقييم",
+    "helpfulFailed": "فشل تحديد التقييم كمفيد",
+    "reportFailed": "فشل الإبلاغ عن التقييم"
+  },
+  "success": {
+    "submitted": "تم إرسال التقييم بنجاح",
+    "updated": "تم تحديث التقييم بنجاح",
+    "deleted": "تم حذف التقييم بنجاح",
+    "markedHelpful": "تم تحديد التقييم كمفيد",
+    "reported": "تم الإبلاغ عن التقييم بنجاح"
+  },
+  "validation": {
+    "ratingRequired": "التقييم مطلوب",
+    "ratingMin": "يجب أن يكون التقييم 1 على الأقل",
+    "ratingMax": "يجب أن يكون التقييم 5 على الأكثر",
+    "commentRequired": "التعليق مطلوب",
+    "commentMin": "يجب أن يكون التعليق 10 أحرف على الأقل",
+    "commentMax": "يجب أن يكون التعليق أقل من 1000 حرف"
+  }
+}

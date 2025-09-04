@@ -1,0 +1,120 @@
+{
+  "title": "طلباتي",
+  "orderNumber": "رقم الطلب",
+  "date": "التاريخ",
+  "status": "الحالة",
+  "paymentStatus": "حالة الدفع",
+  "deliveryAddress": "عنوان التوصيل",
+  "paymentMethod": "طريقة الدفع",
+  "quantity": "الكمية",
+  "subtotal": "المجموع الفرعي",
+  "discount": "الخصم",
+  "total": "المجموع الكلي",
+  "currency": "{{value}} ج.م",
+  "cancel": "إلغاء الطلب",
+  "confirmCancel": "هل أنت متأكد من إلغاء هذا الطلب؟",
+  "noOrders": "لم تقم بإجراء أي طلبات حتى الآن",
+  "continueShopping": "مواصلة التسوق",
+  "retry": "إعادة المحاولة",
+  "previous": "السابق",
+  "next": "التالي",
+  "page": "الصفحة {{current}} من {{total}}",
+  "export": "تصدير",
+  "loading": "جاري تحميل الطلبات...",
+  "viewDetails": "عرض التفاصيل",
+  "reorder": "إعادة الطلب",
+  "downloadInvoice": "تحميل الفاتورة",
+  "items": "العناصر",
+  "item": "عنصر",
+  "shippingAddress": "عنوان الشحن",
+  "pricingSummary": "ملخص الأسعار",
+  "shipping": "الشحن",
+  "grandTotal": "المجموع الإجمالي",
+  "couponApplied": "تم تطبيق الكوبون",
+  "saved": "لقد وفرت",
+  "products": "المنتجات",
+  "trackingNumber": "رقم التتبع",
+  "notes": "ملاحظات",
+  "statuses": {
+    "pending": "قيد الانتظار",
+    "processing": "قيد المعالجة",
+    "shipped": "تم الشحن",
+    "delivered": "تم التوصيل",
+    "cancelled": "ملغي",
+    "paid": "تم الدفع",
+    "completed": "مكتمل",
+    "refunded": "مسترد"
+  },
+  "paymentStatuses": {
+    "pending": "قيد الانتظار",
+    "paid": "تم الدفع",
+    "failed": "فشل الدفع",
+    "refunded": "مسترد"
+  },
+  "paymentMethods": {
+    "cash": "الدفع عند الاستلام",
+    "card": "بطاقة ائتمان/خصم"
+  },
+  "filters": {
+    "title": "الفلتر",
+    "status": "الحالة",
+    "allStatuses": "جميع الحالات",
+    "paymentStatus": "حالة الدفع",
+    "allPaymentStatuses": "جميع حالات الدفع",
+    "dateFrom": "التاريخ من",
+    "dateTo": "التاريخ إلى",
+    "sortBy": "ترتيب حسب",
+    "createdAt": "تاريخ الإنشاء",
+    "orderNumber": "رقم الطلب",
+    "total": "المجموع",
+    "sortDirection": "اتجاه الترتيب",
+    "descending": "تنازلي",
+    "ascending": "تصاعدي",
+    "perPage": "لكل صفحة",
+    "clear": "مسح الفلتر",
+    "loading": "جاري التحميل...",
+    "apply": "تطبيق الفلتر"
+  },
+  "stats": {
+    "totalOrders": "إجمالي الطلبات",
+    "completedOrders": "الطلبات المكتملة",
+    "pendingOrders": "الطلبات المعلقة",
+    "totalSpent": "إجمالي الإنفاق"
+  },
+  "pagination": {
+    "previous": "السابق",
+    "next": "التالي",
+    "showing": "عرض {{from}} إلى {{to}} من {{total}} نتيجة"
+  },
+  "error": {
+    "title": "فشل في تحميل الطلبات",
+    "description": "يرجى تحديث الصفحة أو الاتصال بالدعم إذا استمرت المشكلة.",
+    "retry": "إعادة المحاولة"
+  },
+  "empty": {
+    "title": "لم يتم العثور على طلبات",
+    "description": "حاول تعديل الفلتر أو تحقق مرة أخرى لاحقاً للحصول على طلبات جديدة."
+  },
+  "errors": {
+    "loadingFailed": "فشل تحميل الطلبات",
+    "cancelFailed": "فشل إلغاء الطلب"
+  },
+  "success": {
+    "cancelled": "تم إلغاء الطلب بنجاح"
+  },
+  "orderDetails": "تفاصيل الطلب",
+  "orderDate": "تاريخ الطلب",
+  "orderSummary": "ملخص الطلب",
+  "customerName": "اسم العميل",
+  "phone": "الهاتف",
+  "address": "العنوان",
+  "apartment": "الشقة",
+  "sku": "رمز المنتج",
+  "unitPrice": "سعر الوحدة",
+  "pricingDetails": "تفاصيل الأسعار",
+  "tax": "الضريبة",
+  "couponCode": "رمز الكوبون",
+  "savedAmount": "المبلغ المحفوظ",
+  "loadingDetails": "جاري تحميل تفاصيل الطلب...",
+  "errorLoadingDetails": "فشل في تحميل تفاصيل الطلب"
+}

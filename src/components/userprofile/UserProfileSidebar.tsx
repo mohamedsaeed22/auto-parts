@@ -1,25 +1,42 @@
-import { User, MapPin, ShoppingBag, Settings, Bell, Gift } from "lucide-react";
-import React from "react";
+import { User, FileText, MapPin, ShoppingBag, Settings } from "lucide-react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { ProfilePage } from "@/app/[locale]/userprofile/page";
+import { ProfilePageType } from "@/app/[locale]/userprofile/page";
 
 export default function UserProfileSidebar({
   activePage,
   onPageChange,
 }: {
-  activePage: ProfilePage;
-  onPageChange: (page: ProfilePage) => void;
+  activePage: ProfilePageType;
+  onPageChange: (page: ProfilePageType) => void;
 }) {
   const { t, i18n } = useTranslation("userProfile");
   const isRTL = i18n.language === "ar";
 
+  // Ensure profile is selected by default if no activePage is set
+  const currentActivePage = activePage || "profile";
+
+  // Save active page to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      if (
+        currentActivePage &&
+        typeof window !== "undefined" &&
+        window.localStorage
+      ) {
+        localStorage.setItem("userProfileActivePage", currentActivePage);
+      }
+    } catch (error) {
+      console.warn("Failed to save active page to localStorage:", error);
+    }
+  }, [currentActivePage]);
+
   const menu = [
-    { key: "overview", labelKey: "sidebar.overview", icon: <User size={20} /> },
-    { key: "points", labelKey: "sidebar.points", icon: <Gift size={20} /> },
+    { key: "profile", labelKey: "sidebar.profile", icon: <User size={20} /> },
     {
-      key: "notifications",
-      labelKey: "sidebar.notifications",
-      icon: <Bell size={20} />,
+      key: "addresses",
+      labelKey: "sidebar.addresses",
+      icon: <MapPin size={20} />,
     },
     {
       key: "orders",
@@ -27,11 +44,10 @@ export default function UserProfileSidebar({
       icon: <ShoppingBag size={20} />,
     },
     {
-      key: "addresses",
-      labelKey: "sidebar.addresses",
-      icon: <MapPin size={20} />,
+      key: "requests",
+      labelKey: "sidebar.requests",
+      icon: <FileText size={20} />,
     },
-    // { key: "wishlist", labelKey: "sidebar.wishlist", icon: <Heart size={20} /> },
     {
       key: "settings",
       labelKey: "sidebar.settings",
@@ -56,15 +72,24 @@ export default function UserProfileSidebar({
             {menu.map((item) => (
               <li key={item.key}>
                 <button
-                  className={`w-full flex items-center gap-3 px-4 py-2 rounded-md transition-colors font-medium ${
-                    activePage === item.key
-                      ? "bg-yellow-100 text-yellow-800"
-                      : "hover:bg-gray-100 text-gray-700"
+                  className={`w-full flex items-center gap-3 px-4 py-2 rounded-md transition-all duration-200 font-medium relative ${
+                    currentActivePage === item.key
+                      ? "bg-primary text-white shadow-md transform scale-[1.02]"
+                      : "hover:bg-gray-100 text-gray-700 hover:text-primary-600 hover:scale-[1.01]"
                   }`}
-                  onClick={() => onPageChange(item.key as ProfilePage)}
+                  onClick={() => onPageChange(item.key as ProfilePageType)}
                 >
+                  {currentActivePage === item.key && (
+                    <div
+                      className={`absolute top-0 bottom-0 w-1  rounded-full ${
+                        isRTL ? "right-0" : "left-0"
+                      }`}
+                    />
+                  )}
                   <span>{item.icon}</span>
-                  <span className={`flex-1 ${isRTL ? "text-right" : "text-left"}`}>
+                  <span
+                    className={`flex-1 ${isRTL ? "text-right" : "text-left"}`}
+                  >
                     {t(item.labelKey)}
                   </span>
                 </button>
@@ -82,12 +107,12 @@ export default function UserProfileSidebar({
         {menu.map((item) => (
           <button
             key={item.key}
-            className={`flex flex-col items-center justify-center min-w-[70px] px-2 py-2 rounded-md transition-colors font-medium ${
-              activePage === item.key
-                ? "bg-yellow-100 text-yellow-800"
-                : "hover:bg-gray-100 text-gray-700"
+            className={`flex flex-col items-center justify-center min-w-[70px] px-2 py-2 rounded-md transition-all duration-200 font-medium ${
+              currentActivePage === item.key
+                ? "bg-primary text-white shadow-md transform scale-105"
+                : "hover:bg-gray-100 text-gray-700 hover:text-primary-600 hover:scale-105"
             }`}
-            onClick={() => onPageChange(item.key as ProfilePage)}
+            onClick={() => onPageChange(item.key as ProfilePageType)}
           >
             <span>{item.icon}</span>
             <span className="text-xs mt-1">{t(item.labelKey)}</span>

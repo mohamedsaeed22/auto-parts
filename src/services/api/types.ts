@@ -271,6 +271,10 @@ export interface Address {
   updated_at: string;
 }
 
+export interface AddressesResponse {
+  addresses: Address[];
+}
+
 export interface CreateAddressRequest {
   address_type: "home" | "office" | "other";
   name: string;
@@ -283,104 +287,11 @@ export interface CreateAddressRequest {
 
 export type UpdateAddressRequest = CreateAddressRequest;
 
-// Order Types
-export interface Order {
-  id: number;
-  order_number: string;
-  status:
-    | "pending"
-    | "paid"
-    | "processing"
-    | "shipped"
-    | "completed"
-    | "cancelled"
-    | "refunded";
-  payment_status: "pending" | "paid" | "failed" | "refunded";
-  payment_method:
-    | "cash"
-    | "credit_card"
-    | "paypal"
-    | "stripe"
-    | "bank_transfer";
-  subtotal: number;
-  discount: number;
-  total: number;
-  notes?: string;
-  address: Address;
-  items: OrderItem[];
-  created_at: string;
-  updated_at: string;
-}
+// Order Types - REMOVED due to conflicts with ordersApi
+// These types are now defined in ordersApi.ts with the correct structure
 
-export interface OrderItem {
-  id: number;
-  product_id: number;
-  quantity: number;
-  price: number;
-  total: number;
-  product: Product;
-}
-
-export interface CreateOrderRequest {
-  payment_method:
-    | "cash"
-    | "credit_card"
-    | "paypal"
-    | "stripe"
-    | "bank_transfer";
-  address_id: number;
-  coupon_code?: string;
-  notes?: string;
-}
-
-export interface OrdersRequest {
-  status?: string;
-  payment_status?: string;
-  date_from?: string;
-  date_to?: string;
-  per_page?: number;
-  page?: number;
-  sort_by?: string;
-  sort_direction?: "asc" | "desc";
-}
-
-export interface OrderStatistics {
-  total_orders: number;
-  pending_orders: number;
-  completed_orders: number;
-  cancelled_orders: number;
-  total_amount: number;
-}
-
-// Request Types (Custom Requests)
-export interface RequestItem {
-  part_name: string;
-  quantity: number;
-  chassis_number: string;
-  part_image_path?: File;
-  order_image_path?: File;
-  form_image_path?: File;
-}
-
-export interface CustomRequest {
-  id: number;
-  status: "draft" | "pending" | "submitted" | "accepted" | "rejected";
-  items: RequestItem[];
-  created_at: string;
-  updated_at: string;
-}
-
-export interface CreateRequestRequest {
-  items: RequestItem[];
-}
-
-export interface RequestsRequest {
-  status?: "draft" | "pending" | "submitted" | "accepted" | "rejected";
-  date_from?: string;
-  date_to?: string;
-  per_page?: number;
-  page?: number;
-}
+// Request Types (Custom Requests) - REMOVED due to conflicts with requestsApi
+// These types are now defined in requestsApi.ts with the correct structure
 
 // Banner & Offer Types
 export interface Banner {
@@ -411,6 +322,45 @@ export interface Section {
 }
 
 // Settings Types
+export interface CompanyInfo {
+  name: string;
+  description: string;
+  logo: string;
+  email: string;
+  phone: string;
+  address: string;
+  website: string | null;
+}
+
+export interface SupportInfo {
+  email: string | null;
+  phone: string | null;
+}
+
+export interface SocialMedia {
+  facebook: string | null;
+  twitter: string | null;
+  instagram: string | null;
+  linkedin: string | null;
+}
+
+export interface CompanySettings {
+  company_info: CompanyInfo;
+  support_info: SupportInfo;
+  social_media: SocialMedia;
+}
+
+export interface LegalPages {
+  terms_of_service: string;
+  privacy_policy: string;
+  refund_policy: string;
+  shipping_policy: string;
+}
+
+export interface LegalPageContent {
+  content: string;
+}
+
 export interface AppSettings {
   app_name: string;
   app_version: string;

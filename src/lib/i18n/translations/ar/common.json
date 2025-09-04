@@ -1,0 +1,79 @@
+{
+  "buttons": {
+    "add_to_cart": "أضف إلى السلة",
+    "buy_now": "اشتري الآن",
+    "view_details": "عرض التفاصيل",
+    "add_to_wishlist": "أضف إلى قائمة الرغبات",
+    "remove_from_wishlist": "إزالة من قائمة الرغبات",
+    "submit": "إرسال",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "close": "إغلاق",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق"
+  },
+  "labels": {
+    "search": "بحث",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "name": "الاسم",
+    "phone": "رقم الهاتف",
+    "address": "العنوان",
+    "city": "المدينة",
+    "country": "الدولة",
+    "postal_code": "الرمز البريدي"
+  },
+  "messages": {
+    "loading": "جاري التحميل...",
+    "error": "حدث خطأ",
+    "success": "تمت العملية بنجاح",
+    "no_results": "لا توجد نتائج",
+    "required_field": "هذا الحقل مطلوب",
+    "invalid_email": "البريد الإلكتروني غير صحيح",
+    "invalid_phone": "رقم الهاتف غير صحيح",
+    "min_length": "يجب أن يكون الطول على الأقل {{length}} حروف",
+    "max_length": "يجب أن لا يتجاوز الطول {{length}} حروف"
+  },
+  "navigation": {
+    "home": "الرئيسية",
+    "products": "المنتجات",
+    "categories": "الفئات",
+    "offers": "العروض",
+    "about": "من نحن",
+    "contact": "اتصل بنا",
+    "cart": "سلة التسوق",
+    "wishlist": "قائمة الرغبات",
+    "account": "حسابي"
+  },
+  "product": {
+    "price": "السعر",
+    "quantity": "الكمية",
+    "total": "المجموع",
+    "description": "الوصف",
+    "specifications": "المواصفات",
+    "reviews": "التقييمات",
+    "related_products": "منتجات مشابهة",
+    "out_of_stock": "غير متوفر",
+    "in_stock": "متوفر",
+    "discount": "خصم",
+    "new": "جديد"
+  },
+  "cart": {
+    "empty": "سلة التسوق فارغة",
+    "subtotal": "المجموع الفرعي",
+    "shipping": "الشحن",
+    "tax": "الضريبة",
+    "total": "المجموع الكلي",
+    "checkout": "إتمام الشراء"
+  },
+  "footer": {
+    "newsletter": "النشرة البريدية",
+    "subscribe": "اشترك",
+    "social_media": "وسائل التواصل الاجتماعي",
+    "contact_info": "معلومات الاتصال",
+    "rights": "جميع الحقوق محفوظة"
+  }
+}

@@ -1,12 +1,14 @@
 {
   "sidebar": {
+    "profile": "الملف الشخصي",
     "overview": "الملف الشخصي",
     "points": "نقاطي",
     "notifications": "الإشعارات",
     "orders": "الطلبات",
     "addresses": "العناوين",
     "wishlist": "المفضلة",
-    "settings": "الإعدادات"
+    "settings": "الإعدادات",
+    "requests": "طلبات التسعير"
   },
   "profileOverview": {
     "title": "الملف الشخصي",
@@ -27,16 +29,101 @@
       "savedAddresses": "العناوين المحفوظة"
     }
   },
+  "profile": {
+    "title": "الملف الشخصي",
+    "edit": "تعديل",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "userCode": "رمز المستخدم",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "phone": "رقم الهاتف",
+    "noEmail": "لا يوجد بريد إلكتروني",
+    "type": "النوع",
+    "shop": "متجر",
+    "workshop": "ورشة عمل",
+    "managerName": "اسم المدير",
+    "address": "العنوان",
+    "city": "المدينة",
+    "state": "الولاية",
+    "zip": "الرمز البريدي",
+    "taxNumber": "الرقم الضريبي",
+    "latitude": "خط العرض",
+    "longitude": "خط الطول",
+    "commercialRegister": "السجل التجاري",
+    "selectedFile": "المحدد",
+    "currentFile": "الحالي",
+    "language": "اللغة",
+    "registrationComplete": "اكتمل التسجيل",
+    "registrationIncomplete": "التسجيل غير مكتمل",
+    "googleUser": "مستخدم جوجل",
+    "regularUser": "مستخدم عادي"
+  },
+  "requests": {
+    "title": "طلبات التسعير",
+    "create": "إنشاء طلب",
+    "comingSoon": "قريباً",
+    "description": "ستكون ميزة الطلبات متاحة قريباً.",
+    "filters": {
+      "title": "الفلتر",
+      "status": "الحالة",
+      "allStatuses": "جميع الحالات",
+      "dateFrom": "التاريخ من",
+      "dateTo": "التاريخ إلى",
+      "perPage": "لكل صفحة",
+      "clear": "مسح الفلتر",
+      "results": "عرض {{from}}-{{to}} من {{total}} نتيجة"
+    },
+    "status": {
+      "draft": "مسودة",
+      "pending": "قيد الانتظار",
+      "submitted": "تم الإرسال",
+      "accepted": "مقبول",
+      "rejected": "مرفوض"
+    },
+    "id": "الرقم",
+    "userType": "النوع",
+    "createdAt": "تاريخ الإنشاء",
+    "submittedAt": "تاريخ الإرسال",
+    "price": "السعر",
+    "items": {
+      "title": "عناصر الطلب",
+      "quantity": "الكمية",
+      "created": "تاريخ الإنشاء",
+      "partImage": "الصورة",
+      "orderImage": "الطلب",
+      "formImage": "النموذج"
+    },
+    "actions": {
+      "submit": "إرسال",
+      "download": "تحميل",
+      "view": "عرض",
+      "edit": "تعديل",
+      "delete": "حذف"
+    },
+    "pagination": {
+      "previous": "السابق",
+      "next": "التالي",
+      "showing": "عرض {{from}}-{{to}} من {{total}} نتيجة"
+    },
+    "empty": {
+      "title": "لا توجد طلبات",
+      "description": "لا توجد طلبات تطابق الفلتر الحالية."
+    },
+    "error": {
+      "title": "خطأ في تحميل الطلبات",
+      "description": "فشل في تحميل الطلبات. يرجى المحاولة مرة أخرى.",
+      "retry": "إعادة المحاولة"
+    }
+  },
   "settings": {
     "title": "الإعدادات",
     "edit": "تعديل",
     "save": "حفظ",
     "cancel": "إلغاء",
     "tabs": {
-      "account": "الحساب",
-      "privacy": "الخصوصية",
-      "security": "الأمان",
-      "language": "اللغة والمنطقة"
+      "company": "معلومات الشركة",
+      "legal": "سياسات الشركة"
     },
     "account": {
       "title": "إعدادات الإشعارات",
@@ -83,6 +170,31 @@
       "riyadh": "الرياض (GMT+3)",
       "dubai": "دبي (GMT+4)",
       "london": "لندن (GMT+0)"
+    },
+    "company": {
+      "title": "معلومات الشركة",
+      "name": "اسم الشركة",
+      "email": "البريد الإلكتروني",
+      "phone": "رقم الجوال",
+      "address": "العنوان",
+      "website": "الموقع الإلكتروني",
+      "description": "الوصف",
+      "noAddress": "لا يوجد عنوان"
+    },
+    "support": {
+      "title": "معلومات الدعم",
+      "email": "بريد الدعم",
+      "phone": "هاتف الدعم"
+    },
+    "social": {
+      "title": "وسائل التواصل الاجتماعي"
+    },
+    "legal": {
+      "termsOfService": "شروط الخدمة",
+      "privacyPolicy": "سياسة الخصوصية",
+      "refundPolicy": "سياسة الاسترداد",
+      "shippingPolicy": "سياسة الشحن",
+      "noContent": "لا يوجد محتوى متاح"
     }
   },
   "addresses": {
@@ -90,7 +202,8 @@
     "addAddress": "إضافة عنوان جديد",
     "editAddress": "تعديل العنوان",
     "home": "المنزل",
-    "work": "العمل",
+    "office": "المكتب",
+    "other": "أخرى",
     "default": "افتراضي",
     "setDefault": "تعيين كافتراضي",
     "name": "الاسم",
@@ -105,29 +218,104 @@
     "delete": "حذف",
     "confirmDelete": "هل أنت متأكد من حذف هذا العنوان؟",
     "add": "إضافة",
-    "update": "تحديث"
+    "update": "تحديث",
+    "noAddresses": "لا توجد عناوين بعد",
+    "addFirstAddress": "أضف عنوانك الأول للبدء."
   },
   "orders": {
-    "title": "طلباتي",
-    "orderNumber": "طلب رقم",
-    "date": "التاريخ",
-    "status": "الحالة",
-    "total": "المجموع",
-    "items": "المنتجات",
-    "trackingNumber": "رقم التتبع",
-    "viewDetails": "عرض التفاصيل",
-    "downloadInvoice": "تحميل الفاتورة",
-    "trackOrder": "تتبع الطلب",
-    "statuses": {
-      "pending": "في الانتظار",
-      "processing": "قيد المعالجة",
-      "shipped": "تم الشحن",
-      "delivered": "تم التوصيل",
-      "cancelled": "ملغى"
+    "title": "الطلبات",
+    "export": "تصدير",
+    "filters": {
+      "title": "الفلترة",
+      "status": "حالة الطلب",
+      "allStatuses": "جميع الحالات",
+      "paymentStatus": "حالة الدفع",
+      "allPaymentStatuses": "جميع حالات الدفع",
+      "dateFrom": "التاريخ من",
+      "dateTo": "التاريخ إلى",
+      "sortBy": "ترتيب حسب",
+      "sortDirection": "اتجاه الترتيب",
+      "perPage": "لكل صفحة",
+      "clear": "مسح الفلتر",
+      "apply": "تطبيق الفلتر",
+      "loading": "جاري التحميل...",
+      "createdAt": "تاريخ الإنشاء",
+      "orderNumber": "رقم الطلب",
+      "total": "المجموع",
+      "descending": "تنازلي",
+      "ascending": "تصاعدي"
     },
+    "pagination": {
+      "previous": "السابق",
+      "next": "التالي",
+      "showing": "عرض {{from}}-{{to}} من {{total}} نتيجة"
+    },
+    "empty": {
+      "title": "لا توجد طلبات",
+      "description": "لم تقم بإنشاء أي طلبات بعد."
+    },
+    "error": {
+      "title": "خطأ في تحميل الطلبات",
+      "description": "فشل في تحميل الطلبات. يرجى المحاولة مرة أخرى.",
+      "retry": "إعادة المحاولة"
+    },
+    "orderDetails": "تفاصيل الطلب",
+    "orderDate": "تاريخ الطلب",
+    "orderSummary": "ملخص الطلب",
+    "customerName": "اسم العميل",
+    "phone": "الهاتف",
+    "address": "العنوان",
+    "apartment": "الشقة",
+    "sku": "رمز المنتج",
+    "unitPrice": "سعر الوحدة",
+    "pricingDetails": "تفاصيل الأسعار",
+    "tax": "الضريبة",
+    "couponCode": "رمز الكوبون",
+    "savedAmount": "المبلغ المحفوظ",
+    "loadingDetails": "جاري تحميل تفاصيل الطلب...",
+    "errorLoadingDetails": "فشل في تحميل تفاصيل الطلب",
+    "status": "الحالة",
+    "paymentStatus": "حالة الدفع",
+    "paymentMethod": "طريقة الدفع",
+    "subtotal": "المجموع الفرعي",
+    "discount": "الخصم",
+    "shipping": "الشحن",
+    "total": "المجموع",
+    "grandTotal": "المجموع الكلي",
+    "couponApplied": "تم تطبيق الكوبون",
+    "products": "المنتجات",
     "quantity": "الكمية",
     "price": "السعر",
-    "sar": "ريال"
+    "shippingAddress": "عنوان الشحن",
+    "trackingNumber": "رقم التتبع",
+    "notes": "ملاحظات",
+    "reorder": "إعادة الطلب",
+    "downloadInvoice": "تحميل الفاتورة",
+    "items": "المنتجات",
+    "item": "منتج",
+    "viewDetails": "عرض التفاصيل",
+    "loading": "جاري تحميل الطلبات...",
+    "statuses": {
+      "pending": "في الانتظار",
+      "paid": "مدفوع",
+      "processing": "قيد المعالجة",
+      "shipped": "تم الشحن",
+      "completed": "مكتمل",
+      "cancelled": "ملغى",
+      "refunded": "مسترد"
+    },
+    "paymentStatuses": {
+      "pending": "في الانتظار",
+      "paid": "مدفوع",
+      "failed": "فشل",
+      "refunded": "مسترد"
+    },
+    "stats": {
+      "totalOrders": "إجمالي الطلبات",
+      "completedOrders": "مكتملة",
+      "pendingOrders": "قيد الانتظار",
+      "totalSpent": "إجمالي الإنفاق"
+    }
   },
   "points": {
     "title": "نقاطي",

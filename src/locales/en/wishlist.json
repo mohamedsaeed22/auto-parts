@@ -1,0 +1,23 @@
+{
+  "title": "My Wishlist",
+  "empty": "Your wishlist is empty",
+  "continueShopping": "Continue Shopping",
+  "clearWishlist": "Clear Wishlist",
+  "confirmClear": "Are you sure you want to clear your wishlist?",
+  "addToCart": "Add to Cart",
+  "retry": "Try Again",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page {{current}} of {{total}}",
+  "errors": {
+    "loadingFailed": "Failed to load wishlist",
+    "addFailed": "Failed to add product to wishlist",
+    "removeFailed": "Failed to remove product from wishlist",
+    "clearFailed": "Failed to clear wishlist"
+  },
+  "success": {
+    "added": "Product added to wishlist successfully",
+    "removed": "Product removed from wishlist successfully",
+    "cleared": "Wishlist cleared successfully"
+  }
+}
