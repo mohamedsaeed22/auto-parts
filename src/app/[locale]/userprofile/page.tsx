@@ -19,12 +19,52 @@ export type ProfilePageType =
 export default function UserProfilePage() {
   const [activePage, setActivePage] = useState<ProfilePageType>("profile");
 
-  // Ensure profile is always selected by default
+  // Restore active page from localStorage on component mount
+  useEffect(() => {
+    try {
+      const savedPage = localStorage.getItem(
+        "userProfileActivePage"
+      ) as ProfilePageType;
+      const validPages: ProfilePageType[] = [
+        "profile",
+        "addresses",
+        "orders",
+        "settings",
+        "requests",
+      ];
+
+      if (savedPage && validPages.includes(savedPage)) {
+        setActivePage(savedPage);
+      }
+    } catch (error) {
+      console.warn("Failed to restore active page from localStorage:", error);
+      // Fallback to default page if localStorage fails
+      setActivePage("profile");
+    }
+  }, []);
+
+  // Ensure profile is always selected by default if no activePage is set
   useEffect(() => {
     if (!activePage) {
       setActivePage("profile");
     }
   }, [activePage]);
+
+  // Optional: Clean up localStorage when component unmounts
+  // Uncomment the following if you want to clear the saved page when leaving the profile section
+  /*
+  useEffect(() => {
+    return () => {
+      try {
+        if (typeof window !== "undefined" && window.localStorage) {
+          localStorage.removeItem("userProfileActivePage");
+        }
+      } catch (error) {
+        console.warn("Failed to clear localStorage:", error);
+      }
+    };
+  }, []);
+  */
 
   const renderActivePage = () => {
     switch (activePage) {

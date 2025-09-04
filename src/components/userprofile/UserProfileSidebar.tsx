@@ -1,5 +1,5 @@
 import { User, FileText, MapPin, ShoppingBag, Settings } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { ProfilePageType } from "@/app/[locale]/userprofile/page";
 
@@ -15,6 +15,21 @@ export default function UserProfileSidebar({
 
   // Ensure profile is selected by default if no activePage is set
   const currentActivePage = activePage || "profile";
+
+  // Save active page to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      if (
+        currentActivePage &&
+        typeof window !== "undefined" &&
+        window.localStorage
+      ) {
+        localStorage.setItem("userProfileActivePage", currentActivePage);
+      }
+    } catch (error) {
+      console.warn("Failed to save active page to localStorage:", error);
+    }
+  }, [currentActivePage]);
 
   const menu = [
     { key: "profile", labelKey: "sidebar.profile", icon: <User size={20} /> },
