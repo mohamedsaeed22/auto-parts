@@ -10,7 +10,7 @@
     "userType": {
       "label": "User Type",
       "workshop": "Workshop",
-      "store": "Store"
+      "shop": "Shop"
     },
     "fields": {
       "partName": {
@@ -33,6 +33,8 @@
       }
     },
     "images": {
+      "title": "Required Images",
+      "required": "Required",
       "partImage": "Part Image",
       "requestImage": "Request Image",
       "formImage": "Form Image"

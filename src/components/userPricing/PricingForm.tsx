@@ -126,7 +126,10 @@ export function PricingForm({
             {t("form.title")}
             {userType && (
               <span className="text-lg font-normal text-gray-600 ml-2">
-                - {t(`form.userType.${userType}`)}
+                -{" "}
+                {userType === "workshop"
+                  ? t("form.userType.workshop")
+                  : t("form.userType.shop")}
               </span>
             )}
           </h2>

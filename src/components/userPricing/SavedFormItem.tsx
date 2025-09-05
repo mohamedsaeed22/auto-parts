@@ -25,7 +25,7 @@ export function SavedFormItem({ form, index, onDelete }: SavedFormItemProps) {
           >
             {form.userType === "workshop"
               ? t("form.userType.workshop")
-              : t("form.userType.store")}
+              : t("form.userType.shop")}
           </span>
           <span className="text-xs text-gray-500">#{index + 1}</span>
         </div>

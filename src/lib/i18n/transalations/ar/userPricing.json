@@ -10,7 +10,7 @@
     "userType": {
       "label": "نوع المستخدم",
       "workshop": "ورشة",
-      "store": "محل"
+      "shop": "متجر"
     },
     "fields": {
       "partName": {
@@ -33,6 +33,8 @@
       }
     },
     "images": {
+      "title": "الصور المطلوبة",
+      "required": "مطلوب",
       "partImage": "صورة القطعة",
       "requestImage": "صورة الطلب",
       "formImage": "صورة الاستمارة"

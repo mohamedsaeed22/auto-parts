@@ -46,6 +46,12 @@ export function useUnifiedPricingForm() {
     return user?.type || "shop"; // Default to "shop" if no user type found
   };
 
+  // Get user code from local storage
+  const getUserCodeFromStorage = () => {
+    const user = storage.getUser();
+    return user?.code || "";
+  };
+
   // Check if user is authenticated
   const isAuthenticated = storage.isAuthenticated();
 
@@ -58,6 +64,8 @@ export function useUnifiedPricingForm() {
       userType: isAuthenticated
         ? (getUserTypeFromStorage() as "workshop" | "shop")
         : "workshop",
+      // Set user code from storage if available
+      userCode: getUserCodeFromStorage(),
     },
     mode: "onChange",
   });
@@ -161,6 +169,7 @@ export function useUnifiedPricingForm() {
       form.reset({
         ...defaultValues,
         userType: data.userType, // Keep the user type
+        userCode: getUserCodeFromStorage(), // Keep the user code from storage
       });
       setPartImagePreview(null);
       setRequestImagePreview(null);
