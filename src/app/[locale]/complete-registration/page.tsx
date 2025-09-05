@@ -8,14 +8,31 @@ import { useRouter } from "next/navigation";
 import { useLocale } from "@/hooks/useLocale";
 import { useRegistrationStatus } from "@/hooks/useRegistrationStatus";
 import { showSuccess, showError } from "@/lib/toast";
-import { Loader2 } from "lucide-react";
+import {
+  Loader2,
+  User,
+  Mail,
+  Building,
+  MapPin,
+  Hash,
+  FileText,
+} from "lucide-react";
 import { storage } from "@/lib/storage";
+import FormInput from "@/components/ui/FormInput";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import Image from "next/image";
 
 export default function CompleteRegistrationPage() {
   // ALL HOOKS MUST BE CALLED FIRST - before any early returns
   const [completeRegistration, { isLoading }] =
     useCompleteRegistrationMutation();
-  const { login, authData } = useAuth();
+  const { authData } = useAuth();
   const router = useRouter();
   const { currentLocale } = useLocale();
   const { clearRegistrationIncomplete } = useRegistrationStatus();
@@ -39,6 +56,21 @@ export default function CompleteRegistrationPage() {
     null
   );
   const [avatar, setAvatar] = useState<File | null>(null);
+  const [commercialRegisterPreview, setCommercialRegisterPreview] = useState<
+    string | null
+  >(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [errors, setErrors] = useState<{
+    name?: string;
+    manager_name?: string;
+    address?: string;
+    city?: string;
+    zip?: string;
+    state?: string;
+    tax_number?: string;
+    commercial_register?: string;
+    avatar?: string;
+  }>({});
 
   // Check if user has already completed registration
   const hasRedirectedRef = useRef(false);
@@ -71,6 +103,28 @@ export default function CompleteRegistrationPage() {
     }
   }, [authData, currentLocale, router]);
 
+  // File validation function
+  const validateFile = (file: File): string | null => {
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/gif",
+      "image/svg+xml",
+    ];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+
+    if (!allowedTypes.includes(file.type)) {
+      return `File must be of type: jpeg, png, jpg, gif, svg`;
+    }
+
+    if (file.size > maxSize) {
+      return `File size must be less than 5MB`;
+    }
+
+    return null;
+  };
+
   // Handle input changes
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -84,20 +138,107 @@ export default function CompleteRegistrationPage() {
 
   // Handle file changes
   const handleFileChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    fieldName: string
+    file: File | undefined,
+    fieldName: "commercial_register" | "avatar"
   ) => {
-    const file = e.target.files?.[0] || null;
+    // Clear previous errors
+    setErrors((prev) => ({ ...prev, [fieldName]: undefined }));
+
     if (fieldName === "commercial_register") {
-      setCommercialRegister(file);
+      setCommercialRegister(file || null);
+      if (file) {
+        // Validate file
+        const validationError = validateFile(file);
+        if (validationError) {
+          setErrors((prev) => ({ ...prev, [fieldName]: validationError }));
+          return;
+        }
+
+        // Create preview for image files
+        const reader = new FileReader();
+        reader.onload = (e) =>
+          setCommercialRegisterPreview(e.target?.result as string);
+        reader.readAsDataURL(file);
+      } else {
+        setCommercialRegisterPreview(null);
+      }
     } else if (fieldName === "avatar") {
-      setAvatar(file);
+      setAvatar(file || null);
+      if (file) {
+        // Validate file
+        const validationError = validateFile(file);
+        if (validationError) {
+          setErrors((prev) => ({ ...prev, [fieldName]: validationError }));
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => setAvatarPreview(e.target?.result as string);
+        reader.readAsDataURL(file);
+      } else {
+        setAvatarPreview(null);
+      }
+    }
+  };
+
+  const handleRemoveFile = (fieldName: "commercial_register" | "avatar") => {
+    // Clear errors when removing file
+    setErrors((prev) => ({ ...prev, [fieldName]: undefined }));
+
+    if (fieldName === "commercial_register") {
+      setCommercialRegister(null);
+      setCommercialRegisterPreview(null);
+    } else if (fieldName === "avatar") {
+      setAvatar(null);
+      setAvatarPreview(null);
     }
   };
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Clear previous errors
+    setErrors({});
+
+    // Validate required fields
+    const newErrors: { [key: string]: string } = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    }
+    if (!formData.manager_name.trim()) {
+      newErrors.manager_name = "Manager name is required";
+    }
+    if (!formData.address.trim()) {
+      newErrors.address = "Address is required";
+    }
+    if (!formData.city.trim()) {
+      newErrors.city = "City is required";
+    }
+    if (!formData.zip.trim()) {
+      newErrors.zip = "ZIP code is required";
+    }
+    if (!formData.state.trim()) {
+      newErrors.state = "State is required";
+    }
+    if (!formData.tax_number.trim()) {
+      newErrors.tax_number = "Tax number is required";
+    }
+
+    // Validate file uploads
+    if (!commercialRegister) {
+      newErrors.commercial_register = "Commercial register is required";
+    }
+    if (!avatar) {
+      newErrors.avatar = "Avatar is required";
+    }
+
+    // If there are validation errors, set them and return
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
     try {
       // Create the request data object
@@ -221,14 +362,18 @@ export default function CompleteRegistrationPage() {
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <div className="w-16 h-16 bg-logo-gold/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <User className="text-logo-gold" size={32} />
+          </div>
+          <h1 className="text-3xl font-bold text-logo-black mb-2">
             Complete Registration
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Please complete your registration data to access all features
           </p>
           {authData.user?.code && (
-            <div className="mt-4 inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-lg">
+            <div className="mt-4 inline-flex items-center px-4 py-2 bg-logo-gold/10 text-logo-gold rounded-lg border border-logo-gold/20">
+              <Hash className="w-4 h-4 mr-2" />
               <span className="text-sm font-medium">
                 User Code: {authData.user.code}
               </span>
@@ -237,261 +382,312 @@ export default function CompleteRegistrationPage() {
         </div>
 
         {/* Registration Form */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 md:p-8">
+        <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 md:p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Name *
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter your name"
-                />
-              </div>
+              <FormInput
+                label="Name"
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                placeholder="Enter your name"
+                required
+                icon={User}
+                error={errors.name}
+              />
 
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Email{" "}
-                  <span className="text-gray-500 font-normal">(Optional)</span>
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter your email (optional)"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Leave empty if you don&apos;t have an email
-                </p>
-              </div>
+              <FormInput
+                label="Email"
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="Enter your email (optional)"
+                // helpText="Leave empty if you don't have an email"
+                icon={Mail}
+              />
 
-              <div>
-                <label
-                  htmlFor="type"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Type *
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-neutral-700">
+                  Type <span className="text-accent">*</span>
                 </label>
-                <select
-                  id="type"
-                  name="type"
+                <Select
                   value={formData.type}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onValueChange={(value: "shop" | "workshop") =>
+                    setFormData((prev) => ({ ...prev, type: value }))
+                  }
                 >
-                  <option value="shop">Shop</option>
-                  <option value="workshop">Workshop</option>
-                </select>
+                  <SelectTrigger className="w-full h-12 px-3 py-3 border border-neutral-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="shop">Shop</SelectItem>
+                    <SelectItem value="workshop">Workshop</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
-              <div>
-                <label
-                  htmlFor="manager_name"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Manager Name *
-                </label>
-                <input
-                  type="text"
-                  id="manager_name"
-                  name="manager_name"
-                  value={formData.manager_name}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter manager name"
-                />
-              </div>
+              <FormInput
+                label="Manager Name"
+                type="text"
+                id="manager_name"
+                name="manager_name"
+                value={formData.manager_name}
+                onChange={handleInputChange}
+                placeholder="Enter manager name"
+                required
+                icon={User}
+                error={errors.manager_name}
+              />
 
-              <div>
-                <label
-                  htmlFor="address"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Address *
-                </label>
-                <input
-                  type="text"
-                  id="address"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter address"
-                />
-              </div>
+              <FormInput
+                label="Address"
+                type="text"
+                id="address"
+                name="address"
+                value={formData.address}
+                onChange={handleInputChange}
+                placeholder="Enter address"
+                required
+                icon={MapPin}
+                error={errors.address}
+              />
 
-              <div>
-                <label
-                  htmlFor="city"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  City *
-                </label>
-                <input
-                  type="text"
-                  id="city"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter city"
-                />
-              </div>
+              <FormInput
+                label="City"
+                type="text"
+                id="city"
+                name="city"
+                value={formData.city}
+                onChange={handleInputChange}
+                placeholder="Enter city"
+                required
+                icon={Building}
+                error={errors.city}
+              />
 
-              <div>
-                <label
-                  htmlFor="zip"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  ZIP Code *
-                </label>
-                <input
-                  type="text"
-                  id="zip"
-                  name="zip"
-                  value={formData.zip}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter ZIP code"
-                />
-              </div>
+              <FormInput
+                label="ZIP Code"
+                type="text"
+                id="zip"
+                name="zip"
+                value={formData.zip}
+                onChange={handleInputChange}
+                placeholder="Enter ZIP code"
+                required
+                icon={Hash}
+                error={errors.zip}
+              />
 
-              <div>
-                <label
-                  htmlFor="state"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  State *
-                </label>
-                <input
-                  type="text"
-                  id="state"
-                  name="state"
-                  value={formData.state}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter state"
-                />
-              </div>
+              <FormInput
+                label="State"
+                type="text"
+                id="state"
+                name="state"
+                value={formData.state}
+                onChange={handleInputChange}
+                placeholder="Enter state"
+                required
+                icon={MapPin}
+                error={errors.state}
+              />
 
-              <div>
-                <label
-                  htmlFor="tax_number"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Tax Number *
-                </label>
-                <input
-                  type="text"
-                  id="tax_number"
-                  name="tax_number"
-                  value={formData.tax_number}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter tax number"
-                />
-              </div>
+              <FormInput
+                label="Tax Number"
+                type="text"
+                id="tax_number"
+                name="tax_number"
+                value={formData.tax_number}
+                onChange={handleInputChange}
+                placeholder="Enter tax number"
+                required
+                icon={FileText}
+                error={errors.tax_number}
+              />
 
-              <div>
-                <label
-                  htmlFor="latitude"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Latitude (Static)
-                </label>
-                <input
-                  type="text"
-                  id="latitude"
-                  name="latitude"
-                  value={formData.latitude}
-                  readOnly
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600 cursor-not-allowed"
-                  placeholder="Static latitude value"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Fixed location: Cairo, Egypt
-                </p>
-              </div>
+              <FormInput
+                label="Latitude (Static)"
+                type="text"
+                id="latitude"
+                name="latitude"
+                value={formData.latitude}
+                disabled
+                placeholder="Static latitude value"
+                helpText="Fixed location: Cairo, Egypt"
+                icon={MapPin}
+              />
 
-              <div>
-                <label
-                  htmlFor="longitude"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Longitude (Static)
-                </label>
-                <input
-                  type="text"
-                  id="longitude"
-                  name="longitude"
-                  value={formData.longitude}
-                  readOnly
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600 cursor-not-allowed"
-                  placeholder="Static longitude value"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Fixed location: Cairo, Egypt
-                </p>
-              </div>
+              <FormInput
+                label="Longitude (Static)"
+                type="text"
+                id="longitude"
+                name="longitude"
+                value={formData.longitude}
+                disabled
+                placeholder="Static longitude value"
+                helpText="Fixed location: Cairo, Egypt"
+                icon={MapPin}
+              />
             </div>
 
             {/* File Uploads */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label
-                  htmlFor="commercial_register"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
+              {/* Commercial Register Upload */}
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-logo-black mb-2">
+                  <FileText size={16} color="gray" />
                   Commercial Register
                 </label>
+
                 <input
                   type="file"
                   id="commercial_register"
-                  onChange={(e) => handleFileChange(e, "commercial_register")}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  accept="image/*,.pdf"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    handleFileChange(file, "commercial_register");
+                  }}
+                  className="hidden"
+                  accept="image/jpeg,image/jpg,image/png,image/gif,image/svg+xml"
                 />
+
+                {!commercialRegister && (
+                  <label
+                    htmlFor="commercial_register"
+                    className="flex items-center justify-center w-full h-32 border-2 border-dashed border-logo-gold/50 rounded-lg cursor-pointer hover:border-logo-gold hover:bg-logo-gold/5 transition-colors"
+                  >
+                    <div className="text-center">
+                      <FileText
+                        className="mx-auto text-logo-gold mb-2"
+                        size={24}
+                      />
+                      <p className="text-sm text-logo-black">
+                        Click to select Commercial Register
+                      </p>
+                      <p className="text-xs text-logo-black/60">
+                        Image up to 5MB (jpeg, png, jpg, gif, svg)
+                      </p>
+                    </div>
+                  </label>
+                )}
+
                 {commercialRegister && (
-                  <p className="text-sm text-gray-600 mt-1">
-                    Selected: {commercialRegister.name}
+                  <div className="relative">
+                    <Image
+                      src={commercialRegisterPreview!}
+                      alt="Commercial Register Preview"
+                      className="w-full h-48 object-cover rounded-lg border-2 border-logo-gold"
+                      width={400}
+                      height={192}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveFile("commercial_register")}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                      title="Remove file"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+
+                <p className="text-xs text-gray-500">
+                  Upload commercial register document (jpeg, png, jpg, gif, svg)
+                </p>
+                {errors.commercial_register && (
+                  <p className="text-sm text-red-500">
+                    {errors.commercial_register}
                   </p>
                 )}
               </div>
 
-              <div>
-                <label
-                  htmlFor="avatar"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
+              {/* Avatar Upload */}
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-logo-black mb-2">
+                  <User size={16} color="gray" />
                   Avatar
                 </label>
+
                 <input
                   type="file"
                   id="avatar"
-                  onChange={(e) => handleFileChange(e, "avatar")}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    handleFileChange(file, "avatar");
+                  }}
+                  className="hidden"
+                  accept="image/jpeg,image/jpg,image/png,image/gif,image/svg+xml"
                 />
+
+                {!avatar && (
+                  <label
+                    htmlFor="avatar"
+                    className="flex items-center justify-center w-full h-32 border-2 border-dashed border-logo-gold/50 rounded-lg cursor-pointer hover:border-logo-gold hover:bg-logo-gold/5 transition-colors"
+                  >
+                    <div className="text-center">
+                      <User className="mx-auto text-logo-gold mb-2" size={24} />
+                      <p className="text-sm text-logo-black">
+                        Click to select Avatar
+                      </p>
+                      <p className="text-xs text-logo-black/60">
+                        Image up to 5MB (jpeg, png, jpg, gif, svg)
+                      </p>
+                    </div>
+                  </label>
+                )}
+
                 {avatar && (
-                  <p className="text-sm text-gray-600 mt-1">
-                    Selected: {avatar.name}
-                  </p>
+                  <div className="relative">
+                    <Image
+                      src={avatarPreview!}
+                      alt="Avatar Preview"
+                      className="w-full h-48 object-cover rounded-lg border-2 border-logo-gold"
+                      width={400}
+                      height={192}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveFile("avatar")}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                      title="Remove file"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+
+                <p className="text-xs text-gray-500">
+                  Upload your profile picture (jpeg, png, jpg, gif, svg)
+                </p>
+                {errors.avatar && (
+                  <p className="text-sm text-red-500">{errors.avatar}</p>
                 )}
               </div>
             </div>
@@ -501,7 +697,9 @@ export default function CompleteRegistrationPage() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                variant="gold"
+                size="lg"
+                className="px-8 py-3 text-lg"
               >
                 {isLoading ? (
                   <>
