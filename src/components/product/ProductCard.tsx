@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Product } from "@/services/api/types";
+import { useState } from "react";
 
 interface ProductCardProps {
   product: Product;
@@ -28,19 +29,67 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const cartItem = items.find((item) => item.id === product.id);
   const isInCart = !!cartItem;
 
+  // Local state for immediate visual feedback
+  const [localFavouriteState, setLocalFavouriteState] = useState<
+    boolean | null
+  >(null);
+  const [localWishlistState, setLocalWishlistState] = useState<boolean | null>(
+    null
+  );
+
   // Safe access to product properties
   const productName = product.name || "Product Name Unavailable";
   const productPrice = product.price || "0";
   const productFinalPrice = product.final_price || Number(productPrice);
   const productImage = product.primary_image || "/placeholder-product.jpg";
   const categoryName = product.category?.name || "Unknown Category";
-  const brandName = product.brand?.name;
   const hasDiscount = product.discount_type || product.offer;
   const discountInfo = product.discount_info;
 
-  // Check if product is in favourites or wishlist
-  const isInFavourites = product.in_favourites === true;
-  const isInWishlist = product.in_wishlist === true;
+  // Check if product is in favourites or wishlist (use local state if available, otherwise use API data)
+  const isInFavourites =
+    localFavouriteState !== null
+      ? localFavouriteState
+      : product.in_favourites === true;
+  const isInWishlist =
+    localWishlistState !== null
+      ? localWishlistState
+      : product.in_wishlist === true;
+
+  // Enhanced toggle functions with immediate visual feedback
+  const handleToggleFavouriteWithFeedback = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Immediately update local state for visual feedback
+    const newFavouriteState = !isInFavourites;
+    setLocalFavouriteState(newFavouriteState);
+
+    try {
+      await handleToggleFavourite(product.id);
+    } catch (error) {
+      // Revert local state if API call fails
+      console.error("Failed to toggle favourite:", error);
+      setLocalFavouriteState(!newFavouriteState);
+    }
+  };
+
+  const handleToggleWishlistWithFeedback = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Immediately update local state for visual feedback
+    const newWishlistState = !isInWishlist;
+    setLocalWishlistState(newWishlistState);
+
+    try {
+      await handleToggleWishlist(product.id);
+    } catch (error) {
+      // Revert local state if API call fails
+      console.error("Failed to toggle wishlist:", error);
+      setLocalWishlistState(!newWishlistState);
+    }
+  };
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -88,61 +137,57 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
 
-            {/* Action Buttons */}
+            {/* Action Buttons - Always Visible */}
             <div
               className={`absolute top-2 ${
                 isRTL ? "left-2" : "right-2"
-              } flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200`}
+              } flex flex-col gap-1`}
             >
               <Button
                 size="sm"
                 variant="outline"
-                className={`w-7 h-7 rounded-full backdrop-blur-sm border-neutral-200 hover:bg-white shadow-sm transition-colors ${
-                  isInFavourites 
-                    ? "bg-red-500 border-red-500 hover:bg-red-600" 
-                    : "bg-white/90 hover:bg-white"
+                className={`w-10 h-10 rounded-full border-neutral-200 hover:bg-white shadow-lg transition-colors duration-300 ${
+                  isInFavourites
+                    ? "bg-red-500 border-red-500 hover:bg-red-600"
+                    : "bg-white hover:bg-gray-50"
                 }`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleToggleFavourite(product.id);
-                }}
+                onClick={handleToggleFavouriteWithFeedback}
                 disabled={isLoading(`favourite-${product.id}`)}
               >
                 {isLoading(`favourite-${product.id}`) ? (
-                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-neutral-600"></div>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-neutral-600"></div>
                 ) : (
-                  <Heart 
-                    size={12} 
+                  <Heart
+                    size={22}
                     className={`${
-                      isInFavourites ? "text-white fill-white" : "text-neutral-600"
-                    }`} 
+                      isInFavourites
+                        ? "text-white fill-white"
+                        : "text-neutral-700"
+                    }`}
                   />
                 )}
               </Button>
               <Button
                 size="sm"
                 variant="outline"
-                className={`w-7 h-7 rounded-full backdrop-blur-sm border-neutral-200 hover:bg-white shadow-sm transition-colors ${
-                  isInWishlist 
-                    ? "bg-blue-500 border-blue-500 hover:bg-blue-600" 
-                    : "bg-white/90 hover:bg-white"
+                className={`w-10 h-10 rounded-full border-neutral-200 hover:bg-white shadow-lg transition-colors duration-300 ${
+                  isInWishlist
+                    ? "bg-blue-500 border-blue-500 hover:bg-blue-600"
+                    : "bg-white hover:bg-gray-50"
                 }`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleToggleWishlist(product.id);
-                }}
+                onClick={handleToggleWishlistWithFeedback}
                 disabled={isLoading(`wishlist-${product.id}`)}
               >
                 {isLoading(`wishlist-${product.id}`) ? (
-                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-neutral-600"></div>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-neutral-600"></div>
                 ) : (
-                  <Bookmark 
-                    size={12} 
+                  <Bookmark
+                    size={22}
                     className={`${
-                      isInWishlist ? "text-white fill-white" : "text-neutral-600"
-                    }`} 
+                      isInWishlist
+                        ? "text-white fill-white"
+                        : "text-neutral-700"
+                    }`}
                   />
                 )}
               </Button>
@@ -171,21 +216,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
           {/* Product Info */}
           <div className="p-3 flex flex-col flex-1">
-            {/* Category and Brand */}
-            <div className="flex flex-wrap gap-1 mb-2">
-              <span className="text-xs text-neutral-600 bg-neutral-100 rounded-full px-2 py-1 capitalize">
-                {categoryName}
-              </span>
-              {brandName && (
-                <span className="text-xs text-info bg-info-light rounded-full px-2 py-1">
-                  {brandName}
-                </span>
-              )}
-            </div>
-
             {/* Product Name */}
-            <h3 className="text-sm font-medium text-neutral-900 line-clamp-2 min-h-[2rem]  group-hover:text-primary transition-colors">
-              {productName}
+            <h3 className="text-sm font-medium text-neutral-900 mb-3 group-hover:text-primary transition-colors overflow-hidden">
+              <span className="block truncate" title={productName}>
+                {productName}
+              </span>
             </h3>
 
             {/* Price and Add to Cart Section */}
