@@ -13,10 +13,6 @@ import {
   Building2,
   Star,
   Clock,
-  Filter,
-  Grid3X3,
-  List,
-  Search,
   Award,
   Shield,
   CheckCircle,
@@ -75,7 +71,7 @@ const HeroSection = ({
 }) => (
   <div className="bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-white py-16">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className={`text-center ${isRTL ? "text-right" : "text-left"}`}>
+      <div className="text-center">
         <div className="flex items-center justify-center gap-3 mb-4">
           <Building2 className="h-8 w-8 text-white/70" />
           <h1 className="text-4xl md:text-5xl font-bold">
@@ -129,12 +125,14 @@ const BrandCard = ({
       />
 
       {/* Premium Badge */}
-      <div className="absolute top-4 left-4 bg-primary text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1 shadow-lg">
+      <div
+        className={`absolute top-4 ${
+          isRTL ? "right-4" : "left-4"
+        } bg-primary text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1 shadow-lg`}
+      >
         <Star size={14} />
         {t("premium") || "Premium"}
       </div>
-
-      
 
       {/* Hover Overlay */}
       <div className="absolute inset-0  bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
@@ -149,10 +147,17 @@ const BrandCard = ({
 
     {/* Brand Details */}
     <div className="p-6">
-      <div className={`space-y-3 ${isRTL ? "text-right" : "text-left"}`}>
-        <div className="flex items-center gap-2">
+      <div className="space-y-3">
+        <div
+          className={`flex items-center gap-2 ${
+            isRTL ? "flex-row" : ""
+          }`}
+        >
           <Building2 className="text-primary" size={18} />
-          <h3 className="text-xl font-bold text-gray-900 truncate">
+          <h3
+            className="text-xl font-bold text-gray-900 truncate"
+            dir={isRTL ? "rtl" : "ltr"}
+          >
             {brand.name}
           </h3>
         </div>
@@ -160,13 +165,16 @@ const BrandCard = ({
         <div className="space-y-2">
           <div
             className={`flex items-center gap-2 ${
-              isRTL ? "flex-row-reverse" : ""
+              isRTL ? "flex-row" : ""
             }`}
           >
             <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
               <CheckCircle size={16} className="text-primary" />
             </div>
-            <div>
+            <div
+              className={isRTL ? "text-right" : "text-left"}
+              dir={isRTL ? "rtl" : "ltr"}
+            >
               <p className="text-sm font-semibold text-gray-900">
                 {t("certified") || "Certified Brand"}
               </p>
@@ -178,13 +186,16 @@ const BrandCard = ({
 
           <div
             className={`flex items-center gap-2 ${
-              isRTL ? "flex-row-reverse" : ""
+              isRTL ? "flex-row" : ""
             }`}
           >
             <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
               <Car size={16} className="text-green-600" />
             </div>
-            <div>
+            <div
+              className={isRTL ? "text-right" : "text-left"}
+              dir={isRTL ? "rtl" : "ltr"}
+            >
               <p className="text-sm font-semibold text-gray-900">
                 {brand.products_count || 0} {t("products") || "Products"}
               </p>
@@ -208,72 +219,6 @@ const BrandCard = ({
   </div>
 );
 
-// Filter Bar Component
-const FilterBar = ({
-  isRTL,
-  t,
-  viewMode,
-  onViewModeChange,
-}: {
-  isRTL: boolean;
-  t: (key: string) => string;
-  viewMode: "grid" | "list";
-  onViewModeChange: (mode: "grid" | "list") => void;
-}) => (
-  <div className="bg-white border-b border-gray-200 py-4 sticky top-0 z-10">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div
-        className={`flex items-center justify-between ${
-          isRTL ? "flex-row-reverse" : ""
-        }`}
-      >
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Filter className="text-gray-600" size={20} />
-            <span className="text-gray-700 font-medium">
-              {t("filters") || "Filters"}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Search className="text-gray-600" size={20} />
-            <span className="text-gray-700 font-medium">
-              {t("search") || "Search"}
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="text-gray-700 font-medium">
-            {t("viewMode") || "View Mode"}:
-          </span>
-          <div className="flex bg-gray-100 rounded-lg p-1">
-            <button
-              onClick={() => onViewModeChange("grid")}
-              className={`p-2 rounded-md transition-colors ${
-                viewMode === "grid"
-                  ? "bg-white text-primary shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              <Grid3X3 size={18} />
-            </button>
-            <button
-              onClick={() => onViewModeChange("list")}
-              className={`p-2 rounded-md transition-colors ${
-                viewMode === "list"
-                  ? "bg-white text-primary shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              <List size={18} />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
 // Brand Features Component
 const BrandFeatures = ({
   isRTL,
@@ -284,12 +229,15 @@ const BrandFeatures = ({
 }) => (
   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 bg-gray-50 rounded-lg mb-8">
     <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
+      className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}
     >
       <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
         <Shield size={20} className="text-primary" />
       </div>
-      <div className={isRTL ? "text-right" : "text-left"}>
+      <div
+        className={isRTL ? "text-right" : "text-left"}
+        dir={isRTL ? "rtl" : "ltr"}
+      >
         <p className="font-medium text-gray-900">
           {t("certifiedBrands") || "Certified Brands"}
         </p>
@@ -299,12 +247,15 @@ const BrandFeatures = ({
       </div>
     </div>
     <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
+      className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}
     >
       <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
         <CheckCircle size={20} className="text-green-600" />
       </div>
-      <div className={isRTL ? "text-right" : "text-left"}>
+      <div
+        className={isRTL ? "text-right" : "text-left"}
+        dir={isRTL ? "rtl" : "ltr"}
+      >
         <p className="font-medium text-gray-900">
           {t("qualityAssurance") || "Quality Assurance"}
         </p>
@@ -314,12 +265,15 @@ const BrandFeatures = ({
       </div>
     </div>
     <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
+      className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}
     >
       <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
         <Globe size={20} className="text-primary" />
       </div>
-      <div className={isRTL ? "text-right" : "text-left"}>
+      <div
+        className={isRTL ? "text-right" : "text-left"}
+        dir={isRTL ? "rtl" : "ltr"}
+      >
         <p className="font-medium text-gray-900">
           {t("globalStandards") || "Global Standards"}
         </p>
@@ -415,7 +369,7 @@ export default function BrandsPage() {
           <button
             onClick={handleGoBack}
             className={`flex items-center gap-1 hover:text-gray-700 transition-colors ${
-              isRTL ? "flex-row-reverse" : ""
+              isRTL ? "flex-row" : ""
             }`}
           >
             {isRTL ? (
