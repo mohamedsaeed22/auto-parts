@@ -1,6 +1,7 @@
 import { api } from "./baseApi";
+import { Product } from "./types";
 
-export interface SectionProduct {
+export interface SectionProduct extends Product {
   id: number;
   name: string;
   price: string;

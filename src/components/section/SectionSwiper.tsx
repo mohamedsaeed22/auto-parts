@@ -8,6 +8,7 @@ import ProductCard from "../product/ProductCard";
 import { useTranslation } from "react-i18next";
 import { SectionProduct } from "@/services/api/sectionsApi";
 import { AlertCircle } from "lucide-react";
+import { Product } from "@/services/api/types";
 
 interface SectionSwiperProps {
   section: {
@@ -157,16 +158,7 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
               <SwiperSlide key={product.id}>
                 <div>
                   <ProductCard
-                    product={{
-                      id: product.id,
-                      name: product.name,
-                      price: parseFloat(product.price),
-                      final_price: product.final_price,
-                      primary_image: product.primary_image,
-                      description: product.hover_text,
-                      product_identifier: product.product_identifier,
-                      is_active: product.is_active,
-                    }}
+                    product={product as Product}
                   />
                 </div>
               </SwiperSlide>
