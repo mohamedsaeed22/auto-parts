@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, Menu } from "lucide-react";
 import HeaderLogo from "./HeaderLogo";
 import HeaderSearch from "./HeaderSearch";
+import SearchAutocomplete from "./SearchAutocomplete";
 import HeaderLanguageDropdown from "./HeaderLanguageDropdown";
 import HeaderActions from "./HeaderActions";
 import HeaderNavigation from "./HeaderNavigation";
@@ -100,7 +101,7 @@ export default function Header() {
 
             {/* Desktop Search Bar - Centered */}
             <div className="hidden lg:flex items-center flex-1 max-w-2xl mx-8">
-              <HeaderSearch
+              <SearchAutocomplete
                 searchQuery={searchQuery}
                 setSearchQuery={updateSearchQuery}
                 onSubmit={handleSearchSubmit}
@@ -184,7 +185,7 @@ export default function Header() {
               }}
               className="lg:hidden bg-background border-t border-border px-4 py-3"
             >
-              <HeaderSearch
+              <SearchAutocomplete
                 searchQuery={searchQuery}
                 setSearchQuery={updateSearchQuery}
                 onSubmit={handleSearchSubmit}

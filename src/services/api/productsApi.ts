@@ -54,6 +54,23 @@ export const productsApi = api.injectEndpoints({
       providesTags: (result, error, id) => [{ type: "Products", id }],
     }),
 
+    // Search Products for Autocomplete
+    searchProducts: builder.mutation<
+      ApiResponse<PaginatedResponse<Product>>,
+      { name: string }
+    >({
+      query: (params) => {
+        const formData = new FormData();
+        formData.append("name", params.name);
+
+        return {
+          url: "/products",
+          method: "POST",
+          body: formData,
+        };
+      },
+    }),
+
     // Brands
     getBrands: builder.query<
       ApiResponse<PaginatedResponse<Brand>>,
@@ -97,6 +114,7 @@ export const productsApi = api.injectEndpoints({
 export const {
   useGetProductsMutation,
   useGetProductQuery,
+  useSearchProductsMutation,
   useGetBrandsQuery,
   useGetBannersQuery,
   useGetOffersQuery,
