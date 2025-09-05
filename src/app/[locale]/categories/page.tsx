@@ -9,7 +9,6 @@ import {
   ArrowLeft,
   Package,
   Search,
-  Filter,
   Grid3X3,
   List,
   ChevronRight,
@@ -17,19 +16,20 @@ import {
   Zap,
   Shield,
   Clock,
-  TrendingUp,
-  Building2,
-  Users,
-  Globe,
-  Award,
-  CheckCircle,
   Loader2,
   AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+
+// Types
+interface Category {
+  id: number;
+  name: string;
+  image: string;
+  children?: Category[];
+}
 
 // Category Card Component
 const CategoryCard = ({
@@ -39,7 +39,7 @@ const CategoryCard = ({
   onCategoryClick,
   viewMode,
 }: {
-  category: any;
+  category: Category;
   isRTL: boolean;
   t: (key: string) => string;
   onCategoryClick: (categoryId: number) => void;
@@ -66,7 +66,7 @@ const CategoryCard = ({
   if (viewMode === "list") {
     return (
       <Card
-        className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-2 hover:border-blue-200"
+        className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/30"
         onClick={() => onCategoryClick(category.id)}
       >
         <CardContent className="p-6">
@@ -84,12 +84,12 @@ const CategoryCard = ({
             {/* Category Info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors truncate">
+                <h3 className="text-xl font-semibold text-gray-900 group-hover:text-primary transition-colors truncate">
                   {category.name}
                 </h3>
                 <ChevronRight
                   size={20}
-                  className={`text-gray-400 group-hover:text-blue-600 transition-colors flex-shrink-0 ${
+                  className={`text-gray-400 group-hover:text-primary transition-colors flex-shrink-0 ${
                     isRTL ? "rotate-180" : ""
                   }`}
                 />
@@ -98,10 +98,10 @@ const CategoryCard = ({
               {/* Subcategories */}
               {category.children && category.children.length > 0 && (
                 <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-                  <Package size={16} className="text-blue-500" />
+                  <Package size={16} className="text-primary" />
                   <span>
                     {category.children.length}{" "}
-                    {t("categories.subcategories") || "subcategories"}
+                    {t("categoryFeatures.subcategories")}
                   </span>
                 </div>
               )}
@@ -110,15 +110,15 @@ const CategoryCard = ({
               <div className="flex items-center gap-4 text-xs text-gray-500">
                 <div className="flex items-center gap-1">
                   <Star size={12} className="text-yellow-500" />
-                  <span>{t("categories.quality") || "Quality"}</span>
+                  <span>{t("categoryFeatures.quality")}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Zap size={12} className="text-blue-500" />
-                  <span>{t("categories.fast") || "Fast"}</span>
+                  <Zap size={12} className="text-primary" />
+                  <span>{t("categoryFeatures.fast")}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Shield size={12} className="text-green-500" />
-                  <span>{t("categories.reliable") || "Reliable"}</span>
+                  <span>{t("categoryFeatures.reliable")}</span>
                 </div>
               </div>
             </div>
@@ -130,7 +130,7 @@ const CategoryCard = ({
 
   return (
     <Card
-      className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-2 hover:border-blue-200 overflow-hidden"
+      className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/30 overflow-hidden"
       onClick={() => onCategoryClick(category.id)}
     >
       <CardContent className="p-0">
@@ -149,12 +149,12 @@ const CategoryCard = ({
           {/* Category Info */}
           <div className="p-4">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+              <h3 className="text-lg font-semibold text-gray-900 group-hover:text-primary transition-colors">
                 {category.name}
               </h3>
               <ChevronRight
                 size={20}
-                className={`text-gray-400 group-hover:text-blue-600 transition-colors ${
+                className={`text-gray-400 group-hover:text-primary transition-colors ${
                   isRTL ? "rotate-180" : ""
                 }`}
               />
@@ -163,10 +163,10 @@ const CategoryCard = ({
             {/* Subcategories Count */}
             {category.children && category.children.length > 0 && (
               <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-                <Package size={16} className="text-blue-500" />
+                <Package size={16} className="text-primary" />
                 <span>
                   {category.children.length}{" "}
-                  {t("categories.subcategories") || "subcategories"}
+                  {t("categoryFeatures.subcategories")}
                 </span>
               </div>
             )}
@@ -175,11 +175,11 @@ const CategoryCard = ({
             <div className="flex items-center gap-4 text-xs text-gray-500">
               <div className="flex items-center gap-1">
                 <Star size={12} className="text-yellow-500" />
-                <span>{t("categories.quality") || "Quality"}</span>
+                <span>{t("categoryFeatures.quality")}</span>
               </div>
               <div className="flex items-center gap-1">
-                <Zap size={12} className="text-blue-500" />
-                <span>{t("categories.fast") || "Fast"}</span>
+                <Zap size={12} className="text-primary" />
+                <span>{t("categoryFeatures.fast")}</span>
               </div>
             </div>
           </div>
@@ -197,28 +197,27 @@ const HeroSection = ({
   isRTL: boolean;
   t: (key: string) => string;
 }) => (
-  <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 text-white py-20">
+  <div className="bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-white py-20">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-6">
-          {t("hero.title") || "Product Categories"}
+          {t("hero.title")}
         </h1>
-        <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto mb-8">
-          {t("hero.subtitle") ||
-            "Explore our comprehensive range of automotive parts and accessories"}
+        <p className="text-xl md:text-2xl text-white/80 max-w-3xl mx-auto mb-8">
+          {t("hero.subtitle")}
         </p>
-        <div className="flex items-center justify-center gap-8 text-blue-100">
+        <div className="flex items-center justify-center gap-8 text-white/70">
           <div className="flex items-center gap-2">
             <Package className="h-5 w-5" />
-            <span>{t("hero.categories") || "100+ Categories"}</span>
+            <span>{t("hero.categories")}</span>
           </div>
           <div className="flex items-center gap-2">
             <Shield className="h-5 w-5" />
-            <span>{t("hero.quality") || "Premium Quality"}</span>
+            <span>{t("hero.quality")}</span>
           </div>
           <div className="flex items-center gap-2">
             <Clock className="h-5 w-5" />
-            <span>{t("hero.fast") || "Fast Delivery"}</span>
+            <span>{t("hero.fast")}</span>
           </div>
         </div>
       </div>
@@ -250,7 +249,7 @@ const SearchAndFilter = ({
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
             type="text"
-            placeholder={t("search.placeholder") || "Search categories..."}
+            placeholder={t("search.placeholder")}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-10"
@@ -259,15 +258,13 @@ const SearchAndFilter = ({
 
         {/* View Mode Toggle */}
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-600">
-            {t("viewMode") || "View Mode"}:
-          </span>
+          <span className="text-sm text-gray-600">{t("viewMode")}:</span>
           <div className="flex border border-gray-300 rounded-lg overflow-hidden">
             <button
               onClick={() => onViewModeChange("grid")}
               className={`p-2 ${
                 viewMode === "grid"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-white"
                   : "bg-white text-gray-600 hover:bg-gray-50"
               }`}
             >
@@ -277,7 +274,7 @@ const SearchAndFilter = ({
               onClick={() => onViewModeChange("list")}
               className={`p-2 ${
                 viewMode === "list"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-white"
                   : "bg-white text-gray-600 hover:bg-gray-50"
               }`}
             >
@@ -291,11 +288,11 @@ const SearchAndFilter = ({
 );
 
 // Loading Spinner Component
-const LoadingSpinner = () => (
+const LoadingSpinner = ({ t }: { t: (key: string) => string }) => (
   <div className="flex items-center justify-center py-12">
     <div className="flex items-center gap-2">
-      <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
-      <span className="text-gray-600">Loading categories...</span>
+      <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      <span className="text-gray-600">{t("loading")}</span>
     </div>
   </div>
 );
@@ -311,14 +308,11 @@ const ErrorMessage = ({
   <div className="text-center py-12">
     <AlertCircle className="mx-auto h-16 w-16 text-red-400 mb-4" />
     <h3 className="text-lg font-semibold text-gray-900 mb-2">
-      {t("error.title") || "Unable to Load Categories"}
+      {t("error.title")}
     </h3>
-    <p className="text-gray-600 mb-6">
-      {t("error.message") ||
-        "There was an error loading the categories. Please try again."}
-    </p>
-    <Button onClick={onRetry} className="bg-blue-600 hover:bg-blue-700">
-      {t("error.retry") || "Try Again"}
+    <p className="text-gray-600 mb-6">{t("error.message")}</p>
+    <Button onClick={onRetry} className="bg-primary hover:bg-primary/90">
+      {t("error.retry")}
     </Button>
   </div>
 );
@@ -348,10 +342,10 @@ export default function CategoriesPage() {
 
   // Filter categories based on search query
   const filteredCategories = categories.filter(
-    (category: any) =>
+    (category: Category) =>
       category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (category.children &&
-        category.children.some((child: any) =>
+        category.children.some((child: Category) =>
           child.name.toLowerCase().includes(searchQuery.toLowerCase())
         ))
   );
@@ -400,55 +394,47 @@ export default function CategoriesPage() {
           >
             {isRTL ? (
               <>
-                <span>{t("backButton") || "Back"}</span>
+                <span>{t("backButton")}</span>
                 <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
               </>
             ) : (
               <>
                 <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
-                <span>{t("backButton") || "Back"}</span>
+                <span>{t("backButton")}</span>
               </>
             )}
           </button>
           <span>/</span>
-          <span className="text-gray-900">
-            {t("categories") || "Categories"}
-          </span>
+          <span className="text-gray-900">{t("categories")}</span>
         </nav>
 
         {/* Categories Count */}
         <div className={`mb-8 ${isRTL ? "text-right" : "text-left"}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            {t("foundCategories") || "Found Categories"}
+            {t("foundCategories")}
           </h2>
           <p className="text-gray-600">
-            {t("categoriesCount") ||
-              `${filteredCategories.length} categories available`}
+            {t("categoriesCount", { count: filteredCategories.length })}
           </p>
         </div>
 
         {/* Categories Content */}
         {isLoading ? (
-          <LoadingSpinner />
+          <LoadingSpinner t={t} />
         ) : error ? (
           <ErrorMessage t={t} onRetry={() => refetch()} />
         ) : filteredCategories.length === 0 ? (
           <div className="text-center py-12">
             <Package className="mx-auto h-16 w-16 text-gray-300 mb-4" />
             <h3 className="text-lg font-semibold text-gray-600 mb-2">
-              {searchQuery
-                ? t("noResults") || "No categories found"
-                : t("noCategories") || "No categories available"}
+              {searchQuery ? t("noResults") : t("noCategories")}
             </h3>
             <p className="text-gray-500 mb-6">
-              {searchQuery
-                ? t("noResultsDesc") || "Try adjusting your search terms."
-                : t("noCategoriesDesc") ||
-                  "Check back later for new categories."}
+              {searchQuery ? t("noResultsDesc") : t("noCategoriesDesc")}
             </p>
             {searchQuery && (
               <Button onClick={() => setSearchQuery("")} variant="outline">
-                {t("clearSearch") || "Clear Search"}
+                {t("clearSearch")}
               </Button>
             )}
           </div>
@@ -460,7 +446,7 @@ export default function CategoriesPage() {
                 : "space-y-4"
             }
           >
-            {filteredCategories.map((category: any) => (
+            {filteredCategories.map((category: Category) => (
               <CategoryCard
                 key={category.id}
                 category={category}
