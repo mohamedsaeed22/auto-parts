@@ -93,11 +93,11 @@ const ProductsList = () => {
             <div className="text-center">
               <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                {t("errorLoadingProducts") || "Error loading products"}
+                {t("errorLoadingProducts") || "Unable to Load Products"}
               </h3>
               <p className="text-gray-600 mb-4">
                 {t("errorLoadingProductsDesc") ||
-                  "There was an error loading the products. Please try again."}
+                  "We encountered an issue while loading our product catalog. Please check your internet connection and try again."}
               </p>
               <Button
                 onClick={handleRetry}
@@ -105,7 +105,7 @@ const ProductsList = () => {
                 className="flex items-center gap-2"
               >
                 <RefreshCw className="h-4 w-4" />
-                {t("tryAgain") || "Try Again"}
+                {t("tryAgain") || "Retry"}
               </Button>
             </div>
           </div>
@@ -120,11 +120,11 @@ const ProductsList = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-            {t("allProducts") || "All Products"}
+            {t("ourProducts") || "Our Premium Auto Parts Collection"}
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed">
             {t("productsDescription") ||
-              "Discover our wide range of high-quality auto parts"}
+              "Explore our extensive catalog of genuine auto parts, accessories, and components. Quality guaranteed for all vehicle makes and models with competitive pricing and fast delivery."}
           </p>
         </div>
 
@@ -138,7 +138,8 @@ const ProductsList = () => {
             </div>
 
             {/* Pagination */}
-               <div className="mt-12">
+            {pagination && (
+              <div className="mt-12">
                 <Pagination
                   currentPage={pagination.current_page}
                   totalPages={pagination.last_page}
@@ -148,21 +149,21 @@ const ProductsList = () => {
                   showInfo={true}
                   showFirstLast={false}
                   maxVisiblePages={5}
-                  size="md"
+                  size="default"
                   variant="outline"
                   className="justify-center"
                 />
               </div>
-            
+            )}
           </>
         )}
 
         {/* Empty state */}
         {products.length === 0 && !isLoading && !error && (
           <div className="text-center py-16">
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-lg">
               {t("noProductsAvailable") ||
-                "No products are currently available."}
+                "No products are currently available. Please check back later or contact us for assistance."}
             </p>
           </div>
         )}
