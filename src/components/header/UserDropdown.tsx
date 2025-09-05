@@ -53,6 +53,9 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
 
       // Redirect to home page
       router.push("/");
+      // clear all local storage
+      localStorage.clear();
+      
     } catch (error) {
       console.error("Error logging out:", error);
       showError("حدث خطأ أثناء تسجيل الخروج");
