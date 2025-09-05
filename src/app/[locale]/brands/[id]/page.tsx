@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
@@ -13,20 +13,21 @@ import {
   Building2,
   Star,
   CheckCircle,
-  Globe,
   Car,
-  Settings,
-  Users,
-  Award,
   Shield,
-  Clock,
-  TrendingUp,
   Package,
   Truck,
   RotateCcw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ProductCard from "@/components/product/ProductCard";
+
+// Types
+interface Brand {
+  id: number;
+  name: string;
+  image?: string;
+  products_count?: number;
+}
 
 // Loading Component
 const LoadingSpinner = () => (
@@ -66,11 +67,11 @@ const BrandHeader = ({
   isRTL,
   t,
 }: {
-  brand: any;
+  brand: Brand;
   isRTL: boolean;
   t: (key: string) => string;
 }) => (
-  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-8 mb-8">
+  <div className="bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 rounded-2xl p-8 mb-8">
     <div
       className={`grid grid-cols-1 lg:grid-cols-2 gap-8 items-center ${
         isRTL ? "lg:grid-flow-col-dense" : ""
@@ -79,13 +80,17 @@ const BrandHeader = ({
       {/* Brand Image */}
       <div className="relative aspect-square bg-white rounded-xl overflow-hidden shadow-lg">
         <Image
-          src={brand.image}
+          src={brand.image || "/placeholder-brand.png"}
           alt={brand.name}
           fill
           className="object-contain p-8"
           priority
         />
-        <div className="absolute top-4 left-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
+        <div
+          className={`absolute top-4 ${
+            isRTL ? "right-4" : "left-4"
+          } bg-primary text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1`}
+        >
           <Star size={14} />
           {t("premium") || "Premium"}
         </div>
@@ -93,21 +98,33 @@ const BrandHeader = ({
 
       {/* Brand Details */}
       <div className={`space-y-4 ${isRTL ? "text-right" : "text-left"}`}>
-        <div className="flex items-center gap-2">
-          <Building2 className="text-blue-500" size={24} />
-          <h1 className="text-3xl font-bold text-gray-900">{brand.name}</h1>
+        <div
+          className={`flex items-center gap-2 ${
+            isRTL ? "flex-row" : ""
+          }`}
+        >
+          <Building2 className="text-primary" size={24} />
+          <h1
+            className="text-3xl font-bold text-gray-900"
+            dir={isRTL ? "rtl" : "ltr"}
+          >
+            {brand.name}
+          </h1>
         </div>
 
         <div className="space-y-3">
           <div
             className={`flex items-center gap-3 ${
-              isRTL ? "flex-row-reverse" : ""
+              isRTL ? "flex-row" : ""
             }`}
           >
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-              <CheckCircle size={24} className="text-blue-600" />
+            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+              <CheckCircle size={24} className="text-primary" />
             </div>
-            <div>
+            <div
+              className={isRTL ? "text-right" : "text-left"}
+              dir={isRTL ? "rtl" : "ltr"}
+            >
               <p className="text-xl font-semibold text-gray-900">
                 {t("certifiedBrand") || "Certified Brand"}
               </p>
@@ -119,13 +136,16 @@ const BrandHeader = ({
 
           <div
             className={`flex items-center gap-3 ${
-              isRTL ? "flex-row-reverse" : ""
+              isRTL ? "flex-row" : ""
             }`}
           >
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
               <Car size={24} className="text-green-600" />
             </div>
-            <div>
+            <div
+              className={isRTL ? "text-right" : "text-left"}
+              dir={isRTL ? "rtl" : "ltr"}
+            >
               <p className="text-xl font-semibold text-gray-900">
                 {brand.products_count || 0} {t("products") || "Products"}
               </p>
@@ -136,7 +156,7 @@ const BrandHeader = ({
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-4 border border-blue-200">
+        <div className="bg-white rounded-lg p-4 border border-primary/20">
           <p className="text-gray-700 font-medium">
             {t("brandDescription") ||
               "Premium automotive brand with world-class quality standards and innovative technology."}
@@ -157,12 +177,15 @@ const BrandFeatures = ({
 }) => (
   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 bg-gray-50 rounded-lg mb-8">
     <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
+      className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}
     >
-      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-        <Shield size={20} className="text-blue-600" />
+      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+        <Shield size={20} className="text-primary" />
       </div>
-      <div className={isRTL ? "text-right" : "text-left"}>
+      <div
+        className={isRTL ? "text-right" : "text-left"}
+        dir={isRTL ? "rtl" : "ltr"}
+      >
         <p className="font-medium text-gray-900">
           {t("certifiedQuality") || "Certified Quality"}
         </p>
@@ -172,12 +195,15 @@ const BrandFeatures = ({
       </div>
     </div>
     <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
+      className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}
     >
       <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
         <Truck size={20} className="text-green-600" />
       </div>
-      <div className={isRTL ? "text-right" : "text-left"}>
+      <div
+        className={isRTL ? "text-right" : "text-left"}
+        dir={isRTL ? "rtl" : "ltr"}
+      >
         <p className="font-medium text-gray-900">
           {t("fastDelivery") || "Fast Delivery"}
         </p>
@@ -187,12 +213,15 @@ const BrandFeatures = ({
       </div>
     </div>
     <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
+      className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}
     >
-      <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-        <RotateCcw size={20} className="text-purple-600" />
+      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+        <RotateCcw size={20} className="text-primary" />
       </div>
-      <div className={isRTL ? "text-right" : "text-left"}>
+      <div
+        className={isRTL ? "text-right" : "text-left"}
+        dir={isRTL ? "rtl" : "ltr"}
+      >
         <p className="font-medium text-gray-900">
           {t("easyReturns") || "Easy Returns"}
         </p>
@@ -209,7 +238,6 @@ export default function BrandPage() {
   const params = useParams();
   const brandId = parseInt(params.id as string);
   const { t, i18n } = useTranslation("brands");
-  const [selectedImage, setSelectedImage] = useState(0);
 
   const isRTL = i18n.language === "ar";
   const direction = isRTL ? "rtl" : "ltr";
@@ -226,7 +254,7 @@ export default function BrandPage() {
   } = useGetBrandsQuery();
 
   const brands = brandsResponse?.data?.items || [];
-  const brand = brands.find((b: any) => b.id === brandId);
+  const brand = brands.find((b: Brand) => b.id === brandId);
 
   const handleGoBack = () => {
     router.back();
@@ -289,7 +317,7 @@ export default function BrandPage() {
         <button
           onClick={handleGoBack}
           className={`flex items-center gap-1 hover:text-gray-700 transition-colors ${
-            isRTL ? "flex-row-reverse" : ""
+            isRTL ? "flex-row" : ""
           }`}
         >
           {isRTL ? (
@@ -307,7 +335,9 @@ export default function BrandPage() {
         <span>/</span>
         <span className="text-gray-900">{t("brands") || "Brands"}</span>
         <span>/</span>
-        <span className="text-gray-900 truncate">{brand.name}</span>
+        <span className="text-gray-900 truncate" dir={isRTL ? "rtl" : "ltr"}>
+          {brand.name}
+        </span>
       </nav>
 
       {/* Brand Header */}

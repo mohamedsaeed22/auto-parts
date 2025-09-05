@@ -70,7 +70,7 @@ const HeroSection = ({
 }) => (
   <div className="bg-gradient-to-br from-orange-500 via-red-500 to-pink-500 text-white py-16">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className={`text-center ${isRTL ? "text-right" : "text-left"}`}>
+      <div className={`text-center  `}>
         <div className="flex items-center justify-center gap-3 mb-4">
           <Flame className="h-8 w-8 text-yellow-300" />
           <h1 className="text-4xl md:text-5xl font-bold">
@@ -133,11 +133,6 @@ const OfferCard = ({
         {offer.discount_info}
       </div>
 
-      {/* Products Count Badge */}
-      <div className="absolute top-4 right-4 bg-black bg-opacity-70 text-white px-2 py-1 rounded-full text-xs font-medium">
-        {offer.products_count} {t("products") || "Products"}
-      </div>
-
       {/* Hover Overlay */}
       <div className="absolute inset-0  bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
         <Button
@@ -160,11 +155,7 @@ const OfferCard = ({
         </div>
 
         <div className="space-y-2">
-          <div
-            className={`flex items-center gap-2 ${
-              isRTL ? "flex-row-reverse" : ""
-            }`}
-          >
+          <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}>
             <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
               {offer.discount_type === "percentage" ? (
                 <Percent size={16} className="text-orange-600" />
@@ -184,11 +175,7 @@ const OfferCard = ({
             </div>
           </div>
 
-          <div
-            className={`flex items-center gap-2 ${
-              isRTL ? "flex-row-reverse" : ""
-            }`}
-          >
+          <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}>
             <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
               <ShoppingCart size={16} className="text-green-600" />
             </div>
@@ -232,7 +219,7 @@ const FilterBar = ({
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div
         className={`flex items-center justify-between ${
-          isRTL ? "flex-row-reverse" : ""
+          isRTL ? "flex-row" : ""
         }`}
       >
         <div className="flex items-center gap-4">

@@ -117,7 +117,7 @@ const OfferHeader = ({
           className="object-cover"
           priority
         />
-        <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
+         <div className={`absolute top-4 ${isRTL ? "right-4" : "left-4"} bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1`}>
           {offer.discount_type === "percentage" ? (
             <Percent size={14} />
           ) : (
@@ -139,7 +139,7 @@ const OfferHeader = ({
         <div className="space-y-3">
           <div
             className={`flex items-center gap-3 ${
-              isRTL ? "flex-row-reverse" : ""
+              isRTL ? "flex-row" : ""
             }`}
           >
             <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
@@ -163,7 +163,7 @@ const OfferHeader = ({
 
           <div
             className={`flex items-center gap-3 ${
-              isRTL ? "flex-row-reverse" : ""
+              isRTL ? "flex-row" : ""
             }`}
           >
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
@@ -201,10 +201,10 @@ const ProductFeatures = ({
 }) => (
   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 bg-gray-50 rounded-lg mb-8">
     <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
+      className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}
     >
       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-        <Truck size={20} className="text-blue-600" />
+        <Truck size={20} className="text-green-600" />
       </div>
       <div className={isRTL ? "text-right" : "text-left"}>
         <p className="font-medium text-gray-900">
@@ -216,7 +216,7 @@ const ProductFeatures = ({
       </div>
     </div>
     <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
+      className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}
     >
       <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
         <Shield size={20} className="text-green-600" />
@@ -231,10 +231,10 @@ const ProductFeatures = ({
       </div>
     </div>
     <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
+      className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}
     >
       <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-        <RotateCcw size={20} className="text-purple-600" />
+        <RotateCcw size={20} className="text-green-600" />
       </div>
       <div className={isRTL ? "text-right" : "text-left"}>
         <p className="font-medium text-gray-900">
@@ -253,7 +253,6 @@ export default function OfferPage() {
   const params = useParams();
   const offerId = parseInt(params.id as string);
   const { t, i18n } = useTranslation("offers");
-  const [selectedImage, setSelectedImage] = useState(0);
 
   const isRTL = i18n.language === "ar";
   const direction = isRTL ? "rtl" : "ltr";
@@ -333,7 +332,7 @@ export default function OfferPage() {
         <button
           onClick={handleGoBack}
           className={`flex items-center gap-1 hover:text-gray-700 transition-colors ${
-            isRTL ? "flex-row-reverse" : ""
+            isRTL ? "flex-row" : ""
           }`}
         >
           {isRTL ? (
@@ -410,4 +409,3 @@ export default function OfferPage() {
     </div>
   );
 }
-                                                                                                            
