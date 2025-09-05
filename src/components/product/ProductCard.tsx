@@ -217,7 +217,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           {/* Product Info */}
           <div className="p-3 flex flex-col flex-1">
             {/* Product Name */}
-            <h3 className="text-sm font-medium text-neutral-900 mb-3 group-hover:text-primary transition-colors overflow-hidden">
+            <h3 className="text-md font-medium text-neutral-900 mb-3 group-hover:text-primary transition-colors overflow-hidden">
               <span className="block truncate" title={productName}>
                 {productName}
               </span>
@@ -227,13 +227,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             <div className="mt-auto">
               <div
                 className={`flex items-center justify-between ${
-                  isRTL ? "flex-row-reverse" : ""
+                  isRTL ? "flex-row" : ""
                 }`}
               >
                 {/* Price Section */}
                 <div
                   className={`flex items-center gap-2 ${
-                    isRTL ? "flex-row-reverse" : ""
+                    isRTL ? "flex-row" : ""
                   }`}
                 >
                   <span className="text-base font-bold text-neutral-900">
@@ -254,29 +254,29 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 {!isInCart ? (
                   <Button
                     size="sm"
-                    className="bg-secondary hover:bg-secondary-dark text-white rounded px-2 py-1 flex items-center gap-1 transition-all duration-200 hover:scale-105 text-xs"
+                    className="bg-primary hover:bg-primary/90 text-white rounded px-2 py-1 flex items-center gap-1 transition-colors duration-200 text-xs"
                     onClick={handleAddToCart}
                   >
                     <ShoppingCart size={12} />
                     <span>{t("addToCart")}</span>
                   </Button>
                 ) : (
-                  <div className="flex items-center bg-white border border-neutral-300 rounded overflow-hidden">
+                  <div className="flex items-center bg-white border border-primary/20 rounded overflow-hidden shadow-sm">
                     <Button
                       onClick={handleDecreaseQuantity}
                       size="sm"
                       variant="ghost"
-                      className="h-7 w-7 p-0 hover:bg-neutral-100 text-neutral-700 rounded-none border-r border-neutral-200"
+                      className="h-7 w-7 p-0 hover:bg-red-50 text-red-600 hover:text-red-700 rounded-none border-r border-primary/10 transition-colors duration-200"
                     >
                       {cartItem?.quantity === 1 ? (
-                        <Trash size={10} />
+                        <Trash size={12} />
                       ) : (
-                        <Minus size={10} />
+                        <Minus size={12} />
                       )}
                     </Button>
 
-                    <div className="h-7 px-2 flex items-center justify-center bg-neutral-50 min-w-[28px]">
-                      <span className="text-sm font-semibold text-neutral-800">
+                    <div className="h-7 px-2 flex items-center justify-center bg-primary/5 min-w-[28px]">
+                      <span className="text-sm font-semibold text-primary">
                         {cartItem?.quantity}
                       </span>
                     </div>
@@ -285,9 +285,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                       onClick={handleIncreaseQuantity}
                       size="sm"
                       variant="ghost"
-                      className="h-7 w-7 p-0 hover:bg-neutral-100 text-neutral-700 rounded-none border-l border-neutral-200"
+                      className="h-7 w-7 p-0 hover:bg-green-50 text-green-600 hover:text-green-700 rounded-none border-l border-primary/10 transition-colors duration-200"
                     >
-                      <Plus size={10} />
+                      <Plus size={12} />
                     </Button>
                   </div>
                 )}
