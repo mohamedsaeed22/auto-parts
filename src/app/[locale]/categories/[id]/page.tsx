@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import { useGetCategoriesQuery } from "@/services/api/categoriesApi";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import {
-  ArrowLeft,
   Package,
   Search,
   ChevronRight,
@@ -22,8 +21,21 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+
+// Types
+interface Subcategory {
+  id: number;
+  name: string;
+  image: string;
+}
+
+interface Category {
+  id: number;
+  name: string;
+  image: string;
+  children?: Subcategory[];
+}
 
 // Subcategory Card Component
 const SubcategoryCard = ({
@@ -33,7 +45,7 @@ const SubcategoryCard = ({
   onSubcategoryClick,
   viewMode,
 }: {
-  subcategory: any;
+  subcategory: Subcategory;
   isRTL: boolean;
   t: (key: string) => string;
   onSubcategoryClick: (subcategoryId: number) => void;
@@ -60,7 +72,7 @@ const SubcategoryCard = ({
   if (viewMode === "list") {
     return (
       <Card
-        className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-2 hover:border-blue-200"
+        className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/30"
         onClick={() => onSubcategoryClick(subcategory.id)}
       >
         <CardContent className="p-6">
@@ -78,12 +90,12 @@ const SubcategoryCard = ({
             {/* Subcategory Info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors truncate">
+                <h3 className="text-lg font-semibold text-gray-900 group-hover:text-primary transition-colors truncate">
                   {subcategory.name}
                 </h3>
                 <ChevronRight
                   size={18}
-                  className={`text-gray-400 group-hover:text-blue-600 transition-colors flex-shrink-0 ${
+                  className={`text-gray-400 group-hover:text-primary transition-colors flex-shrink-0 ${
                     isRTL ? "rotate-180" : ""
                   }`}
                 />
@@ -96,7 +108,7 @@ const SubcategoryCard = ({
                   <span>{t("quality") || "Quality"}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Zap size={12} className="text-blue-500" />
+                  <Zap size={12} className="text-primary" />
                   <span>{t("fast") || "Fast"}</span>
                 </div>
                 <div className="flex items-center gap-1">
@@ -113,7 +125,7 @@ const SubcategoryCard = ({
 
   return (
     <Card
-      className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-2 hover:border-blue-200 overflow-hidden"
+      className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/30 overflow-hidden"
       onClick={() => onSubcategoryClick(subcategory.id)}
     >
       <CardContent className="p-0">
@@ -132,12 +144,12 @@ const SubcategoryCard = ({
           {/* Subcategory Info */}
           <div className="p-4">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-base font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+              <h3 className="text-base font-semibold text-gray-900 group-hover:text-primary transition-colors">
                 {subcategory.name}
               </h3>
               <ChevronRight
                 size={18}
-                className={`text-gray-400 group-hover:text-blue-600 transition-colors ${
+                className={`text-gray-400 group-hover:text-primary transition-colors ${
                   isRTL ? "rotate-180" : ""
                 }`}
               />
@@ -150,7 +162,7 @@ const SubcategoryCard = ({
                 <span>{t("quality") || "Quality"}</span>
               </div>
               <div className="flex items-center gap-1">
-                <Zap size={12} className="text-blue-500" />
+                <Zap size={12} className="text-primary" />
                 <span>{t("fast") || "Fast"}</span>
               </div>
             </div>
@@ -202,7 +214,7 @@ const SearchAndViewMode = ({
               onClick={() => onViewModeChange("grid")}
               className={`p-2 ${
                 viewMode === "grid"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-white"
                   : "bg-white text-gray-600 hover:bg-gray-50"
               }`}
             >
@@ -212,7 +224,7 @@ const SearchAndViewMode = ({
               onClick={() => onViewModeChange("list")}
               className={`p-2 ${
                 viewMode === "list"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-white"
                   : "bg-white text-gray-600 hover:bg-gray-50"
               }`}
             >
@@ -229,7 +241,7 @@ const SearchAndViewMode = ({
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center py-12">
     <div className="flex items-center gap-2">
-      <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+      <Loader2 className="h-6 w-6 animate-spin text-primary" />
       <span className="text-gray-600">Loading category...</span>
     </div>
   </div>
@@ -252,7 +264,7 @@ const ErrorMessage = ({
       {t("error.message") ||
         "There was an error loading the category. Please try again."}
     </p>
-    <Button onClick={onRetry} className="bg-blue-600 hover:bg-blue-700">
+    <Button onClick={onRetry} className="bg-primary hover:bg-primary/90">
       {t("error.retry") || "Try Again"}
     </Button>
   </div>
@@ -282,17 +294,14 @@ export default function CategoryPage() {
   });
 
   const categories = categoriesResponse?.data?.categories || [];
-  const category = categories.find((cat: any) => cat.id === categoryId);
+  const category = categories.find((cat: Category) => cat.id === categoryId);
   const subcategories = category?.children || [];
 
   // Filter subcategories based on search query
-  const filteredSubcategories = subcategories.filter((subcategory: any) =>
-    subcategory.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredSubcategories = subcategories.filter(
+    (subcategory: Subcategory) =>
+      subcategory.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const handleGoBack = () => {
-    router.back();
-  };
 
   const handleGoHome = () => {
     router.push("/");
@@ -337,17 +346,17 @@ export default function CategoryPage() {
   return (
     <div dir={direction}>
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 text-white py-16">
+      <div className="bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
               {category.name}
             </h1>
-            <p className="text-lg text-blue-100 mb-6">
+            <p className="text-lg text-white/80 mb-6">
               {t("subtitle") ||
                 "Explore subcategories and find the perfect parts"}
             </p>
-            <div className="flex items-center justify-center gap-6 text-blue-100">
+            <div className="flex items-center justify-center gap-6 text-white/70">
               <div className="flex items-center gap-2">
                 <Package className="h-5 w-5" />
                 <span>
@@ -452,7 +461,7 @@ export default function CategoryPage() {
                 : "space-y-4"
             }
           >
-            {filteredSubcategories.map((subcategory: any) => (
+            {filteredSubcategories.map((subcategory: Subcategory) => (
               <SubcategoryCard
                 key={subcategory.id}
                 subcategory={subcategory}
