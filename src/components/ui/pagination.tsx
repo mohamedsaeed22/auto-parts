@@ -116,13 +116,6 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
           className
         )}
       >
-        {/* Info Section */}
-        {showInfo && totalItems && (
-          <div className="text-sm text-gray-600">
-            Showing {startItem} to {endItem} of {totalItems} results
-          </div>
-        )}
-
         {/* Pagination Controls */}
         <div className="flex items-center gap-1">
           {/* First Page Button */}

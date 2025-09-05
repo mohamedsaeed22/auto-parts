@@ -6,16 +6,17 @@ import ProductCard from "./ProductCard";
 import { useTranslation } from "react-i18next";
 import { useGetProductsMutation } from "@/services/hooks";
 import { Product, ProductsRequest } from "@/services/api/types";
-import { AlertCircle, RefreshCw, ChevronLeft, ChevronRight } from "lucide-react";
+import { AlertCircle, RefreshCw } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Pagination } from "@/components/ui/pagination";
 
 const ProductsList = () => {
   const { t, i18n } = useTranslation("product");
   const isRTL = i18n.language === "ar";
 
   // State for basic filters
-  const [filters] = useState<ProductsRequest>({
-    per_page: 12,
+  const [filters, setFilters] = useState<ProductsRequest>({
+    per_page: 6,
     page: 1,
   });
 
@@ -23,8 +24,9 @@ const ProductsList = () => {
   const [getProducts, { data: productsResponse, isLoading, error }] =
     useGetProductsMutation();
 
-  // Extract products from response
+  // Extract products and pagination from response
   const products = productsResponse?.data?.items || [];
+  const pagination = productsResponse?.data?.pagination;
 
   // Load products on component mount
   useEffect(() => {
@@ -34,6 +36,13 @@ const ProductsList = () => {
   // Handle retry
   const handleRetry = () => {
     getProducts(filters);
+  };
+
+  // Handle pagination
+  const handlePageChange = (page: number) => {
+    setFilters((prev) => ({ ...prev, page }));
+    // Scroll to top when changing pages
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // Simple loading skeleton
@@ -121,11 +130,31 @@ const ProductsList = () => {
 
         {/* Products Grid */}
         {products.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product: Product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {products.map((product: Product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+
+            {/* Pagination */}
+               <div className="mt-12">
+                <Pagination
+                  currentPage={pagination.current_page}
+                  totalPages={pagination.last_page}
+                  totalItems={pagination.total}
+                  itemsPerPage={pagination.per_page}
+                  onPageChange={handlePageChange}
+                  showInfo={true}
+                  showFirstLast={false}
+                  maxVisiblePages={5}
+                  size="md"
+                  variant="outline"
+                  className="justify-center"
+                />
+              </div>
+            
+          </>
         )}
 
         {/* Empty state */}
