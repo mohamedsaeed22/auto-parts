@@ -49,9 +49,6 @@ export function useAuth() {
     setIsAuthenticated(false);
     setUser(null);
     setAuthData(null);
-
-    // Dispatch custom event
-    window.dispatchEvent(new Event("authChange"));
   };
 
   const login = (authData: AuthData) => {
@@ -71,9 +68,6 @@ export function useAuth() {
     setIsAuthenticated(true);
     setUser(authData.user);
     setAuthData(authData);
-
-    // Dispatch custom event
-    window.dispatchEvent(new Event("authChange"));
 
     console.log("useAuth.login completed");
   };
