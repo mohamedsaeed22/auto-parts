@@ -20,7 +20,7 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
   const router = useRouter();
   const [logoutApi, { isLoading: isLoggingOut }] = useLogoutMutation();
   const { user, logout } = useAuth();
-
+  console.log("user", user);
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
