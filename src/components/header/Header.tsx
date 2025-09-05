@@ -29,8 +29,12 @@ export default function Header() {
   const { currentLocale, changeLocale, isRTL } = useLocale();
   const router = useRouter();
   const currentPathname = usePathname();
-  const { searchQuery, updateSearchQuery, clearSearchQuery } =
-    useHeaderSearch();
+  const {
+    searchQuery,
+    updateSearchQuery,
+    submitSearchQuery,
+    clearSearchQuery,
+  } = useHeaderSearch();
 
   const navLinks = [
     { href: "/about", label: t("navigation.about") },
@@ -59,13 +63,16 @@ export default function Header() {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
+      // Submit search query (updates URL)
+      submitSearchQuery(searchQuery.trim());
       // Navigate to products page with search parameter
       const locale = currentLocale;
       router.push(
         `/${locale}/products?search=${encodeURIComponent(searchQuery.trim())}`
       );
       setIsSearchOpen(false);
-      clearSearchQuery();
+      // Clear the local search query after navigation
+      updateSearchQuery("");
     }
   };
 
@@ -106,6 +113,7 @@ export default function Header() {
                 setSearchQuery={updateSearchQuery}
                 onSubmit={handleSearchSubmit}
                 onClear={clearSearch}
+                onSuggestionSelect={submitSearchQuery}
                 isRTL={isRTL}
                 placeholder={
                   t("actions.searchPlaceholder") || "Search products..."
@@ -190,6 +198,7 @@ export default function Header() {
                 setSearchQuery={updateSearchQuery}
                 onSubmit={handleSearchSubmit}
                 onClear={clearSearch}
+                onSuggestionSelect={submitSearchQuery}
                 isRTL={isRTL}
                 placeholder={
                   t("actions.searchPlaceholder") || "Search products..."

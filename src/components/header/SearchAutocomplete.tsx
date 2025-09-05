@@ -13,6 +13,7 @@ interface SearchAutocompleteProps {
   setSearchQuery: (query: string) => void;
   onSubmit: (e: React.FormEvent) => void;
   onClear: () => void;
+  onSuggestionSelect?: (query: string) => void;
   isRTL: boolean;
   placeholder: string;
   isDesktop?: boolean;
@@ -24,6 +25,7 @@ export default function SearchAutocomplete({
   setSearchQuery,
   onSubmit,
   onClear,
+  onSuggestionSelect,
   isRTL,
   placeholder,
   isDesktop = false,
@@ -91,6 +93,11 @@ export default function SearchAutocomplete({
     setSearchQuery(product.name);
     setShowSuggestions(false);
     setSuggestions([]);
+
+    // Call the suggestion select callback if provided
+    if (onSuggestionSelect) {
+      onSuggestionSelect(product.name);
+    }
 
     // Navigate to products page with search query
     router.push(

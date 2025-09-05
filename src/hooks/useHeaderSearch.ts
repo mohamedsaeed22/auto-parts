@@ -1,27 +1,40 @@
 import { useQueryState } from "nuqs";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 export const useHeaderSearch = () => {
-  const [searchQuery, setSearchQuery] = useQueryState("search", {
+  // Local state for typing (doesn't update URL)
+  const [localSearchQuery, setLocalSearchQuery] = useState("");
+
+  // URL state for actual search (only updated on submit/selection)
+  const [urlSearchQuery, setUrlSearchQuery] = useQueryState("search", {
     defaultValue: "",
-    // Don't update URL immediately, only on submit
     shallow: true,
   });
 
-  const updateSearchQuery = useCallback(
+  const updateSearchQuery = useCallback((query: string) => {
+    // Only update local state, not URL
+    setLocalSearchQuery(query);
+  }, []);
+
+  const submitSearchQuery = useCallback(
     (query: string) => {
-      setSearchQuery(query || null);
+      // Update both local state and URL
+      setLocalSearchQuery(query);
+      setUrlSearchQuery(query || null);
     },
-    [setSearchQuery]
+    [setUrlSearchQuery]
   );
 
   const clearSearchQuery = useCallback(() => {
-    setSearchQuery(null);
-  }, [setSearchQuery]);
+    setLocalSearchQuery("");
+    setUrlSearchQuery(null);
+  }, [setUrlSearchQuery]);
 
   return {
-    searchQuery: searchQuery || "",
+    searchQuery: localSearchQuery,
+    urlSearchQuery: urlSearchQuery || "",
     updateSearchQuery,
+    submitSearchQuery,
     clearSearchQuery,
   };
 };
