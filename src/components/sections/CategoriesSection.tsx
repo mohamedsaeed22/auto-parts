@@ -115,7 +115,7 @@ const CategoriesSection = () => {
     with_children: false,
   });
 
-  const categories = categoriesResponse?.data?.categories || [];
+  const categories = (categoriesResponse?.data?.categories || []).slice(0, 6);
 
   const handleCategoryClick = (categoryId: number) => {
     router.push(`/categories/${categoryId}`);

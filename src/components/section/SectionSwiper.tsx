@@ -142,6 +142,7 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
             autoplay={{
               delay: 3000,
               disableOnInteraction: false,
+              pauseOnMouseEnter: true,
             }}
             pagination={{
               clickable: true,
@@ -149,6 +150,7 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
             }}
             modules={[Autoplay, Pagination, Navigation]}
             className="section-swiper"
+            style={{ pointerEvents: "auto" }}
             dir={isRTL ? "rtl" : "ltr"}
           >
             {products.map((product: SectionProduct) => (

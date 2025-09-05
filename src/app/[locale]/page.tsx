@@ -4,7 +4,7 @@ import HeroSwiper from "@/components/swiper/HeroSwiper";
 import Brands from "@/components/brand/Brands";
 import OffersSwiper from "@/components/offers/OffersSwiper";
 import ProductsList from "@/components/product/ProductsList";
-import SectionsContainer from "@/components/sections/SectionsContainer";
+import SectionsContainer from "@/components/section/SectionsContainer";
 import CategoriesSection from "@/components/sections/CategoriesSection";
 import Partners from "@/components/partners/Partners";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
