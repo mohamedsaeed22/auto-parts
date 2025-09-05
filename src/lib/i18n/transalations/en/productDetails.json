@@ -30,5 +30,5 @@
   "shareError": "Failed to share or copy link",
   "addToCartError": "Failed to add to cart",
   "tryAgain": "Try Again",
-  "currency": "${{value}}"
+  "currency": "SAR"
 }

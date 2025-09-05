@@ -1,5 +1,5 @@
 {
-  "currency": "{{value}} ج.م",
+  "currency": "{{value}} ر.س",
   "addToCart": "أضف إلى السلة",
   "outOfStock": "نفذ من المخزن",
   "filters": {

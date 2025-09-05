@@ -5,7 +5,7 @@
   "backButton": "رجوع",
   "sale": "تخفيض",
   "freeShipping": "شحن مجاني",
-  "freeShippingDesc": "للطلبات أكثر من 50 دولار",
+  "freeShippingDesc": "للطلبات أكثر من 50 ريال",
   "warranty": "الضمان",
   "warrantyDesc": "ضمان لمدة سنة واحدة",
   "returns": "إرجاع سهل",
@@ -30,5 +30,5 @@
   "shareError": "فشل في مشاركة أو نسخ الرابط",
   "addToCartError": "فشل في إضافة المنتج إلى السلة",
   "tryAgain": "إعادة المحاولة",
-  "currency": "{{value}} ج.م"
+  "currency": "ر.س"
 }

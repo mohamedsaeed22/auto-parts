@@ -203,9 +203,7 @@ const ProductActions = ({
 
 const ProductFeatures = ({ isRTL, t }: { isRTL: boolean; t: TranslateFn }) => (
   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 bg-gray-50 rounded-lg">
-    <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
-    >
+    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
         <Truck size={20} className="text-blue-600" />
       </div>
@@ -214,9 +212,7 @@ const ProductFeatures = ({ isRTL, t }: { isRTL: boolean; t: TranslateFn }) => (
         <p className="text-sm text-gray-500">{t("freeShippingDesc")}</p>
       </div>
     </div>
-    <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
-    >
+    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
       <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
         <Shield size={20} className="text-green-600" />
       </div>
@@ -225,9 +221,7 @@ const ProductFeatures = ({ isRTL, t }: { isRTL: boolean; t: TranslateFn }) => (
         <p className="text-sm text-gray-500">{t("warrantyDesc")}</p>
       </div>
     </div>
-    <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
-    >
+    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
       <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
         <RotateCcw size={20} className="text-purple-600" />
       </div>
@@ -263,7 +257,9 @@ const PriceSection = ({
     <div className="space-y-2">
       <div
         className={`flex items-center gap-3 ${
-          isRTL ? "flex-row-reverse justify-end" : "justify-start"
+          isRTL
+            ? "flex-row-reverse justify-end"
+            : "justify-end flex-row-reverse  "
         }`}
       >
         <span className="text-3xl font-bold text-gray-900">
@@ -283,7 +279,7 @@ const PriceSection = ({
       {product.discount_info && (
         <div
           className={`inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium ${
-            isRTL ? "flex-row-reverse" : ""
+            isRTL ? "flex-row" : ""
           }`}
         >
           <Info size={14} />
@@ -308,7 +304,7 @@ const PriceSection = ({
 };
 
 const StockIndicator = ({ isRTL, t }: { isRTL: boolean; t: TranslateFn }) => (
-  <div className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
+  <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}>
     <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
     <span className="text-sm font-medium text-green-600">{t("inStock")}</span>
     <span className="text-sm text-gray-500">- {t("readyToShip")}</span>
@@ -553,13 +549,13 @@ export default function ProductDetails() {
         <button
           onClick={handleGoBack}
           className={`flex items-center gap-1 hover:text-gray-700 transition-colors ${
-            isRTL ? "flex-row-reverse" : ""
+            isRTL ? "flex-row" : ""
           }`}
         >
           {isRTL ? (
             <>
-              <span>{t("backButton")}</span>
               <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
+              <span>{t("backButton")}</span>
             </>
           ) : (
             <>
@@ -568,18 +564,7 @@ export default function ProductDetails() {
             </>
           )}
         </button>
-        <span>/</span>
-        {parentCategoryName && (
-          <>
-            <span className="capitalize hover:text-gray-700 cursor-pointer">
-              {parentCategoryName}
-            </span>
-            <span>/</span>
-          </>
-        )}
-        <span className="capitalize hover:text-gray-700 cursor-pointer">
-          {categoryName}
-        </span>
+
         <span>/</span>
         <span className="text-gray-900 truncate">{productName}</span>
       </nav>
@@ -717,9 +702,7 @@ export default function ProductDetails() {
               }`}
             >
               <div
-                className={`flex items-center gap-3 ${
-                  isRTL ? "flex-row-reverse" : ""
-                }`}
+                className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}
               >
                 {offerInfo.image && (
                   <Image
@@ -753,9 +736,7 @@ export default function ProductDetails() {
               }`}
             >
               <div
-                className={`flex items-center gap-2 ${
-                  isRTL ? "flex-row-reverse" : ""
-                }`}
+                className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}
               >
                 <Info size={16} className="text-blue-600" />
                 <p className="text-blue-800 text-sm font-medium">{hoverText}</p>
@@ -779,7 +760,7 @@ export default function ProductDetails() {
                   onClick={handleAddToCart}
                   disabled={isAddingToCart}
                   className={`w-full h-12 flex items-center justify-center gap-2 text-sm font-medium bg-primary text-white ${
-                    isRTL ? "flex-row-reverse" : ""
+                    isRTL ? "flex-row" : ""
                   }`}
                   size="sm"
                 >
@@ -798,10 +779,10 @@ export default function ProductDetails() {
                   )}
                 </Button>
               ) : (
-                <div className="w-full max-w-[200px] h-12 flex items-center justify-center bg-primary rounded-md">
+                <div className="w-full h-12 flex items-center justify-center bg-primary rounded-md">
                   <div
                     className={`flex items-center gap-2 ${
-                      isRTL ? "flex-row-reverse" : ""
+                      isRTL ? "flex-row" : ""
                     }`}
                   >
                     <button
@@ -845,7 +826,7 @@ export default function ProductDetails() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div
                 className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg ${
-                  isRTL ? "flex-row-reverse" : ""
+                  isRTL ? "flex-row" : ""
                 }`}
               >
                 <span className="text-sm text-gray-600 font-medium">
@@ -855,7 +836,7 @@ export default function ProductDetails() {
               </div>
               <div
                 className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg ${
-                  isRTL ? "flex-row-reverse" : ""
+                  isRTL ? "flex-row" : ""
                 }`}
               >
                 <span className="text-sm text-gray-600 font-medium">
@@ -867,7 +848,7 @@ export default function ProductDetails() {
               </div>
               <div
                 className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg ${
-                  isRTL ? "flex-row-reverse" : ""
+                  isRTL ? "flex-row" : ""
                 }`}
               >
                 <span className="text-sm text-gray-600 font-medium">
@@ -880,11 +861,11 @@ export default function ProductDetails() {
               {brandName && (
                 <div
                   className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg ${
-                    isRTL ? "flex-row-reverse" : ""
+                    isRTL ? "flex-row" : ""
                   }`}
                 >
                   <span className="text-sm text-gray-600 font-medium">
-                    Brand:
+                    {t("brand")}:
                   </span>
                   <span className="text-sm font-semibold">{brandName}</span>
                 </div>

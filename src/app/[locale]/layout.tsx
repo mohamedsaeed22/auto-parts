@@ -45,6 +45,7 @@ export default async function LocaleLayout({
     "cart",
     "userPricing",
     "product",
+    "productDetails",
     "userProfile",
   ];
   const { resources } = await serverSideTranslation(locale, ns);

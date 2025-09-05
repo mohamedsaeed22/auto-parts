@@ -12,7 +12,7 @@ export const namespaces = [
   "header",
   "footer",
   "cart",
-  
+
   // Pages
   "home",
   "about",
@@ -23,13 +23,14 @@ export const namespaces = [
   "wishlist",
   "favourites",
   "userPricing",
-  
+
   // Features
   "auth",
   "product",
+  "productDetails",
   "checkout",
   "profile",
-  
+
   // Components
   "forms",
   "buttons",
@@ -37,7 +38,7 @@ export const namespaces = [
   "validation",
 ] as const;
 
-export type Namespace = typeof namespaces[number];
+export type Namespace = (typeof namespaces)[number];
 
 export const getDirection = (locale: Locale) => {
   return locale === "ar" ? "rtl" : "ltr";

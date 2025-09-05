@@ -7,7 +7,7 @@
   "discount": "الخصم",
   "total": "المجموع الكلي",
   "checkout": "إتمام الشراء",
-  "currency": "{{value}} ج.م",
+  "currency": "{{value}} ر.س",
   "retry": "إعادة المحاولة",
   "errors": {
     "loadingFailed": "فشل تحميل محتويات السلة",

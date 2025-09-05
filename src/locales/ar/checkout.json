@@ -5,7 +5,7 @@
   "subtotal": "المجموع الفرعي",
   "discount": "الخصم",
   "total": "المجموع الكلي",
-  "currency": "{{value}} ج.م",
+  "currency": "{{value}} ر.س",
   "placeOrder": "تأكيد الطلب",
   "continueShopping": "مواصلة التسوق",
   "retry": "إعادة المحاولة",
