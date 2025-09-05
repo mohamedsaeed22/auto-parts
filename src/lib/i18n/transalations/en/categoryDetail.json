@@ -1,0 +1,33 @@
+{
+  "hero": {
+    "subtitle": "Explore subcategories and find the perfect parts"
+  },
+  "search": {
+    "placeholder": "Search subcategories..."
+  },
+  "viewMode": "View Mode",
+  "home": "Home",
+  "categories": "Categories",
+  "foundSubcategories": "Found Subcategories",
+  "subcategoriesCount": "{{count}} subcategories available",
+  "subcategories": "subcategories",
+  "noResults": "No subcategories found",
+  "noResultsDesc": "Try adjusting your search terms.",
+  "noSubcategories": "No subcategories available",
+  "noSubcategoriesDesc": "Check back later for new subcategories.",
+  "clearSearch": "Clear Search",
+  "loading": "Loading category...",
+  "categoryNotFound": "Category Not Found",
+  "categoryNotFoundDesc": "The category you're looking for doesn't exist.",
+  "goHome": "Go Home",
+  "error": {
+    "title": "Unable to Load Category",
+    "message": "There was an error loading the category. Please try again.",
+    "retry": "Try Again"
+  },
+  "categoryFeatures": {
+    "quality": "Quality",
+    "fast": "Fast",
+    "reliable": "Reliable"
+  }
+}

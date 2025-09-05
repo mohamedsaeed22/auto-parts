@@ -48,6 +48,7 @@ export default async function LocaleLayout({
     "productDetails",
     "userProfile",
     "categories",
+    "categoryDetail",
   ];
   const { resources } = await serverSideTranslation(locale, ns);
   const direction = getDirection(locale);

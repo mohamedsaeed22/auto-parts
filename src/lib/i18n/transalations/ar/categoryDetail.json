@@ -1,0 +1,33 @@
+{
+  "hero": {
+    "subtitle": "استكشف الأقسام الفرعية واعثر على القطع المثالية"
+  },
+  "search": {
+    "placeholder": "البحث في الأقسام الفرعية..."
+  },
+  "viewMode": "وضع العرض",
+  "home": "الرئيسية",
+  "categories": "الأقسام",
+  "foundSubcategories": "الأقسام الفرعية الموجودة",
+  "subcategoriesCount": "{{count}} قسم فرعي متاح",
+  "subcategories": "أقسام فرعية",
+  "noResults": "لم يتم العثور على أقسام فرعية",
+  "noResultsDesc": "حاول تعديل مصطلحات البحث.",
+  "noSubcategories": "لا توجد أقسام فرعية متاحة",
+  "noSubcategoriesDesc": "تحقق مرة أخرى لاحقاً للحصول على أقسام فرعية جديدة.",
+  "clearSearch": "مسح البحث",
+  "loading": "جاري تحميل القسم...",
+  "categoryNotFound": "القسم غير موجود",
+  "categoryNotFoundDesc": "القسم الذي تبحث عنه غير موجود.",
+  "goHome": "العودة للرئيسية",
+  "error": {
+    "title": "غير قادر على تحميل القسم",
+    "message": "حدث خطأ في تحميل القسم. يرجى المحاولة مرة أخرى.",
+    "retry": "حاول مرة أخرى"
+  },
+  "categoryFeatures": {
+    "quality": "الجودة",
+    "fast": "السرعة",
+    "reliable": "الموثوقية"
+  }
+}

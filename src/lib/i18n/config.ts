@@ -19,6 +19,7 @@ export const namespaces = [
   "contact",
   "products",
   "categories",
+  "categoryDetail",
   "offers",
   "wishlist",
   "favourites",
