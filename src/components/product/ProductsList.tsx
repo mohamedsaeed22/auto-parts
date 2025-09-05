@@ -6,49 +6,37 @@ import ProductCard from "./ProductCard";
 import { useTranslation } from "react-i18next";
 import { useGetProductsMutation } from "@/services/hooks";
 import { Product, ProductsRequest } from "@/services/api/types";
-import { Search, Filter, Grid, List, AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, RefreshCw, ChevronLeft, ChevronRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const ProductsList = () => {
   const { t, i18n } = useTranslation("product");
   const isRTL = i18n.language === "ar";
 
-  // State for filters and search
-  const [filters, setFilters] = useState<ProductsRequest>({});
-  const [searchTerm, setSearchTerm] = useState("");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  // State for basic filters
+  const [filters] = useState<ProductsRequest>({
+    per_page: 12,
+    page: 1,
+  });
 
   // API hook
   const [getProducts, { data: productsResponse, isLoading, error }] =
     useGetProductsMutation();
 
-  // Extract products and pagination from response
+  // Extract products from response
   const products = productsResponse?.data?.items || [];
-  const pagination = productsResponse?.data?.pagination;
 
   // Load products on component mount
   useEffect(() => {
     getProducts(filters);
-  }, [filters]);
+  }, [filters, getProducts]);
 
-  // Handle search
-  const handleSearch = () => {
-    const newFilters = { ...filters, search: searchTerm || undefined };
-    setFilters(newFilters);
+  // Handle retry
+  const handleRetry = () => {
+    getProducts(filters);
   };
 
-  // Handle filter changes
-  const handleFilterChange = (newFilters: Partial<ProductsRequest>) => {
-    const updatedFilters = { ...filters, ...newFilters };
-    setFilters(updatedFilters);
-  };
-
-  // Handle pagination
-  const handlePageChange = (page: number) => {
-    handleFilterChange({ page });
-  };
-
-  // Loading skeleton
+  // Simple loading skeleton
   if (isLoading && products.length === 0) {
     return (
       <section className="py-16 bg-gray-50" dir={isRTL ? "rtl" : "ltr"}>
@@ -62,11 +50,23 @@ const ProductsList = () => {
           {/* Products Grid Skeleton */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {[...Array(8)].map((_, index) => (
-              <div key={index} className="space-y-4">
-                <Skeleton className="h-48 rounded-lg" />
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-                <Skeleton className="h-8 w-24" />
+              <div
+                key={index}
+                className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+              >
+                <Skeleton className="h-48 w-full" />
+                <div className="p-4 space-y-3">
+                  <div className="flex gap-2">
+                    <Skeleton className="h-5 w-16 rounded-full" />
+                    <Skeleton className="h-5 w-12 rounded-full" />
+                  </div>
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <div className="flex justify-between items-center">
+                    <Skeleton className="h-6 w-20" />
+                    <Skeleton className="h-8 w-24" />
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -75,7 +75,7 @@ const ProductsList = () => {
     );
   }
 
-  // Error component
+  // Simple error component
   if (error && products.length === 0) {
     return (
       <section className="py-16 bg-gray-50" dir={isRTL ? "rtl" : "ltr"}>
@@ -90,7 +90,12 @@ const ProductsList = () => {
                 {t("errorLoadingProductsDesc") ||
                   "There was an error loading the products. Please try again."}
               </p>
-              <Button onClick={() => getProducts(filters)} variant="outline">
+              <Button
+                onClick={handleRetry}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <RefreshCw className="h-4 w-4" />
                 {t("tryAgain") || "Try Again"}
               </Button>
             </div>
@@ -115,103 +120,21 @@ const ProductsList = () => {
         </div>
 
         {/* Products Grid */}
-        {products.length > 0 ? (
-          <>
-            <div
-              className={`grid gap-6 ${
-                viewMode === "grid"
-                  ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-                  : "grid-cols-1"
-              }`}
-            >
-              {products.map((product: Product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-
-            {/* Pagination */}
-            {pagination && pagination.last_page > 1 && (
-              <div className="flex items-center justify-center mt-12">
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      handlePageChange(pagination.current_page - 1)
-                    }
-                    disabled={pagination.current_page === 1}
-                  >
-                    {t("previous") || "Previous"}
-                  </Button>
-
-                  {[...Array(pagination.last_page)].map((_, index) => {
-                    const page = index + 1;
-                    const isCurrentPage = page === pagination.current_page;
-
-                    return (
-                      <Button
-                        key={page}
-                        variant={isCurrentPage ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => handlePageChange(page)}
-                        className="w-10 h-10"
-                      >
-                        {page}
-                      </Button>
-                    );
-                  })}
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      handlePageChange(pagination.current_page + 1)
-                    }
-                    disabled={pagination.current_page === pagination.last_page}
-                  >
-                    {t("next") || "Next"}
-                  </Button>
-                </div>
-              </div>
-            )}
-          </>
-        ) : (
-          /* No Products Found */
-          <div className="text-center py-12">
-            <div className="max-w-md mx-auto">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Search className="text-gray-400" size={24} />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                {t("noProductsFound") || "No products found"}
-              </h3>
-              <p className="text-gray-600 mb-4">
-                {t("noProductsFoundDesc") ||
-                  "Try adjusting your search or filter criteria"}
-              </p>
-              <Button
-                onClick={() => {
-                  setSearchTerm("");
-                  setFilters({});
-                  getProducts({});
-                }}
-                variant="outline"
-              >
-                {t("clearFilters") || "Clear Filters"}
-              </Button>
-            </div>
+        {products.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {products.map((product: Product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
           </div>
         )}
 
-        {/* Loading More Indicator */}
-        {isLoading && products.length > 0 && (
-          <div className="flex items-center justify-center mt-8">
-            <div className="flex items-center gap-2">
-              <Loader2 className="h-5 w-5 animate-spin text-gray-600" />
-              <span className="text-gray-600">
-                {t("loadingMore") || "Loading more products..."}
-              </span>
-            </div>
+        {/* Empty state */}
+        {products.length === 0 && !isLoading && !error && (
+          <div className="text-center py-16">
+            <p className="text-gray-600">
+              {t("noProductsAvailable") ||
+                "No products are currently available."}
+            </p>
           </div>
         )}
       </div>
