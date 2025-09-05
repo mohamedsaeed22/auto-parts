@@ -88,7 +88,7 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
         <div className="relative mt-60">
           {/* Custom previous button */}
           <button
-            className={`cursor-pointer absolute top-1/2 z-20 -translate-y-1/2 bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white transition-colors ${
+            className={`cursor-pointer absolute top-42 z-20 -translate-y-1/2 bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white transition-colors ${
               isRTL ? "right-4" : "left-4"
             }`}
             onClick={() => swiperRef.current?.slidePrev()}
@@ -175,7 +175,7 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
 
           {/* Custom next button */}
           <button
-            className={`cursor-pointer absolute top-1/2 z-20 -translate-y-1/2 bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white transition-colors ${
+            className={`cursor-pointer absolute top-42 z-20 -translate-y-1/2 bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white transition-colors ${
               isRTL ? "left-4" : "right-4"
             }`}
             onClick={() => swiperRef.current?.slideNext()}

@@ -22,5 +22,10 @@
     "previousSlide": "الشريحة السابقة",
     "nextSlide": "الشريحة التالية",
     "viewAllProducts": "عرض جميع منتجات {{category}}"
+  },
+  "section": {
+    "previousSlide": "الشريحة السابقة",
+    "nextSlide": "الشريحة التالية",
+    "viewAllProducts": "عرض جميع منتجات {{section}}"
   }
 }

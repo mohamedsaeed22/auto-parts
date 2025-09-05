@@ -22,5 +22,10 @@
     "previousSlide": "Previous slide",
     "nextSlide": "Next slide",
     "viewAllProducts": "View All {{category}} Products"
+  },
+  "section": {
+    "previousSlide": "Previous slide",
+    "nextSlide": "Next slide",
+    "viewAllProducts": "View All {{section}} Products"
   }
 }
