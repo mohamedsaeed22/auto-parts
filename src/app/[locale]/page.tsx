@@ -2,7 +2,7 @@
 
 import HeroSwiper from "@/components/swiper/HeroSwiper";
 import Brands from "@/components/brand/Brands";
-import OffersSwiper from "@/components/swiper/OffersSwiper";
+import OffersSwiper from "@/components/offers/OffersSwiper";
 import ProductsList from "@/components/product/ProductsList";
 import SectionsContainer from "@/components/sections/SectionsContainer";
 import CategoriesSection from "@/components/sections/CategoriesSection";
