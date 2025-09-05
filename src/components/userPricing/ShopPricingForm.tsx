@@ -23,12 +23,7 @@ interface ShopPricingFormProps {
 
 export function ShopPricingForm({
   form,
-  partImagePreview: _,
-  requestImagePreview: __,
-  formImagePreview: ___,
   isSubmitting,
-  onImageChange: ____,
-  onRemoveImage: _____,
   onSubmit,
 }: ShopPricingFormProps) {
   const { t } = useTranslation("userPricing");
@@ -36,46 +31,40 @@ export function ShopPricingForm({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     watch,
-    setValue,
     getValues,
   } = form;
 
-  // Watch for current form values
-  const currentPartName = watch("partName");
-  const currentQuantity = watch("quantity");
+  // Watch all form values for debugging
+  const watchedValues = watch();
+  
+  console.log("Form errors:", errors);
+  console.log("Form isValid:", isValid);
+  console.log("Watched values:", watchedValues);
 
   const handleFormSubmit = async (data: ShopPricingFormData) => {
-    await onSubmit(data);
-  };
-
-  const handleAddItem = () => {
-    if (currentPartName && currentQuantity) {
-      // Get current items from form
-      const currentItems = getValues("items") || [];
-
-      // Add new item to the list
-      const newItem = {
-        partName: currentPartName,
-        quantity: currentQuantity,
-      };
-
-      setValue("items", [...currentItems, newItem]);
-
-      // Clear current form fields
-      setValue("partName", "");
-      setValue("quantity", "");
+    console.log("=== FORM SUBMISSION START ===");
+    console.log("Form data received:", data);
+    console.log("Form validation state:", { isValid, errors });
+    console.log("Current form values:", getValues());
+    
+    try {
+      await onSubmit(data);
+      console.log("=== FORM SUBMISSION SUCCESS ===");
+    } catch (error) {
+      console.error("=== FORM SUBMISSION ERROR ===", error);
     }
   };
 
-  const handleRemoveItem = (index: number) => {
-    const currentItems = getValues("items") || [];
-    const updatedItems = currentItems.filter((_, i) => i !== index);
-    setValue("items", updatedItems);
+  // Debug button to check current form state
+  const handleDebugClick = () => {
+    console.log("=== DEBUG INFO ===");
+    console.log("Current form values:", getValues());
+    console.log("Form errors:", errors);
+    console.log("Form isValid:", isValid);
+    console.log("Watched values:", watchedValues);
   };
-
-  const currentItems = watch("items") || [];
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-8">
@@ -87,6 +76,22 @@ export function ShopPricingForm({
           {t("form.title")} - {t("form.userType.shop")}
         </h2>
         <p className="text-gray-600">{t("form.subtitle")}</p>
+      </div>
+
+      {/* Debug Info Panel */}
+      <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
+        <p className="text-sm font-medium">Debug Info:</p>
+        <p className="text-xs">Valid: {isValid ? "✅" : "❌"}</p>
+        <p className="text-xs">Errors: {Object.keys(errors).length}</p>
+        <Button 
+          type="button" 
+          onClick={handleDebugClick}
+          size="sm"
+          variant="outline"
+          className="mt-2"
+        >
+          Log Form State
+        </Button>
       </div>
 
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
@@ -102,7 +107,10 @@ export function ShopPricingForm({
             icon={Package}
             placeholder={t("form.fields.partName.placeholder")}
             error={errors.partName?.message}
-            {...register("partName")}
+            {...register("partName", { 
+              required: "Part name is required",
+              minLength: { value: 1, message: "Part name cannot be empty" }
+            })}
           />
 
           {/* Quantity Input */}
@@ -113,59 +121,21 @@ export function ShopPricingForm({
             placeholder={t("form.fields.quantity.placeholder")}
             min="1"
             error={errors.quantity?.message}
-            {...register("quantity")}
+            {...register("quantity", { 
+              required: "Quantity is required",
+              min: { value: 1, message: "Quantity must be at least 1" },
+              valueAsNumber: true
+            })}
           />
-
-          {/* Add Item Button */}
-          <Button
-            type="button"
-            onClick={handleAddItem}
-            disabled={!currentPartName || !currentQuantity}
-            className="w-full bg-logo-gold hover:bg-logo-gold/90 text-white"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            {t("form.addItem")}
-          </Button>
+          
+          <FormSubmissionButton isSubmitting={isSubmitting} />
         </div>
 
-        {/* Items List */}
-        {currentItems.length > 0 && (
-          <div className="space-y-3">
-            <h3 className="text-lg font-medium text-gray-800">
-              {t("form.itemsList")} ({currentItems.length})
-            </h3>
-            <div className="space-y-2 max-h-60 overflow-y-auto">
-              {currentItems.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-3"
-                >
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-800">{item.partName}</p>
-                    <p className="text-sm text-gray-600">
-                      {t("form.fields.quantity.label")}: {item.quantity}
-                    </p>
-                  </div>
-                  <Button
-                    type="button"
-                    onClick={() => handleRemoveItem(index)}
-                    variant="outline"
-                    size="sm"
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Submit Button */}
-        <FormSubmissionButton
-          isSubmitting={isSubmitting}
-          disabled={currentItems.length === 0}
-        />
+        {/* Display current form values for debugging */}
+        <div className="text-sm text-gray-500 p-2 bg-gray-50 rounded">
+          <strong>Current Values:</strong>
+          <pre>{JSON.stringify(watchedValues, null, 2)}</pre>
+        </div>
       </form>
 
       {/* Additional Information */}

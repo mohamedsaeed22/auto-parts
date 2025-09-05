@@ -1,6 +1,6 @@
 "use client";
 
-import { useUserPricingForm } from "@/hooks/useUserPricingForm";
+import { useUnifiedPricingForm } from "@/hooks/useUnifiedPricingForm";
 import { HeroSection } from "@/components/userPricing/HeroSection";
 import { PricingForm } from "@/components/userPricing/PricingForm";
 import { SavedFormsList } from "@/components/userPricing/SavedFormsList";
@@ -28,11 +28,9 @@ export default function UserPricingPage() {
     onSubmit,
     deleteSavedForm,
     sendAllToBackend,
-  } = useUserPricingForm();
+  } = useUnifiedPricingForm();
 
-  // Get userType from form for conditional rendering
-  const { watch } = form;
-  const userType = watch("userType");
+  // Form is now handled by the unified PricingForm component
 
   return (
     <div className="min-h-screen bg-gray-50">

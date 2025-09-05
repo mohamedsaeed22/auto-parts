@@ -1,13 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Send, Package, AlertCircle, CheckCircle, LogIn } from "lucide-react";
-import { UserPricingFormData } from "@/lib/validations/userPricingSchema";
+import { SavedUnifiedFormData } from "@/hooks/useUnifiedPricingForm";
 import { SavedFormItem } from "./SavedFormItem";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/hooks/useLocale";
 
 interface SavedFormsListProps {
-  savedForms: (UserPricingFormData & { id: string; submittedAt: Date })[];
+  savedForms: SavedUnifiedFormData[];
   isSendingToBackend: boolean;
   onSendAll: () => void;
   onDeleteForm: (id: string) => void;
