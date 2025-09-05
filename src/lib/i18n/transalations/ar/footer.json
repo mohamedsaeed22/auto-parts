@@ -5,7 +5,7 @@
       "links": {
         "about": "من نحن",
         "contact": "اتصل بنا",
-        "categories": "الفئات",
+        "categories": "الاقسام",
         "brands": "العلامات التجارية",
         "offers": "العروض"
       }
@@ -21,7 +21,7 @@
       }
     },
     "autoPartsCategories": {
-      "title": "فئات قطع السيارات",
+      "title": "اقسام قطع السيارات",
       "links": {
         "spareParts": "قطع الغيار",
         "accessories": "الاكسسوارات",
