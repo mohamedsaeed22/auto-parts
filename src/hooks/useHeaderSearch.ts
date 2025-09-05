@@ -1,5 +1,5 @@
 import { useQueryState } from "nuqs";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 
 export const useHeaderSearch = () => {
   // Local state for typing (doesn't update URL)
@@ -10,6 +10,13 @@ export const useHeaderSearch = () => {
     defaultValue: "",
     shallow: true,
   });
+
+  // Clear local search query when URL search query changes (after navigation)
+  useEffect(() => {
+    if (urlSearchQuery && urlSearchQuery !== localSearchQuery) {
+      setLocalSearchQuery("");
+    }
+  }, [urlSearchQuery, localSearchQuery]);
 
   const updateSearchQuery = useCallback((query: string) => {
     // Only update local state, not URL

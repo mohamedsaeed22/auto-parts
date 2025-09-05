@@ -90,7 +90,6 @@ export default function SearchAutocomplete({
 
   // Handle suggestion click
   const handleSuggestionClick = (product: Product) => {
-    setSearchQuery(product.name);
     setShowSuggestions(false);
     setSuggestions([]);
 
@@ -103,6 +102,11 @@ export default function SearchAutocomplete({
     router.push(
       `/${currentLocale}/products?search=${encodeURIComponent(product.name)}`
     );
+
+    // Clear the search input after navigation
+    setTimeout(() => {
+      setSearchQuery("");
+    }, 100);
   };
 
   // Handle keyboard navigation
