@@ -73,5 +73,8 @@
   "errorLoadingProducts": "Unable to Load Products",
   "errorLoadingProductsDesc": "We encountered an issue while loading our product catalog. Please check your internet connection and try again.",
   "tryAgain": "Retry",
-  "showingResults": "Showing {{start}} to {{end}} of {{total}} results"
+  "showingResults": "Showing {{start}} to {{end}} of {{total}} results",
+  "shareSuccess": "Product shared successfully!",
+  "linkCopied": "Link copied to clipboard!",
+  "shareError": "Failed to share or copy link"
 }
