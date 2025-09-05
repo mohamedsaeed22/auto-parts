@@ -41,9 +41,10 @@ export default function Header() {
     { href: "/userPricing", label: t("navigation.userPricing") },
   ];
 
-  const onLanguageChange = () => {
-    const newLocale = currentLocale === "en" ? "ar" : "en";
-    changeLocale(newLocale);
+  const onLanguageChange = (newLocale: string) => {
+    if (newLocale !== currentLocale) {
+      changeLocale(newLocale);
+    }
   };
 
   const handleCartClick = () => {

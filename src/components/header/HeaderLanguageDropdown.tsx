@@ -1,11 +1,11 @@
-import { Globe, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
 interface HeaderLanguageDropdownProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  onLanguageChange: () => void;
+  onLanguageChange: (locale: string) => void;
   isRTL: boolean;
   activeLocale: string;
   isMobile?: boolean;
@@ -35,7 +35,7 @@ export default function HeaderLanguageDropdown({
           onClick={() => setIsOpen(!isOpen)}
           className="p-2 text-neutral-700 hover:text-primary transition-colors"
         >
-          <Globe size={20} />
+          <span className="text-lg">{currentLanguage?.flag}</span>
         </button>
 
         <AnimatePresence>
@@ -57,7 +57,12 @@ export default function HeaderLanguageDropdown({
                     className={`w-full px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-100 flex items-center gap-2 ${
                       isRTL ? "text-right" : "text-left"
                     }`}
-                    onClick={onLanguageChange}
+                    onClick={() => {
+                      if (language.code !== activeLocale) {
+                        onLanguageChange(language.code);
+                        setIsOpen(false);
+                      }
+                    }}
                   >
                     <span className="text-base">{language.flag}</span>
                     <span className="text-xs">{language.name}</span>
@@ -77,7 +82,7 @@ export default function HeaderLanguageDropdown({
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-neutral-700 hover:text-neutral-900 hover:bg-neutral-100 rounded-md transition-colors"
       >
-        <Globe size={18} />
+        <span className="text-lg">{currentLanguage?.flag}</span>
         <span>{currentLanguage?.name}</span>
         <ChevronDown
           size={12}
@@ -101,7 +106,12 @@ export default function HeaderLanguageDropdown({
                   className={`w-full px-4 py-3 text-sm text-neutral-700 hover:bg-neutral-100 flex items-center gap-3 transition-colors ${
                     isRTL ? "text-right" : "text-left"
                   }`}
-                  onClick={onLanguageChange}
+                  onClick={() => {
+                    if (language.code !== activeLocale) {
+                      onLanguageChange(language.code);
+                      setIsOpen(false);
+                    }
+                  }}
                 >
                   <span className="text-lg">{language.flag}</span>
                   <span>{language.name}</span>
