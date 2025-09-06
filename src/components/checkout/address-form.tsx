@@ -1,11 +1,15 @@
-'use client';
+"use client";
 
-import { useTranslation } from 'react-i18next';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Address, CreateAddressData, useCreateAddress, useUpdateAddress } from '@/services/api/checkout';
-import { Button } from '@/components/ui/button';
+import { useTranslation } from "react-i18next";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import {
+  Address,
+  useCreateAddress,
+  useUpdateAddress,
+} from "@/services/api/checkout";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -13,16 +17,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const addressSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  phone: z.string().min(1, 'Phone is required'),
-  address: z.string().min(1, 'Address is required'),
-  city: z.string().min(1, 'City is required'),
-  state: z.string().min(1, 'State is required'),
+  name: z.string().min(1, "Name is required"),
+  phone: z.string().min(1, "Phone is required"),
+  address: z.string().min(1, "Address is required"),
+  city: z.string().min(1, "City is required"),
+  state: z.string().min(1, "State is required"),
   is_default: z.boolean().default(false),
 });
 
@@ -34,18 +38,18 @@ interface AddressFormProps {
 }
 
 export function AddressForm({ address, onSuccess }: AddressFormProps) {
-  const { t } = useTranslation('checkout');
+  const { t } = useTranslation("checkout");
   const createAddressMutation = useCreateAddress();
   const updateAddressMutation = useUpdateAddress();
 
   const form = useForm<AddressFormValues>({
     resolver: zodResolver(addressSchema),
     defaultValues: {
-      name: address?.name || '',
-      phone: address?.phone || '',
-      address: address?.address || '',
-      city: address?.city || '',
-      state: address?.state || '',
+      name: address?.name || "",
+      phone: address?.phone || "",
+      address: address?.address || "",
+      city: address?.city || "",
+      state: address?.state || "",
       is_default: address?.is_default || false,
     },
   });
@@ -70,7 +74,7 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('address.name')}</FormLabel>
+              <FormLabel>{t("address.name")}</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -83,7 +87,7 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('address.phone')}</FormLabel>
+              <FormLabel>{t("address.phone")}</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -96,7 +100,7 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
           name="address"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('address.address')}</FormLabel>
+              <FormLabel>{t("address.address")}</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -109,7 +113,7 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
           name="city"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('address.city')}</FormLabel>
+              <FormLabel>{t("address.city")}</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -122,7 +126,7 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
           name="state"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('address.state')}</FormLabel>
+              <FormLabel>{t("address.state")}</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -141,7 +145,9 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
                   onCheckedChange={field.onChange}
                 />
               </FormControl>
-              <FormLabel className="!mt-0">{t('address.makeDefault')}</FormLabel>
+              <FormLabel className="!mt-0">
+                {t("address.makeDefault")}
+              </FormLabel>
             </FormItem>
           )}
         />
@@ -152,7 +158,7 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
             createAddressMutation.isPending || updateAddressMutation.isPending
           }
         >
-          {address ? t('address.update') : t('address.add')}
+          {address ? t("address.update") : t("address.add")}
         </Button>
       </form>
     </Form>

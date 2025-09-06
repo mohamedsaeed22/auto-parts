@@ -1,7 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { axios } from '@/lib/axios';
-import { showError, showSuccess } from '@/lib/toast';
-import { Product } from './products';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { axios } from "@/lib/axios";
+import { showError, showSuccess } from "@/lib/toast";
+import { Product } from "./products";
 
 export interface FavoriteItem {
   id: number;
@@ -21,32 +21,34 @@ export interface FavoritesResponse {
 }
 
 const favoritesKeys = {
-  all: ['favorites'] as const,
-  lists: () => [...favoritesKeys.all, 'list'] as const,
+  all: ["favorites"] as const,
+  lists: () => [...favoritesKeys.all, "list"] as const,
   list: (page: number) => [...favoritesKeys.lists(), { page }] as const,
 };
 
 const getFavorites = async ({ page = 1 }: { page?: number }) => {
-  const { data } = await axios.get<FavoritesResponse>('/api/favorites', {
+  const { data } = await axios.get<FavoritesResponse>("/api/favorites", {
     params: { page },
   });
   return data;
 };
 
 const addToFavorites = async (product_id: number) => {
-  const { data } = await axios.post<FavoritesResponse>('/api/favorites', {
+  const { data } = await axios.post<FavoritesResponse>("/api/favorites", {
     product_id,
   });
   return data;
 };
 
 const removeFromFavorites = async (id: number) => {
-  const { data } = await axios.delete<FavoritesResponse>(`/api/favorites/${id}`);
+  const { data } = await axios.delete<FavoritesResponse>(
+    `/api/favorites/${id}`
+  );
   return data;
 };
 
 const clearFavorites = async () => {
-  const { data } = await axios.delete<FavoritesResponse>('/api/favorites');
+  const { data } = await axios.delete<FavoritesResponse>("/api/favorites");
   return data;
 };
 
@@ -64,11 +66,11 @@ export function useAddToFavorites() {
     mutationFn: addToFavorites,
     onSuccess: (data) => {
       queryClient.setQueryData(favoritesKeys.list(1), data);
-      showSuccess('Product added to favorites successfully');
+      showSuccess("Product added to favorites successfully");
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message || 'Failed to add product to favorites'
+        error?.response?.data?.message || "Failed to add product to favorites"
       );
     },
   });
@@ -81,11 +83,12 @@ export function useRemoveFromFavorites() {
     mutationFn: removeFromFavorites,
     onSuccess: (data) => {
       queryClient.setQueryData(favoritesKeys.list(1), data);
-      showSuccess('Product removed from favorites successfully');
+      showSuccess("Product removed from favorites successfully");
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message || 'Failed to remove product from favorites'
+        error?.response?.data?.message ||
+          "Failed to remove product from favorites"
       );
     },
   });
@@ -98,10 +101,10 @@ export function useClearFavorites() {
     mutationFn: clearFavorites,
     onSuccess: (data) => {
       queryClient.setQueryData(favoritesKeys.list(1), data);
-      showSuccess('Favorites cleared successfully');
+      showSuccess("Favorites cleared successfully");
     },
-    onError: (error: any) => {
-      showError(error?.response?.data?.message || 'Failed to clear favorites');
+    onError: (error: unknown) => {
+      showError(error?.response?.data?.message || "Failed to clear favorites");
     },
   });
 }

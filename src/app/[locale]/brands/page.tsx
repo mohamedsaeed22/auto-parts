@@ -62,13 +62,7 @@ const ErrorMessage = ({
 );
 
 // Hero Section Component
-const HeroSection = ({
-  isRTL,
-  t,
-}: {
-  isRTL: boolean;
-  t: (key: string) => string;
-}) => (
+const HeroSection = ({ t }: { t: (key: string) => string }) => (
   <div className="bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-white py-16">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center">
@@ -270,7 +264,7 @@ const BrandFeatures = ({
 export default function BrandsPage() {
   const router = useRouter();
   const { t, i18n } = useTranslation("brands");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewMode] = useState<"grid" | "list">("grid");
 
   const isRTL = i18n.language === "ar";
   const direction = isRTL ? "rtl" : "ltr";
@@ -300,7 +294,7 @@ export default function BrandsPage() {
   if (isLoading) {
     return (
       <div dir={direction}>
-        <HeroSection isRTL={isRTL} t={t} />
+        <HeroSection t={t} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <LoadingSpinner />
         </div>
@@ -319,7 +313,7 @@ export default function BrandsPage() {
 
     return (
       <div dir={direction}>
-        <HeroSection isRTL={isRTL} t={t} />
+        <HeroSection t={t} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <ErrorMessage message={errorMessage} onRetry={refetch} />
         </div>
@@ -330,7 +324,7 @@ export default function BrandsPage() {
   return (
     <div dir={direction}>
       {/* Hero Section */}
-      <HeroSection isRTL={isRTL} t={t} />
+      <HeroSection t={t} />
 
       {/* Filter Bar */}
       {/* <FilterBar

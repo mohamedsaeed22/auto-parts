@@ -23,8 +23,6 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
     {
       currentPage,
       totalPages,
-      totalItems,
-      itemsPerPage,
       onPageChange,
       className,
       // showInfo = true,
@@ -35,7 +33,7 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
     },
     ref
   ) => {
-    const { t, i18n } = useTranslation("product");
+    const { i18n } = useTranslation("product");
     const isRTL = i18n.language === "ar";
 
     // RTL-aware chevron icons
@@ -108,12 +106,6 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
     };
 
     const visiblePages = getVisiblePages();
-    const startItem = totalItems
-      ? (currentPage - 1) * (itemsPerPage || 10) + 1
-      : 0;
-    const endItem = totalItems
-      ? Math.min(currentPage * (itemsPerPage || 10), totalItems)
-      : 0;
 
     return (
       <div

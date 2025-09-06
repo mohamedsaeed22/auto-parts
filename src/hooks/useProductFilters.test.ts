@@ -3,7 +3,7 @@ import { useProductFilters } from "./useProductFilters";
 
 // Mock nuqs
 jest.mock("nuqs", () => ({
-  useQueryState: jest.fn((key: string, options: any) => {
+  useQueryState: jest.fn((key: string) => {
     const mockState = {
       search: ["", jest.fn()],
       category_id: [null, jest.fn()],

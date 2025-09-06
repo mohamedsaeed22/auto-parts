@@ -6,6 +6,8 @@ import {
   useToggleFavouriteMutation,
 } from "@/services/api";
 import { FavouriteItem } from "@/services/api/favouritesApi";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import type { RegistrationIncompleteErrorResponse } from "@/services/api/baseApi";
 import { Heart, Trash2, ShoppingCart, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
@@ -35,7 +37,13 @@ export default function FavouritesPage() {
 
   // Handle API errors (403 registration incomplete, 401 unauthorized, etc.)
   // Disable toasts since ProtectedPageGuard handles authentication toasts
-  useApiErrorHandler(error, { showToasts: false });
+  useApiErrorHandler(
+    error as
+      | FetchBaseQueryError
+      | RegistrationIncompleteErrorResponse
+      | undefined,
+    { showToasts: false }
+  );
 
   // Scroll to top when page loads
   useScrollToTop();
@@ -61,7 +69,7 @@ export default function FavouritesPage() {
 
     try {
       await toggleFavourite({ product_id: productId }).unwrap();
-    } catch (error) {
+    } catch {
       // Revert optimistic update on error
       if (itemToRemove) {
         setOptimisticFavourites([...currentFavourites]);
@@ -95,7 +103,7 @@ export default function FavouritesPage() {
 
     try {
       await handleToggleWishlist(productId);
-    } catch (error) {
+    } catch {
       // Revert optimistic update on error
       setOptimisticWishlist((prev) => ({
         ...prev,

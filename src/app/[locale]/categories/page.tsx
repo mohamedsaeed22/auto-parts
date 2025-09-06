@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import Image from "next/image";
 import { useGetCategoriesQuery } from "@/services/api/categoriesApi";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import {
@@ -73,10 +74,11 @@ const CategoryCard = ({
           <div className="flex items-center gap-6">
             {/* Category Image */}
             <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg">
-              <img
+              <Image
                 src={imageError ? fallbackImage : category.image}
                 alt={category.name}
-                className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300"
+                fill
+                className="object-cover group-hover:scale-110 transition-transform duration-300"
                 onError={handleImageError}
               />
             </div>
@@ -137,10 +139,11 @@ const CategoryCard = ({
         <div className="relative">
           {/* Category Image */}
           <div className="relative h-48 w-full overflow-hidden">
-            <img
+            <Image
               src={imageError ? fallbackImage : category.image}
               alt={category.name}
-              className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300"
+              fill
+              className="object-cover group-hover:scale-110 transition-transform duration-300"
               onError={handleImageError}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -190,13 +193,7 @@ const CategoryCard = ({
 };
 
 // Hero Section Component
-const HeroSection = ({
-  isRTL,
-  t,
-}: {
-  isRTL: boolean;
-  t: (key: string) => string;
-}) => (
+const HeroSection = ({ t }: { t: (key: string) => string }) => (
   <div className="bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-white py-20">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center">
@@ -227,14 +224,12 @@ const HeroSection = ({
 
 // Search and Filter Component
 const SearchAndFilter = ({
-  isRTL,
   t,
   searchQuery,
   onSearchChange,
   viewMode,
   onViewModeChange,
 }: {
-  isRTL: boolean;
   t: (key: string) => string;
   searchQuery: string;
   onSearchChange: (value: string) => void;
@@ -368,10 +363,9 @@ export default function CategoriesPage() {
 
   return (
     <div dir={direction}>
-      <HeroSection isRTL={isRTL} t={t} />
+      <HeroSection t={t} />
 
       <SearchAndFilter
-        isRTL={isRTL}
         t={t}
         searchQuery={searchQuery}
         onSearchChange={handleSearchChange}

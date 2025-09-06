@@ -1,14 +1,15 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Loader2, Trash2 } from 'lucide-react';
-import { useWishlist, useClearWishlist } from '@/services/api/wishlist';
-import { Button } from '@/components/ui/button';
-import { WishlistItem } from './wishlist-item';
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Loader2, Trash2 } from "lucide-react";
+import { useWishlist, useClearWishlist } from "@/services/api/wishlist";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { WishlistItem } from "./wishlist-item";
 
 export function WishlistList() {
-  const { t } = useTranslation('wishlist');
+  const { t } = useTranslation("wishlist");
   const [page, setPage] = useState(1);
   const { data: wishlistResponse, isLoading, isError } = useWishlist(page);
   const clearWishlistMutation = useClearWishlist();
@@ -25,10 +26,10 @@ export function WishlistList() {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-8">
         <p className="text-center text-muted-foreground">
-          {t('errors.loadingFailed')}
+          {t("errors.loadingFailed")}
         </p>
         <Button variant="outline" onClick={() => window.location.reload()}>
-          {t('retry')}
+          {t("retry")}
         </Button>
       </div>
     );
@@ -37,9 +38,9 @@ export function WishlistList() {
   if (!wishlistResponse?.data.length) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-8">
-        <p className="text-center text-muted-foreground">{t('empty')}</p>
+        <p className="text-center text-muted-foreground">{t("empty")}</p>
         <Button variant="outline" asChild>
-          <a href="/products">{t('continueShopping')}</a>
+          <Link href="/products">{t("continueShopping")}</Link>
         </Button>
       </div>
     );
@@ -48,20 +49,20 @@ export function WishlistList() {
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t('title')}</h1>
+        <h1 className="text-2xl font-bold">{t("title")}</h1>
         <Button
           variant="destructive"
           size="sm"
           className="gap-2"
           onClick={() => {
-            if (window.confirm(t('confirmClear'))) {
+            if (window.confirm(t("confirmClear"))) {
               clearWishlistMutation.mutate();
             }
           }}
           disabled={clearWishlistMutation.isPending}
         >
           <Trash2 className="h-4 w-4" />
-          {t('clearWishlist')}
+          {t("clearWishlist")}
         </Button>
       </div>
       <div className="divide-y rounded-lg border">
@@ -76,17 +77,20 @@ export function WishlistList() {
             onClick={() => setPage((p) => p - 1)}
             disabled={page === 1}
           >
-            {t('previous')}
+            {t("previous")}
           </Button>
           <span className="text-sm text-muted-foreground">
-            {t('page', { current: page, total: wishlistResponse.meta.last_page })}
+            {t("page", {
+              current: page,
+              total: wishlistResponse.meta.last_page,
+            })}
           </span>
           <Button
             variant="outline"
             onClick={() => setPage((p) => p + 1)}
             disabled={page === wishlistResponse.meta.last_page}
           >
-            {t('next')}
+            {t("next")}
           </Button>
         </div>
       )}

@@ -2,11 +2,10 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { useTranslation } from "react-i18next";
-import { Heart, ShoppingCart, Star, Tag, Percent } from "lucide-react";
+import { Heart, ShoppingCart, Tag, Percent } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "./button";
-import { Card, CardContent, CardHeader } from "./card";
+import { Card, CardContent } from "./card";
 import { Badge } from "./badge";
 import { cn } from "@/lib/utils";
 
@@ -14,7 +13,7 @@ interface ProductCardProps {
   product: {
     id: number;
     name: string;
-    price: number;
+    price: string;
     final_price: number;
     primary_image: string;
     description: string;
@@ -41,11 +40,7 @@ interface ProductCardProps {
   dir?: "ltr" | "rtl";
 }
 
-export function ProductCard({ product, className, dir = "ltr" }: ProductCardProps) {
-  const { i18n } = useTranslation();
-  const isRTL = i18n.language === "ar" || dir === "rtl";
-  const [imageError, setImageError] = React.useState(false);
-
+export function ProductCard({ product, className }: ProductCardProps) {
   const hasDiscount = product.final_price < product.price;
 
   return (

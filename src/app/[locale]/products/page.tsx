@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useGetProductsMutation } from "@/services/hooks";
@@ -19,7 +18,6 @@ import {
   List,
   Award,
   Shield,
-  CheckCircle,
   Globe,
   ChevronDown,
   ChevronUp,
@@ -34,7 +32,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Breadcrumb, Pagination } from "@/components/ui";
 import ProductCard from "@/components/product/ProductCard";
-import type { FilterState, Category } from "@/lib/types/filters";
+import type { FilterState } from "@/lib/types/filters";
 
 // Loading Component
 const LoadingSpinner = () => (
@@ -69,13 +67,7 @@ const ErrorMessage = ({
 );
 
 // Hero Section Component
-const HeroSection = ({
-  isRTL,
-  t,
-}: {
-  isRTL: boolean;
-  t: (key: string) => string;
-}) => (
+const HeroSection = ({ t }: { t: (key: string) => string }) => (
   <div className="bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 text-white py-16">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center">
@@ -111,20 +103,11 @@ const HeroSection = ({
 
 // Filter Sidebar Component
 const FilterSidebar = ({
-  isRTL,
   t,
-  filters,
-  onFilterChange,
   isOpen,
   onToggle,
 }: {
-  isRTL: boolean;
   t: (key: string) => string;
-  filters: FilterState;
-  onFilterChange: (
-    key: keyof FilterState,
-    value: string | number | null
-  ) => void;
   isOpen: boolean;
   onToggle: () => void;
 }) => (
@@ -204,7 +187,7 @@ const FilterPanel = ({
           </div>
         ) : (
           <div className="space-y-2 max-h-40 overflow-y-auto">
-            {categories.map((category: any) => (
+            {categories.map((category) => (
               <label
                 key={category.id}
                 className="flex items-center gap-2 cursor-pointer"
@@ -220,19 +203,7 @@ const FilterPanel = ({
                   }}
                   className="border-gray-300 text-green-600 focus:ring-green-500"
                 />
-                <span className="text-sm text-gray-700">
-                  {category.parent ? (
-                    <span>
-                      <span className="text-gray-500">
-                        {category.parent.name}
-                      </span>
-                      <span className="mx-1">→</span>
-                      <span>{category.name}</span>
-                    </span>
-                  ) : (
-                    category.name
-                  )}
-                </span>
+                <span className="text-sm text-gray-700">{category.name}</span>
               </label>
             ))}
             {/* Clear category selection */}
@@ -368,12 +339,10 @@ const FilterPanel = ({
 
 // View Mode Toggle Component
 const ViewModeToggle = ({
-  isRTL,
   t,
   viewMode,
   onViewModeChange,
 }: {
-  isRTL: boolean;
   t: (key: string) => string;
   viewMode: "grid" | "list";
   onViewModeChange: (mode: "grid" | "list") => void;
@@ -490,10 +459,6 @@ export default function ProductsPage() {
     clearFilters();
   };
 
-  const handleSortChange = (value: string) => {
-    updateSortBy(value);
-  };
-
   // Handle error state
   if (error) {
     let errorMessage = "Failed to load products";
@@ -505,7 +470,7 @@ export default function ProductsPage() {
 
     return (
       <div dir={direction}>
-        <HeroSection isRTL={isRTL} t={t} />
+        <HeroSection t={t} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <ErrorMessage
             message={errorMessage}
@@ -519,7 +484,7 @@ export default function ProductsPage() {
   return (
     <div dir={direction}>
       {/* Hero Section */}
-      <HeroSection isRTL={isRTL} t={t} />
+      <HeroSection t={t} />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -546,10 +511,7 @@ export default function ProductsPage() {
           {/* Filters Sidebar */}
           <div className="lg:col-span-1">
             <FilterSidebar
-              isRTL={isRTL}
               t={t}
-              filters={filters}
-              onFilterChange={handleFilterChange}
               isOpen={isFilterOpen}
               onToggle={() => setIsFilterOpen(!isFilterOpen)}
             />
@@ -594,7 +556,6 @@ export default function ProductsPage() {
               }`}
             >
               <ViewModeToggle
-                isRTL={isRTL}
                 t={t}
                 viewMode={filters.view_mode}
                 onViewModeChange={updateViewMode}
@@ -619,7 +580,7 @@ export default function ProductsPage() {
                         <p className="text-green-700">
                           {t("searchingFor") || "Searching for"}:
                           <span className="font-medium ml-1">
-                            "{filters.search}"
+                            &quot;{filters.search}&quot;
                           </span>
                         </p>
                       </div>

@@ -1,8 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { axios } from '@/lib/axios';
-import { showError, showSuccess } from '@/lib/toast';
-import { Product } from './products';
-import { Address } from './checkout';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { axios } from "@/lib/axios";
+import { showError, showSuccess } from "@/lib/toast";
+import { Product } from "./products";
+import { Address } from "./checkout";
 
 export interface OrderItem {
   id: number;
@@ -18,9 +18,9 @@ export interface OrderItem {
 export interface Order {
   id: number;
   order_number: string;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  payment_method: 'cash' | 'card';
-  payment_status: 'pending' | 'paid' | 'failed';
+  status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+  payment_method: "cash" | "card";
+  payment_status: "pending" | "paid" | "failed";
   address: Address;
   items: OrderItem[];
   subtotal: number;
@@ -45,15 +45,15 @@ export interface OrderResponse {
 }
 
 const ordersKeys = {
-  all: ['orders'] as const,
-  lists: () => [...ordersKeys.all, 'list'] as const,
+  all: ["orders"] as const,
+  lists: () => [...ordersKeys.all, "list"] as const,
   list: (page: number) => [...ordersKeys.lists(), { page }] as const,
-  details: () => [...ordersKeys.all, 'detail'] as const,
+  details: () => [...ordersKeys.all, "detail"] as const,
   detail: (id: number) => [...ordersKeys.details(), id] as const,
 };
 
 const getOrders = async ({ page = 1 }: { page?: number }) => {
-  const { data } = await axios.get<OrdersResponse>('/api/orders', {
+  const { data } = await axios.get<OrdersResponse>("/api/orders", {
     params: { page },
   });
   return data;
@@ -89,17 +89,16 @@ export function useCancelOrder() {
   return useMutation({
     mutationFn: cancelOrder,
     onSuccess: (data) => {
-      queryClient.setQueryData(
-        ordersKeys.detail(data.data.id),
-        { data: data.data }
-      );
+      queryClient.setQueryData(ordersKeys.detail(data.data.id), {
+        data: data.data,
+      });
       queryClient.invalidateQueries({
         queryKey: ordersKeys.lists(),
       });
-      showSuccess('Order cancelled successfully');
+      showSuccess("Order cancelled successfully");
     },
-    onError: (error: any) => {
-      showError(error?.response?.data?.message || 'Failed to cancel order');
+    onError: (error: unknown) => {
+      showError(error?.response?.data?.message || "Failed to cancel order");
     },
   });
 }

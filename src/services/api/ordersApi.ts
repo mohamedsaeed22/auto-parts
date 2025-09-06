@@ -15,7 +15,7 @@ export interface OrderProduct {
   quantity: number;
   total: number;
   line_total: number;
-  options: any[];
+  options: unknown[];
   product: {
     id: number;
     name: string;

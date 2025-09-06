@@ -17,7 +17,7 @@ export const useFilterData = () => {
   const categories = useMemo(() => {
     if (!categoriesResponse?.data?.categories) return [];
 
-    return categoriesResponse.data.categories.map((category: any) => ({
+    return categoriesResponse.data.categories.map((category: unknown) => ({
       id: category.id,
       name: category.name,
       level: category.level,
@@ -30,7 +30,7 @@ export const useFilterData = () => {
   const brands = useMemo(() => {
     if (!brandsResponse?.data?.items) return [];
 
-    return brandsResponse.data.items.map((brand: any) => ({
+    return brandsResponse.data.items.map((brand: unknown) => ({
       id: brand.id,
       name: brand.name,
       image: brand.image,

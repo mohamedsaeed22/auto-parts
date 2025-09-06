@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useGetSectionsQuery } from "@/services/api";
-import { SectionsRequest, Section } from "@/services/api/sectionsApi";
+import { Section } from "@/services/api/sectionsApi";
 import SectionSwiper from "./SectionSwiper";
 import { AlertCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";

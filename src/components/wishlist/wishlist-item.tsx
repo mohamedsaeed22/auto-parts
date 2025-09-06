@@ -1,13 +1,16 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
-import { Heart, ShoppingCart, Trash2 } from 'lucide-react';
-import { WishlistItem as WishlistItemType, useRemoveFromWishlist } from '@/services/api/wishlist';
-import { useAddToCart } from '@/services/api/cart';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import Image from "next/image";
+import Link from "next/link";
+import { useTranslation } from "react-i18next";
+import { ShoppingCart, Trash2 } from "lucide-react";
+import {
+  WishlistItem as WishlistItemType,
+  useRemoveFromWishlist,
+} from "@/services/api/wishlist";
+import { useAddToCart } from "@/services/api/cart";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface WishlistItemProps {
   item: WishlistItemType;
@@ -15,7 +18,7 @@ interface WishlistItemProps {
 }
 
 export function WishlistItem({ item, className }: WishlistItemProps) {
-  const { t } = useTranslation(['products', 'wishlist']);
+  const { t } = useTranslation(["products", "wishlist"]);
   const removeFromWishlistMutation = useRemoveFromWishlist();
   const addToCartMutation = useAddToCart();
 
@@ -31,10 +34,12 @@ export function WishlistItem({ item, className }: WishlistItemProps) {
   };
 
   const isDiscounted = item.product.discount_price !== null;
-  const price = isDiscounted ? item.product.discount_price! : item.product.price;
+  const price = isDiscounted
+    ? item.product.discount_price!
+    : item.product.price;
 
   return (
-    <div className={cn('flex gap-4', className)}>
+    <div className={cn("flex gap-4", className)}>
       <Link
         href={`/products/${item.product.id}`}
         className="relative aspect-square h-24 w-24 overflow-hidden rounded-lg"
@@ -56,11 +61,11 @@ export function WishlistItem({ item, className }: WishlistItemProps) {
           </Link>
           <div className="flex items-center gap-2">
             <span className="text-sm font-bold">
-              {t('currency', { value: price })}
+              {t("currency", { value: price })}
             </span>
             {isDiscounted && (
               <span className="text-sm text-muted-foreground line-through">
-                {t('currency', { value: item.product.price })}
+                {t("currency", { value: item.product.price })}
               </span>
             )}
           </div>
@@ -79,8 +84,8 @@ export function WishlistItem({ item, className }: WishlistItemProps) {
           >
             <ShoppingCart className="h-4 w-4" />
             {item.product.stock === 0
-              ? t('outOfStock')
-              : t('wishlist:addToCart')}
+              ? t("outOfStock")
+              : t("wishlist:addToCart")}
           </Button>
           <Button
             variant="ghost"
@@ -88,7 +93,8 @@ export function WishlistItem({ item, className }: WishlistItemProps) {
             className="h-8 w-8 text-destructive"
             onClick={handleRemove}
             disabled={
-              addToCartMutation.isPending || removeFromWishlistMutation.isPending
+              addToCartMutation.isPending ||
+              removeFromWishlistMutation.isPending
             }
           >
             <Trash2 className="h-4 w-4" />

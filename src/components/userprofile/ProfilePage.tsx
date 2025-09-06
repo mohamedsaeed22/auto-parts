@@ -152,7 +152,7 @@ export default function ProfilePage() {
       setIsEditing(false);
 
       showSuccess("Profile updated successfully!");
-    } catch (error) {
+    } catch {
       showError("Failed to update profile. Please try again.");
     } finally {
       setIsLoading(false);
@@ -179,7 +179,7 @@ export default function ProfilePage() {
       await changeLanguage({ locale }).unwrap();
 
       showSuccess("Language changed successfully!");
-    } catch (error) {
+    } catch {
       showError("Failed to change language. Please try again.");
     }
   };

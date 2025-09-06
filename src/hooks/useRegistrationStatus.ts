@@ -53,7 +53,7 @@ export function useRegistrationStatus() {
   };
 
   const isErrorRegistrationIncomplete = (
-    error: any
+    error: unknown
   ): error is RegistrationIncompleteErrorResponse => {
     return (
       error &&

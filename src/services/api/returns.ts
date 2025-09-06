@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { axios } from '@/lib/axios';
-import { showError, showSuccess } from '@/lib/toast';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { axios } from "@/lib/axios";
+import { showError, showSuccess } from "@/lib/toast";
 
 export interface ReturnItem {
   id: number;
@@ -8,7 +8,7 @@ export interface ReturnItem {
   product_id: number;
   quantity: number;
   reason: string;
-  status: 'pending' | 'approved' | 'rejected' | 'completed';
+  status: "pending" | "approved" | "rejected" | "completed";
   created_at: string;
   updated_at: string;
   product: {
@@ -38,20 +38,20 @@ export interface CreateReturnData {
 }
 
 const returnsKeys = {
-  all: ['returns'] as const,
-  lists: () => [...returnsKeys.all, 'list'] as const,
+  all: ["returns"] as const,
+  lists: () => [...returnsKeys.all, "list"] as const,
   list: (page: number) => [...returnsKeys.lists(), { page }] as const,
 };
 
 const getReturns = async ({ page = 1 }: { page?: number }) => {
-  const { data } = await axios.get<ReturnsResponse>('/api/returns', {
+  const { data } = await axios.get<ReturnsResponse>("/api/returns", {
     params: { page },
   });
   return data;
 };
 
 const createReturn = async (data: CreateReturnData) => {
-  const response = await axios.post<ReturnsResponse>('/api/returns', data);
+  const response = await axios.post<ReturnsResponse>("/api/returns", data);
   return response.data;
 };
 
@@ -74,11 +74,11 @@ export function useCreateReturn() {
     mutationFn: createReturn,
     onSuccess: (data) => {
       queryClient.setQueryData(returnsKeys.list(1), data);
-      showSuccess('Return request submitted successfully');
+      showSuccess("Return request submitted successfully");
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message || 'Failed to submit return request'
+        error?.response?.data?.message || "Failed to submit return request"
       );
     },
   });
@@ -91,11 +91,11 @@ export function useCancelReturn() {
     mutationFn: cancelReturn,
     onSuccess: (data) => {
       queryClient.setQueryData(returnsKeys.list(1), data);
-      showSuccess('Return request cancelled successfully');
+      showSuccess("Return request cancelled successfully");
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message || 'Failed to cancel return request'
+        error?.response?.data?.message || "Failed to cancel return request"
       );
     },
   });

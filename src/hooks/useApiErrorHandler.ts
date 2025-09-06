@@ -10,7 +10,7 @@ import type { RegistrationIncompleteErrorResponse } from "@/services/api/baseApi
 
 interface ApiError {
   status?: number;
-  data?: any;
+  data?: unknown;
 }
 
 interface UseApiErrorHandlerOptions {
@@ -87,14 +87,14 @@ export function useApiErrorHandler(
   ]);
 
   // Helper function to check if error is registration incomplete
-  const isRegistrationIncompleteError = (err: any): boolean => {
+  const isRegistrationIncompleteError = (err: unknown): boolean => {
     return (
       err?.status === 403 && err?.data?.data?.is_registration_complete === false
     );
   };
 
   // Helper function to check if error is auth error
-  const isAuthError = (err: any): boolean => {
+  const isAuthError = (err: unknown): boolean => {
     return err?.status === 401;
   };
 
@@ -114,7 +114,7 @@ export function useMutationErrorHandler(
   const router = useRouter();
   const { t } = useTranslation("auth");
 
-  const handleError = (error: any) => {
+  const handleError = (error: unknown) => {
     const {
       showToasts = true,
       autoRedirect = true,

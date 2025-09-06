@@ -13,7 +13,8 @@ import Image from "next/image";
 import { ProtectedPageGuard } from "@/components/auth/AuthGuard";
 import { useApiErrorHandler } from "@/hooks/useApiErrorHandler";
 import { useFavouritesWishlist } from "@/hooks/useFavouritesWishlist";
-import { api } from "@/services/api/baseApi";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import type { RegistrationIncompleteErrorResponse } from "@/services/api/baseApi";
 import React from "react";
 
 export default function WishlistPage() {
@@ -33,7 +34,13 @@ export default function WishlistPage() {
 
   // Handle API errors (403 registration incomplete, 401 unauthorized, etc.)
   // Disable toasts since ProtectedPageGuard handles authentication toasts
-  useApiErrorHandler(error, { showToasts: false });
+  useApiErrorHandler(
+    error as
+      | FetchBaseQueryError
+      | RegistrationIncompleteErrorResponse
+      | undefined,
+    { showToasts: false }
+  );
 
   // Scroll to top when page loads
   useScrollToTop();
@@ -57,7 +64,7 @@ export default function WishlistPage() {
 
     try {
       await toggleWishlist({ product_id: productId }).unwrap();
-    } catch (error) {
+    } catch {
       // Revert optimistic update on error
       if (itemToRemove) {
         setOptimisticWishlist([...currentWishlist]);
@@ -91,7 +98,7 @@ export default function WishlistPage() {
 
     try {
       await handleToggleFavourite(productId);
-    } catch (error) {
+    } catch {
       // Revert optimistic update on error
       setOptimisticFavourites((prev) => ({
         ...prev,

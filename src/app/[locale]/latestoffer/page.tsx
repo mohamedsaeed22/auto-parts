@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useGetOffersQuery } from "@/services/hooks";
+import { Offer } from "@/services/api/types";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import {
   ArrowLeft,
@@ -17,16 +18,12 @@ import {
   Star,
   Clock,
   TrendingUp,
-  Filter,
-  Grid3X3,
-  List,
-  Search,
   Flame,
   Gift,
   Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Breadcrumb, Pagination } from "@/components/ui";
+import { Breadcrumb } from "@/components/ui";
 
 // Loading Component
 const LoadingSpinner = () => (
@@ -61,13 +58,7 @@ const ErrorMessage = ({
 );
 
 // Hero Section Component
-const HeroSection = ({
-  isRTL,
-  t,
-}: {
-  isRTL: boolean;
-  t: (key: string) => string;
-}) => (
+const HeroSection = ({ t }: { t: (key: string) => string }) => (
   <div className="bg-gradient-to-br from-orange-500 via-red-500 to-pink-500 text-white py-16">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className={`text-center  `}>
@@ -108,7 +99,7 @@ const OfferCard = ({
   t,
   onViewOffer,
 }: {
-  offer: any;
+  offer: Offer;
   isRTL: boolean;
   t: (key: string) => string;
   onViewOffer: (id: number) => void;
@@ -203,76 +194,10 @@ const OfferCard = ({
   </div>
 );
 
-// Filter Bar Component
-const FilterBar = ({
-  isRTL,
-  t,
-  viewMode,
-  onViewModeChange,
-}: {
-  isRTL: boolean;
-  t: (key: string) => string;
-  viewMode: "grid" | "list";
-  onViewModeChange: (mode: "grid" | "list") => void;
-}) => (
-  <div className="bg-white border-b border-gray-200 py-4 sticky top-0 z-10">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div
-        className={`flex items-center justify-between ${
-          isRTL ? "flex-row" : ""
-        }`}
-      >
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Filter className="text-gray-600" size={20} />
-            <span className="text-gray-700 font-medium">
-              {t("filters") || "Filters"}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Search className="text-gray-600" size={20} />
-            <span className="text-gray-700 font-medium">
-              {t("search") || "Search"}
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="text-gray-700 font-medium">
-            {t("viewMode") || "View Mode"}:
-          </span>
-          <div className="flex bg-gray-100 rounded-lg p-1">
-            <button
-              onClick={() => onViewModeChange("grid")}
-              className={`p-2 rounded-md transition-colors ${
-                viewMode === "grid"
-                  ? "bg-white text-orange-600 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              <Grid3X3 size={18} />
-            </button>
-            <button
-              onClick={() => onViewModeChange("list")}
-              className={`p-2 rounded-md transition-colors ${
-                viewMode === "list"
-                  ? "bg-white text-orange-600 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              <List size={18} />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
 export default function LatestOffersPage() {
   const router = useRouter();
   const { t, i18n } = useTranslation("offers");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewMode] = useState<"grid" | "list">("grid");
 
   const isRTL = i18n.language === "ar";
   const direction = isRTL ? "rtl" : "ltr";
@@ -302,7 +227,7 @@ export default function LatestOffersPage() {
   if (isLoading) {
     return (
       <div dir={direction}>
-        <HeroSection isRTL={isRTL} t={t} />
+        <HeroSection t={t} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <LoadingSpinner />
         </div>
@@ -321,7 +246,7 @@ export default function LatestOffersPage() {
 
     return (
       <div dir={direction}>
-        <HeroSection isRTL={isRTL} t={t} />
+        <HeroSection t={t} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <ErrorMessage message={errorMessage} onRetry={refetch} />
         </div>
@@ -332,7 +257,7 @@ export default function LatestOffersPage() {
   return (
     <div dir={direction}>
       {/* Hero Section */}
-      <HeroSection isRTL={isRTL} t={t} />
+      <HeroSection t={t} />
 
       {/* Filter Bar */}
       {/* <FilterBar
@@ -395,7 +320,7 @@ export default function LatestOffersPage() {
                 : "space-y-6"
             }
           >
-            {offers.map((offer: any) => (
+            {offers.map((offer: Offer) => (
               <OfferCard
                 key={offer.id}
                 offer={offer}

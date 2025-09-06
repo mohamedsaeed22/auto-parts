@@ -82,7 +82,12 @@ export const useProductFilters = () => {
     }
 
     if (description) apiFilters.description = description;
-    if (sortBy) apiFilters.sort_by = sortBy as any;
+    if (sortBy)
+      apiFilters.sort_by = sortBy as
+        | "price_asc"
+        | "price_desc"
+        | "newest"
+        | "rating";
 
     return apiFilters;
   }, [
@@ -140,7 +145,7 @@ export const useProductFilters = () => {
 
   const updateSortBy = useCallback(
     (value: string) => {
-      setSortBy(value as any);
+      setSortBy(value as "price_asc" | "price_desc" | "newest" | "rating");
       setPage(1);
     },
     [setSortBy, setPage]

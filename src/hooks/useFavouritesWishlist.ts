@@ -40,19 +40,19 @@ export const useFavouritesWishlist = () => {
   const checkAuthStatus = () => {
     const isAuthenticated = storage.isAuthenticated();
     const isRegistrationComplete = storage.isRegistrationComplete();
-    
+
     return { isAuthenticated, isRegistrationComplete };
   };
 
   // Handle authentication check for favourites/wishlist actions
-  const handleAuthCheck = (action: "favourite" | "wishlist") => {
+  const handleAuthCheck = () => {
     const { isAuthenticated, isRegistrationComplete } = checkAuthStatus();
-    
+
     if (!isAuthenticated) {
       showError(t("auth.loginRequired"));
       return false;
     }
-    
+
     if (!isRegistrationComplete) {
       showWarning(t("auth.completeRegistrationRequired"));
       // Store current page for redirect after registration
@@ -61,7 +61,7 @@ export const useFavouritesWishlist = () => {
       router.push(`/${currentLocale}/complete-registration`);
       return false;
     }
-    
+
     return true;
   };
 

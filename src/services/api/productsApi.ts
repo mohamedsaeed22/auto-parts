@@ -5,13 +5,10 @@ import type {
   Product,
   ProductDetailsResponse,
   ProductsRequest,
-  Category,
-  CategoriesRequest,
   Brand,
   BrandsRequest,
   Banner,
   Offer,
-  Section,
 } from "./types";
 
 export const productsApi = api.injectEndpoints({

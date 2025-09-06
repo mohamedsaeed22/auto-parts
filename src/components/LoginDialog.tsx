@@ -16,14 +16,12 @@ import { useRouter } from "next/navigation";
 import {
   type LoginFormData,
   type RegistrationFormData,
-  type OtpFormData,
 } from "@/lib/validations/authSchema";
 
 // Import separated auth components
 import { LoginForm, RegisterForm, OtpForm } from "./auth";
-import { useSendOtpMutation, useVerifyOtpMutation } from "@/services/hooks";
-import { storage } from "@/lib/storage";
-import { showSuccess, showError, showPromise } from "@/lib/toast";
+import { useSendOtpMutation } from "@/services/hooks";
+import { showSuccess, showError } from "@/lib/toast";
 
 interface LoginDialogProps {
   trigger?: React.ReactNode;
@@ -41,7 +39,6 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [sendOtp, { isLoading: isSendingOtp }] = useSendOtpMutation();
-  const [verifyOtp] = useVerifyOtpMutation();
 
   const onLoginSubmit = async (data: LoginFormData) => {
     try {
@@ -173,7 +170,7 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
                 : goBackToLogin
             }
             phoneNumber={getPhoneNumber()}
-            onAuthSuccess={(authData) => {
+            onAuthSuccess={() => {
               // Handle successful authentication
               showSuccess("تم تسجيل الدخول بنجاح!");
               handleDialogChange(false);

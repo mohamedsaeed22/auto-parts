@@ -6,6 +6,7 @@ import { useSearchProductsMutation } from "@/services/api/productsApi";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useLocale } from "@/hooks/useLocale";
 import { Search, X } from "lucide-react";
+import Image from "next/image";
 import type { Product } from "@/services/api/types";
 
 interface SearchAutocompleteProps {
@@ -262,11 +263,14 @@ export default function SearchAutocomplete({
                 >
                   <div className="flex items-center gap-3">
                     {product.primary_image && (
-                      <img
-                        src={product.primary_image}
-                        alt={product.name}
-                        className="w-8 h-8 object-cover rounded"
-                      />
+                      <div className="relative w-8 h-8">
+                        <Image
+                          src={product.primary_image}
+                          alt={product.name}
+                          fill
+                          className="object-cover rounded"
+                        />
+                      </div>
                     )}
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-neutral-900 truncate">
@@ -287,7 +291,7 @@ export default function SearchAutocomplete({
           ) : debouncedSearchQuery.trim().length >= 2 ? (
             <div className="p-4 text-center text-neutral-500">
               <p className="text-sm">
-                No products found for "{debouncedSearchQuery}"
+                No products found for &quot;{debouncedSearchQuery}&quot;
               </p>
             </div>
           ) : null}

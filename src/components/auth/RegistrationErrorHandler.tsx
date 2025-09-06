@@ -5,7 +5,7 @@ import { useRegistrationStatus } from "@/hooks/useRegistrationStatus";
 
 interface RegistrationErrorHandlerProps {
   children: React.ReactNode;
-  error?: any;
+  error?: unknown;
 }
 
 export default function RegistrationErrorHandler({

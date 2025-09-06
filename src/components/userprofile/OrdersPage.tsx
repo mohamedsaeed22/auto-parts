@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Package,
   Truck,
@@ -9,12 +9,7 @@ import {
   Eye,
   Download,
   Filter,
-  Calendar,
   CreditCard,
-  MapPin,
-  ShoppingCart,
-  DollarSign,
-  Percent,
   X,
   ChevronLeft,
   ChevronRight,
@@ -30,7 +25,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTranslation } from "react-i18next";
-import Image from "next/image";
 import { useGetOrdersQuery } from "@/services/api/ordersApi";
 import type { Order, OrdersRequest } from "@/services/api/ordersApi";
 import OrderDetailsDialog from "./OrderDetailsDialog";
@@ -162,42 +156,6 @@ export default function OrdersPage() {
     }
   };
 
-  // Get payment status info
-  const getPaymentStatusInfo = (status: Order["payment_status"]) => {
-    switch (status) {
-      case "pending":
-        return {
-          text: t("orders.paymentStatuses.pending"),
-          color: "text-yellow-600",
-          bg: "bg-yellow-100",
-        };
-      case "paid":
-        return {
-          text: t("orders.paymentStatuses.paid"),
-          color: "text-green-600",
-          bg: "bg-green-100",
-        };
-      case "failed":
-        return {
-          text: t("orders.paymentStatuses.failed"),
-          color: "text-red-600",
-          bg: "bg-red-100",
-        };
-      case "refunded":
-        return {
-          text: t("orders.paymentStatuses.refunded"),
-          color: "text-gray-600",
-          bg: "bg-gray-100",
-        };
-      default:
-        return {
-          text: status,
-          color: "text-gray-600",
-          bg: "bg-gray-100",
-        };
-    }
-  };
-
   // Format date
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString(isRTL ? "ar-SA" : "en-US", {
@@ -215,22 +173,10 @@ export default function OrdersPage() {
     }).format(amount);
   };
 
-  // Handle reorder
-  const handleReorder = (order: Order) => {
-    // Add to cart logic would go here
-    console.log("Reorder:", order);
-  };
-
   // Handle view order details
   const handleViewDetails = (order: Order) => {
     setSelectedOrder(order);
     setIsDetailsDialogOpen(true);
-  };
-
-  // Handle download invoice
-  const handleDownloadInvoice = (order: Order) => {
-    // Download invoice logic would go here
-    console.log("Download invoice:", order);
   };
 
   const orders = ordersResponse?.data?.data?.items || [];
@@ -547,9 +493,6 @@ export default function OrdersPage() {
         <div className="space-y-4">
           {orders.map((order) => {
             const statusInfo = getStatusInfo(order.status);
-            const paymentStatusInfo = getPaymentStatusInfo(
-              order.payment_status
-            );
             const StatusIcon = statusInfo.icon;
 
             return (

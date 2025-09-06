@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import Image from "next/image";
 import { useGetCategoriesQuery } from "@/services/api/categoriesApi";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import {
@@ -79,10 +80,11 @@ const SubcategoryCard = ({
           <div className="flex items-center gap-6">
             {/* Subcategory Image */}
             <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg">
-              <img
+              <Image
                 src={imageError ? fallbackImage : subcategory.image}
                 alt={subcategory.name}
-                className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300"
+                fill
+                className="object-cover group-hover:scale-110 transition-transform duration-300"
                 onError={handleImageError}
               />
             </div>
@@ -132,10 +134,11 @@ const SubcategoryCard = ({
         <div className="relative">
           {/* Subcategory Image */}
           <div className="relative h-40 w-full overflow-hidden">
-            <img
+            <Image
               src={imageError ? fallbackImage : subcategory.image}
               alt={subcategory.name}
-              className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300"
+              fill
+              className="object-cover group-hover:scale-110 transition-transform duration-300"
               onError={handleImageError}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -175,14 +178,12 @@ const SubcategoryCard = ({
 
 // Search and View Mode Component
 const SearchAndViewMode = ({
-  isRTL,
   t,
   searchQuery,
   onSearchChange,
   viewMode,
   onViewModeChange,
 }: {
-  isRTL: boolean;
   t: (key: string) => string;
   searchQuery: string;
   onSearchChange: (value: string) => void;
@@ -366,7 +367,6 @@ export default function CategoryPage() {
       </div>
 
       <SearchAndViewMode
-        isRTL={isRTL}
         t={t}
         searchQuery={searchQuery}
         onSearchChange={handleSearchChange}

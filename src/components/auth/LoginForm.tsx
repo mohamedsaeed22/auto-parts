@@ -4,10 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import { FormInput } from "@/components/ui";
-import { Phone } from "lucide-react";
-import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import {
   loginSchema,
   type LoginFormData,
@@ -30,12 +27,7 @@ interface LoginFormProps {
   isLoading: boolean;
 }
 
-export default function LoginForm({
-  onSubmit,
-  onSwitchToRegister,
-  onSwitchToOtp,
-  isLoading,
-}: LoginFormProps) {
+export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
   const { t } = useTranslation("auth");
   const { translateError } = useFormErrorTranslation();
   const { login } = useAuth();
@@ -76,34 +68,35 @@ export default function LoginForm({
     };
 
     checkGoogle();
-  }, []);
+  }, [handleGoogleCredentialResponse]);
 
-  const handleGoogleCredentialResponse = async (response: {
-    credential: string;
-  }) => {
-    try {
-      console.log("Google OAuth response received");
-      const result = await handleCredentialResponse(response);
-      console.log("Google login successful:", result);
+  const handleGoogleCredentialResponse = useCallback(
+    async (response: { credential: string }) => {
+      try {
+        console.log("Google OAuth response received");
+        const result = await handleCredentialResponse(response);
+        console.log("Google login successful:", result);
 
-      // Check if the response has the expected structure
-      if (result.backendData.code === 200 && result.backendData.data) {
-        // Store authentication data using useAuth hook
-        login(result.backendData.data);
+        // Check if the response has the expected structure
+        if (result.backendData.code === 200 && result.backendData.data) {
+          // Store authentication data using useAuth hook
+          login(result.backendData.data);
 
-        // Show success message
-        showSuccess("تم تسجيل الدخول بنجاح!");
+          // Show success message
+          showSuccess("تم تسجيل الدخول بنجاح!");
 
-        // Redirect to home page after successful login
-        router.push("/");
-      } else {
-        throw new Error("Invalid response from backend");
+          // Redirect to home page after successful login
+          router.push("/");
+        } else {
+          throw new Error("Invalid response from backend");
+        }
+      } catch (error) {
+        console.error("Google login error:", error);
+        showError("حدث خطأ أثناء تسجيل الدخول بجوجل");
       }
-    } catch (error) {
-      console.error("Google login error:", error);
-      showError("حدث خطأ أثناء تسجيل الدخول بجوجل");
-    }
-  };
+    },
+    [login, router]
+  );
 
   const handleSendOtp = async (data: LoginFormData) => {
     // Simple: get phone number from form data and send it

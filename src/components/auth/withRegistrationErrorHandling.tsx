@@ -5,7 +5,7 @@ import RegistrationErrorHandler from "./RegistrationErrorHandler";
 import ProtectedRoute from "./ProtectedRoute";
 
 interface WithRegistrationErrorHandlingProps {
-  error?: any;
+  error?: unknown;
   children: React.ReactNode;
 }
 

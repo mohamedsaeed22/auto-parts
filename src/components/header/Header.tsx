@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Menu } from "lucide-react";
 import HeaderLogo from "./HeaderLogo";
-import HeaderSearch from "./HeaderSearch";
 import SearchAutocomplete from "./SearchAutocomplete";
 import HeaderLanguageDropdown from "./HeaderLanguageDropdown";
 import HeaderActions from "./HeaderActions";
@@ -15,7 +14,6 @@ import HeaderNavigation from "./HeaderNavigation";
 import HeaderMobileMenu from "./HeaderMobileMenu";
 import HeaderBottomNavigation from "./HeaderBottomNavigation";
 import { useRouter } from "next/navigation";
-import { i18nConfig } from "@/lib/i18n";
 import { useLocale } from "@/hooks/useLocale";
 import { useHeaderSearch } from "@/hooks/useHeaderSearch";
 
@@ -28,7 +26,6 @@ export default function Header() {
   const { t } = useTranslation("header");
   const { currentLocale, changeLocale, isRTL } = useLocale();
   const router = useRouter();
-  const currentPathname = usePathname();
   const {
     searchQuery,
     updateSearchQuery,

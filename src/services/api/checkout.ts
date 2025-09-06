@@ -1,7 +1,7 @@
-import { useMutation } from '@tanstack/react-query';
-import { axios } from '@/lib/axios';
-import { showError, showSuccess } from '@/lib/toast';
-import { useRouter } from 'next/navigation';
+import { useMutation } from "@tanstack/react-query";
+import { axios } from "@/lib/axios";
+import { showError, showSuccess } from "@/lib/toast";
+import { useRouter } from "next/navigation";
 
 export interface Address {
   id: number;
@@ -30,21 +30,27 @@ export interface CreateAddressData {
 
 export interface CheckoutData {
   address_id: number;
-  payment_method: 'cash' | 'card';
+  payment_method: "cash" | "card";
 }
 
 const getAddresses = async () => {
-  const { data } = await axios.get<AddressResponse>('/api/addresses');
+  const { data } = await axios.get<AddressResponse>("/api/addresses");
   return data;
 };
 
 const createAddress = async (addressData: CreateAddressData) => {
-  const { data } = await axios.post<Address>('/api/addresses', addressData);
+  const { data } = await axios.post<Address>("/api/addresses", addressData);
   return data;
 };
 
-const updateAddress = async ({ id, ...addressData }: CreateAddressData & { id: number }) => {
-  const { data } = await axios.put<Address>(`/api/addresses/${id}`, addressData);
+const updateAddress = async ({
+  id,
+  ...addressData
+}: CreateAddressData & { id: number }) => {
+  const { data } = await axios.put<Address>(
+    `/api/addresses/${id}`,
+    addressData
+  );
   return data;
 };
 
@@ -53,13 +59,13 @@ const deleteAddress = async (id: number) => {
 };
 
 const checkout = async (checkoutData: CheckoutData) => {
-  const { data } = await axios.post('/api/checkout', checkoutData);
+  const { data } = await axios.post("/api/checkout", checkoutData);
   return data;
 };
 
 export function useAddresses() {
   return useQuery({
-    queryKey: ['addresses'],
+    queryKey: ["addresses"],
     queryFn: getAddresses,
   });
 }
@@ -70,11 +76,11 @@ export function useCreateAddress() {
   return useMutation({
     mutationFn: createAddress,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['addresses'] });
-      showSuccess('Address added successfully');
+      queryClient.invalidateQueries({ queryKey: ["addresses"] });
+      showSuccess("Address added successfully");
     },
-    onError: (error: any) => {
-      showError(error?.response?.data?.message || 'Failed to add address');
+    onError: (error: unknown) => {
+      showError(error?.response?.data?.message || "Failed to add address");
     },
   });
 }
@@ -85,11 +91,11 @@ export function useUpdateAddress() {
   return useMutation({
     mutationFn: updateAddress,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['addresses'] });
-      showSuccess('Address updated successfully');
+      queryClient.invalidateQueries({ queryKey: ["addresses"] });
+      showSuccess("Address updated successfully");
     },
-    onError: (error: any) => {
-      showError(error?.response?.data?.message || 'Failed to update address');
+    onError: (error: unknown) => {
+      showError(error?.response?.data?.message || "Failed to update address");
     },
   });
 }
@@ -100,11 +106,11 @@ export function useDeleteAddress() {
   return useMutation({
     mutationFn: deleteAddress,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['addresses'] });
-      showSuccess('Address deleted successfully');
+      queryClient.invalidateQueries({ queryKey: ["addresses"] });
+      showSuccess("Address deleted successfully");
     },
-    onError: (error: any) => {
-      showError(error?.response?.data?.message || 'Failed to delete address');
+    onError: (error: unknown) => {
+      showError(error?.response?.data?.message || "Failed to delete address");
     },
   });
 }
@@ -115,11 +121,11 @@ export function useCheckout() {
   return useMutation({
     mutationFn: checkout,
     onSuccess: () => {
-      showSuccess('Order placed successfully');
-      router.push('/orders');
+      showSuccess("Order placed successfully");
+      router.push("/orders");
     },
-    onError: (error: any) => {
-      showError(error?.response?.data?.message || 'Failed to place order');
+    onError: (error: unknown) => {
+      showError(error?.response?.data?.message || "Failed to place order");
     },
   });
 }

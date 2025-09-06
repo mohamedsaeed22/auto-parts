@@ -76,7 +76,7 @@ export const storage = {
       };
 
       // Remove the duplicate field from root level
-      delete (updatedAuth as any).is_registration_complete;
+      delete (updatedAuth as Record<string, unknown>).is_registration_complete;
 
       console.log("Updating user data:", userData);
       console.log("Updated auth data:", updatedAuth);

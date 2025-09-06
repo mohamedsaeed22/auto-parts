@@ -1,14 +1,11 @@
 "use client";
 
 import {
-  Download,
-  ShoppingCart,
   Percent,
   MapPin,
   User,
   Phone,
   Hash,
-  CalendarDays,
   Loader2,
   Package,
   Truck,
@@ -17,7 +14,6 @@ import {
   CheckCircle,
   X,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -26,14 +22,13 @@ import {
 } from "@/components/ui/dialog";
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
-import type { Order, DetailedOrder } from "@/services/api/ordersApi";
+import type { Order } from "@/services/api/ordersApi";
 import { useGetOrderDetailsQuery } from "@/services/api/ordersApi";
 
 interface OrderDetailsDialogProps {
   order: Order | null;
   isOpen: boolean;
   onClose: () => void;
-  isRTL: boolean;
   width?: string;
 }
 
@@ -41,7 +36,6 @@ export default function OrderDetailsDialog({
   order,
   isOpen,
   onClose,
-  isRTL,
   width = "max-w-4xl",
 }: OrderDetailsDialogProps) {
   const { t, i18n } = useTranslation("userProfile");

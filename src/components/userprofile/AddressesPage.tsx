@@ -88,7 +88,7 @@ export default function AddressesPage() {
       showSuccess("Address added successfully!");
       resetForm();
       refetch();
-    } catch (error) {
+    } catch {
       showError("Failed to add address. Please try again.");
     }
   };
@@ -129,7 +129,7 @@ export default function AddressesPage() {
       showSuccess("Address updated successfully!");
       resetForm();
       refetch();
-    } catch (error) {
+    } catch {
       showError("Failed to update address. Please try again.");
     }
   };
@@ -142,7 +142,7 @@ export default function AddressesPage() {
       await deleteAddress(id).unwrap();
       showSuccess("Address deleted successfully!");
       refetch();
-    } catch (error) {
+    } catch {
       showError("Failed to delete address. Please try again.");
     }
   };
