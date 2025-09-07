@@ -23,10 +23,10 @@ import { Loader2 } from "lucide-react";
 
 const checkoutSchema = z.object({
   address_id: z.number({
-    required_error: "Please select a delivery address",
+    message: "Please select a delivery address",
   }),
   payment_method: z.enum(["cash", "card"], {
-    required_error: "Please select a payment method",
+    message: "Please select a payment method",
   }),
 });
 
@@ -99,8 +99,10 @@ export function CheckoutForm() {
               <FormItem>
                 <FormControl>
                   <RadioGroup
-                    onValueChange={field.onChange}
-                    value={field.value}
+                    onValueChange={(value) =>
+                      (field.onChange as (value: string) => void)(value)
+                    }
+                    value={field.value as string}
                     className="space-y-2"
                   >
                     <FormItem className="flex items-center gap-2">

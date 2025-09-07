@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Loader2, Trash2 } from "lucide-react";
-import { useWishlist, useClearWishlist } from "@/services/api/wishlist";
+import {
+  useWishlist,
+  useClearWishlist,
+  WishlistItem as WishlistItemType,
+} from "@/services/api/wishlist";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { WishlistItem } from "./wishlist-item";
@@ -66,7 +70,7 @@ export function WishlistList() {
         </Button>
       </div>
       <div className="divide-y rounded-lg border">
-        {wishlistResponse.data.map((item) => (
+        {wishlistResponse.data.map((item: WishlistItemType) => (
           <WishlistItem key={item.id} item={item} className="p-4" />
         ))}
       </div>

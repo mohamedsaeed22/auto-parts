@@ -92,7 +92,7 @@ export function useWorkshopPricingForm() {
   ) => {
     if (!file) {
       // Clear image and preview
-      form.setValue(field, undefined);
+      // Note: We can't set required fields to undefined, so we'll just clear the previews
       if (field === "partImage") setPartImagePreview(null);
       if (field === "requestImage") setRequestImagePreview(null);
       if (field === "formImage") setFormImagePreview(null);
@@ -114,7 +114,7 @@ export function useWorkshopPricingForm() {
   };
 
   const removeImage = (field: "partImage" | "requestImage" | "formImage") => {
-    form.setValue(field, undefined);
+    // Note: We can't set required fields to undefined, so we'll just clear the previews
     if (field === "partImage") setPartImagePreview(null);
     if (field === "requestImage") setRequestImagePreview(null);
     if (field === "formImage") setFormImagePreview(null);
@@ -122,7 +122,7 @@ export function useWorkshopPricingForm() {
 
   const onSubmit = async (data: WorkshopPricingFormData) => {
     // Check authentication before allowing form submission
-    if (!handleAuthCheck("submit")) {
+    if (!handleAuthCheck()) {
       return;
     }
 

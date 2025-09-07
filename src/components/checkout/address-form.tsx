@@ -27,7 +27,7 @@ const addressSchema = z.object({
   address: z.string().min(1, "Address is required"),
   city: z.string().min(1, "City is required"),
   state: z.string().min(1, "State is required"),
-  is_default: z.boolean().default(false),
+  is_default: z.boolean(),
 });
 
 type AddressFormValues = z.infer<typeof addressSchema>;
@@ -141,8 +141,12 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
             <FormItem className="flex items-center gap-2">
               <FormControl>
                 <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
+                  checked={field.value as boolean}
+                  onCheckedChange={(checked) =>
+                    (field.onChange as (value: boolean) => void)(
+                      checked as boolean
+                    )
+                  }
                 />
               </FormControl>
               <FormLabel className="!mt-0">

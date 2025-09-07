@@ -67,7 +67,7 @@ export const useFavouritesWishlist = () => {
 
   const handleToggleFavourite = async (productId: number) => {
     // Check authentication first
-    if (!handleAuthCheck("favourite")) {
+    if (!handleAuthCheck()) {
       return;
     }
 
@@ -85,7 +85,7 @@ export const useFavouritesWishlist = () => {
 
   const handleToggleWishlist = async (productId: number) => {
     // Check authentication first
-    if (!handleAuthCheck("wishlist")) {
+    if (!handleAuthCheck()) {
       return;
     }
 
@@ -103,7 +103,7 @@ export const useFavouritesWishlist = () => {
 
   const handleAddFavourite = async (productId: number) => {
     // Check authentication first
-    if (!handleAuthCheck("favourite")) {
+    if (!handleAuthCheck()) {
       return;
     }
 
@@ -121,7 +121,7 @@ export const useFavouritesWishlist = () => {
 
   const handleRemoveFavourite = async (productId: number) => {
     // Check authentication first
-    if (!handleAuthCheck("favourite")) {
+    if (!handleAuthCheck()) {
       return;
     }
 
@@ -139,7 +139,7 @@ export const useFavouritesWishlist = () => {
 
   const handleAddToWishlist = async (productId: number) => {
     // Check authentication first
-    if (!handleAuthCheck("wishlist")) {
+    if (!handleAuthCheck()) {
       return;
     }
 
@@ -157,7 +157,7 @@ export const useFavouritesWishlist = () => {
 
   const handleRemoveFromWishlist = async (productId: number) => {
     // Check authentication first
-    if (!handleAuthCheck("wishlist")) {
+    if (!handleAuthCheck()) {
       return;
     }
 

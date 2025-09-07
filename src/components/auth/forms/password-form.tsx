@@ -39,7 +39,7 @@ export function PasswordForm() {
   // Placeholder for updatePasswordMutation - to be implemented
   const updatePasswordMutation = {
     mutate: () => {},
-    mutateAsync: async (_data: unknown) => ({}),
+    mutateAsync: async () => ({}),
     isLoading: false,
     isPending: false,
   };
@@ -53,12 +53,9 @@ export function PasswordForm() {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof passwordSchema>) => {
+  const onSubmit = async () => {
     try {
-      await updatePasswordMutation.mutateAsync({
-        current_password: values.currentPassword,
-        new_password: values.newPassword,
-      });
+      await updatePasswordMutation.mutateAsync();
       form.reset();
     } catch {
       // Error handling is done in the mutation

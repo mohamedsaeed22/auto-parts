@@ -40,7 +40,7 @@ const shopItemSchema = z.object({
 
 // Shop-specific schema (only part name and quantity required)
 export const shopPricingSchema = z.object({
-  userType: z.literal("shop"),
+  userType: z.literal("store"),
   partName: z
     .string()
     .min(1, "اسم القطعة مطلوب")
@@ -68,7 +68,7 @@ export type ShopPricingFormData = z.infer<typeof shopPricingSchema>;
 
 // Default values for shop form
 export const shopDefaultValues: ShopPricingFormData = {
-  userType: "shop",
+  userType: "store",
   partName: "",
   quantity: "",
   items: [],

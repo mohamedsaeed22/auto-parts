@@ -72,7 +72,7 @@ export default function ProfilePage() {
   const [changeLanguage] = useChangeLanguageMutation();
   const { changeLocale } = useLocale();
 
-  const profile = profileResponse?.data?.user as ProfileData | undefined;
+  const profile = profileResponse?.data as ProfileData | undefined;
 
   // Update form data when profile is loaded
   useEffect(() => {
@@ -128,6 +128,7 @@ export default function ProfilePage() {
     try {
       const updateData = {
         ...formData,
+        email: formData.email || undefined,
         avatar: selectedAvatar || undefined,
         commercial_register: selectedCommercialRegister || undefined,
       };

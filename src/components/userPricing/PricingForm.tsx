@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import { useLocale } from "@/hooks/useLocale";
 
 interface PricingFormProps {
-  form: UseFormReturn<UserPricingFormData>;
+  form: UseFormReturn<UserPricingFormData, object, UserPricingFormData>;
   partImagePreview: string | null;
   requestImagePreview: string | null;
   formImagePreview: string | null;

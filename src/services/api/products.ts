@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useInfiniteQuery } from "@tanstack/react-query";
-import { axios } from "@/lib/axios";
+import { axiosInstance as axios } from "@/lib/axios";
 import { showError } from "@/lib/toast";
 
 export interface Product {
@@ -107,7 +107,10 @@ export function useToggleFavorite() {
   return useMutation({
     mutationFn: toggleFavorite,
     onError: (error: unknown) => {
-      showError(error?.response?.data?.message || "Failed to toggle favorite");
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to toggle favorite"
+      );
     },
   });
 }
@@ -116,7 +119,10 @@ export function useToggleWishlist() {
   return useMutation({
     mutationFn: toggleWishlist,
     onError: (error: unknown) => {
-      showError(error?.response?.data?.message || "Failed to toggle wishlist");
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to toggle wishlist"
+      );
     },
   });
 }

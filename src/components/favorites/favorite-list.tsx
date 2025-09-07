@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Loader2, Trash2 } from "lucide-react";
-import { useFavorites, useClearFavorites } from "@/services/api/favorites";
+import {
+  useFavorites,
+  useClearFavorites,
+  FavoriteItem as FavoriteItemType,
+} from "@/services/api/favorites";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { FavoriteItem } from "./favorite-item";
@@ -66,7 +70,7 @@ export function FavoriteList() {
         </Button>
       </div>
       <div className="divide-y rounded-lg border">
-        {favoritesResponse.data.map((item) => (
+        {favoritesResponse.data.map((item: FavoriteItemType) => (
           <FavoriteItem key={item.id} item={item} className="p-4" />
         ))}
       </div>

@@ -27,7 +27,9 @@ export function useUserPricingForm() {
       // Only set userType from storage if user is authenticated
       // Otherwise, let the UserTypeSelector handle it
       userType: isAuthenticated
-        ? (getUserTypeFromStorage() as "workshop" | "shop")
+        ? getUserTypeFromStorage() === "shop"
+          ? "store"
+          : "workshop"
         : "workshop",
     },
     mode: "onChange",
@@ -37,7 +39,7 @@ export function useUserPricingForm() {
   useEffect(() => {
     if (isAuthenticated) {
       const userType = getUserTypeFromStorage();
-      form.setValue("userType", userType as "workshop" | "shop");
+      form.setValue("userType", userType === "shop" ? "store" : "workshop");
     }
   }, [form, isAuthenticated]);
 
@@ -49,9 +51,9 @@ export function useUserPricingForm() {
   const workshopForm = useWorkshopPricingForm();
 
   // Return the appropriate form data based on user type
-  if (userType === "shop") {
+  if (userType === "store") {
     return {
-      form: shopForm.form as UseFormReturn<UserPricingFormData>,
+      form: shopForm.form as unknown as UseFormReturn<UserPricingFormData>,
       savedForms: shopForm.savedForms as unknown[], // Type assertion for compatibility
       partImagePreview: shopForm.partImagePreview,
       requestImagePreview: shopForm.requestImagePreview,
@@ -60,7 +62,9 @@ export function useUserPricingForm() {
       isSendingToBackend: shopForm.isSendingToBackend,
       handleImageChange: shopForm.handleImageChange,
       removeImage: shopForm.removeImage,
-      onSubmit: shopForm.onSubmit as (data: UserPricingFormData) => void,
+      onSubmit: shopForm.onSubmit as unknown as (
+        data: UserPricingFormData
+      ) => void,
       deleteSavedForm: shopForm.deleteSavedForm,
       sendAllToBackend: shopForm.sendAllToBackend,
     };

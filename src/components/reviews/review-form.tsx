@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Loader2, Star } from 'lucide-react';
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Loader2, Star } from "lucide-react";
 import {
   Review,
   useCreateReview,
   useUpdateReview,
-} from '@/services/api/reviews';
-import { Button } from '@/components/ui/button';
+} from "@/services/api/reviews";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -19,15 +19,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
+} from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
 
 const reviewFormSchema = z.object({
   rating: z.number().min(1).max(5),
   comment: z
     .string()
-    .min(10, 'Comment must be at least 10 characters')
-    .max(1000, 'Comment must be less than 1000 characters'),
+    .min(10, "Comment must be at least 10 characters")
+    .max(1000, "Comment must be less than 1000 characters"),
 });
 
 type ReviewFormValues = z.infer<typeof reviewFormSchema>;
@@ -45,7 +45,7 @@ export function ReviewForm({
   onSuccess,
   onCancel,
 }: ReviewFormProps) {
-  const { t } = useTranslation('reviews');
+  const { t } = useTranslation("reviews");
   const createReviewMutation = useCreateReview();
   const updateReviewMutation = useUpdateReview();
 
@@ -53,7 +53,7 @@ export function ReviewForm({
     resolver: zodResolver(reviewFormSchema),
     defaultValues: {
       rating: 0,
-      comment: '',
+      comment: "",
     },
   });
 
@@ -89,7 +89,7 @@ export function ReviewForm({
           name="rating"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('rating')}</FormLabel>
+              <FormLabel>{t("rating")}</FormLabel>
               <FormControl>
                 <div className="flex items-center gap-2">
                   {[1, 2, 3, 4, 5].map((rating) => (
@@ -99,10 +99,16 @@ export function ReviewForm({
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8"
-                      onClick={() => field.onChange(rating)}
+                      onClick={() =>
+                        (field.onChange as (value: number) => void)(rating)
+                      }
                     >
                       <Star
-                        className={`h-6 w-6 ${field.value >= rating ? 'fill-primary text-primary' : 'fill-none text-muted-foreground'}`}
+                        className={`h-6 w-6 ${
+                          (field.value as number) >= rating
+                            ? "fill-primary text-primary"
+                            : "fill-none text-muted-foreground"
+                        }`}
                       />
                     </Button>
                   ))}
@@ -117,12 +123,12 @@ export function ReviewForm({
           name="comment"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('comment')}</FormLabel>
+              <FormLabel>{t("comment")}</FormLabel>
               <FormControl>
                 <Textarea
                   {...field}
                   rows={5}
-                  placeholder={t('commentPlaceholder')}
+                  placeholder={t("commentPlaceholder")}
                 />
               </FormControl>
               <FormMessage />
@@ -140,7 +146,7 @@ export function ReviewForm({
               updateReviewMutation.isPending) && (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             )}
-            {review ? t('updateReview') : t('submitReview')}
+            {review ? t("updateReview") : t("submitReview")}
           </Button>
           {onCancel && (
             <Button
@@ -151,7 +157,7 @@ export function ReviewForm({
                 createReviewMutation.isPending || updateReviewMutation.isPending
               }
             >
-              {t('cancel')}
+              {t("cancel")}
             </Button>
           )}
         </div>

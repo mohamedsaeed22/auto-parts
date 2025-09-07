@@ -55,14 +55,16 @@ export function useUnifiedPricingForm() {
   // Check if user is authenticated
   const isAuthenticated = storage.isAuthenticated();
 
-  const form = useForm<UserPricingFormData>({
+  const form = useForm<UserPricingFormData, object, UserPricingFormData>({
     resolver: zodResolver(userPricingSchema),
     defaultValues: {
       ...defaultValues,
       // Only set userType from storage if user is authenticated
       // Otherwise, let the UserTypeSelector handle it
       userType: isAuthenticated
-        ? (getUserTypeFromStorage() as "workshop" | "shop")
+        ? getUserTypeFromStorage() === "shop"
+          ? "store"
+          : "workshop"
         : "workshop",
       // Set user code from storage if available
       userCode: getUserCodeFromStorage(),
@@ -168,9 +170,9 @@ export function useUnifiedPricingForm() {
       // Reset form and previews
       form.reset({
         ...defaultValues,
-        userType: data.userType, // Keep the user type
+        userType: data.userType === "store" ? "store" : "workshop", // Map to correct type
         userCode: getUserCodeFromStorage(), // Keep the user code from storage
-      });
+      } as UserPricingFormData);
       setPartImagePreview(null);
       setRequestImagePreview(null);
       setFormImagePreview(null);
@@ -206,7 +208,7 @@ export function useUnifiedPricingForm() {
       const items: RequestItem[] = [];
 
       savedForms.forEach((form) => {
-        if (form.userType === "shop") {
+        if (form.userType === "store") {
           // For shop: create a single item with part name and quantity
           items.push({
             part_name: form.partName,

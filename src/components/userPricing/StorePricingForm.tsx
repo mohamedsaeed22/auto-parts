@@ -22,12 +22,7 @@ interface ShopPricingFormProps {
 
 export function ShopPricingForm({
   form,
-  partImagePreview: _partImagePreview,
-  requestImagePreview: _requestImagePreview,
-  formImagePreview: _formImagePreview,
   isSubmitting,
-  onImageChange: _onImageChange,
-  onRemoveImage: _onRemoveImage,
   onSubmit,
 }: ShopPricingFormProps) {
   const { t } = useTranslation("userPricing");

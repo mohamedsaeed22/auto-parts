@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { axios } from "@/lib/axios";
+import { axiosInstance as axios } from "@/lib/axios";
 import { showError, showSuccess } from "@/lib/toast";
 
 export interface ReturnItem {
@@ -78,7 +78,8 @@ export function useCreateReturn() {
     },
     onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message || "Failed to submit return request"
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to submit return request"
       );
     },
   });
@@ -95,7 +96,8 @@ export function useCancelReturn() {
     },
     onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message || "Failed to cancel return request"
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to cancel return request"
       );
     },
   });

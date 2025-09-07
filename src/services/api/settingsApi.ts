@@ -17,31 +17,31 @@ export const settingsApi = api.injectEndpoints({
     // Get Legal Pages
     getLegalPages: builder.query<ApiResponse<LegalPages>, void>({
       query: () => "/settings/legal",
-      providesTags: ["LegalPages"],
+      providesTags: ["Settings"],
     }),
 
     // Get Terms of Service
     getTermsOfService: builder.query<ApiResponse<LegalPageContent>, void>({
       query: () => "/settings/legal/terms_of_service",
-      providesTags: ["LegalPages"],
+      providesTags: ["Settings"],
     }),
 
     // Get Privacy Policy
     getPrivacyPolicy: builder.query<ApiResponse<LegalPageContent>, void>({
       query: () => "/settings/legal/privacy_policy",
-      providesTags: ["LegalPages"],
+      providesTags: ["Settings"],
     }),
 
     // Get Refund Policy
     getRefundPolicy: builder.query<ApiResponse<LegalPageContent>, void>({
       query: () => "/settings/legal/refund_policy",
-      providesTags: ["LegalPages"],
+      providesTags: ["Settings"],
     }),
 
     // Get Shipping Policy
     getShippingPolicy: builder.query<ApiResponse<LegalPageContent>, void>({
       query: () => "/settings/legal/shipping_policy",
-      providesTags: ["LegalPages"],
+      providesTags: ["Settings"],
     }),
   }),
 });

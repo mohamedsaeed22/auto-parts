@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { axios } from "@/lib/axios";
+import { axiosInstance as axios } from "@/lib/axios";
 import { showError, showSuccess } from "@/lib/toast";
 
 export interface Review {
@@ -134,7 +134,10 @@ export function useCreateReview() {
       showSuccess("Review submitted successfully");
     },
     onError: (error: unknown) => {
-      showError(error?.response?.data?.message || "Failed to submit review");
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to submit review"
+      );
     },
   });
 }
@@ -149,7 +152,10 @@ export function useUpdateReview() {
       showSuccess("Review updated successfully");
     },
     onError: (error: unknown) => {
-      showError(error?.response?.data?.message || "Failed to update review");
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to update review"
+      );
     },
   });
 }
@@ -164,7 +170,10 @@ export function useDeleteReview() {
       showSuccess("Review deleted successfully");
     },
     onError: (error: unknown) => {
-      showError(error?.response?.data?.message || "Failed to delete review");
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to delete review"
+      );
     },
   });
 }
@@ -180,7 +189,8 @@ export function useMarkAsHelpful() {
     },
     onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message || "Failed to mark review as helpful"
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to mark review as helpful"
       );
     },
   });
@@ -193,7 +203,10 @@ export function useReportAbuse() {
       showSuccess("Review reported successfully");
     },
     onError: (error: unknown) => {
-      showError(error?.response?.data?.message || "Failed to report review");
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to report review"
+      );
     },
   });
 }

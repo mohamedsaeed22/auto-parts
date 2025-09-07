@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { axios } from "@/lib/axios";
+import { axiosInstance as axios } from "@/lib/axios";
 import { showError, showSuccess } from "@/lib/toast";
 import { Product } from "./products";
 
@@ -70,7 +70,8 @@ export function useAddToFavorites() {
     },
     onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message || "Failed to add product to favorites"
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to add product to favorites"
       );
     },
   });
@@ -87,8 +88,8 @@ export function useRemoveFromFavorites() {
     },
     onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message ||
-          "Failed to remove product from favorites"
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to remove product from favorites"
       );
     },
   });
@@ -104,7 +105,10 @@ export function useClearFavorites() {
       showSuccess("Favorites cleared successfully");
     },
     onError: (error: unknown) => {
-      showError(error?.response?.data?.message || "Failed to clear favorites");
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to clear favorites"
+      );
     },
   });
 }

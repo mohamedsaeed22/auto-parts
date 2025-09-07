@@ -47,7 +47,7 @@ export const useProductFilters = () => {
       max_price: maxPrice || "",
       description: description || "",
       sort_by: sortBy || "newest",
-      view_mode: viewMode || "grid",
+      view_mode: (viewMode as "grid" | "list") || "grid",
     }),
     [
       search,
@@ -82,12 +82,24 @@ export const useProductFilters = () => {
     }
 
     if (description) apiFilters.description = description;
-    if (sortBy)
-      apiFilters.sort_by = sortBy as
-        | "price_asc"
-        | "price_desc"
+    if (sortBy) {
+      // Map internal sort values to API expected values
+      const sortMapping: Record<
+        string,
         | "newest"
-        | "rating";
+        | "price-low"
+        | "price-high"
+        | "name-asc"
+        | "name-desc"
+        | "popularity"
+      > = {
+        newest: "newest",
+        price_asc: "price-low",
+        price_desc: "price-high",
+        rating: "popularity",
+      };
+      apiFilters.sort_by = sortMapping[sortBy] || "newest";
+    }
 
     return apiFilters;
   }, [

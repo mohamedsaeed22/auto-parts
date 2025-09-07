@@ -20,7 +20,7 @@ export function GoogleLoginButton({ className }: GoogleLoginButtonProps) {
     async (response: unknown) => {
       try {
         const result = await googleLoginMutation.mutateAsync({
-          token: (response as { credential: string }).credential,
+          google_id: (response as { credential: string }).credential,
         });
         login(result.data.token, result.data.user);
       } catch {
@@ -33,12 +33,42 @@ export function GoogleLoginButton({ className }: GoogleLoginButtonProps) {
   // Initialize Google Sign-In
   useEffect(() => {
     if (typeof window !== "undefined" && window.google) {
-      (window.google as any).accounts.id.initialize({
+      (
+        window.google as {
+          accounts: {
+            id: {
+              initialize: (config: {
+                client_id: string;
+                callback: (response: unknown) => void;
+              }) => void;
+              renderButton: (
+                element: HTMLElement,
+                config: { theme: string; size: string; width: string }
+              ) => void;
+            };
+          };
+        }
+      ).accounts.id.initialize({
         client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
         callback: handleGoogleLogin,
       });
 
-      (window.google as any).accounts.id.renderButton(
+      (
+        window.google as {
+          accounts: {
+            id: {
+              initialize: (config: {
+                client_id: string;
+                callback: (response: unknown) => void;
+              }) => void;
+              renderButton: (
+                element: HTMLElement,
+                config: { theme: string; size: string; width: string }
+              ) => void;
+            };
+          };
+        }
+      ).accounts.id.renderButton(
         document.getElementById("google-login-button")!,
         {
           theme: "outline",

@@ -16,7 +16,7 @@ export function useRegistrationStatus() {
     const authData = storage.getAuth();
     const storedCode = storage.getRegistrationCode();
 
-    if (authData && !authData.is_registration_complete) {
+    if (authData && !authData.user.is_registration_complete) {
       setIsRegistrationIncomplete(true);
       setRegistrationCode(storedCode);
     } else {
@@ -55,12 +55,14 @@ export function useRegistrationStatus() {
   const isErrorRegistrationIncomplete = (
     error: unknown
   ): error is RegistrationIncompleteErrorResponse => {
+    const apiError = error as {
+      status?: number;
+      data?: { data?: { is_registration_complete?: boolean } };
+    };
     return (
-      error &&
-      "status" in error &&
-      error.status === 403 &&
-      "data" in error &&
-      error.data?.data?.is_registration_complete === false
+      apiError &&
+      apiError.status === 403 &&
+      apiError.data?.data?.is_registration_complete === false
     );
   };
 

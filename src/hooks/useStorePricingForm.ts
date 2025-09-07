@@ -117,7 +117,7 @@ export function useShopPricingForm() {
 
   const onSubmit = async (data: ShopPricingFormData) => {
     // Check authentication before allowing form submission
-    if (!handleAuthCheck("submit")) {
+    if (!handleAuthCheck()) {
       return;
     }
 
@@ -155,7 +155,7 @@ export function useShopPricingForm() {
 
   const sendAllToBackend = async () => {
     // Check authentication before allowing backend operation
-    if (!handleAuthCheck("sendToBackend")) {
+    if (!handleAuthCheck()) {
       return;
     }
 

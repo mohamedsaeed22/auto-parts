@@ -28,11 +28,11 @@ const profileSchema = z.object({
 
 export function ProfileForm() {
   const { t } = useTranslation("auth");
-  const { user, updateUser } = useAuthContext();
+  const { user } = useAuthContext();
   // Placeholder for updateProfileMutation - to be implemented
   const updateProfileMutation = {
     mutate: () => {},
-    mutateAsync: async (_data: unknown) => ({}),
+    mutateAsync: async () => ({}),
     isLoading: false,
     isPending: false,
   };
@@ -46,9 +46,9 @@ export function ProfileForm() {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof profileSchema>) => {
+  const onSubmit = async () => {
     try {
-      const response = await updateProfileMutation.mutateAsync(values);
+      const response = await updateProfileMutation.mutateAsync();
       // Placeholder response handling - to be implemented
       console.log("Profile update response:", response);
     } catch {

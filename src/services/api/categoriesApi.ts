@@ -33,7 +33,7 @@ export const categoriesApi = api.injectEndpoints({
       CategoriesResponse,
       CategoriesQueryParams | void
     >({
-      query: (params = {}) => {
+      query: (params: CategoriesQueryParams = {}) => {
         const searchParams = new URLSearchParams();
         if (params.level) searchParams.append("level", params.level.toString());
         if (params.perPage)

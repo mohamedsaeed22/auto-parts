@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { storage } from "@/lib/storage";
+import { storage, AuthData } from "@/lib/storage";
 import { showError, showSuccess } from "@/lib/toast";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -202,8 +202,10 @@ export const useAuth = () => {
   >({
     mutationFn: verifyOtp,
     onSuccess: (response) => {
-      storage.setToken(response.data.token);
-      storage.setUser(response.data.user);
+      storage.setAuth({
+        token: response.data.token,
+        user: response.data.user as AuthData["user"], // Type conversion needed due to nullable fields
+      });
       queryClient.invalidateQueries({ queryKey: ["profile"] });
       showSuccess("Login successful");
     },
@@ -219,8 +221,10 @@ export const useAuth = () => {
   >({
     mutationFn: googleLogin,
     onSuccess: (response) => {
-      storage.setToken(response.data.token);
-      storage.setUser(response.data.user);
+      storage.setAuth({
+        token: response.data.token,
+        user: response.data.user as AuthData["user"], // Type conversion needed due to nullable fields
+      });
       queryClient.invalidateQueries({ queryKey: ["profile"] });
       showSuccess("Login successful");
     },
@@ -236,8 +240,10 @@ export const useAuth = () => {
   >({
     mutationFn: completeRegistration,
     onSuccess: (response) => {
-      storage.setToken(response.data.token);
-      storage.setUser(response.data.user);
+      storage.setAuth({
+        token: response.data.token,
+        user: response.data.user as AuthData["user"], // Type conversion needed due to nullable fields
+      });
       queryClient.invalidateQueries({ queryKey: ["profile"] });
       showSuccess("Registration completed successfully");
     },

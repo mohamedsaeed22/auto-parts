@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
-import { useOrders } from "@/services/api/orders";
+import { useOrders, Order } from "@/services/api/orders";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { OrderItem } from "./order-item";
@@ -49,7 +49,7 @@ export function OrderList() {
     <div className="space-y-8">
       <h1 className="text-2xl font-bold">{t("title")}</h1>
       <div className="space-y-4">
-        {ordersResponse.data.map((order) => (
+        {ordersResponse.data.map((order: Order) => (
           <OrderItem key={order.id} order={order} />
         ))}
       </div>

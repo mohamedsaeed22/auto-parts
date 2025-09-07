@@ -42,9 +42,9 @@ export const workshopPricingSchema = z.object({
     .min(3, "كود الورشة يجب أن يكون أكثر من 3 أحرف")
     .max(20, "كود الورشة طويل جداً"),
   chassisNumber: z.string().optional(),
-  partImage: requiredFileSchema,
-  requestImage: requiredFileSchema,
-  formImage: requiredFileSchema,
+  partImage: requiredFileSchema.optional(),
+  requestImage: requiredFileSchema.optional(),
+  formImage: requiredFileSchema.optional(),
 });
 
 // Type inference

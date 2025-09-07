@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useGetSectionsQuery } from "@/services/api";
-import { Section } from "@/services/api/sectionsApi";
+import { SectionData } from "@/services/api/sectionsApi";
 import SectionSwiper from "./SectionSwiper";
 import { AlertCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 
 const SectionsContainer: React.FC = () => {
   const { t } = useTranslation("sections");
-  const { data: sectionsResponse, isLoading, error } = useGetSectionsQuery();
+  const { data: sectionsResponse, isLoading, error } = useGetSectionsQuery({});
 
   if (isLoading) {
     return (
@@ -48,7 +48,7 @@ const SectionsContainer: React.FC = () => {
     );
   }
 
-  const sections = (sectionsResponse?.data?.items || []) as Section[];
+  const sections = (sectionsResponse?.data?.items || []) as SectionData[];
 
   if (sections.length === 0) {
     return (
@@ -70,7 +70,7 @@ const SectionsContainer: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      {sections.map((section: Section) => (
+      {sections.map((section: SectionData) => (
         <SectionSwiper key={section.id} section={section} />
       ))}
     </div>

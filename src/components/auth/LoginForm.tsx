@@ -43,33 +43,6 @@ export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
     defaultValues: loginDefaultValues,
   });
 
-  // Initialize Google OAuth
-  useEffect(() => {
-    initializeGoogleAuth();
-
-    // Wait for Google script to load
-    const checkGoogle = () => {
-      if (window.google?.accounts?.id) {
-        // Initialize Google Identity Services
-        window.google.accounts.id.initialize({
-          client_id:
-            "933306839237-e22lqcs5d3tdhnue1uasvqhrf50r267e.apps.googleusercontent.com",
-          callback: handleGoogleCredentialResponse,
-        });
-
-        // Render Google button if element exists
-        if (googleButtonRef.current) {
-          renderGoogleButton("googleBtn");
-        }
-      } else {
-        // Retry after a short delay
-        setTimeout(checkGoogle, 100);
-      }
-    };
-
-    checkGoogle();
-  }, [handleGoogleCredentialResponse]);
-
   const handleGoogleCredentialResponse = useCallback(
     async (response: { credential: string }) => {
       try {
@@ -97,6 +70,33 @@ export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
     },
     [login, router]
   );
+
+  // Initialize Google OAuth
+  useEffect(() => {
+    initializeGoogleAuth();
+
+    // Wait for Google script to load
+    const checkGoogle = () => {
+      if (window.google?.accounts?.id) {
+        // Initialize Google Identity Services
+        window.google.accounts.id.initialize({
+          client_id:
+            "933306839237-e22lqcs5d3tdhnue1uasvqhrf50r267e.apps.googleusercontent.com",
+          callback: handleGoogleCredentialResponse,
+        });
+
+        // Render Google button if element exists
+        if (googleButtonRef.current) {
+          renderGoogleButton("googleBtn");
+        }
+      } else {
+        // Retry after a short delay
+        setTimeout(checkGoogle, 100);
+      }
+    };
+
+    checkGoogle();
+  }, [handleGoogleCredentialResponse]);
 
   const handleSendOtp = async (data: LoginFormData) => {
     // Simple: get phone number from form data and send it

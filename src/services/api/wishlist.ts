@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { axios } from "@/lib/axios";
+import { axiosInstance as axios } from "@/lib/axios";
 import { showError, showSuccess } from "@/lib/toast";
 import { Product } from "./products";
 
@@ -68,7 +68,8 @@ export function useAddToWishlist() {
     },
     onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message || "Failed to add product to wishlist"
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to add product to wishlist"
       );
     },
   });
@@ -85,8 +86,8 @@ export function useRemoveFromWishlist() {
     },
     onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message ||
-          "Failed to remove product from wishlist"
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to remove product from wishlist"
       );
     },
   });
@@ -102,7 +103,10 @@ export function useClearWishlist() {
       showSuccess("Wishlist cleared successfully");
     },
     onError: (error: unknown) => {
-      showError(error?.response?.data?.message || "Failed to clear wishlist");
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to clear wishlist"
+      );
     },
   });
 }

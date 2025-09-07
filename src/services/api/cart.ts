@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { axios } from "@/lib/axios";
+import { axiosInstance as axios } from "@/lib/axios";
 import { showError, showSuccess } from "@/lib/toast";
 import { Product } from "./products";
 
@@ -87,7 +87,8 @@ export function useAddToCart() {
     },
     onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message || "Failed to add product to cart"
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to add product to cart"
       );
     },
   });
@@ -103,7 +104,10 @@ export function useUpdateCartItem() {
       showSuccess("Cart updated successfully");
     },
     onError: (error: unknown) => {
-      showError(error?.response?.data?.message || "Failed to update cart");
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to update cart"
+      );
     },
   });
 }
@@ -119,7 +123,8 @@ export function useRemoveFromCart() {
     },
     onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message || "Failed to remove product from cart"
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to remove product from cart"
       );
     },
   });
@@ -135,7 +140,10 @@ export function useClearCart() {
       showSuccess("Cart cleared successfully");
     },
     onError: (error: unknown) => {
-      showError(error?.response?.data?.message || "Failed to clear cart");
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to clear cart"
+      );
     },
   });
 }

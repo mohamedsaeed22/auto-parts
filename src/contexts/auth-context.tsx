@@ -1,7 +1,13 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
-import { storage } from '@/lib/storage';
-import { User } from '@/services/api/auth';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import { useRouter } from "next/navigation";
+import { storage, AuthData } from "@/lib/storage";
+import { User } from "@/services/api/auth";
 
 interface AuthContextType {
   user: User | null;
@@ -24,25 +30,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check for stored auth data on mount
     const storedUser = storage.getUser();
     if (storedUser) {
-      setUser(storedUser);
+      setUser(storedUser as User);
     }
     setIsLoading(false);
   }, []);
 
   const login = (token: string, user: User) => {
-    storage.setToken(token);
-    storage.setUser(user);
+    storage.setAuth({
+      token,
+      user: user as AuthData["user"], // Type conversion needed due to nullable fields
+    });
     setUser(user);
   };
 
   const logout = () => {
     storage.removeAuth();
     setUser(null);
-    router.push('/');
+    router.push("/");
   };
 
   const updateUser = (updatedUser: User) => {
-    storage.setUser(updatedUser);
+    storage.updateUser(updatedUser as AuthData["user"]);
     setUser(updatedUser);
   };
 
@@ -62,7 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuthContext() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuthContext must be used within an AuthProvider');
+    throw new Error("useAuthContext must be used within an AuthProvider");
   }
   return context;
 }

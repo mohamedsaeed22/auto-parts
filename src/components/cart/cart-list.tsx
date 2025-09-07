@@ -1,7 +1,11 @@
 "use client";
 
 import { useTranslation } from "react-i18next";
-import { useCart, useClearCart } from "@/services/api/cart";
+import {
+  useCart,
+  useClearCart,
+  CartItem as CartItemType,
+} from "@/services/api/cart";
 import { CartItem } from "./cart-item";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -60,7 +64,7 @@ export function CartList() {
         </Button>
       </div>
       <div className="divide-y rounded-lg border">
-        {cart.data.map((item) => (
+        {cart.data.map((item: CartItemType) => (
           <CartItem key={item.id} item={item} className="p-4" />
         ))}
       </div>

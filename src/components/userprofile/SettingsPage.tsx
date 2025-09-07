@@ -68,8 +68,11 @@ export default function SettingsPage() {
   const [formData, setFormData] = useState(userSettings);
 
   // API Queries
-  const { data: companySettingsResponse, isLoading: isLoadingCompany } =
-    useGetCompanySettingsQuery();
+  const {
+    data: companySettingsResponse,
+    isLoading: isLoadingCompany,
+    refetch: refetchCompany,
+  } = useGetCompanySettingsQuery();
   const { data: legalPagesResponse, isLoading: isLoadingLegal } =
     useGetLegalPagesQuery();
   const { data: termsResponse, isLoading: isLoadingTerms } =

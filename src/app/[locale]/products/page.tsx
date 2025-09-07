@@ -200,7 +200,7 @@ const FilterPanel = ({
                   onChange={(e) => {
                     const value = e.target.checked ? category.id : null;
                     onFilterChange("category_id", value);
-                  }}
+                  }}//
                   className="border-gray-300 text-green-600 focus:ring-green-500"
                 />
                 <span className="text-sm text-gray-700">{category.name}</span>

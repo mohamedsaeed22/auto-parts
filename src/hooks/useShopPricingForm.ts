@@ -122,7 +122,7 @@ export function useShopPricingForm() {
 
   const onSubmit = async (data: ShopPricingFormData) => {
     // Check authentication before allowing form submission
-    if (!handleAuthCheck("submit")) {
+    if (!handleAuthCheck()) {
       return;
     }
 

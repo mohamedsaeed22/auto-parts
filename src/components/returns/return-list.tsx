@@ -1,7 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useReturns } from "@/services/api/returns";
+import {
+  useReturns,
+  ReturnItem as ReturnItemType,
+} from "@/services/api/returns";
 import { ReturnItem } from "./return-item";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -12,7 +16,8 @@ import { Pagination } from "@/components/pagination";
 
 export function ReturnList() {
   const { t } = useTranslation("returns");
-  const { data, isLoading, isError, error } = useReturns();
+  const [page, setPage] = useState(1);
+  const { data, isLoading, isError, error } = useReturns(page);
 
   if (isLoading) {
     return (
@@ -28,7 +33,10 @@ export function ReturnList() {
     return (
       <ErrorState
         title={t("error.title")}
-        description={error?.response?.data?.message || t("error.description")}
+        description={
+          (error as { response?: { data?: { message?: string } } })?.response
+            ?.data?.message || t("error.description")
+        }
       />
     );
   }
@@ -50,7 +58,7 @@ export function ReturnList() {
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        {data.data.map((item) => (
+        {data.data.map((item: ReturnItemType) => (
           <ReturnItem key={item.id} item={item} />
         ))}
       </div>
@@ -58,6 +66,7 @@ export function ReturnList() {
         <Pagination
           currentPage={data.meta.current_page}
           totalPages={data.meta.last_page}
+          onPageChange={setPage}
           className="justify-center"
         />
       )}

@@ -1,5 +1,5 @@
-import { useMutation } from "@tanstack/react-query";
-import { axios } from "@/lib/axios";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { axiosInstance as axios } from "@/lib/axios";
 import { showError, showSuccess } from "@/lib/toast";
 import { useRouter } from "next/navigation";
 
@@ -80,7 +80,10 @@ export function useCreateAddress() {
       showSuccess("Address added successfully");
     },
     onError: (error: unknown) => {
-      showError(error?.response?.data?.message || "Failed to add address");
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to add address"
+      );
     },
   });
 }
@@ -95,7 +98,10 @@ export function useUpdateAddress() {
       showSuccess("Address updated successfully");
     },
     onError: (error: unknown) => {
-      showError(error?.response?.data?.message || "Failed to update address");
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to update address"
+      );
     },
   });
 }
@@ -110,7 +116,10 @@ export function useDeleteAddress() {
       showSuccess("Address deleted successfully");
     },
     onError: (error: unknown) => {
-      showError(error?.response?.data?.message || "Failed to delete address");
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to delete address"
+      );
     },
   });
 }
@@ -125,7 +134,10 @@ export function useCheckout() {
       router.push("/orders");
     },
     onError: (error: unknown) => {
-      showError(error?.response?.data?.message || "Failed to place order");
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to place order"
+      );
     },
   });
 }

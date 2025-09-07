@@ -3,11 +3,11 @@ import { Building, Store } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 // Generic interface that works with any form data that has a userType field
-interface UserTypeSelectorProps<T extends { userType: "workshop" | "shop" }> {
+interface UserTypeSelectorProps<T extends { userType: "workshop" | "store" }> {
   control: Control<T>;
 }
 
-export function UserTypeSelector<T extends { userType: "workshop" | "shop" }>({
+export function UserTypeSelector<T extends { userType: "workshop" | "store" }>({
   control,
 }: UserTypeSelectorProps<T>) {
   const { t, i18n } = useTranslation("userPricing");
@@ -42,9 +42,9 @@ export function UserTypeSelector<T extends { userType: "workshop" | "shop" }>({
             </button>
             <button
               type="button"
-              onClick={() => field.onChange("shop")}
+              onClick={() => field.onChange("store")}
               className={`p-4 border-2 rounded-lg text-center transition-colors ${
-                field.value === "shop"
+                field.value === "store"
                   ? "border-green-500 bg-green-50 text-green-700"
                   : "border-gray-300 hover:border-gray-400"
               }`}

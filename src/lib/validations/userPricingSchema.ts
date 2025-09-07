@@ -36,7 +36,7 @@ const requiredFileSchema = z
 
 // Base schema for common fields
 const baseSchema = z.object({
-  userType: z.enum(["workshop", "shop"], {
+  userType: z.enum(["workshop", "store"], {
     message: "يجب اختيار نوع المستخدم",
   }),
   partName: z
@@ -68,9 +68,9 @@ const workshopSchema = baseSchema.extend({
   formImage: requiredFileSchema,
 });
 
-// Shop-specific schema (images OPTIONAL)
-const shopSchema = baseSchema.extend({
-  userType: z.literal("shop"),
+// Store-specific schema (images OPTIONAL)
+const storeSchema = baseSchema.extend({
+  userType: z.literal("store"),
   userCode: z.string().optional(),
   chassisNumber: z.string().optional(),
   partImage: optionalFileSchema,
@@ -81,7 +81,7 @@ const shopSchema = baseSchema.extend({
 // Main schema using discriminated union
 export const userPricingSchema = z.discriminatedUnion("userType", [
   workshopSchema,
-  shopSchema,
+  storeSchema,
 ]);
 
 // Type inference
