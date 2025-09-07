@@ -72,7 +72,18 @@ export default function ProfilePage() {
   const [changeLanguage] = useChangeLanguageMutation();
   const { changeLocale } = useLocale();
 
-  const profile = profileResponse?.data as ProfileData | undefined;
+  type ProfileEnvelope = { user: ProfileData } | ProfileData | undefined;
+  const responseData = profileResponse?.data as unknown as ProfileEnvelope;
+  let profile: ProfileData | undefined;
+  if (
+    responseData &&
+    typeof responseData === "object" &&
+    "user" in (responseData as Record<string, unknown>)
+  ) {
+    profile = (responseData as { user: ProfileData }).user;
+  } else {
+    profile = responseData as ProfileData | undefined;
+  }
 
   // Update form data when profile is loaded
   useEffect(() => {
