@@ -193,17 +193,6 @@ export default function OrdersPage() {
         <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
           {t("orders.title")}
         </h2>
-        <div
-          className={`flex gap-2 w-full sm:w-auto ${isRTL ? "flex-row" : ""}`}
-        >
-          <Button
-            variant="outline"
-            className="flex items-center gap-2 w-full sm:w-auto"
-          >
-            <Download size={16} />
-            {t("orders.export")}
-          </Button>
-        </div>
       </div>
 
       {/* Filters */}

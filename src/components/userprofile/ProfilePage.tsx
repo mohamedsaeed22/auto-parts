@@ -287,108 +287,114 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
         {/* Profile & Commercial Register Side-by-Side */}
-        <div className="col-span-2 flex flex-col sm:flex-row items-center justify-center gap-6 mb-6">
-          {/* Avatar */}
-          <div className="relative">
-            <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden border-4 border-white shadow-lg">
-              {avatarPreview ? (
-                <Image
-                  src={avatarPreview}
-                  alt="Profile Preview"
-                  className="w-full h-full object-cover"
-                  width={128}
-                  height={128}
-                  loading="lazy"
-                />
-              ) : profile.avatar ? (
-                <Image
-                  src={profile.avatar}
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                  width={128}
-                  height={128}
-                  loading="lazy"
-                />
-              ) : (
-                <User size={32} className="text-gray-400 sm:w-12 sm:h-12" />
-              )}
-            </div>
-            {isEditing && (
-              <label
-                className={`absolute rounded-full w-8 h-8 p-0 bg-primary text-white flex items-center justify-center cursor-pointer hover:bg-primary/90 shadow-lg transition-all duration-200 ${
-                  isRTL ? "bottom-0 left-0" : "bottom-0 right-0"
-                }`}
-              >
-                <Upload size={12} />
-                <input
-                  type="file"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={(e) => handleFileChange(e, "avatar")}
-                />
-              </label>
-            )}
-          </div>
-
-          {/* Commercial Register Card */}
-          <div className="relative">
-            <div className="w-48 h-32 sm:w-64 sm:h-40 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden border border-gray-200 shadow-sm">
-              {(() => {
-                const src = profile.commercial_register || "";
-                const isPdf =
-                  typeof src === "string" && src.toLowerCase().endsWith(".pdf");
-                if (!src) {
-                  return (
-                    <div className="flex flex-col items-center text-gray-400">
-                      <FileText size={24} />
-                      <span className="text-xs mt-1">
-                        {t("profile.commercialRegister")}
-                      </span>
-                    </div>
-                  );
-                }
-                if (isPdf) {
-                  return (
-                    <a
-                      href={src}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary underline text-sm"
-                    >
-                      {t("profile.viewFile")}
-                    </a>
-                  );
-                }
-                return (
+        <div className="col-span-full">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-4 sm:mb-6">
+            {/* Avatar */}
+            <div className="relative flex-shrink-0">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden border-2 sm:border-4 border-white shadow-lg">
+                {avatarPreview ? (
                   <Image
-                    src={src}
-                    alt="Commercial Register"
+                    src={avatarPreview}
+                    alt="Profile Preview"
                     className="w-full h-full object-cover"
-                    width={256}
-                    height={160}
+                    width={128}
+                    height={128}
                     loading="lazy"
                   />
-                );
-              })()}
+                ) : profile.avatar ? (
+                  <Image
+                    src={profile.avatar}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                    width={128}
+                    height={128}
+                    loading="lazy"
+                  />
+                ) : (
+                  <User
+                    size={24}
+                    className="text-gray-400 sm:w-8 sm:h-8 lg:w-12 lg:h-12"
+                  />
+                )}
+              </div>
+              {isEditing && (
+                <label
+                  className={`absolute rounded-full w-6 h-6 sm:w-8 sm:h-8 p-0 bg-primary text-white flex items-center justify-center cursor-pointer hover:bg-primary/90 shadow-lg transition-all duration-200 ${
+                    isRTL ? "bottom-0 left-0" : "bottom-0 right-0"
+                  }`}
+                >
+                  <Upload size={10} className="sm:w-3 sm:h-3" />
+                  <input
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={(e) => handleFileChange(e, "avatar")}
+                  />
+                </label>
+              )}
             </div>
-            {/* Editing of commercial register disabled as requested */}
+
+            {/* Commercial Register Card */}
+            <div className="relative w-full max-w-xs sm:max-w-sm">
+              <div className="w-full h-24 sm:h-28 lg:h-32 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden border border-gray-200 shadow-sm">
+                {(() => {
+                  const src = profile.commercial_register || "";
+                  const isPdf =
+                    typeof src === "string" &&
+                    src.toLowerCase().endsWith(".pdf");
+                  if (!src) {
+                    return (
+                      <div className="flex flex-col items-center text-gray-400 text-center px-2">
+                        <FileText size={20} className="sm:w-6 sm:h-6" />
+                        <span className="text-xs mt-1 leading-tight">
+                          {t("profile.commercialRegister")}
+                        </span>
+                      </div>
+                    );
+                  }
+                  if (isPdf) {
+                    return (
+                      <a
+                        href={src}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary underline text-xs sm:text-sm text-center px-2"
+                      >
+                        {t("profile.viewFile")}
+                      </a>
+                    );
+                  }
+                  return (
+                    <Image
+                      src={src}
+                      alt="Commercial Register"
+                      className="w-full h-full object-cover"
+                      width={256}
+                      height={160}
+                      loading="lazy"
+                    />
+                  );
+                })()}
+              </div>
+              {/* Editing of commercial register disabled as requested */}
+            </div>
           </div>
         </div>
 
         {/* User Code */}
-        <div className="col-span-2">
+        <div className="col-span-full">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             {t("profile.userCode")}
           </label>
-          <div className="px-3 py-2 bg-primary-50 text-primary-700 rounded-md font-mono text-center border border-primary-200">
+          <div className="px-3 py-2 bg-primary-50 text-primary-700 rounded-md font-mono text-center border border-primary-200 text-sm sm:text-base">
             {profile.code}
           </div>
         </div>
 
         {/* Name */}
-        <div>
+        <div className="col-span-full sm:col-span-1">
           <label
             className={`block text-sm font-medium text-gray-700 mb-2 ${
               isRTL ? "text-right" : "text-left"
@@ -402,17 +408,19 @@ export default function ProfilePage() {
               name="name"
               value={formData.name || ""}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-colors text-sm sm:text-base"
               dir={isRTL ? "rtl" : "ltr"}
             />
           ) : (
             <div
-              className={`px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 ${
+              className={`w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base ${
                 isRTL ? "flex-row" : ""
               }`}
             >
-              <User size={16} className="text-gray-400" />
-              <span className={isRTL ? "text-right" : "text-left"}>
+              <User size={16} className="text-gray-400 flex-shrink-0" />
+              <span
+                className={`${isRTL ? "text-right" : "text-left"} truncate`}
+              >
                 {profile.name}
               </span>
             </div>
@@ -420,7 +428,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Email */}
-        <div>
+        <div className="col-span-full sm:col-span-1">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             {t("profile.email")}
           </label>
@@ -430,19 +438,21 @@ export default function ProfilePage() {
               name="email"
               value={formData.email || ""}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base"
               placeholder="Enter email (optional)"
             />
           ) : (
-            <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2">
-              <Mail size={16} className="text-gray-400" />
-              {profile.email || t("profile.noEmail")}
+            <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
+              <Mail size={16} className="text-gray-400 flex-shrink-0" />
+              <span className="truncate">
+                {profile.email || t("profile.noEmail")}
+              </span>
             </div>
           )}
         </div>
 
         {/* Phone */}
-        <div>
+        <div className="col-span-full sm:col-span-1">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             {t("profile.phone")} *
           </label>
@@ -452,18 +462,18 @@ export default function ProfilePage() {
               name="phone"
               value={formData.phone || ""}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base"
             />
           ) : (
-            <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2">
-              <Phone size={16} className="text-gray-400" />
-              {profile.phone}
+            <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
+              <Phone size={16} className="text-gray-400 flex-shrink-0" />
+              <span className="truncate">{profile.phone}</span>
             </div>
           )}
         </div>
 
         {/* Type */}
-        <div>
+        <div className="col-span-full sm:col-span-1">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             {t("profile.type")} *
           </label>
@@ -472,24 +482,26 @@ export default function ProfilePage() {
               name="type"
               value={formData.type || ""}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed text-sm sm:text-base"
               disabled
             >
               <option value="shop">{t("profile.shop")}</option>
               <option value="workshop">{t("profile.workshop")}</option>
             </select>
           ) : (
-            <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2">
-              <Building size={16} className="text-gray-400" />
-              {profile.type === "shop"
-                ? t("profile.shop")
-                : t("profile.workshop")}
+            <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
+              <Building size={16} className="text-gray-400 flex-shrink-0" />
+              <span className="truncate">
+                {profile.type === "shop"
+                  ? t("profile.shop")
+                  : t("profile.workshop")}
+              </span>
             </div>
           )}
         </div>
 
         {/* Manager Name */}
-        <div>
+        <div className="col-span-full sm:col-span-1">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             {t("profile.managerName")} *
           </label>
@@ -499,18 +511,18 @@ export default function ProfilePage() {
               name="manager_name"
               value={formData.manager_name || ""}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base"
             />
           ) : (
-            <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2">
-              <User size={16} className="text-gray-400" />
-              {profile.manager_name}
+            <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
+              <User size={16} className="text-gray-400 flex-shrink-0" />
+              <span className="truncate">{profile.manager_name}</span>
             </div>
           )}
         </div>
 
         {/* Address */}
-        <div>
+        <div className="col-span-full sm:col-span-1">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             {t("profile.address")} *
           </label>
@@ -520,18 +532,18 @@ export default function ProfilePage() {
               name="address"
               value={formData.address || ""}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base"
             />
           ) : (
-            <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2">
-              <MapPin size={16} className="text-gray-400" />
-              {profile.address}
+            <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
+              <MapPin size={16} className="text-gray-400 flex-shrink-0" />
+              <span className="truncate">{profile.address}</span>
             </div>
           )}
         </div>
 
         {/* City */}
-        <div>
+        <div className="col-span-full sm:col-span-1">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             {t("profile.city")} *
           </label>
@@ -541,18 +553,18 @@ export default function ProfilePage() {
               name="city"
               value={formData.city || ""}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base"
             />
           ) : (
-            <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2">
-              <MapPin size={16} className="text-gray-400" />
-              {profile.city}
+            <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
+              <MapPin size={16} className="text-gray-400 flex-shrink-0" />
+              <span className="truncate">{profile.city}</span>
             </div>
           )}
         </div>
 
         {/* State */}
-        <div>
+        <div className="col-span-full sm:col-span-1">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             {t("profile.state")} *
           </label>
@@ -562,18 +574,18 @@ export default function ProfilePage() {
               name="state"
               value={formData.state || ""}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base"
             />
           ) : (
-            <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2">
-              <MapPin size={16} className="text-gray-400" />
-              {profile.state}
+            <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
+              <MapPin size={16} className="text-gray-400 flex-shrink-0" />
+              <span className="truncate">{profile.state}</span>
             </div>
           )}
         </div>
 
         {/* ZIP */}
-        <div>
+        <div className="col-span-full sm:col-span-1">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             {t("profile.zip")} *
           </label>
@@ -583,18 +595,18 @@ export default function ProfilePage() {
               name="zip"
               value={formData.zip || ""}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base"
             />
           ) : (
-            <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2">
-              <MapPin size={16} className="text-gray-400" />
-              {profile.zip}
+            <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
+              <MapPin size={16} className="text-gray-400 flex-shrink-0" />
+              <span className="truncate">{profile.zip}</span>
             </div>
           )}
         </div>
 
         {/* Tax Number */}
-        <div>
+        <div className="col-span-full sm:col-span-1">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             {t("profile.taxNumber")} *
           </label>
@@ -604,35 +616,35 @@ export default function ProfilePage() {
               name="tax_number"
               value={formData.tax_number || ""}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base"
             />
           ) : (
-            <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2">
-              <FileText size={16} className="text-gray-400" />
-              {profile.tax_number}
+            <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
+              <FileText size={16} className="text-gray-400 flex-shrink-0" />
+              <span className="truncate">{profile.tax_number}</span>
             </div>
           )}
         </div>
 
         {/* Latitude */}
-        <div>
+        <div className="col-span-full sm:col-span-1">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             {t("profile.latitude")}
           </label>
-          <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-gray-600">
-            <Globe size={16} className="text-gray-400" />
-            {profile.latitude}
+          <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-gray-600 text-sm sm:text-base">
+            <Globe size={16} className="text-gray-400 flex-shrink-0" />
+            <span className="truncate">{profile.latitude}</span>
           </div>
         </div>
 
         {/* Longitude */}
-        <div>
+        <div className="col-span-full sm:col-span-1">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             {t("profile.longitude")}
           </label>
-          <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-gray-600">
-            <Globe size={16} className="text-gray-400" />
-            {profile.longitude}
+          <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-gray-600 text-sm sm:text-base">
+            <Globe size={16} className="text-gray-400 flex-shrink-0" />
+            <span className="truncate">{profile.longitude}</span>
           </div>
         </div>
       </div>
