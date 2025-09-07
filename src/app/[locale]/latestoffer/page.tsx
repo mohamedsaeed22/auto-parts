@@ -259,14 +259,6 @@ export default function LatestOffersPage() {
       {/* Hero Section */}
       <HeroSection t={t} />
 
-      {/* Filter Bar */}
-      {/* <FilterBar
-        isRTL={isRTL}
-        t={t}
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-      /> */}
-
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
@@ -275,7 +267,7 @@ export default function LatestOffersPage() {
             {
               label: t("backButton") || "Back",
               icon: (
-                <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
+                <ArrowLeft size={16} className={isRTL ? "transform rotate-180" : ""} />
               ),
             },
             {

@@ -253,7 +253,8 @@ export default function OfferPage() {
     refetch,
   } = useGetOfferQuery(offerId);
 
-  const offer = offerResponse?.data as OfferDetails;
+  const offerData = offerResponse?.data as { offer: OfferDetails };
+  const offer = offerData?.offer;
   const products = offer?.products || [];
 
   const handleGoBack = () => {
@@ -408,8 +409,8 @@ export default function OfferPage() {
                   discount_amount: product.discount_amount,
                   images: product.images,
                   hover_text: product.hover_text,
-                  in_favourites: false,
-                  in_wishlist: false,
+                  in_favourites: product.in_favorites || false,
+                  in_wishlist: product.in_wishlist || false,
                 }}
               />
             ))}
