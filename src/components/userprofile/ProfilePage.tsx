@@ -229,7 +229,7 @@ export default function ProfilePage() {
         ) : (
           <div
             className={`flex flex-col sm:flex-row gap-2 w-full sm:w-auto ${
-              isRTL ? "sm:flex-row-reverse" : ""
+              isRTL ? "sm:flex-row" : ""
             }`}
           >
             <Button
@@ -272,7 +272,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Buttons */}
-          <div className={`flex gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
+          <div className={`flex gap-2 ${isRTL ? "flex-row" : ""}`}>
             <Button
               variant={i18n.language === "ar" ? "default" : "outline"}
               size="sm"

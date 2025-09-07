@@ -209,9 +209,7 @@ export default function RequestsPage() {
       {/* Filters */}
       <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 mb-6">
         <div
-          className={`flex items-center gap-3 mb-4 ${
-            isRTL ? "flex-row-reverse" : ""
-          }`}
+          className={`flex items-center gap-3 mb-4 ${isRTL ? "flex-row" : ""}`}
         >
           <Filter size={20} className="text-gray-600" />
           <h3 className="font-medium text-gray-900">

@@ -32,10 +32,12 @@ export function Flex({
   const flexClassName = cn(
     inline ? "inline-flex" : "flex",
     // Direction
-    direction === "row" && !responsive && (isRTL ? "flex-row-reverse" : "flex-row"),
+    direction === "row" && !responsive && (isRTL ? "flex-row" : "flex-row"),
     direction === "col" && !responsive && "flex-col",
     // Responsive direction
-    direction === "row" && responsive && (isRTL ? "flex-col md:flex-row-reverse" : "flex-col md:flex-row"),
+    direction === "row" &&
+      responsive &&
+      (isRTL ? "flex-col md:flex-row" : "flex-col md:flex-row"),
     direction === "col" && responsive && "flex-col",
     // Alignment
     align === "start" && "items-start",

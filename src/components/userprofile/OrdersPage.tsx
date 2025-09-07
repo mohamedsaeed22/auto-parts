@@ -194,9 +194,7 @@ export default function OrdersPage() {
           {t("orders.title")}
         </h2>
         <div
-          className={`flex gap-2 w-full sm:w-auto ${
-            isRTL ? "flex-row-reverse" : ""
-          }`}
+          className={`flex gap-2 w-full sm:w-auto ${isRTL ? "flex-row" : ""}`}
         >
           <Button
             variant="outline"
@@ -211,9 +209,7 @@ export default function OrdersPage() {
       {/* Filters */}
       <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 mb-6">
         <div
-          className={`flex items-center gap-2 mb-4 ${
-            isRTL ? "flex-row-reverse" : ""
-          }`}
+          className={`flex items-center gap-2 mb-4 ${isRTL ? "flex-row" : ""}`}
         >
           <Filter size={20} className="text-gray-600" />
           <h3 className="font-medium text-gray-900">
@@ -403,7 +399,7 @@ export default function OrdersPage() {
         </div>
 
         {/* Filter Actions */}
-        <div className={`flex gap-2 mt-4 ${isRTL ? "flex-row-reverse" : ""}`}>
+        <div className={`flex gap-2 mt-4 ${isRTL ? "flex-row" : ""}`}>
           <Button onClick={clearFilters} variant="outline">
             {t("orders.filters.clear")}
           </Button>
@@ -581,11 +577,7 @@ export default function OrdersPage() {
       {/* Pagination */}
       {pagination && pagination.last_page > 1 && (
         <div className="mt-8 flex justify-center">
-          <div
-            className={`flex items-center gap-2 ${
-              isRTL ? "flex-row-reverse" : ""
-            }`}
-          >
+          <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}>
             <Button
               variant="outline"
               size="sm"

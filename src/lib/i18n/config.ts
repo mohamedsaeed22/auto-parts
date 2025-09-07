@@ -54,9 +54,9 @@ export const getOppositeTextAlign = (locale: Locale) => {
 };
 
 export const getFlexDirection = (locale: Locale) => {
-  return locale === "ar" ? "row-reverse" : "row";
+  return locale === "ar" ? "row" : "row";
 };
 
 export const getOppositeFlexDirection = (locale: Locale) => {
-  return locale === "ar" ? "row" : "row-reverse";
+  return locale === "ar" ? "row" : "row";
 };

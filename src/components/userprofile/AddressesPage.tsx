@@ -346,9 +346,7 @@ export default function AddressesPage() {
               />
             </div>
             <div
-              className={`flex items-center gap-2 ${
-                isRTL ? "flex-row-reverse" : ""
-              }`}
+              className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}
             >
               <input
                 type="checkbox"
@@ -363,7 +361,7 @@ export default function AddressesPage() {
               </label>
             </div>
           </div>
-          <div className={`flex gap-2 mt-4 ${isRTL ? "flex-row-reverse" : ""}`}>
+          <div className={`flex gap-2 mt-4 ${isRTL ? "flex-row" : ""}`}>
             <Button
               onClick={editingId ? handleUpdate : handleAdd}
               disabled={isCreating || isUpdating}
@@ -408,12 +406,10 @@ export default function AddressesPage() {
             >
               <div
                 className={`flex justify-between items-start mb-3 ${
-                  isRTL ? "flex-row-reverse" : ""
+                  isRTL ? "flex-row" : ""
                 }`}
               >
-                <div
-                  className={`flex gap-2 ${isRTL ? "flex-row-reverse" : ""}`}
-                >
+                <div className={`flex gap-2 ${isRTL ? "flex-row" : ""}`}>
                   <Button
                     size="sm"
                     variant="outline"
@@ -438,7 +434,7 @@ export default function AddressesPage() {
                 </div>
                 <div
                   className={`flex items-center gap-2 ${
-                    isRTL ? "flex-row-reverse" : ""
+                    isRTL ? "flex-row" : ""
                   }`}
                 >
                   {address.address_type === "home" ? (

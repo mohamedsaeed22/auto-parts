@@ -346,9 +346,7 @@ export default function SettingsPage() {
               }
             >
               <div
-                className={`flex items-center gap-3 ${
-                  isRTL ? "flex-row-reverse" : ""
-                }`}
+                className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}
               >
                 <item.icon size={20} className="text-gray-500" />
                 <div className="flex-1">
@@ -368,7 +366,7 @@ export default function SettingsPage() {
           <div className="bg-white p-6 rounded-lg border">
             <div
               className={`flex justify-between items-center mb-4 ${
-                isRTL ? "flex-row-reverse" : ""
+                isRTL ? "flex-row" : ""
               }`}
             >
               <h3 className="text-lg font-semibold">
@@ -457,7 +455,7 @@ export default function SettingsPage() {
     <div className="p-4 sm:p-6 lg:p-8" dir={isRTL ? "rtl" : "ltr"}>
       <div
         className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 ${
-          isRTL ? "sm:flex-row-reverse" : ""
+          isRTL ? "sm:flex-row" : ""
         }`}
       >
         <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
@@ -466,20 +464,16 @@ export default function SettingsPage() {
         {activeTab === "account" && !isEditing ? (
           <Button
             onClick={() => setIsEditing(true)}
-            className={`flex items-center gap-2 ${
-              isRTL ? "flex-row-reverse" : ""
-            }`}
+            className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}
           >
             <Save size={16} />
             {t("settings.edit")}
           </Button>
         ) : activeTab === "account" && isEditing ? (
-          <div className={`flex gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
+          <div className={`flex gap-2 ${isRTL ? "flex-row" : ""}`}>
             <Button
               onClick={handleSave}
-              className={`flex items-center gap-2 ${
-                isRTL ? "flex-row-reverse" : ""
-              }`}
+              className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}
             >
               <Save size={16} />
               {t("settings.save")}
@@ -487,9 +481,7 @@ export default function SettingsPage() {
             <Button
               variant="outline"
               onClick={handleCancel}
-              className={`flex items-center gap-2 ${
-                isRTL ? "flex-row-reverse" : ""
-              }`}
+              className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}
             >
               <X size={16} />
               {t("settings.cancel")}

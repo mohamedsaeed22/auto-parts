@@ -388,9 +388,7 @@ export default function LocationPicker({
   return (
     <div className="space-y-4">
       <div
-        className={`flex items-center gap-2 mb-2 ${
-          isRTL ? "flex-row-reverse" : ""
-        }`}
+        className={`flex items-center gap-2 mb-2 ${isRTL ? "flex-row" : ""}`}
       >
         <MapPin className="w-5 h-5 text-primary" />
         <h3 className="text-lg font-medium text-neutral-700">{t("title")}</h3>
@@ -597,7 +595,7 @@ export default function LocationPicker({
         <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
           <h4
             className={`font-medium text-primary-900 mb-3 flex items-center gap-2 ${
-              isRTL ? "flex-row-reverse" : ""
+              isRTL ? "flex-row" : ""
             }`}
           >
             <MapPin className="w-4 h-4" />

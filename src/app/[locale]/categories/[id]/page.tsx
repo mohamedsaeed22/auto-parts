@@ -384,7 +384,7 @@ export default function CategoryPage() {
           <button
             onClick={handleGoHome}
             className={`flex items-center gap-1 hover:text-gray-700 transition-colors ${
-              isRTL ? "flex-row-reverse" : ""
+              isRTL ? "flex-row" : ""
             }`}
           >
             {isRTL ? (

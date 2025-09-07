@@ -54,7 +54,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         className={cn(
           buttonVariants({ variant, size, className }),
-          isRTL && "flex-row-reverse"
+          isRTL && "flex-row"
         )}
         ref={ref}
         {...props}

@@ -592,7 +592,7 @@ export default function ContactPage() {
           <button
             onClick={handleGoBack}
             className={`flex items-center gap-1 hover:text-gray-700 transition-colors ${
-              isRTL ? "flex-row-reverse" : ""
+              isRTL ? "flex-row" : ""
             }`}
           >
             {isRTL ? (

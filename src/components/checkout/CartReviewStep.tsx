@@ -37,7 +37,7 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({
         <div className="flex items-center justify-between">
           <h2
             className={`text-2xl font-bold text-gray-900 flex items-center ${
-              isRTL ? "flex-row-reverse" : ""
+              isRTL ? "flex-row" : ""
             }`}
           >
             <ShoppingBag className={`w-6 h-6 ${isRTL ? "ml-3" : "mr-3"}`} />
@@ -57,7 +57,7 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({
           >
             <div
               className={`flex items-start ${
-                isRTL ? "space-x-reverse space-x-4" : "space-x-4"
+                isRTL ? "space-x space-x-4" : "space-x-4"
               }`}
             >
               <div className="relative w-24 h-24 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0">
@@ -79,7 +79,7 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({
                 </h3>
                 <div
                   className={`flex items-center mb-3 ${
-                    isRTL ? "space-x-reverse space-x-4" : "space-x-4"
+                    isRTL ? "space-x space-x-4" : "space-x-4"
                   }`}
                 >
                   <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">
@@ -89,12 +89,12 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({
 
                 <div
                   className={`flex items-center ${
-                    isRTL ? "space-x-reverse space-x-4" : "space-x-4"
+                    isRTL ? "space-x space-x-4" : "space-x-4"
                   }`}
                 >
                   <div
                     className={`flex items-center bg-white border-2 border-gray-400 rounded-lg overflow-hidden ${
-                      isRTL ? "flex-row-reverse" : ""
+                      isRTL ? "flex-row" : ""
                     }`}
                   >
                     <button
@@ -167,7 +167,7 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({
         <Button
           onClick={onNext}
           className={`flex-1 bg-black hover:bg-gray-800 text-white py-3 rounded-lg font-medium w-full flex items-center justify-center ${
-            isRTL ? "flex-row-reverse" : ""
+            isRTL ? "flex-row" : ""
           }`}
         >
           {isRTL ? (

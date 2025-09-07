@@ -163,7 +163,7 @@ const Footer = () => {
               {t("sections.contactSupport.title")}
             </h3>
             <div className="space-y-4">
-              <div className="flex items-center space-x-3 space-x-reverse">
+              <div className="flex items-center space-x-3 space-x">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -185,7 +185,7 @@ const Footer = () => {
                   {t("sections.contactSupport.email")}
                 </a>
               </div>
-              <div className="flex items-center space-x-3 space-x-reverse">
+              <div className="flex items-center space-x-3 space-x">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -207,7 +207,7 @@ const Footer = () => {
                   {t("sections.contactSupport.phone")}
                 </a>
               </div>
-              <div className="flex items-center space-x-3 space-x-reverse">
+              <div className="flex items-center space-x-3 space-x">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"

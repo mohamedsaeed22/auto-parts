@@ -26,12 +26,15 @@ export function useResponsiveLayout() {
     if (config.md && isMd) baseClasses.push(`md:grid-cols-${config.md}`);
     if (config.lg && isLg) baseClasses.push(`lg:grid-cols-${config.lg}`);
     if (config.xl && isXl) baseClasses.push(`xl:grid-cols-${config.xl}`);
-    if (config["2xl"] && is2Xl) baseClasses.push(`2xl:grid-cols-${config["2xl"]}`);
+    if (config["2xl"] && is2Xl)
+      baseClasses.push(`2xl:grid-cols-${config["2xl"]}`);
 
     return baseClasses.join(" ");
   };
 
-  const getResponsiveContainer = (size: "sm" | "md" | "lg" | "xl" | "full"): string => {
+  const getResponsiveContainer = (
+    size: "sm" | "md" | "lg" | "xl" | "full"
+  ): string => {
     const sizes = {
       sm: "max-w-screen-sm",
       md: "max-w-screen-md",
@@ -65,11 +68,11 @@ export function useResponsiveLayout() {
     return sizes[size];
   };
 
-  const getResponsiveFlexDirection = (defaultDirection: "row" | "col"): string => {
+  const getResponsiveFlexDirection = (
+    defaultDirection: "row" | "col"
+  ): string => {
     if (defaultDirection === "row") {
-      return isRTL
-        ? "flex-col md:flex-row-reverse"
-        : "flex-col md:flex-row";
+      return isRTL ? "flex-col md:flex-row" : "flex-col md:flex-row";
     }
     return "flex-col";
   };

@@ -21,7 +21,9 @@ export function useDirection() {
   const oppositeTextAlign = getOppositeTextAlign(i18n.language as "ar" | "en");
 
   const flexDirection = getFlexDirection(i18n.language as "ar" | "en");
-  const oppositeFlexDirection = getOppositeFlexDirection(i18n.language as "ar" | "en");
+  const oppositeFlexDirection = getOppositeFlexDirection(
+    i18n.language as "ar" | "en"
+  );
 
   return {
     direction,
@@ -37,25 +39,25 @@ export function useDirection() {
     classes: {
       textAlign: isRTL ? "text-right" : "text-left",
       oppositeTextAlign: isRTL ? "text-left" : "text-right",
-      flexDirection: isRTL ? "flex-row-reverse" : "flex-row",
-      oppositeFlexDirection: isRTL ? "flex-row" : "flex-row-reverse",
+      flexDirection: isRTL ? "flex-row" : "flex-row",
+      oppositeFlexDirection: isRTL ? "flex-row" : "flex-row",
       // Margin utilities
-      marginStart: (value: number) => isRTL ? `ml-${value}` : `mr-${value}`,
-      marginEnd: (value: number) => isRTL ? `mr-${value}` : `ml-${value}`,
+      marginStart: (value: number) => (isRTL ? `ml-${value}` : `mr-${value}`),
+      marginEnd: (value: number) => (isRTL ? `mr-${value}` : `ml-${value}`),
       // Padding utilities
-      paddingStart: (value: number) => isRTL ? `pl-${value}` : `pr-${value}`,
-      paddingEnd: (value: number) => isRTL ? `pr-${value}` : `pl-${value}`,
+      paddingStart: (value: number) => (isRTL ? `pl-${value}` : `pr-${value}`),
+      paddingEnd: (value: number) => (isRTL ? `pr-${value}` : `pl-${value}`),
       // Border utilities
-      borderStart: (width: number = 1) => isRTL ? `border-l-${width}` : `border-r-${width}`,
-      borderEnd: (width: number = 1) => isRTL ? `border-r-${width}` : `border-l-${width}`,
+      borderStart: (width: number = 1) =>
+        isRTL ? `border-l-${width}` : `border-r-${width}`,
+      borderEnd: (width: number = 1) =>
+        isRTL ? `border-r-${width}` : `border-l-${width}`,
       // Responsive utilities
       responsiveClasses: {
-        flexDirection: isRTL
-          ? "flex-col md:flex-row-reverse"
-          : "flex-col md:flex-row",
+        flexDirection: isRTL ? "flex-col md:flex-row" : "flex-col md:flex-row",
         oppositeFlexDirection: isRTL
           ? "flex-col md:flex-row"
-          : "flex-col md:flex-row-reverse",
+          : "flex-col md:flex-row",
       },
     },
   };
