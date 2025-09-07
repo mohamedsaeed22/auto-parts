@@ -38,35 +38,33 @@ export function SavedFormItem({ form, index, onDelete }: SavedFormItemProps) {
         </button>
       </div>
 
-      {/* Part Name */}
-      <div className="w-full mt-3">
-        <div className="bg-gray-50 rounded p-2 w-full">
+      {/* Summary row: Part Name and Quantity */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
+        <div className="bg-gray-50 rounded p-2 flex items-center justify-between">
           <span className="text-sm text-gray-500">
             {t("savedForms.labels.partName")}:{" "}
           </span>
-          <span className="text-lg font-semibold text-gray-900">
+          <span className="text-base font-semibold text-gray-900 truncate max-w-[60%] text-right">
             {form.partName}
           </span>
         </div>
-      </div>
-
-      {/* Info Grid */}
-      <div className="grid grid-cols-2 gap-2 mt-3">
-        <div className="bg-gray-50 rounded p-2">
-          <span className="text-xs text-gray-500">
+        <div className="bg-gray-50 rounded p-2 flex items-center justify-between">
+          <span className="text-sm text-gray-500">
             {t("savedForms.labels.quantity")}:{" "}
           </span>
-          <span className="text-sm font-semibold">{form.quantity}</span>
+          <span className="text-base font-semibold">{form.quantity}</span>
         </div>
-        {form.userType === "workshop" && form.userCode && (
-          <div className="bg-gray-50 rounded p-2">
-            <span className="text-xs text-gray-500">
-              {t("savedForms.labels.userCode")}:{" "}
-            </span>
-            <span className="text-sm font-semibold">{form.userCode}</span>
-          </div>
-        )}
       </div>
+
+      {/* Workshop code (if available) */}
+      {form.userType === "workshop" && form.userCode && (
+        <div className="bg-gray-50 rounded p-2 mt-2">
+          <span className="text-xs text-gray-500">
+            {t("savedForms.labels.userCode")}:{" "}
+          </span>
+          <span className="text-sm font-semibold">{form.userCode}</span>
+        </div>
+      )}
 
       {/* Optional Fields */}
       {form.userType === "workshop" && form.chassisNumber && (
@@ -78,36 +76,38 @@ export function SavedFormItem({ form, index, onDelete }: SavedFormItemProps) {
         </div>
       )}
 
-      {/* Images */}
-      <div className="grid grid-cols-3 gap-2 mt-3">
-        {form.partImagePreview && (
-          <Image
-            src={form.partImagePreview}
-            alt={t("savedForms.imageAlts.partImage")}
-            className="w-full h-16 object-cover rounded border"
-            width={80}
-            height={64}
-          />
-        )}
-        {form.requestImagePreview && (
-          <Image
-            src={form.requestImagePreview}
-            alt={t("savedForms.imageAlts.requestImage")}
-            className="w-full h-16 object-cover rounded border"
-            width={80}
-            height={64}
-          />
-        )}
-        {form.formImagePreview && (
-          <Image
-            src={form.formImagePreview}
-            alt={t("savedForms.imageAlts.formImage")}
-            className="w-full h-16 object-cover rounded border"
-            width={80}
-            height={64}
-          />
-        )}
-      </div>
+      {/* Images (only for workshop) */}
+      {form.userType === "workshop" && (
+        <div className="grid grid-cols-3 gap-2 mt-3">
+          {form.partImagePreview && (
+            <Image
+              src={form.partImagePreview}
+              alt={t("savedForms.imageAlts.partImage")}
+              className="w-full h-16 object-cover rounded border"
+              width={80}
+              height={64}
+            />
+          )}
+          {form.requestImagePreview && (
+            <Image
+              src={form.requestImagePreview}
+              alt={t("savedForms.imageAlts.requestImage")}
+              className="w-full h-16 object-cover rounded border"
+              width={80}
+              height={64}
+            />
+          )}
+          {form.formImagePreview && (
+            <Image
+              src={form.formImagePreview}
+              alt={t("savedForms.imageAlts.formImage")}
+              className="w-full h-16 object-cover rounded border"
+              width={80}
+              height={64}
+            />
+          )}
+        </div>
+      )}
 
       {/* Footer */}
       <p className="text-xs text-gray-400 mt-3">

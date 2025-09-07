@@ -97,5 +97,21 @@
       "backendCompleteRegistration": "Complete registration to send data",
       "backendReady": "Ready to send data to backend"
     }
+  },
+  "validation": {
+    "partName": {
+      "required": "Part name is required",
+      "minLength": "Part name must be more than 1 character",
+      "maxLength": "Part name is too long"
+    },
+    "quantity": {
+      "required": "Quantity is required",
+      "positive": "Quantity must be a positive number"
+    },
+    "userCode": {
+      "required": "Workshop code is required",
+      "minLength": "Workshop code must be at least 3 characters",
+      "maxLength": "Workshop code is too long"
+    }
   }
 }

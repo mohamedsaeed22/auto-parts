@@ -81,7 +81,7 @@ const FormInput = forwardRef<
     },
     ref
   ) => {
-    const { i18n } = useTranslation();
+    const { i18n, t } = useTranslation();
     const isRTL = i18n.language === "ar";
 
     // Auto-detect icon position based on language direction
@@ -201,7 +201,7 @@ const FormInput = forwardRef<
               errorClassName
             )}
           >
-            {error}
+            {t(error) || error}
           </p>
         )}
       </div>

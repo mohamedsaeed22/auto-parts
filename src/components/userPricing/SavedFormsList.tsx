@@ -49,7 +49,7 @@ export function SavedFormsList({
 
       {/* Authentication Status for Backend Operations */}
       {savedForms.length > 0 && (
-        <div className="mb-4 p-3 rounded-lg border">
+        <div>
           {!isAuthenticated ? (
             <div className="flex items-center gap-2 text-amber-700 bg-amber-50 border-amber-200">
               <AlertCircle size={16} />
@@ -83,12 +83,7 @@ export function SavedFormsList({
                 {t("auth.buttons.completeRegistration")}
               </Button>
             </div>
-          ) : (
-            <div className="flex items-center gap-2 text-green-700 bg-green-50 border-green-200">
-              <CheckCircle size={16} />
-              <p className="text-sm">{t("auth.status.backendReady")}</p>
-            </div>
-          )}
+          ) : null}
         </div>
       )}
 
@@ -126,8 +121,17 @@ export function SavedFormsList({
                 </div>
               ) : (
                 <div className="flex items-center justify-center">
-                  {t("savedForms.buttons.sendAll")}
-                  <Send className={isRTL ? "ml-2" : "mr-2"} size={18} />
+                  {isRTL ? (
+                    <>
+                      <Send className={"ml-2"} size={18} />
+                      {t("savedForms.buttons.sendAll")}
+                    </>
+                  ) : (
+                    <>
+                      {t("savedForms.buttons.sendAll")}
+                      <Send className={"ms-2"} size={18} />
+                    </>
+                  )}
                 </div>
               )}
             </Button>

@@ -19,7 +19,7 @@ export function FormSubmissionButton({
       <Button
         type="submit"
         disabled={isSubmitting || disabled}
-        className="w-full py-3 bg-logo-black hover:bg-logo-black/90 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
+        className="w-full py-3 bg-accent-dark hover:bg-accent-dark/90 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
       >
         {isSubmitting ? (
           <div className="flex items-center justify-center">
