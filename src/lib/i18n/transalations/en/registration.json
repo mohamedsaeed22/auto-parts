@@ -1,0 +1,74 @@
+{
+  "title": "Complete Registration",
+  "description": "Please complete your registration data to access all features",
+  "userCode": "User Code",
+  "basicInfo": "Basic Information",
+  "labels": {
+    "name": "Name",
+    "email": "Email",
+    "type": "Type",
+    "managerName": "Manager Name",
+    "address": "Address",
+    "city": "City",
+    "zip": "ZIP Code",
+    "state": "State",
+    "taxNumber": "Tax Number",
+    "latitudeStatic": "Latitude (Static)",
+    "longitudeStatic": "Longitude (Static)",
+    "commercialRegister": "Commercial Register",
+    "avatar": "Avatar"
+  },
+  "placeholders": {
+    "name": "Enter your name",
+    "email": "Enter your email (optional)",
+    "managerName": "Enter manager name",
+    "address": "Enter address",
+    "city": "Enter city",
+    "zip": "Enter ZIP code",
+    "state": "Enter state",
+    "taxNumber": "Enter tax number",
+    "latitude": "Static latitude value",
+    "longitude": "Static longitude value",
+    "selectType": "Select type"
+  },
+  "help": {
+    "fixedLocation": "Fixed location: Cairo, Egypt",
+    "uploadNote": "Image up to 5MB (jpeg, png, jpg, gif, svg)"
+  },
+  "typeOptions": {
+    "shop": "Shop",
+    "workshop": "Workshop"
+  },
+  "uploads": {
+    "clickToSelectCR": "Click to select Commercial Register",
+    "clickToSelectAvatar": "Click to select Avatar",
+    "crPreviewAlt": "Commercial Register Preview",
+    "avatarPreviewAlt": "Avatar Preview",
+    "removeFile": "Remove file",
+    "uploadCRHelp": "Upload commercial register document (jpeg, png, jpg, gif, svg)",
+    "uploadAvatarHelp": "Upload your profile picture (jpeg, png, jpg, gif, svg)"
+  },
+  "validation": {
+    "nameRequired": "Name is required",
+    "managerRequired": "Manager name is required",
+    "addressRequired": "Address is required",
+    "cityRequired": "City is required",
+    "zipRequired": "ZIP code is required",
+    "stateRequired": "State is required",
+    "taxRequired": "Tax number is required",
+    "typeRequired": "Type selection is required",
+    "crRequired": "Commercial register is required",
+    "avatarRequired": "Avatar is required",
+    "fileType": "File must be of type: jpeg, png, jpg, gif, svg",
+    "fileSize": "File size must be less than 5MB"
+  },
+  "actions": {
+    "submit": "Submit Registration",
+    "submitting": "Submitting..."
+  },
+  "toasts": {
+    "registrationAlreadyCompleted": "Registration already completed!",
+    "registrationCompleted": "Registration completed successfully!",
+    "registrationFailed": "Failed to complete registration. Please try again."
+  }
+}
