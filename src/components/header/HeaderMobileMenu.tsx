@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import LoginDialog from "../LoginDialog";
+import UserDropdown from "./UserDropdown";
+import { useAuth } from "@/hooks/useAuth";
 
 interface NavLink {
   href: string;
@@ -26,6 +28,7 @@ export default function HeaderMobileMenu({
   isRTL,
 }: HeaderMobileMenuProps) {
   const { t } = useTranslation("header");
+  const { user } = useAuth();
 
   return (
     <AnimatePresence>
@@ -66,17 +69,23 @@ export default function HeaderMobileMenu({
 
             {/* Account Section */}
             <div className="p-4 border-b border-gray-200">
-              <LoginDialog
-                trigger={
-                  <Button
-                    variant="outline"
-                    className="w-full justify-center gap-2"
-                  >
-                    <User size={20} />
-                    {t("actions.login") || "Login / Register"}
-                  </Button>
-                }
-              />
+              {user ? (
+                <div className="w-full flex justify-center">
+                  <UserDropdown isRTL={isRTL} />
+                </div>
+              ) : (
+                <LoginDialog
+                  trigger={
+                    <Button
+                      variant="outline"
+                      className="w-full justify-center gap-2"
+                    >
+                      <User size={20} />
+                      {t("actions.login") || "Login / Register"}
+                    </Button>
+                  }
+                />
+              )}
             </div>
 
             {/* Navigation Links */}
