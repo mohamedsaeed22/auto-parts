@@ -11,7 +11,6 @@ import {
   DollarSign,
   ChevronLeft,
   ChevronRight,
-  Plus,
   CheckCircle,
   XCircle,
   PlayCircle,
@@ -35,6 +34,7 @@ import type {
 } from "@/services/api/requestsApi";
 import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const statusColors = {
   draft: "bg-gray-100 text-gray-800 border-gray-200",
@@ -56,7 +56,6 @@ export default function RequestsPage() {
   const { t, i18n } = useTranslation("userProfile");
   const isRTL = i18n.language === "ar";
   const { user } = useAuth();
-
   const [filters, setFilters] = useState<{
     status: "all" | "draft" | "pending" | "submitted" | "accepted" | "rejected";
     date_from: string;
@@ -200,10 +199,6 @@ export default function RequestsPage() {
             {t("requests.title", "Requests")}
           </h2>
         </div>
-        <Button className="flex items-center gap-2 w-full sm:w-auto">
-          <Plus size={16} />
-          {t("requests.create", "Create Request")}
-        </Button>
       </div>
 
       {/* Filters */}

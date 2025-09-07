@@ -13,14 +13,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/hooks/useCart"; // Use Redux hook
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useTranslation } from "react-i18next";
@@ -291,29 +284,17 @@ const Cart: React.FC = () => {
       </AnimatePresence>
 
       {/* Clear Cart Confirmation Dialog */}
-      <Dialog open={showClearCartDialog} onOpenChange={setShowClearCartDialog}>
-        <DialogContent className="sm:max-w-md" dir={isRTL ? "rtl" : "ltr"}>
-          <DialogHeader>
-            <DialogTitle className="text-center">
-              {t("dialog.clearTitle")}
-            </DialogTitle>
-            <DialogDescription>
-              {t("dialog.clearDescription")}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex space-x-2">
-            <Button
-              variant="outline"
-              onClick={() => setShowClearCartDialog(false)}
-            >
-              {t("dialog.cancel")}
-            </Button>
-            <Button variant="destructive" onClick={confirmClearCart}>
-              {t("dialog.confirm")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmDialog
+        open={showClearCartDialog}
+        onOpenChange={setShowClearCartDialog}
+        title={t("dialog.clearTitle")}
+        description={t("dialog.clearDescription")}
+        cancelLabel={t("dialog.cancel")}
+        confirmLabel={t("dialog.confirm")}
+        onConfirm={confirmClearCart}
+        confirmVariant="destructive"
+        dir={isRTL ? "rtl" : "ltr"}
+      />
     </>
   );
 };

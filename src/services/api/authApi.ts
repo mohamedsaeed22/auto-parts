@@ -23,7 +23,7 @@ export const authApi = api.injectEndpoints({
           method: "POST",
           body: JSON.stringify({ phone: data.phone }),
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         };
       },
@@ -35,12 +35,12 @@ export const authApi = api.injectEndpoints({
         return {
           url: "/auth/verify-otp",
           method: "POST",
-          body: JSON.stringify({ 
+          body: JSON.stringify({
             phone: data.phone,
-            code: data.code 
+            code: data.code,
           }),
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         };
       },
@@ -124,6 +124,9 @@ export const authApi = api.injectEndpoints({
         if (data.latitude) formData.append("latitude", data.latitude);
         if (data.longitude) formData.append("longitude", data.longitude);
 
+        if (data.commercial_register) {
+          formData.append("commercial_register", data.commercial_register);
+        }
         if (data.avatar) {
           formData.append("avatar", data.avatar);
         }

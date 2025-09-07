@@ -56,12 +56,7 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<Partial<ProfileData>>({});
   const [selectedAvatar, setSelectedAvatar] = useState<File | null>(null);
-  const [selectedCommercialRegister, setSelectedCommercialRegister] =
-    useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const [commercialRegisterPreview, setCommercialRegisterPreview] = useState<
-    string | null
-  >(null);
 
   const {
     data: profileResponse,
@@ -118,17 +113,6 @@ export default function ProfilePage() {
       } else {
         setAvatarPreview(null);
       }
-    } else if (fieldName === "commercial_register") {
-      setSelectedCommercialRegister(file);
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          setCommercialRegisterPreview(e.target?.result as string);
-        };
-        reader.readAsDataURL(file);
-      } else {
-        setCommercialRegisterPreview(null);
-      }
     }
   };
 
@@ -137,30 +121,28 @@ export default function ProfilePage() {
 
     setIsLoading(true);
     try {
-      const updateData = {
-        ...formData,
+      const updatePayload = {
+        name: formData.name || undefined,
         email: formData.email || undefined,
+        phone: formData.phone || undefined,
+        manager_name: formData.manager_name || undefined,
+        address: formData.address || undefined,
+        city: formData.city || undefined,
+        zip: formData.zip || undefined,
+        state: formData.state || undefined,
+        latitude: formData.latitude || undefined,
+        longitude: formData.longitude || undefined,
         avatar: selectedAvatar || undefined,
-        commercial_register: selectedCommercialRegister || undefined,
       };
 
-      // Remove undefined values
-      Object.keys(updateData).forEach((key) => {
-        if (updateData[key as keyof typeof updateData] === undefined) {
-          delete updateData[key as keyof typeof updateData];
-        }
-      });
-
-      await updateProfile(updateData).unwrap();
+      await updateProfile(updatePayload).unwrap();
 
       // Refresh profile data
       refetch();
 
       // Reset form state
       setSelectedAvatar(null);
-      setSelectedCommercialRegister(null);
       setAvatarPreview(null);
-      setCommercialRegisterPreview(null);
       setIsEditing(false);
 
       showSuccess("Profile updated successfully!");
@@ -175,9 +157,7 @@ export default function ProfilePage() {
     if (profile) {
       setFormData(profile);
       setSelectedAvatar(null);
-      setSelectedCommercialRegister(null);
       setAvatarPreview(null);
-      setCommercialRegisterPreview(null);
     }
     setIsEditing(false);
   };
@@ -308,8 +288,9 @@ export default function ProfilePage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        {/* Profile Picture */}
-        <div className="col-span-2 flex justify-center mb-6">
+        {/* Profile & Commercial Register Side-by-Side */}
+        <div className="col-span-2 flex flex-col sm:flex-row items-center justify-center gap-6 mb-6">
+          {/* Avatar */}
           <div className="relative">
             <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden border-4 border-white shadow-lg">
               {avatarPreview ? (
@@ -317,8 +298,8 @@ export default function ProfilePage() {
                   src={avatarPreview}
                   alt="Profile Preview"
                   className="w-full h-full object-cover"
-                  width={100}
-                  height={100}
+                  width={128}
+                  height={128}
                   loading="lazy"
                 />
               ) : profile.avatar ? (
@@ -326,8 +307,8 @@ export default function ProfilePage() {
                   src={profile.avatar}
                   alt="Profile"
                   className="w-full h-full object-cover"
-                  width={100}
-                  height={100}
+                  width={128}
+                  height={128}
                   loading="lazy"
                 />
               ) : (
@@ -349,6 +330,50 @@ export default function ProfilePage() {
                 />
               </label>
             )}
+          </div>
+
+          {/* Commercial Register Card */}
+          <div className="relative">
+            <div className="w-48 h-32 sm:w-64 sm:h-40 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden border border-gray-200 shadow-sm">
+              {(() => {
+                const src = profile.commercial_register || "";
+                const isPdf =
+                  typeof src === "string" && src.toLowerCase().endsWith(".pdf");
+                if (!src) {
+                  return (
+                    <div className="flex flex-col items-center text-gray-400">
+                      <FileText size={24} />
+                      <span className="text-xs mt-1">
+                        {t("profile.commercialRegister")}
+                      </span>
+                    </div>
+                  );
+                }
+                if (isPdf) {
+                  return (
+                    <a
+                      href={src}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary underline text-sm"
+                    >
+                      {t("profile.viewFile")}
+                    </a>
+                  );
+                }
+                return (
+                  <Image
+                    src={src}
+                    alt="Commercial Register"
+                    className="w-full h-full object-cover"
+                    width={256}
+                    height={160}
+                    loading="lazy"
+                  />
+                );
+              })()}
+            </div>
+            {/* Editing of commercial register disabled as requested */}
           </div>
         </div>
 
@@ -611,117 +636,6 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-
-      {/* Commercial Register Upload */}
-      {isEditing && (
-        <div className="mt-6 p-4 sm:p-6 bg-gray-50 rounded-lg border border-gray-200">
-          <label
-            className={`block text-sm font-medium text-gray-700 mb-2 ${
-              isRTL ? "text-right" : "text-left"
-            }`}
-          >
-            {t("profile.commercialRegister")}
-          </label>
-
-          {/* Current Commercial Register Display */}
-          {profile.commercial_register && (
-            <div className="mb-4">
-              <p
-                className={`text-sm text-gray-600 mb-2 ${
-                  isRTL ? "text-right" : "text-left"
-                }`}
-              >
-                {t("profile.currentFile")}:
-              </p>
-              <div className="relative inline-block">
-                <Image
-                  src={profile.commercial_register}
-                  alt="Current Commercial Register"
-                  className="max-w-full h-auto max-h-48 rounded-lg border border-gray-300"
-                  width={200}
-                  height={150}
-                  loading="lazy"
-                />
-                <div className="absolute top-2 right-2 bg-gray-800 bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-                  {profile.commercial_register.split("/").pop()}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* File Upload */}
-          <input
-            type="file"
-            onChange={(e) => handleFileChange(e, "commercial_register")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
-            accept="image/*,.pdf"
-          />
-
-          {/* Preview of Selected File */}
-          {commercialRegisterPreview && (
-            <div className="mt-4">
-              <p
-                className={`text-sm text-gray-600 mb-2 ${
-                  isRTL ? "text-right" : "text-left"
-                }`}
-              >
-                {t("profile.selectedFile")}:
-              </p>
-              <div className="relative inline-block">
-                <Image
-                  src={commercialRegisterPreview}
-                  alt="Selected Commercial Register Preview"
-                  className="max-w-full h-auto max-h-48 rounded-lg border border-gray-300"
-                  width={200}
-                  height={150}
-                  loading="lazy"
-                />
-                <div className="absolute top-2 right-2 bg-primary bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-                  {selectedCommercialRegister?.name}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* File Info */}
-          {selectedCommercialRegister && !commercialRegisterPreview && (
-            <p
-              className={`text-sm text-gray-600 mt-2 ${
-                isRTL ? "text-right" : "text-left"
-              }`}
-            >
-              {t("profile.selectedFile")}:{" "}
-              <span className="font-medium">
-                {selectedCommercialRegister.name}
-              </span>
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* Account Status */}
-      {/* <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="bg-success-50 p-4 sm:p-6 rounded-lg text-center border border-success-200 shadow-sm">
-          <div className="text-2xl sm:text-3xl font-bold text-success-600 mb-2">
-            {profile.is_registration_complete ? "✓" : "✗"}
-          </div>
-          <div className="text-sm text-success-700">
-            {profile.is_registration_complete
-              ? t("profile.registrationComplete")
-              : t("profile.registrationIncomplete")}
-          </div>
-        </div>
-        <div className="bg-primary-50 p-4 sm:p-6 rounded-lg text-center border border-primary-200 shadow-sm">
-          <div className="text-2xl sm:text-3xl font-bold text-primary-600 mb-2">
-            {profile.is_google_user ? "✓" : "✗"}
-          </div>
-          <div className="text-sm text-primary-700">
-            {profile.is_google_user
-              ? t("profile.googleUser")
-              : t("profile.regularUser")}
-          </div>
-        </div>
-      </div> */}
     </div>
   );
 }

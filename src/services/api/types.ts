@@ -57,6 +57,7 @@ export interface UpdateProfileRequest {
   city?: string;
   zip?: string;
   state?: string;
+  commercial_register?: File;
   avatar?: File;
   latitude?: string;
   longitude?: string;

@@ -11,6 +11,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { useTranslation } from "react-i18next";
 import {
   useGetAddressesQuery,
@@ -27,6 +28,8 @@ export default function AddressesPage() {
 
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
   const [formData, setFormData] = useState<CreateAddressRequest>({
     address_type: "home",
     name: "",
@@ -134,16 +137,28 @@ export default function AddressesPage() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm("Are you sure you want to delete this address?"))
-      return;
+  const handleDelete = (id: number) => {
+    setPendingDeleteId(id);
+    setShowDeleteDialog(true);
+  };
 
+  const confirmDelete = async () => {
+    if (!pendingDeleteId) return;
     try {
-      await deleteAddress(id).unwrap();
-      showSuccess("Address deleted successfully!");
+      await deleteAddress(pendingDeleteId).unwrap();
+      showSuccess(
+        t("addresses.deleteSuccess", "Address deleted successfully!")
+      );
+      setShowDeleteDialog(false);
+      setPendingDeleteId(null);
       refetch();
     } catch {
-      showError("Failed to delete address. Please try again.");
+      showError(
+        t(
+          "addresses.deleteFailed",
+          "Failed to delete address. Please try again."
+        )
+      );
     }
   };
 
@@ -474,6 +489,22 @@ export default function AddressesPage() {
           ))}
         </div>
       )}
+      {/* Delete Address Confirmation Dialog */}
+      <ConfirmDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        title={t("addresses.deleteTitle", "Delete address")}
+        description={t(
+          "addresses.deleteDescription",
+          "Are you sure you want to delete this address?"
+        )}
+        cancelLabel={t("addresses.cancel", "Cancel")}
+        confirmLabel={t("addresses.confirm", "Confirm")}
+        onConfirm={confirmDelete}
+        confirmDisabled={isDeleting}
+        confirmVariant="destructive"
+        dir={isRTL ? "rtl" : "ltr"}
+      />
     </div>
   );
 }
