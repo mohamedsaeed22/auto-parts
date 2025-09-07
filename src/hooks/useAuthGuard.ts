@@ -91,7 +91,10 @@ export function useAuthGuard(options: AuthGuardOptions = {}) {
 
     if (shouldShowToast) {
       showError(
-        t("errors.loginRequired") || "Please login to access this page"
+        t("errors.loginRequired", {
+          ns: "auth",
+          defaultValue: "Please login to access this page",
+        })
       );
       lastToastTime.current = now;
       hasShownToast.current = true;
@@ -127,8 +130,10 @@ export function useAuthGuard(options: AuthGuardOptions = {}) {
 
     if (shouldShowToast) {
       showError(
-        t("errors.completeRegistrationRequired") ||
-          "Please complete your registration"
+        t("errors.completeRegistrationRequired", {
+          ns: "auth",
+          defaultValue: "Please complete your registration",
+        })
       );
       lastToastTime.current = now;
       hasShownToast.current = true;

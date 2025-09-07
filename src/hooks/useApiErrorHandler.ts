@@ -43,8 +43,10 @@ export function useApiErrorHandler(
     if (apiError.status === 401) {
       if (showToasts) {
         showError(
-          t("errors.sessionExpired") ||
-            "Your session has expired. Please login again."
+          t("errors.sessionExpired", {
+            ns: "auth",
+            defaultValue: "Your session has expired. Please login again.",
+          })
         );
       }
 
@@ -66,8 +68,11 @@ export function useApiErrorHandler(
       if (errorData?.data?.is_registration_complete === false) {
         if (showToasts) {
           showError(
-            t("errors.completeRegistrationRequired") ||
-              "Please complete your registration to access this feature."
+            t("errors.completeRegistrationRequired", {
+              ns: "auth",
+              defaultValue:
+                "Please complete your registration to access this feature.",
+            })
           );
         }
 
@@ -141,8 +146,10 @@ export function useMutationErrorHandler(
     if (apiError.status === 401) {
       if (showToasts) {
         showError(
-          t("errors.sessionExpired") ||
-            "Your session has expired. Please login again."
+          t("errors.sessionExpired", {
+            ns: "auth",
+            defaultValue: "Your session has expired. Please login again.",
+          })
         );
       }
 
@@ -161,8 +168,11 @@ export function useMutationErrorHandler(
     ) {
       if (showToasts) {
         showError(
-          t("errors.completeRegistrationRequired") ||
-            "Please complete your registration to access this feature."
+          t("errors.completeRegistrationRequired", {
+            ns: "auth",
+            defaultValue:
+              "Please complete your registration to access this feature.",
+          })
         );
       }
 
