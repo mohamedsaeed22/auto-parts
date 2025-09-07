@@ -249,11 +249,11 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3"
+            className="w-full bg-logo-gold hover:bg-amber-600 text-black py-3"
           >
             {isSubmitting ? (
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
                 {t("contactForm.sending") || "Sending..."}
               </div>
             ) : (
@@ -308,8 +308,8 @@ const ContactInfo = ({ t }: { t: (key: string) => string }) => (
       <Card className="hover:shadow-lg transition-shadow">
         <CardContent className="p-6">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <MailIcon className="h-6 w-6 text-blue-600" />
+            <div className="w-12 h-12 bg-logo-gold/15 rounded-full flex items-center justify-center flex-shrink-0">
+              <MailIcon className="h-6 w-6 text-logo-gold" />
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 mb-1">
@@ -330,8 +330,8 @@ const ContactInfo = ({ t }: { t: (key: string) => string }) => (
       <Card className="hover:shadow-lg transition-shadow">
         <CardContent className="p-6">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <PhoneIcon className="h-6 w-6 text-green-600" />
+            <div className="w-12 h-12 bg-logo-gold/15 rounded-full flex items-center justify-center flex-shrink-0">
+              <PhoneIcon className="h-6 w-6 text-logo-gold" />
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 mb-1">
@@ -351,8 +351,8 @@ const ContactInfo = ({ t }: { t: (key: string) => string }) => (
       <Card className="hover:shadow-lg transition-shadow">
         <CardContent className="p-6">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <MapPinIcon className="h-6 w-6 text-purple-600" />
+            <div className="w-12 h-12 bg-logo-gold/15 rounded-full flex items-center justify-center flex-shrink-0">
+              <MapPinIcon className="h-6 w-6 text-logo-gold" />
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 mb-1">
@@ -376,8 +376,8 @@ const ContactInfo = ({ t }: { t: (key: string) => string }) => (
       <Card className="hover:shadow-lg transition-shadow">
         <CardContent className="p-6">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <ClockIcon className="h-6 w-6 text-orange-600" />
+            <div className="w-12 h-12 bg-logo-gold/15 rounded-full flex items-center justify-center flex-shrink-0">
+              <ClockIcon className="h-6 w-6 text-logo-gold" />
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 mb-1">
@@ -413,13 +413,13 @@ const ContactInfo = ({ t }: { t: (key: string) => string }) => (
 
 // Company Stats Component
 const CompanyStats = ({ t }: { t: (key: string) => string }) => (
-  <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
+  <div className="bg-gradient-to-r from-logo-gold to-amber-600 text-white py-16">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold mb-4">
           {t("stats.title") || "Why Choose Fal Parts?"}
         </h2>
-        <p className="text-blue-100 text-lg max-w-3xl mx-auto">
+        <p className="text-white/90 text-lg max-w-3xl mx-auto">
           {t("stats.subtitle") ||
             "Leading the automotive parts industry with quality, reliability, and innovation"}
         </p>
@@ -431,7 +431,7 @@ const CompanyStats = ({ t }: { t: (key: string) => string }) => (
             <UsersIcon className="h-8 w-8" />
           </div>
           <div className="text-3xl font-bold mb-2">50K+</div>
-          <div className="text-blue-100">
+          <div className="text-white/90">
             {t("stats.customers") || "Happy Customers"}
           </div>
         </div>
@@ -441,7 +441,7 @@ const CompanyStats = ({ t }: { t: (key: string) => string }) => (
             <TruckIcon className="h-8 w-8" />
           </div>
           <div className="text-3xl font-bold mb-2">100K+</div>
-          <div className="text-blue-100">
+          <div className="text-white/90">
             {t("stats.deliveries") || "Successful Deliveries"}
           </div>
         </div>
@@ -451,7 +451,7 @@ const CompanyStats = ({ t }: { t: (key: string) => string }) => (
             <ShieldIcon className="h-8 w-8" />
           </div>
           <div className="text-3xl font-bold mb-2">15+</div>
-          <div className="text-blue-100">
+          <div className="text-white/90">
             {t("stats.years") || "Years Experience"}
           </div>
         </div>
@@ -461,7 +461,7 @@ const CompanyStats = ({ t }: { t: (key: string) => string }) => (
             <StarIcon className="h-8 w-8" />
           </div>
           <div className="text-3xl font-bold mb-2">4.9</div>
-          <div className="text-blue-100">
+          <div className="text-white/90">
             {t("stats.rating") || "Customer Rating"}
           </div>
         </div>
@@ -490,37 +490,37 @@ const SocialMedia = ({ t }: { t: (key: string) => string }) => (
             icon: FacebookIcon,
             href: "#",
             label: "Facebook",
-            color: "bg-blue-600 hover:bg-blue-700",
+            color: "bg-logo-gold hover:bg-amber-600",
           },
           {
             icon: TwitterIcon,
             href: "#",
             label: "Twitter",
-            color: "bg-sky-500 hover:bg-sky-600",
+            color: "bg-logo-gold hover:bg-amber-600",
           },
           {
             icon: InstagramIcon,
             href: "#",
             label: "Instagram",
-            color: "bg-pink-600 hover:bg-pink-700",
+            color: "bg-logo-gold hover:bg-amber-600",
           },
           {
             icon: LinkedinIcon,
             href: "#",
             label: "LinkedIn",
-            color: "bg-blue-700 hover:bg-blue-800",
+            color: "bg-logo-gold hover:bg-amber-600",
           },
           {
             icon: YoutubeIcon,
             href: "#",
             label: "YouTube",
-            color: "bg-red-600 hover:bg-red-700",
+            color: "bg-logo-gold hover:bg-amber-600",
           },
           {
             icon: MessageCircleIcon,
             href: "#",
             label: "WhatsApp",
-            color: "bg-green-600 hover:bg-green-700",
+            color: "bg-logo-gold hover:bg-amber-600",
           },
         ].map((social) => (
           <a
@@ -553,17 +553,17 @@ export default function ContactPage() {
   return (
     <div dir={direction}>
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 text-white py-20">
+      <div className="bg-gradient-to-br from-logo-gold via-amber-500 to-amber-600 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
               {t("hero.title") || "Contact Fal Parts"}
             </h1>
-            <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto mb-8">
+            <p className="text-xl md:text-2xl text-white/80 max-w-3xl mx-auto mb-8">
               {t("hero.subtitle") ||
                 "Get in touch with our team for expert automotive parts and exceptional service"}
             </p>
-            <div className="flex items-center justify-center gap-8 text-blue-100">
+            <div className="flex items-center justify-center gap-8 text-white/90">
               <div className="flex items-center gap-2">
                 <PhoneIcon className="h-5 w-5" />
                 <span>{t("hero.phone") || "24/7 Support"}</span>

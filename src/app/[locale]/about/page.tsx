@@ -22,7 +22,7 @@ import { Badge } from "@/components/ui/badge";
 
 // Hero Section Component
 const HeroSection = ({ t }: { t: (key: string) => string }) => (
-  <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 text-white py-20">
+  <div className="bg-gradient-to-br from-logo-gold via-amber-500 to-amber-600 text-white py-20">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center">
         <Badge
@@ -34,11 +34,11 @@ const HeroSection = ({ t }: { t: (key: string) => string }) => (
         <h1 className="text-4xl md:text-6xl font-bold mb-6">
           {t("hero.title") || "About Fal Parts"}
         </h1>
-        <p className="text-xl md:text-2xl text-blue-100 max-w-4xl mx-auto mb-8">
+        <p className="text-xl md:text-2xl text-white/80 max-w-4xl mx-auto mb-8">
           {t("hero.subtitle") ||
             "Leading the automotive parts industry with innovation, quality, and customer satisfaction for over 15 years"}
         </p>
-        <div className="flex items-center justify-center gap-8 text-blue-100">
+        <div className="flex items-center justify-center gap-8 text-white/80">
           <div className="flex items-center gap-2">
             <UsersIcon className="h-5 w-5" />
             <span>{t("hero.customers") || "50K+ Customers"}</span>
@@ -84,8 +84,8 @@ const CompanyStory = ({
 
           <div className="space-y-4">
             <div className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                <CheckCircleIcon className="h-4 w-4 text-blue-600" />
+              <div className="w-8 h-8 bg-logo-gold/15 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                <CheckCircleIcon className="h-4 w-4 text-logo-gold" />
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">
@@ -99,8 +99,8 @@ const CompanyStory = ({
             </div>
 
             <div className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                <CheckCircleIcon className="h-4 w-4 text-green-600" />
+              <div className="w-8 h-8 bg-logo-gold/15 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                <CheckCircleIcon className="h-4 w-4 text-logo-gold" />
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">
@@ -114,8 +114,8 @@ const CompanyStory = ({
             </div>
 
             <div className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                <CheckCircleIcon className="h-4 w-4 text-purple-600" />
+              <div className="w-8 h-8 bg-logo-gold/15 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                <CheckCircleIcon className="h-4 w-4 text-logo-gold" />
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">
@@ -129,8 +129,8 @@ const CompanyStory = ({
             </div>
 
             <div className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                <CheckCircleIcon className="h-4 w-4 text-orange-600" />
+              <div className="w-8 h-8 bg-logo-gold/15 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                <CheckCircleIcon className="h-4 w-4 text-logo-gold" />
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">
@@ -146,7 +146,7 @@ const CompanyStory = ({
         </div>
 
         <div className={`${isRTL ? "lg:order-1" : ""}`}>
-          <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-8 text-white">
+          <div className="bg-gradient-to-br from-logo-gold to-amber-600 rounded-2xl p-8 text-white">
             <div className="text-center space-y-6">
               <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto">
                 <Building2Icon className="h-10 w-10" />
@@ -157,25 +157,25 @@ const CompanyStory = ({
               <div className="grid grid-cols-2 gap-6">
                 <div className="text-center">
                   <div className="text-3xl font-bold mb-1">15+</div>
-                  <div className="text-blue-100 text-sm">
+                  <div className="text-white/80 text-sm">
                     {t("story.stats.years") || "Years"}
                   </div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold mb-1">50K+</div>
-                  <div className="text-blue-100 text-sm">
+                  <div className="text-white/80 text-sm">
                     {t("story.stats.customers") || "Customers"}
                   </div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold mb-1">100K+</div>
-                  <div className="text-blue-100 text-sm">
+                  <div className="text-white/80 text-sm">
                     {t("story.stats.parts") || "Parts"}
                   </div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold mb-1">25+</div>
-                  <div className="text-blue-100 text-sm">
+                  <div className="text-white/80 text-sm">
                     {t("story.stats.countries") || "Countries"}
                   </div>
                 </div>
@@ -203,10 +203,10 @@ const MissionVision = ({ t }: { t: (key: string) => string }) => (
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <Card className="border-2 border-blue-100 hover:border-blue-200 transition-colors">
+        <Card className="border-2 border-logo-gold/30 hover:border-logo-gold/50 transition-colors">
           <CardHeader className="text-center">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <TargetIcon className="h-8 w-8 text-blue-600" />
+            <div className="w-16 h-16 bg-logo-gold/15 rounded-full flex items-center justify-center mx-auto mb-4">
+              <TargetIcon className="h-8 w-8 text-logo-gold" />
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900">
               {t("mission.mission.title") || "Our Mission"}
@@ -243,10 +243,10 @@ const MissionVision = ({ t }: { t: (key: string) => string }) => (
           </CardContent>
         </Card>
 
-        <Card className="border-2 border-purple-100 hover:border-purple-200 transition-colors">
+        <Card className="border-2 border-logo-gold/30 hover:border-logo-gold/50 transition-colors">
           <CardHeader className="text-center">
-            <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <LightbulbIcon className="h-8 w-8 text-purple-600" />
+            <div className="w-16 h-16 bg-logo-gold/15 rounded-full flex items-center justify-center mx-auto mb-4">
+              <LightbulbIcon className="h-8 w-8 text-logo-gold" />
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900">
               {t("mission.vision.title") || "Our Vision"}
@@ -305,7 +305,7 @@ const CompanyValues = ({ t }: { t: (key: string) => string }) => (
             desc:
               t("values.quality.desc") ||
               "We never compromise on quality. Every part we sell meets the highest industry standards.",
-            color: "bg-blue-100 text-blue-600",
+            color: "bg-logo-gold/15 text-logo-gold",
           },
           {
             icon: HeartIcon,
@@ -313,7 +313,7 @@ const CompanyValues = ({ t }: { t: (key: string) => string }) => (
             desc:
               t("values.customer.desc") ||
               "Our customers are at the heart of everything we do. Their satisfaction is our priority.",
-            color: "bg-red-100 text-red-600",
+            color: "bg-logo-gold/15 text-logo-gold",
           },
           {
             icon: LightbulbIcon,
@@ -321,7 +321,7 @@ const CompanyValues = ({ t }: { t: (key: string) => string }) => (
             desc:
               t("values.innovation.desc") ||
               "We continuously innovate to provide cutting-edge solutions and better service.",
-            color: "bg-yellow-100 text-yellow-600",
+            color: "bg-logo-gold/15 text-logo-gold",
           },
           {
             icon: UsersIcon,
@@ -329,7 +329,7 @@ const CompanyValues = ({ t }: { t: (key: string) => string }) => (
             desc:
               t("values.integrity.desc") ||
               "We conduct business with honesty, transparency, and ethical practices.",
-            color: "bg-green-100 text-green-600",
+            color: "bg-logo-gold/15 text-logo-gold",
           },
         ].map((value, index) => (
           <Card
@@ -399,7 +399,7 @@ const TeamSection = ({ t }: { t: (key: string) => string }) => (
             className="text-center hover:shadow-lg transition-shadow"
           >
             <CardContent className="p-6">
-              <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white text-2xl font-bold">
+              <div className="w-24 h-24 bg-gradient-to-br from-logo-gold to-amber-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white text-2xl font-bold">
                 {member.name
                   .split(" ")
                   .map((n) => n[0])
@@ -408,7 +408,7 @@ const TeamSection = ({ t }: { t: (key: string) => string }) => (
               <h3 className="text-xl font-bold text-gray-900 mb-1">
                 {member.name}
               </h3>
-              <p className="text-blue-600 font-medium mb-3">
+              <p className="text-logo-gold font-medium mb-3">
                 {member.position}
               </p>
               <p className="text-gray-600 mb-4">{member.desc}</p>
@@ -425,12 +425,12 @@ const TeamSection = ({ t }: { t: (key: string) => string }) => (
 
 // Contact CTA Component
 const ContactCTA = ({ t }: { t: (key: string) => string }) => (
-  <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
+  <div className="bg-gradient-to-r from-logo-gold to-amber-600 text-white py-16">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <h2 className="text-3xl md:text-4xl font-bold mb-4">
         {t("cta.title") || "Ready to Experience Fal Parts?"}
       </h2>
-      <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+      <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
         {t("cta.subtitle") ||
           "Join thousands of satisfied customers who trust us for their automotive needs"}
       </p>
@@ -438,14 +438,14 @@ const ContactCTA = ({ t }: { t: (key: string) => string }) => (
         <Button
           size="lg"
           variant="secondary"
-          className="bg-white text-blue-600 hover:bg-gray-100"
+          className="bg-white text-logo-black hover:bg-gray-100"
         >
           {t("cta.contact") || "Contact Us"}
         </Button>
         <Button
           size="lg"
           variant="outline"
-          className="border-white text-black hover:bg-white hover:text-blue-600"
+          className="border-white text-black hover:bg-white hover:text-logo-black"
         >
           {t("cta.learnMore") || "Learn More"}
         </Button>
@@ -484,17 +484,13 @@ export default function AboutPage() {
               isRTL ? "flex-row" : ""
             }`}
           >
-            {isRTL ? (
-              <>
-                <span>{t("backButton") || "Back"}</span>
-                <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
-              </>
-            ) : (
-              <>
-                <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
-                <span>{t("backButton") || "Back"}</span>
-              </>
-            )}
+            <>
+              <ArrowLeft
+                size={16}
+                className={isRTL ? "transform rotate-180" : ""}
+              />
+              <span>{t("backButton") || "Back"}</span>
+            </>
           </button>
           <span>/</span>
           <span className="text-gray-900">{t("about") || "About"}</span>
