@@ -29,6 +29,10 @@
     "search": "Search",
     "searchPlaceholder": "Search for products, parts..."
   },
+  "search": {
+    "searching": "Searching...",
+    "noResultsFor": "No products found for \"{{query}}\""
+  },
   "cart": {
     "cart": "Cart"
   },

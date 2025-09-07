@@ -6,6 +6,7 @@ import { useCompleteRegistrationMutation } from "@/services/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/hooks/useLocale";
+import { useTranslation } from "react-i18next";
 import { useRegistrationStatus } from "@/hooks/useRegistrationStatus";
 import { showSuccess, showError } from "@/lib/toast";
 import {
@@ -36,12 +37,13 @@ export default function CompleteRegistrationPage() {
   const router = useRouter();
   const { currentLocale } = useLocale();
   const { clearRegistrationIncomplete } = useRegistrationStatus();
+  const { t } = useTranslation("registration");
 
   // State for form fields - these must also be called before any early returns
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    type: "shop" as "shop" | "workshop", // shop or workshop
+    type: "" as "" | "shop" | "workshop", // require user to pick
     manager_name: "",
     address: "",
     city: "",
@@ -95,7 +97,7 @@ export default function CompleteRegistrationPage() {
 
       // Only show success message if we're actually on the complete-registration page
       if (window.location.pathname.includes("/complete-registration")) {
-        showSuccess("Registration already completed!");
+        showSuccess(t("toasts.registrationAlreadyCompleted"));
       }
 
       router.push(`/${currentLocale}`);
@@ -115,11 +117,11 @@ export default function CompleteRegistrationPage() {
     const maxSize = 5 * 1024 * 1024; // 5MB
 
     if (!allowedTypes.includes(file.type)) {
-      return `File must be of type: jpeg, png, jpg, gif, svg`;
+      return t("validation.fileType");
     }
 
     if (file.size > maxSize) {
-      return `File size must be less than 5MB`;
+      return t("validation.fileSize");
     }
 
     return null;
@@ -205,33 +207,37 @@ export default function CompleteRegistrationPage() {
     const newErrors: { [key: string]: string } = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
+      newErrors.name = t("validation.nameRequired");
     }
     if (!formData.manager_name.trim()) {
-      newErrors.manager_name = "Manager name is required";
+      newErrors.manager_name = t("validation.managerRequired");
     }
     if (!formData.address.trim()) {
-      newErrors.address = "Address is required";
+      newErrors.address = t("validation.addressRequired");
     }
     if (!formData.city.trim()) {
-      newErrors.city = "City is required";
+      newErrors.city = t("validation.cityRequired");
     }
     if (!formData.zip.trim()) {
-      newErrors.zip = "ZIP code is required";
+      newErrors.zip = t("validation.zipRequired");
     }
     if (!formData.state.trim()) {
-      newErrors.state = "State is required";
+      newErrors.state = t("validation.stateRequired");
     }
     if (!formData.tax_number.trim()) {
-      newErrors.tax_number = "Tax number is required";
+      newErrors.tax_number = t("validation.taxRequired");
+    }
+    // require type selection
+    if (!formData.type) {
+      newErrors.type = t("validation.typeRequired");
     }
 
     // Validate file uploads
     if (!commercialRegister) {
-      newErrors.commercial_register = "Commercial register is required";
+      newErrors.commercial_register = t("validation.crRequired");
     }
     if (!avatar) {
-      newErrors.avatar = "Avatar is required";
+      newErrors.avatar = t("validation.avatarRequired");
     }
 
     // If there are validation errors, set them and return
@@ -304,7 +310,7 @@ export default function CompleteRegistrationPage() {
         );
 
         clearRegistrationIncomplete();
-        showSuccess("Registration completed successfully!");
+        showSuccess(t("toasts.registrationCompleted"));
 
         // Get the previous page URL and redirect back
         const previousPage = storage.getPreviousPage();
@@ -319,7 +325,7 @@ export default function CompleteRegistrationPage() {
       }
     } catch (error: unknown) {
       console.error("Error completing registration:", error);
-      showError("Failed to complete registration. Please try again.");
+      showError(t("toasts.registrationFailed"));
     }
   };
 
@@ -366,16 +372,14 @@ export default function CompleteRegistrationPage() {
             <User className="text-logo-gold" size={32} />
           </div>
           <h1 className="text-3xl font-bold text-logo-black mb-2">
-            Complete Registration
+            {t("title")}
           </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Please complete your registration data to access all features
-          </p>
+          <p className="text-gray-600 max-w-2xl mx-auto">{t("description")}</p>
           {authData.user?.code && (
             <div className="mt-4 inline-flex items-center px-4 py-2 bg-logo-gold/10 text-logo-gold rounded-lg border border-logo-gold/20">
               <Hash className="w-4 h-4 mr-2" />
               <span className="text-sm font-medium">
-                User Code: {authData.user.code}
+                {t("userCode")}: {authData.user.code}
               </span>
             </div>
           )}
@@ -387,149 +391,156 @@ export default function CompleteRegistrationPage() {
             {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormInput
-                label="Name"
+                label={t("labels.name")}
                 type="text"
                 id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                placeholder="Enter your name"
+                placeholder={t("placeholders.name")}
                 required
                 icon={User}
                 error={errors.name}
               />
 
               <FormInput
-                label="Email"
+                label={t("labels.email")}
                 type="email"
                 id="email"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                placeholder="Enter your email (optional)"
+                placeholder={t("placeholders.email")}
                 // helpText="Leave empty if you don't have an email"
                 icon={Mail}
               />
 
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-neutral-700">
-                  Type <span className="text-accent">*</span>
+                  {t("labels.type")} <span className="text-accent">*</span>
                 </label>
                 <Select
-                  value={formData.type}
+                  value={formData.type || undefined}
                   onValueChange={(value: "shop" | "workshop") =>
                     setFormData((prev) => ({ ...prev, type: value }))
                   }
                 >
                   <SelectTrigger className="w-full h-12 px-3 py-3 border border-neutral-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
-                    <SelectValue placeholder="Select type" />
+                    <SelectValue placeholder={t("placeholders.selectType")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="shop">Shop</SelectItem>
-                    <SelectItem value="workshop">Workshop</SelectItem>
+                    <SelectItem value="shop">
+                      {t("typeOptions.shop")}
+                    </SelectItem>
+                    <SelectItem value="workshop">
+                      {t("typeOptions.workshop")}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
+                {errors.type && (
+                  <p className="text-sm text-red-500">{errors.type}</p>
+                )}
               </div>
 
               <FormInput
-                label="Manager Name"
+                label={t("labels.managerName")}
                 type="text"
                 id="manager_name"
                 name="manager_name"
                 value={formData.manager_name}
                 onChange={handleInputChange}
-                placeholder="Enter manager name"
+                placeholder={t("placeholders.managerName")}
                 required
                 icon={User}
                 error={errors.manager_name}
               />
 
               <FormInput
-                label="Address"
+                label={t("labels.address")}
                 type="text"
                 id="address"
                 name="address"
                 value={formData.address}
                 onChange={handleInputChange}
-                placeholder="Enter address"
+                placeholder={t("placeholders.address")}
                 required
                 icon={MapPin}
                 error={errors.address}
               />
 
               <FormInput
-                label="City"
+                label={t("labels.city")}
                 type="text"
                 id="city"
                 name="city"
                 value={formData.city}
                 onChange={handleInputChange}
-                placeholder="Enter city"
+                placeholder={t("placeholders.city")}
                 required
                 icon={Building}
                 error={errors.city}
               />
 
               <FormInput
-                label="ZIP Code"
+                label={t("labels.zip")}
                 type="text"
                 id="zip"
                 name="zip"
                 value={formData.zip}
                 onChange={handleInputChange}
-                placeholder="Enter ZIP code"
+                placeholder={t("placeholders.zip")}
                 required
                 icon={Hash}
                 error={errors.zip}
               />
 
               <FormInput
-                label="State"
+                label={t("labels.state")}
                 type="text"
                 id="state"
                 name="state"
                 value={formData.state}
                 onChange={handleInputChange}
-                placeholder="Enter state"
+                placeholder={t("placeholders.state")}
                 required
                 icon={MapPin}
                 error={errors.state}
               />
 
               <FormInput
-                label="Tax Number"
+                label={t("labels.taxNumber")}
                 type="text"
                 id="tax_number"
                 name="tax_number"
                 value={formData.tax_number}
                 onChange={handleInputChange}
-                placeholder="Enter tax number"
+                placeholder={t("placeholders.taxNumber")}
                 required
                 icon={FileText}
                 error={errors.tax_number}
               />
 
               <FormInput
-                label="Latitude (Static)"
+                label={t("labels.latitudeStatic")}
                 type="text"
                 id="latitude"
                 name="latitude"
                 value={formData.latitude}
                 disabled
-                placeholder="Static latitude value"
-                helpText="Fixed location: Cairo, Egypt"
+                placeholder={t("placeholders.latitude")}
+                helpText={t("help.fixedLocation")}
                 icon={MapPin}
               />
 
               <FormInput
-                label="Longitude (Static)"
+                label={t("labels.longitudeStatic")}
                 type="text"
                 id="longitude"
                 name="longitude"
                 value={formData.longitude}
                 disabled
-                placeholder="Static longitude value"
-                helpText="Fixed location: Cairo, Egypt"
+                placeholder={t("placeholders.longitude")}
+                helpText={t("help.fixedLocation")}
                 icon={MapPin}
               />
             </div>
@@ -540,7 +551,7 @@ export default function CompleteRegistrationPage() {
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-medium text-logo-black mb-2">
                   <FileText size={16} color="gray" />
-                  Commercial Register
+                  {t("labels.commercialRegister")}
                 </label>
 
                 <input
@@ -565,10 +576,10 @@ export default function CompleteRegistrationPage() {
                         size={24}
                       />
                       <p className="text-sm text-logo-black">
-                        Click to select Commercial Register
+                        {t("uploads.clickToSelectCR")}
                       </p>
                       <p className="text-xs text-logo-black/60">
-                        Image up to 5MB (jpeg, png, jpg, gif, svg)
+                        {t("help.uploadNote")}
                       </p>
                     </div>
                   </label>
@@ -578,7 +589,7 @@ export default function CompleteRegistrationPage() {
                   <div className="relative">
                     <Image
                       src={commercialRegisterPreview!}
-                      alt="Commercial Register Preview"
+                      alt={t("uploads.crPreviewAlt")}
                       className="w-full h-48 object-cover rounded-lg border-2 border-logo-gold"
                       width={400}
                       height={192}
@@ -607,7 +618,7 @@ export default function CompleteRegistrationPage() {
                 )}
 
                 <p className="text-xs text-gray-500">
-                  Upload commercial register document (jpeg, png, jpg, gif, svg)
+                  {t("uploads.uploadCRHelp")}
                 </p>
                 {errors.commercial_register && (
                   <p className="text-sm text-red-500">
@@ -620,7 +631,7 @@ export default function CompleteRegistrationPage() {
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-medium text-logo-black mb-2">
                   <User size={16} color="gray" />
-                  Avatar
+                  {t("labels.avatar")}
                 </label>
 
                 <input
@@ -642,10 +653,10 @@ export default function CompleteRegistrationPage() {
                     <div className="text-center">
                       <User className="mx-auto text-logo-gold mb-2" size={24} />
                       <p className="text-sm text-logo-black">
-                        Click to select Avatar
+                        {t("uploads.clickToSelectAvatar")}
                       </p>
                       <p className="text-xs text-logo-black/60">
-                        Image up to 5MB (jpeg, png, jpg, gif, svg)
+                        {t("help.uploadNote")}
                       </p>
                     </div>
                   </label>
@@ -655,7 +666,7 @@ export default function CompleteRegistrationPage() {
                   <div className="relative">
                     <Image
                       src={avatarPreview!}
-                      alt="Avatar Preview"
+                      alt={t("uploads.avatarPreviewAlt")}
                       className="w-full h-48 object-cover rounded-lg border-2 border-logo-gold"
                       width={400}
                       height={192}
@@ -684,7 +695,7 @@ export default function CompleteRegistrationPage() {
                 )}
 
                 <p className="text-xs text-gray-500">
-                  Upload your profile picture (jpeg, png, jpg, gif, svg)
+                  {t("uploads.uploadAvatarHelp")}
                 </p>
                 {errors.avatar && (
                   <p className="text-sm text-red-500">{errors.avatar}</p>
@@ -704,10 +715,10 @@ export default function CompleteRegistrationPage() {
                 {isLoading ? (
                   <>
                     <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Submitting...
+                    {t("actions.submitting")}
                   </>
                 ) : (
-                  "Submit Registration"
+                  t("actions.submit")
                 )}
               </Button>
             </div>

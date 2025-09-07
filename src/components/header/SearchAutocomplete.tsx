@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSearchProductsMutation } from "@/services/api/productsApi";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useLocale } from "@/hooks/useLocale";
+import { useTranslation } from "react-i18next";
 import { Search, X } from "lucide-react";
 import Image from "next/image";
 import type { Product } from "@/services/api/types";
@@ -32,6 +33,7 @@ export default function SearchAutocomplete({
   isDesktop = false,
   autoFocus = false,
 }: SearchAutocompleteProps) {
+  const { t } = useTranslation("header");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -248,7 +250,7 @@ export default function SearchAutocomplete({
           {isLoading ? (
             <div className="p-4 text-center text-neutral-500">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div>
-              <p className="mt-2 text-sm">Searching...</p>
+              <p className="mt-2 text-sm">{t("search.searching")}</p>
             </div>
           ) : suggestions.length > 0 ? (
             <div className="py-2">
@@ -291,7 +293,7 @@ export default function SearchAutocomplete({
           ) : debouncedSearchQuery.trim().length >= 2 ? (
             <div className="p-4 text-center text-neutral-500">
               <p className="text-sm">
-                No products found for &quot;{debouncedSearchQuery}&quot;
+                {t("search.noResultsFor", { query: debouncedSearchQuery })}
               </p>
             </div>
           ) : null}

@@ -1,0 +1,74 @@
+{
+  "title": "إكمال التسجيل",
+  "description": "يرجى إكمال بيانات التسجيل للوصول إلى جميع الميزات",
+  "userCode": "رمز المستخدم",
+  "basicInfo": "المعلومات الأساسية",
+  "labels": {
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "type": "النوع",
+    "managerName": "اسم المدير",
+    "address": "العنوان",
+    "city": "المدينة",
+    "zip": "الرمز البريدي",
+    "state": "الولاية",
+    "taxNumber": "الرقم الضريبي",
+    "latitudeStatic": "خط العرض (ثابت)",
+    "longitudeStatic": "خط الطول (ثابت)",
+    "commercialRegister": "السجل التجاري",
+    "avatar": "الصورة الشخصية"
+  },
+  "placeholders": {
+    "name": "أدخل اسمك",
+    "email": "أدخل بريدك الإلكتروني (اختياري)",
+    "managerName": "أدخل اسم المدير",
+    "address": "أدخل العنوان",
+    "city": "أدخل المدينة",
+    "zip": "أدخل الرمز البريدي",
+    "state": "أدخل الولاية",
+    "taxNumber": "أدخل الرقم الضريبي",
+    "latitude": "قيمة خط العرض الثابتة",
+    "longitude": "قيمة خط الطول الثابتة",
+    "selectType": "اختر النوع"
+  },
+  "help": {
+    "fixedLocation": "موقع ثابت: القاهرة، مصر",
+    "uploadNote": "صورة حتى 5 ميجابايت (jpeg, png, jpg, gif, svg)"
+  },
+  "typeOptions": {
+    "shop": "متجر",
+    "workshop": "ورشة"
+  },
+  "uploads": {
+    "clickToSelectCR": "اضغط لاختيار السجل التجاري",
+    "clickToSelectAvatar": "اضغط لاختيار الصورة الشخصية",
+    "crPreviewAlt": "معاينة السجل التجاري",
+    "avatarPreviewAlt": "معاينة الصورة الشخصية",
+    "removeFile": "إزالة الملف",
+    "uploadCRHelp": "قم برفع مستند السجل التجاري (jpeg, png, jpg, gif, svg)",
+    "uploadAvatarHelp": "قم برفع صورتك الشخصية (jpeg, png, jpg, gif, svg)"
+  },
+  "validation": {
+    "nameRequired": "الاسم مطلوب",
+    "managerRequired": "اسم المدير مطلوب",
+    "addressRequired": "العنوان مطلوب",
+    "cityRequired": "المدينة مطلوبة",
+    "zipRequired": "الرمز البريدي مطلوب",
+    "stateRequired": "الولاية مطلوبة",
+    "taxRequired": "الرقم الضريبي مطلوب",
+    "typeRequired": "يجب اختيار النوع",
+    "crRequired": "السجل التجاري مطلوب",
+    "avatarRequired": "الصورة الشخصية مطلوبة",
+    "fileType": "يجب أن يكون الملف من نوع: jpeg, png, jpg, gif, svg",
+    "fileSize": "يجب أن يكون حجم الملف أقل من 5 ميجابايت"
+  },
+  "actions": {
+    "submit": "إرسال التسجيل",
+    "submitting": "جاري الإرسال..."
+  },
+  "toasts": {
+    "registrationAlreadyCompleted": "تم إكمال التسجيل مسبقًا!",
+    "registrationCompleted": "تم إكمال التسجيل بنجاح!",
+    "registrationFailed": "فشل إكمال التسجيل. يرجى المحاولة مرة أخرى."
+  }
+}

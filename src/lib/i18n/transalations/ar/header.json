@@ -29,6 +29,10 @@
     "search": "بحث",
     "searchPlaceholder": "ابحث عن المنتجات والقطع..."
   },
+  "search": {
+    "searching": "جاري البحث...",
+    "noResultsFor": "لا توجد منتجات ل\"{{query}}\""
+  },
   "cart": {
     "cart": "السلة"
   },

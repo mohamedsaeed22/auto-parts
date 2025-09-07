@@ -109,7 +109,7 @@ export function PricingForm({
         ) : null}
       </>
       {/* User Type Selection - Only show when user is not authenticated */}
-      {!isAuthenticated && (
+      {!isAuthenticated || !isRegistrationComplete && (
         <div className="mb-6">
           <UserTypeSelector control={control} />
         </div>

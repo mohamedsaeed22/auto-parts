@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { User } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 // Import validation schemas and types
 import {
@@ -19,7 +20,7 @@ import {
 } from "@/lib/validations/authSchema";
 
 // Import separated auth components
-import { LoginForm, RegisterForm, OtpForm } from "./auth";
+import { LoginForm, OtpForm } from "./auth";
 import { useSendOtpMutation } from "@/services/hooks";
 import { showSuccess, showError } from "@/lib/toast";
 
@@ -29,6 +30,7 @@ interface LoginDialogProps {
 }
 
 export default function LoginDialog({ trigger, className }: LoginDialogProps) {
+  const { t } = useTranslation("auth");
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState<"login" | "register" | "otp">(
     "login"
@@ -52,30 +54,10 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
 
       setFormData(data);
       setCurrentStep("otp");
-      showSuccess("تم إرسال رمز التحقق بنجاح!");
+      showSuccess(t("success.codeSent"));
     } catch (error) {
       console.error("Error sending OTP:", error);
-      showError("حدث خطأ أثناء إرسال رمز التحقق");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const onRegisterSubmit = async (data: RegistrationFormData) => {
-    try {
-      setIsLoading(true);
-      console.log("Registration data:", data);
-
-      // Call the real API to send OTP for registration
-      const phoneNumber = data.phoneNumber || "";
-      await sendOtp({ phone: phoneNumber }).unwrap();
-
-      setFormData(data);
-      setCurrentStep("otp");
-      showSuccess("تم إرسال رمز التحقق بنجاح!");
-    } catch (error) {
-      console.error("Error submitting registration:", error);
-      showError("حدث خطأ أثناء إرسال رمز التحقق");
+      showError(t("errors.otpSendError"));
     } finally {
       setIsLoading(false);
     }
@@ -102,20 +84,16 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
     setCurrentStep("register");
   };
 
-  const switchToLogin = () => {
-    setCurrentStep("login");
-  };
-
   const getDialogTitle = () => {
     switch (currentStep) {
       case "login":
-        return "تسجيل الدخول";
+        return t("login.title");
       case "register":
-        return "إنشاء حساب جديد";
+        return t("registration.title");
       case "otp":
-        return "إدخال رمز التحقق";
+        return t("step2");
       default:
-        return "تسجيل الدخول";
+        return t("login.title");
     }
   };
 
@@ -154,14 +132,6 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
           />
         )}
 
-        {currentStep === "register" && (
-          <RegisterForm
-            onSubmit={onRegisterSubmit}
-            onSwitchToLogin={switchToLogin}
-            isLoading={isLoading || isSendingOtp}
-          />
-        )}
-
         {currentStep === "otp" && (
           <OtpForm
             onGoBack={
@@ -172,7 +142,7 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
             phoneNumber={getPhoneNumber()}
             onAuthSuccess={() => {
               // Handle successful authentication
-              showSuccess("تم تسجيل الدخول بنجاح!");
+              showSuccess(t("success.loginSuccess"));
               handleDialogChange(false);
 
               // Redirect to home page after successful login

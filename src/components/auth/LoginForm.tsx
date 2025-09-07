@@ -56,7 +56,7 @@ export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
           login(result.backendData.data);
 
           // Show success message
-          showSuccess("تم تسجيل الدخول بنجاح!");
+          showSuccess(t("success.loginSuccess"));
 
           // Redirect to home page after successful login
           router.push("/");
@@ -65,10 +65,10 @@ export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
         }
       } catch (error) {
         console.error("Google login error:", error);
-        showError("حدث خطأ أثناء تسجيل الدخول بجوجل");
+        showError(t("errors.googleLoginError"));
       }
     },
-    [login, router]
+    [login, router, t]
   );
 
   // Initialize Google OAuth
