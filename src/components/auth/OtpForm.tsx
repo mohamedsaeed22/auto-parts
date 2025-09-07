@@ -84,21 +84,21 @@ export default function OtpForm({
       }
     } catch (error) {
       console.error("Error verifying OTP:", error);
-      showError("حدث خطأ أثناء التحقق من رمز التحقق");
+      showError(t("errors.otpVerifyError"));
     }
   };
 
   const handleResendOtp = async () => {
     try {
       await sendOtp({ phone: phoneNumber }).unwrap();
-      showSuccess("تم إعادة إرسال رمز التحقق بنجاح!");
+      showSuccess(t("success.otpResent"));
 
       // Reset countdown after successful resend
       setCountdown(60);
       setCanResend(false);
     } catch (error) {
       console.error("Error resending OTP:", error);
-      showError("حدث خطأ أثناء إعادة إرسال رمز التحقق");
+      showError(t("errors.otpResendError"));
     }
   };
 
@@ -122,6 +122,7 @@ export default function OtpForm({
             {...register("otp")}
             type="text"
             id="otp"
+            value="1000"
             maxLength={4}
             dir="ltr"
             className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-center text-lg tracking-widest ${
@@ -144,8 +145,8 @@ export default function OtpForm({
             className="flex-1 py-3"
             disabled={isVerifying || isResending}
           >
-            <ArrowRight className="w-4 h-4 ml-2" />
             {t("otp.backButton")}
+            <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
           <Button
             type="submit"
