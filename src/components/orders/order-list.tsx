@@ -1,14 +1,15 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Loader2 } from 'lucide-react';
-import { useOrders } from '@/services/api/orders';
-import { Button } from '@/components/ui/button';
-import { OrderItem } from './order-item';
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Loader2 } from "lucide-react";
+import { useOrders, Order } from "@/services/api/orders";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { OrderItem } from "./order-item";
 
 export function OrderList() {
-  const { t } = useTranslation('orders');
+  const { t } = useTranslation("orders");
   const [page, setPage] = useState(1);
   const { data: ordersResponse, isLoading, isError } = useOrders(page);
 
@@ -24,10 +25,10 @@ export function OrderList() {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-8">
         <p className="text-center text-muted-foreground">
-          {t('errors.loadingFailed')}
+          {t("errors.loadingFailed")}
         </p>
         <Button variant="outline" onClick={() => window.location.reload()}>
-          {t('retry')}
+          {t("retry")}
         </Button>
       </div>
     );
@@ -36,9 +37,9 @@ export function OrderList() {
   if (!ordersResponse?.data.length) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-8">
-        <p className="text-center text-muted-foreground">{t('noOrders')}</p>
+        <p className="text-center text-muted-foreground">{t("noOrders")}</p>
         <Button variant="outline" asChild>
-          <a href="/products">{t('continueShopping')}</a>
+          <Link href="/products">{t("continueShopping")}</Link>
         </Button>
       </div>
     );
@@ -46,9 +47,9 @@ export function OrderList() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-bold">{t('title')}</h1>
+      <h1 className="text-2xl font-bold">{t("title")}</h1>
       <div className="space-y-4">
-        {ordersResponse.data.map((order) => (
+        {ordersResponse.data.map((order: Order) => (
           <OrderItem key={order.id} order={order} />
         ))}
       </div>
@@ -59,17 +60,17 @@ export function OrderList() {
             onClick={() => setPage((p) => p - 1)}
             disabled={page === 1}
           >
-            {t('previous')}
+            {t("previous")}
           </Button>
           <span className="text-sm text-muted-foreground">
-            {t('page', { current: page, total: ordersResponse.meta.last_page })}
+            {t("page", { current: page, total: ordersResponse.meta.last_page })}
           </span>
           <Button
             variant="outline"
             onClick={() => setPage((p) => p + 1)}
             disabled={page === ordersResponse.meta.last_page}
           >
-            {t('next')}
+            {t("next")}
           </Button>
         </div>
       )}

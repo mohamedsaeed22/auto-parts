@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useInfiniteQuery } from '@tanstack/react-query';
-import { axios } from '@/lib/axios';
-import { showError } from '@/lib/toast';
+import { useMutation, useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { axiosInstance as axios } from "@/lib/axios";
+import { showError } from "@/lib/toast";
 
 export interface Product {
   id: number;
@@ -39,20 +39,24 @@ interface ProductFilters {
   search?: string;
   min_price?: number;
   max_price?: number;
-  sort_by?: 'price_asc' | 'price_desc' | 'newest' | 'rating';
+  sort_by?: "price_asc" | "price_desc" | "newest" | "rating";
   per_page?: number;
 }
 
 const productsKeys = {
-  all: ['products'] as const,
-  lists: () => [...productsKeys.all, 'list'] as const,
-  list: (filters: ProductFilters) => [...productsKeys.lists(), filters] as const,
-  details: () => [...productsKeys.all, 'detail'] as const,
+  all: ["products"] as const,
+  lists: () => [...productsKeys.all, "list"] as const,
+  list: (filters: ProductFilters) =>
+    [...productsKeys.lists(), filters] as const,
+  details: () => [...productsKeys.all, "detail"] as const,
   detail: (id: number) => [...productsKeys.details(), id] as const,
 };
 
-const getProducts = async ({ pageParam = 1, ...filters }: ProductFilters & { pageParam?: number }) => {
-  const { data } = await axios.get<ProductsResponse>('/api/products', {
+const getProducts = async ({
+  pageParam = 1,
+  ...filters
+}: ProductFilters & { pageParam?: number }) => {
+  const { data } = await axios.get<ProductsResponse>("/api/products", {
     params: {
       ...filters,
       page: pageParam,
@@ -67,12 +71,16 @@ const getProduct = async (id: number) => {
 };
 
 const toggleFavorite = async (id: number) => {
-  const { data } = await axios.post<{ data: { is_favorite: boolean } }>(`/api/products/${id}/favorite`);
+  const { data } = await axios.post<{ data: { is_favorite: boolean } }>(
+    `/api/products/${id}/favorite`
+  );
   return data.data;
 };
 
 const toggleWishlist = async (id: number) => {
-  const { data } = await axios.post<{ data: { is_in_wishlist: boolean } }>(`/api/products/${id}/wishlist`);
+  const { data } = await axios.post<{ data: { is_in_wishlist: boolean } }>(
+    `/api/products/${id}/wishlist`
+  );
   return data.data;
 };
 
@@ -82,7 +90,9 @@ export function useProducts(filters: ProductFilters = {}) {
     queryFn: ({ pageParam }) => getProducts({ ...filters, pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) =>
-      lastPage.meta.current_page < lastPage.meta.last_page ? lastPage.meta.current_page + 1 : undefined,
+      lastPage.meta.current_page < lastPage.meta.last_page
+        ? lastPage.meta.current_page + 1
+        : undefined,
   });
 }
 
@@ -96,8 +106,11 @@ export function useProduct(id: number) {
 export function useToggleFavorite() {
   return useMutation({
     mutationFn: toggleFavorite,
-    onError: (error: any) => {
-      showError(error?.response?.data?.message || 'Failed to toggle favorite');
+    onError: (error: unknown) => {
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to toggle favorite"
+      );
     },
   });
 }
@@ -105,8 +118,11 @@ export function useToggleFavorite() {
 export function useToggleWishlist() {
   return useMutation({
     mutationFn: toggleWishlist,
-    onError: (error: any) => {
-      showError(error?.response?.data?.message || 'Failed to toggle wishlist');
+    onError: (error: unknown) => {
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to toggle wishlist"
+      );
     },
   });
 }

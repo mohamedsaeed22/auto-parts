@@ -6,27 +6,6 @@ import { useTranslation } from "react-i18next";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import {
   ArrowLeft,
-  Mail,
-  Phone,
-  MapPin,
-  Clock,
-  MessageSquare,
-  Send,
-  CheckCircle,
-  AlertCircle,
-  Building2,
-  Users,
-  Globe,
-  Truck,
-  Shield,
-  Star,
-  Award,
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
-  Youtube,
-  MessageCircle,
   Mail as MailIcon,
   Phone as PhoneIcon,
   MapPin as MapPinIcon,
@@ -35,13 +14,10 @@ import {
   Send as SendIcon,
   CheckCircle as CheckCircleIcon,
   AlertCircle as AlertCircleIcon,
-  Building2 as Building2Icon,
   Users as UsersIcon,
-  Globe as GlobeIcon,
   Truck as TruckIcon,
   Shield as ShieldIcon,
   Star as StarIcon,
-  Award as AwardIcon,
   Facebook as FacebookIcon,
   Twitter as TwitterIcon,
   Instagram as InstagramIcon,
@@ -67,16 +43,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 // Contact Form Component
-const ContactForm = ({
-  isRTL,
-  t,
-}: {
-  isRTL: boolean;
-  t: (key: string) => string;
-}) => {
+const ContactForm = ({ t }: { t: (key: string) => string }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -322,13 +291,7 @@ const ContactForm = ({
 };
 
 // Contact Info Component
-const ContactInfo = ({
-  isRTL,
-  t,
-}: {
-  isRTL: boolean;
-  t: (key: string) => string;
-}) => (
+const ContactInfo = ({ t }: { t: (key: string) => string }) => (
   <div className="space-y-6">
     <div className="text-center mb-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -449,13 +412,7 @@ const ContactInfo = ({
 );
 
 // Company Stats Component
-const CompanyStats = ({
-  isRTL,
-  t,
-}: {
-  isRTL: boolean;
-  t: (key: string) => string;
-}) => (
+const CompanyStats = ({ t }: { t: (key: string) => string }) => (
   <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
@@ -514,13 +471,7 @@ const CompanyStats = ({
 );
 
 // Social Media Component
-const SocialMedia = ({
-  isRTL,
-  t,
-}: {
-  isRTL: boolean;
-  t: (key: string) => string;
-}) => (
+const SocialMedia = ({ t }: { t: (key: string) => string }) => (
   <div className="bg-gray-50 py-16">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
@@ -662,16 +613,16 @@ export default function ContactPage() {
 
         {/* Contact Form and Info Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-          <ContactForm isRTL={isRTL} t={t} />
-          <ContactInfo isRTL={isRTL} t={t} />
+          <ContactForm t={t} />
+          <ContactInfo t={t} />
         </div>
 
         {/* Company Stats */}
-        <CompanyStats isRTL={isRTL} t={t} />
+        <CompanyStats t={t} />
       </div>
 
       {/* Social Media */}
-      <SocialMedia isRTL={isRTL} t={t} />
+      <SocialMedia t={t} />
     </div>
   );
 }

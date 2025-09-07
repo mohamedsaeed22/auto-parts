@@ -8,6 +8,7 @@ import ProductCard from "../product/ProductCard";
 import { useTranslation } from "react-i18next";
 import { SectionProduct } from "@/services/api/sectionsApi";
 import { AlertCircle } from "lucide-react";
+import { Product } from "@/services/api/types";
 
 interface SectionSwiperProps {
   section: {
@@ -88,7 +89,7 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
         <div className="relative mt-60">
           {/* Custom previous button */}
           <button
-            className={`cursor-pointer absolute top-1/2 z-20 -translate-y-1/2 bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white transition-colors ${
+            className={`cursor-pointer absolute top-42 z-20 -translate-y-1/2 bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white transition-colors ${
               isRTL ? "right-4" : "left-4"
             }`}
             onClick={() => swiperRef.current?.slidePrev()}
@@ -142,6 +143,7 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
             autoplay={{
               delay: 3000,
               disableOnInteraction: false,
+              pauseOnMouseEnter: true,
             }}
             pagination={{
               clickable: true,
@@ -149,22 +151,14 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
             }}
             modules={[Autoplay, Pagination, Navigation]}
             className="section-swiper"
+            style={{ pointerEvents: "auto" }}
             dir={isRTL ? "rtl" : "ltr"}
           >
             {products.map((product: SectionProduct) => (
               <SwiperSlide key={product.id}>
                 <div>
                   <ProductCard
-                    product={{
-                      id: product.id,
-                      name: product.name,
-                      price: parseFloat(product.price),
-                      final_price: product.final_price,
-                      primary_image: product.primary_image,
-                      description: product.hover_text,
-                      product_identifier: product.product_identifier,
-                      is_active: product.is_active,
-                    }}
+                    product={product as Product}
                   />
                 </div>
               </SwiperSlide>
@@ -173,7 +167,7 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
 
           {/* Custom next button */}
           <button
-            className={`cursor-pointer absolute top-1/2 z-20 -translate-y-1/2 bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white transition-colors ${
+            className={`cursor-pointer absolute top-42 z-20 -translate-y-1/2 bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white transition-colors ${
               isRTL ? "left-4" : "right-4"
             }`}
             onClick={() => swiperRef.current?.slideNext()}

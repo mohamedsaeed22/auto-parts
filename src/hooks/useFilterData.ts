@@ -17,38 +17,40 @@ export const useFilterData = () => {
   const categories = useMemo(() => {
     if (!categoriesResponse?.data?.categories) return [];
 
-    return categoriesResponse.data.categories.map((category: any) => ({
-      id: category.id,
-      name: category.name,
-      level: category.level,
-      parent: category.parent,
-      children: category.children || [],
-    })) as Category[];
+    return categoriesResponse.data.categories.map(
+      (category: {
+        id: number;
+        name: string;
+        level: number;
+        parent?: { id: number; name: string };
+      }) => ({
+        id: category.id,
+        name: category.name,
+        level: category.level,
+        parent: category.parent,
+      })
+    ) as Category[];
   }, [categoriesResponse]);
 
   // Process brands data
   const brands = useMemo(() => {
     if (!brandsResponse?.data?.items) return [];
 
-    return brandsResponse.data.items.map((brand: any) => ({
-      id: brand.id,
-      name: brand.name,
-      image: brand.image,
-    })) as Brand[];
+    return brandsResponse.data.items.map(
+      (brand: { id: number; name: string; image?: string }) => ({
+        id: brand.id,
+        name: brand.name,
+        image: brand.image,
+      })
+    ) as Brand[];
   }, [brandsResponse]);
 
   // Get all subcategories (for advanced filtering)
   const allSubcategories = useMemo(() => {
-    const subcategories: Category[] = [];
-
-    categories.forEach((category) => {
-      if (category.children) {
-        subcategories.push(...category.children);
-      }
-    });
-
-    return subcategories;
-  }, [categories]);
+    // Since Category interface doesn't have children, return empty array for now
+    // This can be updated when the API provides hierarchical category data
+    return [] as Category[];
+  }, []);
 
   return {
     categories,

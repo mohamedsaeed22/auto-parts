@@ -20,7 +20,7 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
   const router = useRouter();
   const [logoutApi, { isLoading: isLoggingOut }] = useLogoutMutation();
   const { user, logout } = useAuth();
-
+  console.log("user", user);
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -53,6 +53,9 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
 
       // Redirect to home page
       router.push("/");
+      // clear all local storage
+      localStorage.clear();
+      
     } catch (error) {
       console.error("Error logging out:", error);
       showError("حدث خطأ أثناء تسجيل الخروج");

@@ -5,13 +5,10 @@ import type {
   Product,
   ProductDetailsResponse,
   ProductsRequest,
-  Category,
-  CategoriesRequest,
   Brand,
   BrandsRequest,
   Banner,
   Offer,
-  Section,
 } from "./types";
 
 export const productsApi = api.injectEndpoints({
@@ -52,6 +49,23 @@ export const productsApi = api.injectEndpoints({
     getProduct: builder.query<ApiResponse<ProductDetailsResponse>, number>({
       query: (id) => `/products/${id}`,
       providesTags: (result, error, id) => [{ type: "Products", id }],
+    }),
+
+    // Search Products for Autocomplete
+    searchProducts: builder.mutation<
+      ApiResponse<PaginatedResponse<Product>>,
+      { name: string }
+    >({
+      query: (params) => {
+        const formData = new FormData();
+        formData.append("name", params.name);
+
+        return {
+          url: "/products",
+          method: "POST",
+          body: formData,
+        };
+      },
     }),
 
     // Brands
@@ -97,6 +111,7 @@ export const productsApi = api.injectEndpoints({
 export const {
   useGetProductsMutation,
   useGetProductQuery,
+  useSearchProductsMutation,
   useGetBrandsQuery,
   useGetBannersQuery,
   useGetOffersQuery,

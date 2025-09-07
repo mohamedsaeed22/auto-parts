@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import Image from "next/image";
 import { useTranslation } from "react-i18next";
 import { useGetBrandsQuery } from "@/services/hooks";
@@ -133,7 +133,7 @@ const Brands = () => {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 md:gap-8">
-          {brands.map((brand: Brand) => (
+          {brands.slice(0, 8).map((brand: Brand) => (
             <div
               key={brand.id}
               className="group relative flex flex-col items-center"

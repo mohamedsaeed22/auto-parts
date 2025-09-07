@@ -7,14 +7,13 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Menu } from "lucide-react";
 import HeaderLogo from "./HeaderLogo";
-import HeaderSearch from "./HeaderSearch";
+import SearchAutocomplete from "./SearchAutocomplete";
 import HeaderLanguageDropdown from "./HeaderLanguageDropdown";
 import HeaderActions from "./HeaderActions";
 import HeaderNavigation from "./HeaderNavigation";
 import HeaderMobileMenu from "./HeaderMobileMenu";
 import HeaderBottomNavigation from "./HeaderBottomNavigation";
 import { useRouter } from "next/navigation";
-import { i18nConfig } from "@/lib/i18n";
 import { useLocale } from "@/hooks/useLocale";
 import { useHeaderSearch } from "@/hooks/useHeaderSearch";
 
@@ -27,9 +26,12 @@ export default function Header() {
   const { t } = useTranslation("header");
   const { currentLocale, changeLocale, isRTL } = useLocale();
   const router = useRouter();
-  const currentPathname = usePathname();
-  const { searchQuery, updateSearchQuery, clearSearchQuery } =
-    useHeaderSearch();
+  const {
+    searchQuery,
+    updateSearchQuery,
+    submitSearchQuery,
+    clearSearchQuery,
+  } = useHeaderSearch();
 
   const navLinks = [
     { href: "/about", label: t("navigation.about") },
@@ -41,9 +43,10 @@ export default function Header() {
     { href: "/userPricing", label: t("navigation.userPricing") },
   ];
 
-  const onLanguageChange = () => {
-    const newLocale = currentLocale === "en" ? "ar" : "en";
-    changeLocale(newLocale);
+  const onLanguageChange = (newLocale: string) => {
+    if (newLocale !== currentLocale) {
+      changeLocale(newLocale);
+    }
   };
 
   const handleCartClick = () => {
@@ -57,13 +60,16 @@ export default function Header() {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
+      // Submit search query (updates URL)
+      submitSearchQuery(searchQuery.trim());
       // Navigate to products page with search parameter
       const locale = currentLocale;
       router.push(
         `/${locale}/products?search=${encodeURIComponent(searchQuery.trim())}`
       );
       setIsSearchOpen(false);
-      clearSearchQuery();
+      // Clear the local search query after navigation
+      updateSearchQuery("");
     }
   };
 
@@ -99,11 +105,12 @@ export default function Header() {
 
             {/* Desktop Search Bar - Centered */}
             <div className="hidden lg:flex items-center flex-1 max-w-2xl mx-8">
-              <HeaderSearch
+              <SearchAutocomplete
                 searchQuery={searchQuery}
                 setSearchQuery={updateSearchQuery}
                 onSubmit={handleSearchSubmit}
                 onClear={clearSearch}
+                onSuggestionSelect={submitSearchQuery}
                 isRTL={isRTL}
                 placeholder={
                   t("actions.searchPlaceholder") || "Search products..."
@@ -183,11 +190,12 @@ export default function Header() {
               }}
               className="lg:hidden bg-background border-t border-border px-4 py-3"
             >
-              <HeaderSearch
+              <SearchAutocomplete
                 searchQuery={searchQuery}
                 setSearchQuery={updateSearchQuery}
                 onSubmit={handleSearchSubmit}
                 onClear={clearSearch}
+                onSuggestionSelect={submitSearchQuery}
                 isRTL={isRTL}
                 placeholder={
                   t("actions.searchPlaceholder") || "Search products..."

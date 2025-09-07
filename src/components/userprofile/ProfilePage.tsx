@@ -72,7 +72,7 @@ export default function ProfilePage() {
   const [changeLanguage] = useChangeLanguageMutation();
   const { changeLocale } = useLocale();
 
-  const profile = profileResponse?.data?.user as ProfileData | undefined;
+  const profile = profileResponse?.data as ProfileData | undefined;
 
   // Update form data when profile is loaded
   useEffect(() => {
@@ -128,6 +128,7 @@ export default function ProfilePage() {
     try {
       const updateData = {
         ...formData,
+        email: formData.email || undefined,
         avatar: selectedAvatar || undefined,
         commercial_register: selectedCommercialRegister || undefined,
       };
@@ -152,7 +153,7 @@ export default function ProfilePage() {
       setIsEditing(false);
 
       showSuccess("Profile updated successfully!");
-    } catch (error) {
+    } catch {
       showError("Failed to update profile. Please try again.");
     } finally {
       setIsLoading(false);
@@ -179,7 +180,7 @@ export default function ProfilePage() {
       await changeLanguage({ locale }).unwrap();
 
       showSuccess("Language changed successfully!");
-    } catch (error) {
+    } catch {
       showError("Failed to change language. Please try again.");
     }
   };

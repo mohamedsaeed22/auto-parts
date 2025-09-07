@@ -10,7 +10,7 @@ import type { RegistrationIncompleteErrorResponse } from "@/services/api/baseApi
 
 interface ApiError {
   status?: number;
-  data?: any;
+  data?: unknown;
 }
 
 interface UseApiErrorHandlerOptions {
@@ -59,7 +59,9 @@ export function useApiErrorHandler(
 
     // Handle 403 Registration Incomplete
     if (apiError.status === 403) {
-      const errorData = apiError.data;
+      const errorData = apiError.data as {
+        data?: { is_registration_complete?: boolean };
+      };
 
       if (errorData?.data?.is_registration_complete === false) {
         if (showToasts) {
@@ -87,15 +89,21 @@ export function useApiErrorHandler(
   ]);
 
   // Helper function to check if error is registration incomplete
-  const isRegistrationIncompleteError = (err: any): boolean => {
+  const isRegistrationIncompleteError = (err: unknown): boolean => {
+    const apiError = err as {
+      status?: number;
+      data?: { data?: { is_registration_complete?: boolean } };
+    };
     return (
-      err?.status === 403 && err?.data?.data?.is_registration_complete === false
+      apiError?.status === 403 &&
+      apiError?.data?.data?.is_registration_complete === false
     );
   };
 
   // Helper function to check if error is auth error
-  const isAuthError = (err: any): boolean => {
-    return err?.status === 401;
+  const isAuthError = (err: unknown): boolean => {
+    const apiError = err as { status?: number };
+    return apiError?.status === 401;
   };
 
   return {
@@ -114,7 +122,7 @@ export function useMutationErrorHandler(
   const router = useRouter();
   const { t } = useTranslation("auth");
 
-  const handleError = (error: any) => {
+  const handleError = (error: unknown) => {
     const {
       showToasts = true,
       autoRedirect = true,
@@ -124,8 +132,13 @@ export function useMutationErrorHandler(
 
     if (!error) return;
 
+    const apiError = error as {
+      status?: number;
+      data?: { data?: { is_registration_complete?: boolean } };
+    };
+
     // Handle 401 Unauthorized
-    if (error.status === 401) {
+    if (apiError.status === 401) {
       if (showToasts) {
         showError(
           t("errors.sessionExpired") ||
@@ -143,8 +156,8 @@ export function useMutationErrorHandler(
 
     // Handle 403 Registration Incomplete
     if (
-      error.status === 403 &&
-      error.data?.data?.is_registration_complete === false
+      apiError.status === 403 &&
+      apiError.data?.data?.is_registration_complete === false
     ) {
       if (showToasts) {
         showError(

@@ -15,7 +15,7 @@ interface Category {
   id: number;
   name: string;
   image: string;
-  children?: Category[];
+  level: number;
 }
 
 const CategoryCard = ({
@@ -82,17 +82,6 @@ const CategoryCard = ({
               />
             </div>
 
-            {/* Subcategories Count */}
-            {category.children && category.children.length > 0 && (
-              <div className="flex items-center gap-2 text-sm text-neutral-600">
-                <Package size={16} className="text-primary" />
-                <span>
-                  {category.children.length}{" "}
-                  {t("categories.subcategories") || "subcategories"}
-                </span>
-              </div>
-            )}
-
             {/* Features */}
             <div className="flex items-center gap-4 mt-3 text-xs text-neutral-500">
               <div className="flex items-center gap-1">
@@ -123,10 +112,10 @@ const CategoriesSection = () => {
   } = useGetCategoriesQuery({
     level: 1,
     perPage: 6,
-    with_children: true,
+    with_children: false,
   });
 
-  const categories = categoriesResponse?.data?.categories || [];
+  const categories = (categoriesResponse?.data?.categories || []).slice(0, 6);
 
   const handleCategoryClick = (categoryId: number) => {
     router.push(`/categories/${categoryId}`);

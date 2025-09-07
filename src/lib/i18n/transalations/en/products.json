@@ -19,6 +19,9 @@
   "productsCount": "products available",
   "noProducts": "No products found",
   "noProductsDesc": "Try adjusting your search or filter criteria.",
+  "searchResults": "Search Results",
+  "searchingFor": "Searching for",
+  "clearSearch": "Clear Search",
   "previous": "Previous",
   "next": "Next",
   "hero": {

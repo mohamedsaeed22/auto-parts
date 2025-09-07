@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useGetProductsMutation } from "@/services/hooks";
@@ -19,7 +18,6 @@ import {
   List,
   Award,
   Shield,
-  CheckCircle,
   Globe,
   ChevronDown,
   ChevronUp,
@@ -28,13 +26,13 @@ import {
   Building2,
   FolderOpen,
   Eye,
-  Search,
-  X,
+  Search as SearchIcon,
+  X as CloseIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Breadcrumb, Pagination } from "@/components/ui";
 import ProductCard from "@/components/product/ProductCard";
-import type { FilterState, Category } from "@/lib/types/filters";
+import type { FilterState } from "@/lib/types/filters";
 
 // Loading Component
 const LoadingSpinner = () => (
@@ -69,16 +67,10 @@ const ErrorMessage = ({
 );
 
 // Hero Section Component
-const HeroSection = ({
-  isRTL,
-  t,
-}: {
-  isRTL: boolean;
-  t: (key: string) => string;
-}) => (
+const HeroSection = ({ t }: { t: (key: string) => string }) => (
   <div className="bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 text-white py-16">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className={`text-center ${isRTL ? "text-right" : "text-left"}`}>
+      <div className="text-center">
         <div className="flex items-center justify-center gap-3 mb-4">
           <Package className="h-8 w-8 text-green-200" />
           <h1 className="text-4xl md:text-5xl font-bold">
@@ -111,20 +103,11 @@ const HeroSection = ({
 
 // Filter Sidebar Component
 const FilterSidebar = ({
-  isRTL,
   t,
-  filters,
-  onFilterChange,
   isOpen,
   onToggle,
 }: {
-  isRTL: boolean;
   t: (key: string) => string;
-  filters: FilterState;
-  onFilterChange: (
-    key: keyof FilterState,
-    value: string | number | null
-  ) => void;
   isOpen: boolean;
   onToggle: () => void;
 }) => (
@@ -173,7 +156,7 @@ const FilterPanel = ({
   <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
     <div
       className={`flex items-center justify-between mb-4 ${
-        isRTL ? "flex-row-reverse" : ""
+        isRTL ? "flex-row" : ""
       }`}
     >
       <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
@@ -204,7 +187,7 @@ const FilterPanel = ({
           </div>
         ) : (
           <div className="space-y-2 max-h-40 overflow-y-auto">
-            {categories.map((category: any) => (
+            {categories.map((category) => (
               <label
                 key={category.id}
                 className="flex items-center gap-2 cursor-pointer"
@@ -217,22 +200,10 @@ const FilterPanel = ({
                   onChange={(e) => {
                     const value = e.target.checked ? category.id : null;
                     onFilterChange("category_id", value);
-                  }}
+                  }}//
                   className="border-gray-300 text-green-600 focus:ring-green-500"
                 />
-                <span className="text-sm text-gray-700">
-                  {category.parent ? (
-                    <span>
-                      <span className="text-gray-500">
-                        {category.parent.name}
-                      </span>
-                      <span className="mx-1">→</span>
-                      <span>{category.name}</span>
-                    </span>
-                  ) : (
-                    category.name
-                  )}
-                </span>
+                <span className="text-sm text-gray-700">{category.name}</span>
               </label>
             ))}
             {/* Clear category selection */}
@@ -366,63 +337,12 @@ const FilterPanel = ({
   </div>
 );
 
-// Search Bar Component
-const ProductsSearchBar = ({
-  isRTL,
-  t,
-  searchQuery,
-  onSearchChange,
-  onSearchSubmit,
-  onClear,
-}: {
-  isRTL: boolean;
-  t: (key: string) => string;
-  searchQuery: string;
-  onSearchChange: (query: string) => void;
-  onSearchSubmit: (e: React.FormEvent) => void;
-  onClear: () => void;
-}) => (
-  <div className="flex-1 max-w-md">
-    <form onSubmit={onSearchSubmit} className="relative">
-      <div className="relative">
-        <Search
-          className={`absolute top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 ${
-            isRTL ? "right-3" : "left-3"
-          }`}
-        />
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
-          placeholder={t("searchPlaceholder") || "Search products..."}
-          className={`w-full py-2 px-10 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors ${
-            isRTL ? "text-right" : "text-left"
-          }`}
-        />
-        {searchQuery && (
-          <button
-            type="button"
-            onClick={onClear}
-            className={`absolute top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 ${
-              isRTL ? "left-3" : "right-3"
-            }`}
-          >
-            <X className="w-4 h-4" />
-          </button>
-        )}
-      </div>
-    </form>
-  </div>
-);
-
 // View Mode Toggle Component
 const ViewModeToggle = ({
-  isRTL,
   t,
   viewMode,
   onViewModeChange,
 }: {
-  isRTL: boolean;
   t: (key: string) => string;
   viewMode: "grid" | "list";
   onViewModeChange: (mode: "grid" | "list") => void;
@@ -510,9 +430,6 @@ export default function ProductsPage() {
     value: string | number | null
   ) => {
     switch (key) {
-      case "search":
-        updateSearch(value as string);
-        break;
       case "category_id":
         updateCategory(value as number | null);
         break;
@@ -542,10 +459,6 @@ export default function ProductsPage() {
     clearFilters();
   };
 
-  const handleSortChange = (value: string) => {
-    updateSortBy(value);
-  };
-
   // Handle error state
   if (error) {
     let errorMessage = "Failed to load products";
@@ -557,7 +470,7 @@ export default function ProductsPage() {
 
     return (
       <div dir={direction}>
-        <HeroSection isRTL={isRTL} t={t} />
+        <HeroSection t={t} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <ErrorMessage
             message={errorMessage}
@@ -571,7 +484,7 @@ export default function ProductsPage() {
   return (
     <div dir={direction}>
       {/* Hero Section */}
-      <HeroSection isRTL={isRTL} t={t} />
+      <HeroSection t={t} />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -598,10 +511,7 @@ export default function ProductsPage() {
           {/* Filters Sidebar */}
           <div className="lg:col-span-1">
             <FilterSidebar
-              isRTL={isRTL}
               t={t}
-              filters={filters}
-              onFilterChange={handleFilterChange}
               isOpen={isFilterOpen}
               onToggle={() => setIsFilterOpen(!isFilterOpen)}
             />
@@ -639,62 +549,71 @@ export default function ProductsPage() {
 
           {/* Products Section */}
           <div className="lg:col-span-3">
-            {/* Search and View Controls */}
+            {/* View Controls */}
             <div
-              className={`flex items-center justify-between mb-6 ${
-                isRTL ? "flex-row-reverse" : ""
+              className={`flex items-center justify-end mb-6 ${
+                isRTL ? "flex-row" : ""
               }`}
             >
-              <ProductsSearchBar
-                isRTL={isRTL}
-                t={t}
-                searchQuery={filters.search}
-                onSearchChange={updateSearch}
-                onSearchSubmit={(e) => {
-                  e.preventDefault();
-                  // Search is already handled by updateSearch
-                }}
-                onClear={() => updateSearch("")}
-              />
               <ViewModeToggle
-                isRTL={isRTL}
                 t={t}
                 viewMode={filters.view_mode}
                 onViewModeChange={updateViewMode}
               />
             </div>
 
+            {/* Search Results Header */}
+            {filters.search && (
+              <div className={`mb-6 ${isRTL ? "text-right" : "text-left"}`}>
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <div
+                    className={`flex items-center justify-between ${
+                      isRTL ? "flex-row" : ""
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <SearchIcon className="h-5 w-5 text-green-600" />
+                      <div>
+                        <h3 className="text-lg font-semibold text-green-800">
+                          {t("searchResults") || "Search Results"}
+                        </h3>
+                        <p className="text-green-700">
+                          {t("searchingFor") || "Searching for"}:
+                          <span className="font-medium ml-1">
+                            &quot;{filters.search}&quot;
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => updateSearch("")}
+                      variant="outline"
+                      size="sm"
+                      className="text-green-700 border-green-300 hover:bg-green-100 hover:border-green-400"
+                    >
+                      <CloseIcon className="h-4 w-4 mr-2" />
+                      {t("clearSearch") || "Clear Search"}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Products Count */}
             <div className={`mb-6 ${isRTL ? "text-right" : "text-left"}`}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                    {filters.search
-                      ? `${t("searchResults") || "Search Results"} for "${
-                          filters.search
-                        }"`
-                      : t("foundProducts") || "Found Products"}
-                  </h2>
-                  <p className="text-gray-600">
-                    {pagination
-                      ? `${pagination.total} products available`
-                      : `${products.length} products available`}
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  {t("foundProducts") || "Found Products"}
+                </h2>
+                <p className="text-gray-600">
+                  {pagination
+                    ? `${pagination.total} products available`
+                    : `${products.length} products available`}
+                </p>
+                {hasActiveFilters && (
+                  <p className="text-sm text-green-600 mt-1">
+                    {t("filtersApplied") || "Filters applied"}
                   </p>
-                  {hasActiveFilters && (
-                    <p className="text-sm text-green-600 mt-1">
-                      {t("filtersApplied") || "Filters applied"}
-                    </p>
-                  )}
-                </div>
-                {filters.search && (
-                  <Button
-                    onClick={() => updateSearch("")}
-                    variant="outline"
-                    size="sm"
-                    className="text-gray-600 hover:text-gray-900"
-                  >
-                    {t("clearSearch") || "Clear Search"}
-                  </Button>
                 )}
               </div>
             </div>
@@ -769,6 +688,8 @@ export default function ProductsPage() {
                       discount_amount: string | null;
                       images: string[];
                       hover_text: string;
+                      in_favourites?: boolean | null;
+                      in_wishlist?: boolean | null;
                     }) => (
                       <ProductCard
                         key={product.id}
@@ -791,6 +712,8 @@ export default function ProductsPage() {
                           discount_amount: product.discount_amount,
                           images: product.images,
                           hover_text: product.hover_text,
+                          in_favourites: product.in_favourites || false,
+                          in_wishlist: product.in_wishlist || false,
                         }}
                       />
                     )
@@ -809,7 +732,7 @@ export default function ProductsPage() {
                       showInfo={true}
                       showFirstLast={true}
                       maxVisiblePages={5}
-                      size="md"
+                      size="lg"
                       variant="outline"
                     />
                   </div>

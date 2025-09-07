@@ -19,6 +19,9 @@
   "productsCount": "منتج متاح",
   "noProducts": "لم يتم العثور على منتجات",
   "noProductsDesc": "حاول تعديل معايير البحث أو الفلتر.",
+  "searchResults": "نتائج البحث",
+  "searchingFor": "البحث عن",
+  "clearSearch": "مسح البحث",
   "previous": "السابق",
   "next": "التالي",
   "hero": {
@@ -28,7 +31,7 @@
     "feature2": "قطع مميزة",
     "feature3": "علامات تجارية عالمية"
   },
-  "categories": "الفئات",
+  "categories": "الاقسام",
   "brands": "العلامات التجارية",
   "priceRange": "نطاق السعر",
   "minPrice": "الحد الأدنى",

@@ -3,10 +3,10 @@
 import React, { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import Image from "next/image";
 import { useGetCategoriesQuery } from "@/services/api/categoriesApi";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import {
-  ArrowLeft,
   Package,
   Search,
   ChevronRight,
@@ -22,8 +22,21 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+
+// Types
+interface Subcategory {
+  id: number;
+  name: string;
+  image: string;
+}
+
+interface Category {
+  id: number;
+  name: string;
+  image: string;
+  children?: Subcategory[];
+}
 
 // Subcategory Card Component
 const SubcategoryCard = ({
@@ -33,7 +46,7 @@ const SubcategoryCard = ({
   onSubcategoryClick,
   viewMode,
 }: {
-  subcategory: any;
+  subcategory: Subcategory;
   isRTL: boolean;
   t: (key: string) => string;
   onSubcategoryClick: (subcategoryId: number) => void;
@@ -60,17 +73,18 @@ const SubcategoryCard = ({
   if (viewMode === "list") {
     return (
       <Card
-        className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-2 hover:border-blue-200"
+        className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/30"
         onClick={() => onSubcategoryClick(subcategory.id)}
       >
         <CardContent className="p-6">
           <div className="flex items-center gap-6">
             {/* Subcategory Image */}
             <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg">
-              <img
+              <Image
                 src={imageError ? fallbackImage : subcategory.image}
                 alt={subcategory.name}
-                className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300"
+                fill
+                className="object-cover group-hover:scale-110 transition-transform duration-300"
                 onError={handleImageError}
               />
             </div>
@@ -78,12 +92,12 @@ const SubcategoryCard = ({
             {/* Subcategory Info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors truncate">
+                <h3 className="text-lg font-semibold text-gray-900 group-hover:text-primary transition-colors truncate">
                   {subcategory.name}
                 </h3>
                 <ChevronRight
                   size={18}
-                  className={`text-gray-400 group-hover:text-blue-600 transition-colors flex-shrink-0 ${
+                  className={`text-gray-400 group-hover:text-primary transition-colors flex-shrink-0 ${
                     isRTL ? "rotate-180" : ""
                   }`}
                 />
@@ -93,15 +107,15 @@ const SubcategoryCard = ({
               <div className="flex items-center gap-4 text-xs text-gray-500">
                 <div className="flex items-center gap-1">
                   <Star size={12} className="text-yellow-500" />
-                  <span>{t("quality") || "Quality"}</span>
+                  <span>{t("categoryFeatures.quality")}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Zap size={12} className="text-blue-500" />
-                  <span>{t("fast") || "Fast"}</span>
+                  <Zap size={12} className="text-primary" />
+                  <span>{t("categoryFeatures.fast")}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Shield size={12} className="text-green-500" />
-                  <span>{t("reliable") || "Reliable"}</span>
+                  <span>{t("categoryFeatures.reliable")}</span>
                 </div>
               </div>
             </div>
@@ -113,17 +127,18 @@ const SubcategoryCard = ({
 
   return (
     <Card
-      className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-2 hover:border-blue-200 overflow-hidden"
+      className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/30 overflow-hidden"
       onClick={() => onSubcategoryClick(subcategory.id)}
     >
       <CardContent className="p-0">
         <div className="relative">
           {/* Subcategory Image */}
           <div className="relative h-40 w-full overflow-hidden">
-            <img
+            <Image
               src={imageError ? fallbackImage : subcategory.image}
               alt={subcategory.name}
-              className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300"
+              fill
+              className="object-cover group-hover:scale-110 transition-transform duration-300"
               onError={handleImageError}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -132,12 +147,12 @@ const SubcategoryCard = ({
           {/* Subcategory Info */}
           <div className="p-4">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-base font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+              <h3 className="text-base font-semibold text-gray-900 group-hover:text-primary transition-colors">
                 {subcategory.name}
               </h3>
               <ChevronRight
                 size={18}
-                className={`text-gray-400 group-hover:text-blue-600 transition-colors ${
+                className={`text-gray-400 group-hover:text-primary transition-colors ${
                   isRTL ? "rotate-180" : ""
                 }`}
               />
@@ -147,11 +162,11 @@ const SubcategoryCard = ({
             <div className="flex items-center gap-3 text-xs text-gray-500">
               <div className="flex items-center gap-1">
                 <Star size={12} className="text-yellow-500" />
-                <span>{t("quality") || "Quality"}</span>
+                <span>{t("categoryFeatures.quality")}</span>
               </div>
               <div className="flex items-center gap-1">
-                <Zap size={12} className="text-blue-500" />
-                <span>{t("fast") || "Fast"}</span>
+                <Zap size={12} className="text-primary" />
+                <span>{t("categoryFeatures.fast")}</span>
               </div>
             </div>
           </div>
@@ -163,14 +178,12 @@ const SubcategoryCard = ({
 
 // Search and View Mode Component
 const SearchAndViewMode = ({
-  isRTL,
   t,
   searchQuery,
   onSearchChange,
   viewMode,
   onViewModeChange,
 }: {
-  isRTL: boolean;
   t: (key: string) => string;
   searchQuery: string;
   onSearchChange: (value: string) => void;
@@ -185,7 +198,7 @@ const SearchAndViewMode = ({
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
             type="text"
-            placeholder={t("search.placeholder") || "Search subcategories..."}
+            placeholder={t("search.placeholder")}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-10"
@@ -194,15 +207,13 @@ const SearchAndViewMode = ({
 
         {/* View Mode Toggle */}
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-600">
-            {t("viewMode") || "View Mode"}:
-          </span>
+          <span className="text-sm text-gray-600">{t("viewMode")}:</span>
           <div className="flex border border-gray-300 rounded-lg overflow-hidden">
             <button
               onClick={() => onViewModeChange("grid")}
               className={`p-2 ${
                 viewMode === "grid"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-white"
                   : "bg-white text-gray-600 hover:bg-gray-50"
               }`}
             >
@@ -212,7 +223,7 @@ const SearchAndViewMode = ({
               onClick={() => onViewModeChange("list")}
               className={`p-2 ${
                 viewMode === "list"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-white"
                   : "bg-white text-gray-600 hover:bg-gray-50"
               }`}
             >
@@ -226,11 +237,11 @@ const SearchAndViewMode = ({
 );
 
 // Loading Spinner Component
-const LoadingSpinner = () => (
+const LoadingSpinner = ({ t }: { t: (key: string) => string }) => (
   <div className="flex items-center justify-center py-12">
     <div className="flex items-center gap-2">
-      <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
-      <span className="text-gray-600">Loading category...</span>
+      <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      <span className="text-gray-600">{t("loading")}</span>
     </div>
   </div>
 );
@@ -246,14 +257,11 @@ const ErrorMessage = ({
   <div className="text-center py-12">
     <AlertCircle className="mx-auto h-16 w-16 text-red-400 mb-4" />
     <h3 className="text-lg font-semibold text-gray-900 mb-2">
-      {t("error.title") || "Unable to Load Category"}
+      {t("error.title")}
     </h3>
-    <p className="text-gray-600 mb-6">
-      {t("error.message") ||
-        "There was an error loading the category. Please try again."}
-    </p>
-    <Button onClick={onRetry} className="bg-blue-600 hover:bg-blue-700">
-      {t("error.retry") || "Try Again"}
+    <p className="text-gray-600 mb-6">{t("error.message")}</p>
+    <Button onClick={onRetry} className="bg-primary hover:bg-primary/90">
+      {t("error.retry")}
     </Button>
   </div>
 );
@@ -262,7 +270,7 @@ export default function CategoryPage() {
   const router = useRouter();
   const params = useParams();
   const categoryId = parseInt(params.id as string);
-  const { t, i18n } = useTranslation("categories");
+  const { t, i18n } = useTranslation("categoryDetail");
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const isRTL = i18n.language === "ar";
@@ -282,17 +290,14 @@ export default function CategoryPage() {
   });
 
   const categories = categoriesResponse?.data?.categories || [];
-  const category = categories.find((cat: any) => cat.id === categoryId);
+  const category = categories.find((cat: Category) => cat.id === categoryId);
   const subcategories = category?.children || [];
 
   // Filter subcategories based on search query
-  const filteredSubcategories = subcategories.filter((subcategory: any) =>
-    subcategory.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredSubcategories = subcategories.filter(
+    (subcategory: Subcategory) =>
+      subcategory.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const handleGoBack = () => {
-    router.back();
-  };
 
   const handleGoHome = () => {
     router.push("/");
@@ -311,7 +316,7 @@ export default function CategoryPage() {
   };
 
   if (isLoading) {
-    return <LoadingSpinner />;
+    return <LoadingSpinner t={t} />;
   }
 
   if (error) {
@@ -323,13 +328,10 @@ export default function CategoryPage() {
       <div className="text-center py-12">
         <Package className="mx-auto h-16 w-16 text-gray-300 mb-4" />
         <h3 className="text-lg font-semibold text-gray-600 mb-2">
-          {t("categoryNotFound") || "Category Not Found"}
+          {t("categoryNotFound")}
         </h3>
-        <p className="text-gray-500 mb-6">
-          {t("categoryNotFoundDesc") ||
-            "The category you're looking for doesn't exist."}
-        </p>
-        <Button onClick={handleGoHome}>{t("goHome") || "Go Home"}</Button>
+        <p className="text-gray-500 mb-6">{t("categoryNotFoundDesc")}</p>
+        <Button onClick={handleGoHome}>{t("goHome")}</Button>
       </div>
     );
   }
@@ -337,30 +339,27 @@ export default function CategoryPage() {
   return (
     <div dir={direction}>
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 text-white py-16">
+      <div className="bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
               {category.name}
             </h1>
-            <p className="text-lg text-blue-100 mb-6">
-              {t("subtitle") ||
-                "Explore subcategories and find the perfect parts"}
-            </p>
-            <div className="flex items-center justify-center gap-6 text-blue-100">
+            <p className="text-lg text-white/80 mb-6">{t("hero.subtitle")}</p>
+            <div className="flex items-center justify-center gap-6 text-white/70">
               <div className="flex items-center gap-2">
                 <Package className="h-5 w-5" />
                 <span>
-                  {subcategories.length} {t("subcategories") || "subcategories"}
+                  {subcategories.length} {t("subcategories")}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <Shield className="h-5 w-5" />
-                <span>{t("quality") || "Quality"}</span>
+                <span>{t("categoryFeatures.quality")}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="h-5 w-5" />
-                <span>{t("fast") || "Fast"}</span>
+                <span>{t("categoryFeatures.fast")}</span>
               </div>
             </div>
           </div>
@@ -368,7 +367,6 @@ export default function CategoryPage() {
       </div>
 
       <SearchAndViewMode
-        isRTL={isRTL}
         t={t}
         searchQuery={searchQuery}
         onSearchChange={handleSearchChange}
@@ -391,13 +389,13 @@ export default function CategoryPage() {
           >
             {isRTL ? (
               <>
-                <span>{t("home") || "Home"}</span>
+                <span>{t("home")}</span>
                 <Home size={16} />
               </>
             ) : (
               <>
                 <Home size={16} />
-                <span>{t("home") || "Home"}</span>
+                <span>{t("home")}</span>
               </>
             )}
           </button>
@@ -406,7 +404,7 @@ export default function CategoryPage() {
             onClick={() => router.push("/categories")}
             className="hover:text-gray-700 transition-colors"
           >
-            {t("categories") || "Categories"}
+            {t("categories")}
           </button>
           <span>/</span>
           <span className="text-gray-900">{category.name}</span>
@@ -415,11 +413,10 @@ export default function CategoryPage() {
         {/* Subcategories Count */}
         <div className={`mb-8 ${isRTL ? "text-right" : "text-left"}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            {t("foundSubcategories") || "Found Subcategories"}
+            {t("foundSubcategories")}
           </h2>
           <p className="text-gray-600">
-            {t("subcategoriesCount") ||
-              `${filteredSubcategories.length} subcategories available`}
+            {t("subcategoriesCount", { count: filteredSubcategories.length })}
           </p>
         </div>
 
@@ -428,19 +425,14 @@ export default function CategoryPage() {
           <div className="text-center py-12">
             <Package className="mx-auto h-16 w-16 text-gray-300 mb-4" />
             <h3 className="text-lg font-semibold text-gray-600 mb-2">
-              {searchQuery
-                ? t("noResults") || "No subcategories found"
-                : t("noSubcategories") || "No subcategories available"}
+              {searchQuery ? t("noResults") : t("noSubcategories")}
             </h3>
             <p className="text-gray-500 mb-6">
-              {searchQuery
-                ? t("noResultsDesc") || "Try adjusting your search terms."
-                : t("noSubcategoriesDesc") ||
-                  "Check back later for new subcategories."}
+              {searchQuery ? t("noResultsDesc") : t("noSubcategoriesDesc")}
             </p>
             {searchQuery && (
               <Button onClick={() => setSearchQuery("")} variant="outline">
-                {t("clearSearch") || "Clear Search"}
+                {t("clearSearch")}
               </Button>
             )}
           </div>
@@ -452,7 +444,7 @@ export default function CategoryPage() {
                 : "space-y-4"
             }
           >
-            {filteredSubcategories.map((subcategory: any) => (
+            {filteredSubcategories.map((subcategory: Subcategory) => (
               <SubcategoryCard
                 key={subcategory.id}
                 subcategory={subcategory}

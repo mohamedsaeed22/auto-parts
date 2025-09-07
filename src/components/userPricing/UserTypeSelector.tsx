@@ -18,7 +18,7 @@ export function UserTypeSelector<T extends { userType: "workshop" | "store" }>({
       // @ts-expect-error - userType is not a valid path
       name="userType"
       control={control}
-      render={({ field, fieldState }) => (
+      render={({ field }) => (
         <div>
           <label
             className={`block text-sm font-medium text-gray-700 mb-3 ${
@@ -50,18 +50,9 @@ export function UserTypeSelector<T extends { userType: "workshop" | "store" }>({
               }`}
             >
               <Store className="mx-auto mb-2" size={24} />
-              <span className="font-medium">{t("form.userType.store")}</span>
+              <span className="font-medium">{t("form.userType.shop")}</span>
             </button>
           </div>
-          {fieldState.error && (
-            <p
-              className={`text-red-500 text-sm mt-1 ${
-                isRTL ? "text-right" : "text-left"
-              }`}
-            >
-              {fieldState.error.message}
-            </p>
-          )}
         </div>
       )}
     />

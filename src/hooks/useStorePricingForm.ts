@@ -1,0 +1,218 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useLocale } from "@/hooks/useLocale";
+import { storage } from "@/lib/storage";
+import { showError } from "@/lib/toast";
+import { useTranslation } from "react-i18next";
+import {
+  shopPricingSchema,
+  type ShopPricingFormData,
+  shopDefaultValues,
+} from "@/lib/validations/shopPricingSchema";
+
+// Helper type for saved form data
+export type SavedShopFormData = ShopPricingFormData & {
+  id: string;
+  partImagePreview: string | null;
+  requestImagePreview: string | null;
+  formImagePreview: string | null;
+  submittedAt: Date;
+};
+
+export function useShopPricingForm() {
+  const [savedForms, setSavedForms] = useState<SavedShopFormData[]>([]);
+  const [partImagePreview, setPartImagePreview] = useState<string | null>(null);
+  const [requestImagePreview, setRequestImagePreview] = useState<string | null>(
+    null
+  );
+  const [formImagePreview, setFormImagePreview] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSendingToBackend, setIsSendingToBackend] = useState(false);
+
+  const router = useRouter();
+  const { currentLocale } = useLocale();
+  const { t } = useTranslation("userPricing");
+
+  const form = useForm<ShopPricingFormData>({
+    resolver: zodResolver(shopPricingSchema),
+    defaultValues: shopDefaultValues,
+    mode: "onChange",
+  });
+
+  // Check authentication status
+  const checkAuthStatus = () => {
+    const isAuthenticated = storage.isAuthenticated();
+    const isRegistrationComplete = storage.isRegistrationComplete();
+
+    return { isAuthenticated, isRegistrationComplete };
+  };
+
+  // Handle authentication check for form submission
+  const handleAuthCheck = () => {
+    const { isAuthenticated, isRegistrationComplete } = checkAuthStatus();
+
+    if (!isAuthenticated) {
+      showError(
+        t("auth.loginRequired") || "Please login to access this feature"
+      );
+      return false;
+    }
+
+    if (!isRegistrationComplete) {
+      showError(
+        t("auth.completeRegistrationRequired") ||
+          "Please complete your registration to access this feature"
+      );
+      // Navigate to complete registration page
+      router.push(`/${currentLocale}/complete-registration`);
+      return false;
+    }
+
+    return true;
+  };
+
+  const createFilePreview = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target?.result as string);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleImageChange = async (
+    file: File | undefined,
+    field: "partImage" | "requestImage" | "formImage"
+  ) => {
+    if (!file) {
+      // Clear image and preview
+      form.setValue(field, undefined);
+      if (field === "partImage") setPartImagePreview(null);
+      if (field === "requestImage") setRequestImagePreview(null);
+      if (field === "formImage") setFormImagePreview(null);
+      return;
+    }
+
+    // Set the file in form
+    form.setValue(field, file);
+
+    // Create and set preview
+    try {
+      const preview = await createFilePreview(file);
+      if (field === "partImage") setPartImagePreview(preview);
+      if (field === "requestImage") setRequestImagePreview(preview);
+      if (field === "formImage") setFormImagePreview(preview);
+    } catch (error) {
+      console.error("Error creating file preview:", error);
+    }
+  };
+
+  const removeImage = (field: "partImage" | "requestImage" | "formImage") => {
+    form.setValue(field, undefined);
+    if (field === "partImage") setPartImagePreview(null);
+    if (field === "requestImage") setRequestImagePreview(null);
+    if (field === "formImage") setFormImagePreview(null);
+  };
+
+  const onSubmit = async (data: ShopPricingFormData) => {
+    // Check authentication before allowing form submission
+    if (!handleAuthCheck()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Create saved form data
+      const newSavedForm: SavedShopFormData = {
+        ...data,
+        id: Date.now().toString(),
+        partImagePreview,
+        requestImagePreview,
+        formImagePreview,
+        submittedAt: new Date(),
+      };
+
+      setSavedForms((prev) => [...prev, newSavedForm]);
+
+      // Reset form and previews
+      form.reset(shopDefaultValues);
+      setPartImagePreview(null);
+      setRequestImagePreview(null);
+      setFormImagePreview(null);
+    } catch (error) {
+      console.error("Error saving form:", error);
+      alert("حدث خطأ أثناء حفظ البيانات");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const deleteSavedForm = (id: string) => {
+    setSavedForms((prev) => prev.filter((form) => form.id !== id));
+  };
+
+  const sendAllToBackend = async () => {
+    // Check authentication before allowing backend operation
+    if (!handleAuthCheck()) {
+      return;
+    }
+
+    if (savedForms.length === 0) {
+      alert("لا توجد بيانات لإرسالها!");
+      return;
+    }
+
+    setIsSendingToBackend(true);
+
+    try {
+      // Prepare data for backend
+      const dataToSend = savedForms.map((form) => ({
+        id: form.id,
+        userType: form.userType,
+        userCode: form.userCode,
+        partName: form.partName,
+        hasPartImage: form.partImage !== undefined,
+        partImageName: form.partImage?.name || null,
+        hasRequestImage: form.requestImage !== undefined,
+        requestImageName: form.requestImage?.name || null,
+        hasFormImage: form.formImage !== undefined,
+        formImageName: form.formImage?.name || null,
+        quantity: form.quantity,
+        chassisNumber: form.chassisNumber,
+        submittedAt: form.submittedAt.toISOString(),
+      }));
+
+      console.log("Sending shop data to backend:", dataToSend);
+      console.log("Full saved shop forms with images:", savedForms);
+
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Clear saved forms after successful submission
+      setSavedForms([]);
+      alert("تم إرسال جميع البيانات بنجاح!");
+    } catch (error) {
+      console.error("Error sending data:", error);
+      alert("حدث خطأ أثناء الإرسال. حاول مرة أخرى.");
+    } finally {
+      setIsSendingToBackend(false);
+    }
+  };
+
+  return {
+    form,
+    savedForms,
+    partImagePreview,
+    requestImagePreview,
+    formImagePreview,
+    isSubmitting,
+    isSendingToBackend,
+    handleImageChange,
+    removeImage,
+    onSubmit,
+    deleteSavedForm,
+    sendAllToBackend,
+  };
+}

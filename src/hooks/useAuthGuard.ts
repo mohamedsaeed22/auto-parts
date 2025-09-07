@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { storage } from "@/lib/storage";
-import { showError, showSuccess } from "@/lib/toast";
+import { showError } from "@/lib/toast";
 
 export interface AuthGuardOptions {
   requireAuth?: boolean;
@@ -19,7 +19,7 @@ export interface AuthStatus {
   isAuthenticated: boolean;
   isRegistrationComplete: boolean;
   isLoading: boolean;
-  user: any;
+  user: unknown;
 }
 
 const DEFAULT_OPTIONS: AuthGuardOptions = {

@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Loader2, Star } from 'lucide-react';
-import { useReviews } from '@/services/api/reviews';
-import { Button } from '@/components/ui/button';
-import { ReviewItem } from './review-item';
-import { ReviewForm } from './review-form';
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Loader2, Star } from "lucide-react";
+import { useReviews, Review } from "@/services/api/reviews";
+import { Button } from "@/components/ui/button";
+import { ReviewItem } from "./review-item";
+import { ReviewForm } from "./review-form";
 
 interface ReviewListProps {
   productId: number;
@@ -14,13 +14,14 @@ interface ReviewListProps {
 }
 
 export function ReviewList({ productId, userId }: ReviewListProps) {
-  const { t } = useTranslation('reviews');
+  const { t } = useTranslation("reviews");
   const [page, setPage] = useState(1);
   const [isWritingReview, setIsWritingReview] = useState(false);
-  const { data: reviewsResponse, isLoading, isError } = useReviews(
-    productId,
-    page
-  );
+  const {
+    data: reviewsResponse,
+    isLoading,
+    isError,
+  } = useReviews(productId, page);
 
   if (isLoading) {
     return (
@@ -34,10 +35,10 @@ export function ReviewList({ productId, userId }: ReviewListProps) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-8">
         <p className="text-center text-muted-foreground">
-          {t('errors.loadingFailed')}
+          {t("errors.loadingFailed")}
         </p>
         <Button variant="outline" onClick={() => window.location.reload()}>
-          {t('retry')}
+          {t("retry")}
         </Button>
       </div>
     );
@@ -55,12 +56,17 @@ export function ReviewList({ productId, userId }: ReviewListProps) {
               {Array.from({ length: 5 }).map((_, index) => (
                 <Star
                   key={index}
-                  className={`h-4 w-4 ${index < Math.round(reviewsResponse?.meta.average_rating || 0) ? 'fill-current' : 'fill-none text-muted-foreground'}`}
+                  className={`h-4 w-4 ${
+                    index <
+                    Math.round(reviewsResponse?.meta.average_rating || 0)
+                      ? "fill-current"
+                      : "fill-none text-muted-foreground"
+                  }`}
                 />
               ))}
             </div>
             <span className="text-sm text-muted-foreground">
-              ({reviewsResponse?.meta.total} {t('reviews')})
+              ({reviewsResponse?.meta.total} {t("reviews")})
             </span>
           </div>
           <div className="space-y-1">
@@ -79,11 +85,15 @@ export function ReviewList({ productId, userId }: ReviewListProps) {
                     <div
                       className="h-full rounded-full bg-primary"
                       style={{
-                        width: `${(count / reviewsResponse?.meta.total) * 100}%`,
+                        width: `${
+                          ((count as number) /
+                            (reviewsResponse?.meta.total || 1)) *
+                          100
+                        }%`,
                       }}
                     />
                   </div>
-                  <span className="w-12 text-right">{count}</span>
+                  <span className="w-12 text-right">{count as number}</span>
                 </div>
               ))}
           </div>
@@ -93,7 +103,7 @@ export function ReviewList({ productId, userId }: ReviewListProps) {
           onClick={() => setIsWritingReview(true)}
           disabled={isWritingReview}
         >
-          {t('writeReview')}
+          {t("writeReview")}
         </Button>
       </div>
       {isWritingReview && (
@@ -106,10 +116,10 @@ export function ReviewList({ productId, userId }: ReviewListProps) {
         </div>
       )}
       {!reviewsResponse?.data.length ? (
-        <p className="text-center text-muted-foreground">{t('noReviews')}</p>
+        <p className="text-center text-muted-foreground">{t("noReviews")}</p>
       ) : (
         <div className="divide-y rounded-lg border">
-          {reviewsResponse.data.map((review) => (
+          {reviewsResponse.data.map((review: Review) => (
             <ReviewItem
               key={review.id}
               review={review}
@@ -118,27 +128,27 @@ export function ReviewList({ productId, userId }: ReviewListProps) {
           ))}
         </div>
       )}
-      {reviewsResponse?.meta.last_page > 1 && (
+      {(reviewsResponse?.meta.last_page || 0) > 1 && (
         <div className="flex items-center justify-center gap-2">
           <Button
             variant="outline"
             onClick={() => setPage((p) => p - 1)}
             disabled={page === 1}
           >
-            {t('previous')}
+            {t("previous")}
           </Button>
           <span className="text-sm text-muted-foreground">
-            {t('page', {
+            {t("page", {
               current: page,
-              total: reviewsResponse.meta.last_page,
+              total: reviewsResponse?.meta.last_page || 1,
             })}
           </span>
           <Button
             variant="outline"
             onClick={() => setPage((p) => p + 1)}
-            disabled={page === reviewsResponse.meta.last_page}
+            disabled={page === (reviewsResponse?.meta.last_page || 1)}
           >
-            {t('next')}
+            {t("next")}
           </Button>
         </div>
       )}

@@ -48,6 +48,9 @@ export const storage = {
       const parsed = stored ? JSON.parse(stored) : null;
       console.log("Parsed stored data:", parsed);
       console.log("Stored token:", parsed?.token);
+
+      // Dispatch custom event to notify components of auth data change
+      window.dispatchEvent(new Event("authChange"));
     } catch (error) {
       console.error("Error storing auth data:", error);
     }
@@ -73,12 +76,16 @@ export const storage = {
       };
 
       // Remove the duplicate field from root level
-      delete (updatedAuth as any).is_registration_complete;
+      delete (updatedAuth as unknown as Record<string, unknown>)
+        .is_registration_complete;
 
       console.log("Updating user data:", userData);
       console.log("Updated auth data:", updatedAuth);
 
       localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(updatedAuth));
+
+      // Dispatch custom event to notify components of auth data change
+      window.dispatchEvent(new Event("authChange"));
     } catch (error) {
       console.error("Error updating user data:", error);
     }
@@ -99,6 +106,9 @@ export const storage = {
   removeAuth: (): void => {
     try {
       localStorage.removeItem(AUTH_STORAGE_KEY);
+
+      // Dispatch custom event to notify components of auth data change
+      window.dispatchEvent(new Event("authChange"));
     } catch (error) {
       console.error("Error removing auth data:", error);
     }

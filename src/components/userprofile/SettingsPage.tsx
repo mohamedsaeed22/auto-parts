@@ -3,8 +3,6 @@
 import { useState } from "react";
 import {
   Lock,
-  Bell,
-  Globe,
   Shield,
   Save,
   X,
@@ -13,7 +11,6 @@ import {
   Mail,
   Phone,
   MapPin,
-  Globe2,
   Facebook,
   Twitter,
   Instagram,
@@ -71,8 +68,11 @@ export default function SettingsPage() {
   const [formData, setFormData] = useState(userSettings);
 
   // API Queries
-  const { data: companySettingsResponse, isLoading: isLoadingCompany } =
-    useGetCompanySettingsQuery();
+  const {
+    data: companySettingsResponse,
+    isLoading: isLoadingCompany,
+    refetch: refetchCompany,
+  } = useGetCompanySettingsQuery();
   const { data: legalPagesResponse, isLoading: isLoadingLegal } =
     useGetLegalPagesQuery();
   const { data: termsResponse, isLoading: isLoadingTerms } =
@@ -131,12 +131,7 @@ export default function SettingsPage() {
     return (
       <div className="space-y-8">
         {/* Company Information */}
-        <div
-          className={`bg-white ${
-            isRTL ? "text-right" : "text-left"
-          }`}
-        >
-         
+        <div className={`bg-white ${isRTL ? "text-right" : "text-left"}`}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex items-center gap-3 p-4 border rounded-lg">
               <Building size={20} className="text-gray-500" />

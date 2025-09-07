@@ -1,11 +1,15 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useInView } from 'react-intersection-observer';
-import { Product, ProductsResponse, useProducts } from '@/services/api/products';
-import { ProductCard } from './product-card';
-import { Grid } from '@/components/ui/grid';
-import { Loader2 } from 'lucide-react';
+import { useEffect } from "react";
+import { useInView } from "react-intersection-observer";
+import {
+  Product,
+  ProductsResponse,
+  useProducts,
+} from "@/services/api/products";
+import { ProductCard } from "@/components/ui/product-card";
+import { Grid } from "@/components/ui/grid";
+import { Loader2 } from "lucide-react";
 
 interface ProductListProps {
   filters?: {
@@ -14,21 +18,20 @@ interface ProductListProps {
     search?: string;
     min_price?: number;
     max_price?: number;
-    sort_by?: 'price_asc' | 'price_desc' | 'newest' | 'rating';
+    sort_by?: "price_asc" | "price_desc" | "newest" | "rating";
   };
   onAddToCart?: (product: Product) => void;
   className?: string;
 }
 
-export function ProductList({ filters = {}, onAddToCart, className }: ProductListProps) {
+export function ProductList({
+  filters = {},
+  onAddToCart,
+  className,
+}: ProductListProps) {
   const { ref, inView } = useInView();
-  const {
-    data,
-    isLoading,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-  } = useProducts(filters);
+  const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useProducts(filters);
 
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
@@ -44,7 +47,8 @@ export function ProductList({ filters = {}, onAddToCart, className }: ProductLis
     );
   }
 
-  const products = data?.pages.flatMap((page: ProductsResponse) => page.data) ?? [];
+  const products =
+    data?.pages.flatMap((page: ProductsResponse) => page.data) ?? [];
 
   if (products.length === 0) {
     return (
@@ -56,8 +60,8 @@ export function ProductList({ filters = {}, onAddToCart, className }: ProductLis
 
   return (
     <div className={className}>
-      <Grid cols={1} responsive={{ sm: 2, md: 3, lg: 4 }} gap={4}>
-        {products.map((product) => (
+      <Grid cols={4} responsive={true} gap={4}>
+        {products.map((product: Product) => (
           <ProductCard
             key={product.id}
             product={product}
@@ -65,13 +69,8 @@ export function ProductList({ filters = {}, onAddToCart, className }: ProductLis
           />
         ))}
       </Grid>
-      <div
-        ref={ref}
-        className="mt-8 flex items-center justify-center py-4"
-      >
-        {isFetchingNextPage && (
-          <Loader2 className="h-6 w-6 animate-spin" />
-        )}
+      <div ref={ref} className="mt-8 flex items-center justify-center py-4">
+        {isFetchingNextPage && <Loader2 className="h-6 w-6 animate-spin" />}
       </div>
     </div>
   );

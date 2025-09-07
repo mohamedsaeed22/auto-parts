@@ -9,4 +9,4 @@ export type I18NConfig = {
 };
 
 // Filter types
-export * from "../filters";
+export * from "./filters";

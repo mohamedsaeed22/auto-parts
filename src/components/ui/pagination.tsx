@@ -2,6 +2,7 @@ import * as React from "react";
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 export interface PaginationProps {
   currentPage: number;
@@ -13,7 +14,7 @@ export interface PaginationProps {
   showInfo?: boolean;
   showFirstLast?: boolean;
   maxVisiblePages?: number;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "default" | "lg";
   variant?: "default" | "outline" | "ghost";
 }
 
@@ -22,18 +23,22 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
     {
       currentPage,
       totalPages,
-      totalItems,
-      itemsPerPage,
       onPageChange,
       className,
-      showInfo = true,
+      // showInfo = true,
       showFirstLast = true,
       maxVisiblePages = 5,
-      size = "md",
+      size = "default",
       variant = "outline",
     },
     ref
   ) => {
+    const { i18n } = useTranslation("product");
+    const isRTL = i18n.language === "ar";
+
+    // RTL-aware chevron icons
+    const ChevronPrev = isRTL ? ChevronRight : ChevronLeft;
+    const ChevronNext = isRTL ? ChevronLeft : ChevronRight;
     const getVisiblePages = () => {
       const pages: (number | string)[] = [];
       const halfVisible = Math.floor(maxVisiblePages / 2);
@@ -46,7 +51,7 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
       } else {
         // Calculate start and end of visible pages
         let start = Math.max(1, currentPage - halfVisible);
-        let end = Math.min(totalPages, start + maxVisiblePages - 1);
+        const end = Math.min(totalPages, start + maxVisiblePages - 1);
 
         // Adjust start if we're near the end
         if (end - start + 1 < maxVisiblePages) {
@@ -101,12 +106,6 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
     };
 
     const visiblePages = getVisiblePages();
-    const startItem = totalItems
-      ? (currentPage - 1) * (itemsPerPage || 10) + 1
-      : 0;
-    const endItem = totalItems
-      ? Math.min(currentPage * (itemsPerPage || 10), totalItems)
-      : 0;
 
     return (
       <div
@@ -116,13 +115,6 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
           className
         )}
       >
-        {/* Info Section */}
-        {showInfo && totalItems && (
-          <div className="text-sm text-gray-600">
-            Showing {startItem} to {endItem} of {totalItems} results
-          </div>
-        )}
-
         {/* Pagination Controls */}
         <div className="flex items-center gap-1">
           {/* First Page Button */}
@@ -134,8 +126,10 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
               className={cn(getSizeClasses(), getVariantClasses())}
               aria-label="Go to first page"
             >
-              <ChevronLeft className="h-4 w-4" />
-              <ChevronLeft className="h-4 w-4 -ml-2" />
+              <ChevronPrev className="h-4 w-4" />
+              <ChevronPrev
+                className={cn("h-4 w-4", isRTL ? "-mr-2" : "-ml-2")}
+              />
             </Button>
           )}
 
@@ -148,7 +142,7 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
             className={cn(getSizeClasses(), getVariantClasses())}
             aria-label="Go to previous page"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronPrev className="h-4 w-4" />
           </Button>
 
           {/* Page Numbers */}
@@ -187,7 +181,7 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
             className={cn(getSizeClasses(), getVariantClasses())}
             aria-label="Go to next page"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronNext className="h-4 w-4" />
           </Button>
 
           {/* Last Page Button */}
@@ -199,8 +193,10 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
               className={cn(getSizeClasses(), getVariantClasses())}
               aria-label="Go to last page"
             >
-              <ChevronRight className="h-4 w-4" />
-              <ChevronRight className="h-4 w-4 -ml-2" />
+              <ChevronNext className="h-4 w-4" />
+              <ChevronNext
+                className={cn("h-4 w-4", isRTL ? "-mr-2" : "-ml-2")}
+              />
             </Button>
           )}
         </div>

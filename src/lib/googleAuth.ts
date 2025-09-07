@@ -5,6 +5,9 @@ const GOOGLE_CLIENT_ID =
   process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
   "933306839237-e22lqcs5d3tdhnue1uasvqhrf50r267e.apps.googleusercontent.com";
 
+// Export for potential use
+export { GOOGLE_CLIENT_ID };
+
 // Initialize Google OAuth
 export const initializeGoogleAuth = () => {
   if (typeof window !== "undefined" && !window.google) {
@@ -37,11 +40,14 @@ export const handleCredentialResponse = async (response: {
 
     // Send google_id to your backend
     // base url is https://brave.iseek.name/api
-    const backendResponse = await fetch("https://brave.iseek.name/api/auth/google-login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ google_id: user.sub }),
-    });
+    const backendResponse = await fetch(
+      "https://brave.iseek.name/api/auth/google-login",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ google_id: user.sub }),
+      }
+    );
 
     if (!backendResponse.ok) {
       throw new Error(`Backend error: ${backendResponse.status}`);

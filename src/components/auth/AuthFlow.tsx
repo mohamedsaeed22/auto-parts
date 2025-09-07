@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import LoginForm from "./LoginForm";
 import OtpForm from "./OtpForm";
 import RegisterForm from "./RegisterForm";
-import { storage } from "@/lib/storage";
 
 type AuthStep = "login" | "otp" | "register";
 

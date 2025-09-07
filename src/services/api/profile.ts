@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { axios } from '@/lib/axios';
-import { showError, showSuccess } from '@/lib/toast';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { axiosInstance as axios } from "@/lib/axios";
+import { showError, showSuccess } from "@/lib/toast";
 
 export interface Profile {
   id: number;
@@ -25,36 +25,36 @@ export interface UpdatePasswordData {
 }
 
 const profileKeys = {
-  all: ['profile'] as const,
-  profile: () => [...profileKeys.all, 'me'] as const,
+  all: ["profile"] as const,
+  profile: () => [...profileKeys.all, "me"] as const,
 };
 
 const getProfile = async () => {
-  const { data } = await axios.get<Profile>('/api/profile');
+  const { data } = await axios.get<Profile>("/api/profile");
   return data;
 };
 
 const updateProfile = async (data: UpdateProfileData) => {
   const formData = new FormData();
-  if (data.name) formData.append('name', data.name);
-  if (data.phone) formData.append('phone', data.phone);
-  if (data.avatar) formData.append('avatar', data.avatar);
+  if (data.name) formData.append("name", data.name);
+  if (data.phone) formData.append("phone", data.phone);
+  if (data.avatar) formData.append("avatar", data.avatar);
 
-  const response = await axios.post<Profile>('/api/profile', formData, {
+  const response = await axios.post<Profile>("/api/profile", formData, {
     headers: {
-      'Content-Type': 'multipart/form-data',
+      "Content-Type": "multipart/form-data",
     },
   });
   return response.data;
 };
 
 const updatePassword = async (data: UpdatePasswordData) => {
-  const response = await axios.put('/api/profile/password', data);
+  const response = await axios.put("/api/profile/password", data);
   return response.data;
 };
 
 const deleteAvatar = async () => {
-  const response = await axios.delete('/api/profile/avatar');
+  const response = await axios.delete("/api/profile/avatar");
   return response.data;
 };
 
@@ -72,11 +72,12 @@ export function useUpdateProfile() {
     mutationFn: updateProfile,
     onSuccess: (data) => {
       queryClient.setQueryData(profileKeys.profile(), data);
-      showSuccess('Profile updated successfully');
+      showSuccess("Profile updated successfully");
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message || 'Failed to update profile'
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to update profile"
       );
     },
   });
@@ -86,11 +87,12 @@ export function useUpdatePassword() {
   return useMutation({
     mutationFn: updatePassword,
     onSuccess: () => {
-      showSuccess('Password updated successfully');
+      showSuccess("Password updated successfully");
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message || 'Failed to update password'
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to update password"
       );
     },
   });
@@ -103,11 +105,12 @@ export function useDeleteAvatar() {
     mutationFn: deleteAvatar,
     onSuccess: (data) => {
       queryClient.setQueryData(profileKeys.profile(), data);
-      showSuccess('Avatar deleted successfully');
+      showSuccess("Avatar deleted successfully");
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message || 'Failed to delete avatar'
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to delete avatar"
       );
     },
   });

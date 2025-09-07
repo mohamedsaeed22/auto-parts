@@ -1,17 +1,23 @@
-'use client';
+"use client";
 
-import { useTranslation } from 'react-i18next';
-import { useReturns } from '@/services/api/returns';
-import { ReturnItem } from './return-item';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { EmptyState } from '@/components/empty-state';
-import { ErrorState } from '@/components/error-state';
-import { Pagination } from '@/components/pagination';
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import {
+  useReturns,
+  ReturnItem as ReturnItemType,
+} from "@/services/api/returns";
+import { ReturnItem } from "./return-item";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/empty-state";
+import { ErrorState } from "@/components/error-state";
+import { Pagination } from "@/components/pagination";
 
 export function ReturnList() {
-  const { t } = useTranslation('returns');
-  const { data, isLoading, isError, error } = useReturns();
+  const { t } = useTranslation("returns");
+  const [page, setPage] = useState(1);
+  const { data, isLoading, isError, error } = useReturns(page);
 
   if (isLoading) {
     return (
@@ -26,10 +32,10 @@ export function ReturnList() {
   if (isError) {
     return (
       <ErrorState
-        title={t('error.title')}
+        title={t("error.title")}
         description={
-          error?.response?.data?.message ||
-          t('error.description')
+          (error as { response?: { data?: { message?: string } } })?.response
+            ?.data?.message || t("error.description")
         }
       />
     );
@@ -38,11 +44,11 @@ export function ReturnList() {
   if (!data?.data.length) {
     return (
       <EmptyState
-        title={t('empty.title')}
-        description={t('empty.description')}
+        title={t("empty.title")}
+        description={t("empty.description")}
         action={
           <Button asChild>
-            <a href="/orders">{t('empty.action')}</a>
+            <Link href="/orders">{t("empty.action")}</Link>
           </Button>
         }
       />
@@ -52,7 +58,7 @@ export function ReturnList() {
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        {data.data.map((item) => (
+        {data.data.map((item: ReturnItemType) => (
           <ReturnItem key={item.id} item={item} />
         ))}
       </div>
@@ -60,6 +66,7 @@ export function ReturnList() {
         <Pagination
           currentPage={data.meta.current_page}
           totalPages={data.meta.last_page}
+          onPageChange={setPage}
           className="justify-center"
         />
       )}

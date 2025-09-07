@@ -1,13 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useGetOfferQuery } from "@/services/hooks";
-import { useCart } from "@/hooks/useCart";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
-import { useFavouritesWishlist } from "@/hooks/useFavouritesWishlist";
 
 // Types for the offer page
 interface OfferProduct {
@@ -47,9 +45,6 @@ import {
   Loader2,
   AlertCircle,
   ShoppingCart,
-  Heart,
-  Bookmark,
-  Star,
   Truck,
   Shield,
   RotateCcw,
@@ -117,7 +112,11 @@ const OfferHeader = ({
           className="object-cover"
           priority
         />
-        <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
+        <div
+          className={`absolute top-4 ${
+            isRTL ? "right-4" : "left-4"
+          } bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1`}
+        >
           {offer.discount_type === "percentage" ? (
             <Percent size={14} />
           ) : (
@@ -137,11 +136,7 @@ const OfferHeader = ({
         </div>
 
         <div className="space-y-3">
-          <div
-            className={`flex items-center gap-3 ${
-              isRTL ? "flex-row-reverse" : ""
-            }`}
-          >
+          <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
             <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
               {offer.discount_type === "percentage" ? (
                 <Percent size={24} className="text-orange-600" />
@@ -161,11 +156,7 @@ const OfferHeader = ({
             </div>
           </div>
 
-          <div
-            className={`flex items-center gap-3 ${
-              isRTL ? "flex-row-reverse" : ""
-            }`}
-          >
+          <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
               <ShoppingCart size={24} className="text-green-600" />
             </div>
@@ -200,11 +191,9 @@ const ProductFeatures = ({
   t: (key: string) => string;
 }) => (
   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 bg-gray-50 rounded-lg mb-8">
-    <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
-    >
+    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-        <Truck size={20} className="text-blue-600" />
+        <Truck size={20} className="text-green-600" />
       </div>
       <div className={isRTL ? "text-right" : "text-left"}>
         <p className="font-medium text-gray-900">
@@ -215,9 +204,7 @@ const ProductFeatures = ({
         </p>
       </div>
     </div>
-    <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
-    >
+    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
       <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
         <Shield size={20} className="text-green-600" />
       </div>
@@ -230,11 +217,9 @@ const ProductFeatures = ({
         </p>
       </div>
     </div>
-    <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
-    >
+    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
       <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-        <RotateCcw size={20} className="text-purple-600" />
+        <RotateCcw size={20} className="text-green-600" />
       </div>
       <div className={isRTL ? "text-right" : "text-left"}>
         <p className="font-medium text-gray-900">
@@ -253,7 +238,6 @@ export default function OfferPage() {
   const params = useParams();
   const offerId = parseInt(params.id as string);
   const { t, i18n } = useTranslation("offers");
-  const [selectedImage, setSelectedImage] = useState(0);
 
   const isRTL = i18n.language === "ar";
   const direction = isRTL ? "rtl" : "ltr";
@@ -269,7 +253,7 @@ export default function OfferPage() {
     refetch,
   } = useGetOfferQuery(offerId);
 
-  const offer = offerResponse?.data?.offer as OfferDetails;
+  const offer = offerResponse?.data as OfferDetails;
   const products = offer?.products || [];
 
   const handleGoBack = () => {
@@ -333,7 +317,7 @@ export default function OfferPage() {
         <button
           onClick={handleGoBack}
           className={`flex items-center gap-1 hover:text-gray-700 transition-colors ${
-            isRTL ? "flex-row-reverse" : ""
+            isRTL ? "flex-row" : ""
           }`}
         >
           {isRTL ? (
@@ -393,14 +377,39 @@ export default function OfferPage() {
                 product={{
                   id: product.id,
                   name: product.name,
-                  price: parseFloat(product.price),
+                  price: product.price,
                   final_price: product.final_price,
                   primary_image: product.primary_image,
                   description: product.description,
                   product_identifier: product.product_identifier,
-                  is_active: true,
                   discount_info: product.discount_info,
-                  offer: product.offer,
+                  offer: {
+                    id: product.offer.id,
+                    image: product.offer.image,
+                    discount_type: product.offer.discount_type as
+                      | "fixed"
+                      | "percentage",
+                    discount_amount: product.offer.discount_amount,
+                    discount_info: product.offer.discount_info,
+                    products_count: product.offer.products_count,
+                  },
+                  brand: null,
+                  category: {
+                    id: 0,
+                    name: "",
+                    level: 0,
+                    image: "",
+                    parent: null,
+                  },
+                  discount_type: product.discount_type as
+                    | "percentage"
+                    | "fixed"
+                    | null,
+                  discount_amount: product.discount_amount,
+                  images: product.images,
+                  hover_text: product.hover_text,
+                  in_favourites: false,
+                  in_wishlist: false,
                 }}
               />
             ))}
@@ -410,4 +419,3 @@ export default function OfferPage() {
     </div>
   );
 }
-                                                                                                            

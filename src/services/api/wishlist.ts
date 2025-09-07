@@ -1,7 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { axios } from '@/lib/axios';
-import { showError, showSuccess } from '@/lib/toast';
-import { Product } from './products';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { axiosInstance as axios } from "@/lib/axios";
+import { showError, showSuccess } from "@/lib/toast";
+import { Product } from "./products";
 
 export interface WishlistItem {
   id: number;
@@ -21,20 +21,20 @@ export interface WishlistResponse {
 }
 
 const wishlistKeys = {
-  all: ['wishlist'] as const,
-  lists: () => [...wishlistKeys.all, 'list'] as const,
+  all: ["wishlist"] as const,
+  lists: () => [...wishlistKeys.all, "list"] as const,
   list: (page: number) => [...wishlistKeys.lists(), { page }] as const,
 };
 
 const getWishlist = async ({ page = 1 }: { page?: number }) => {
-  const { data } = await axios.get<WishlistResponse>('/api/wishlist', {
+  const { data } = await axios.get<WishlistResponse>("/api/wishlist", {
     params: { page },
   });
   return data;
 };
 
 const addToWishlist = async (product_id: number) => {
-  const { data } = await axios.post<WishlistResponse>('/api/wishlist', {
+  const { data } = await axios.post<WishlistResponse>("/api/wishlist", {
     product_id,
   });
   return data;
@@ -46,7 +46,7 @@ const removeFromWishlist = async (id: number) => {
 };
 
 const clearWishlist = async () => {
-  const { data } = await axios.delete<WishlistResponse>('/api/wishlist');
+  const { data } = await axios.delete<WishlistResponse>("/api/wishlist");
   return data;
 };
 
@@ -64,11 +64,12 @@ export function useAddToWishlist() {
     mutationFn: addToWishlist,
     onSuccess: (data) => {
       queryClient.setQueryData(wishlistKeys.list(1), data);
-      showSuccess('Product added to wishlist successfully');
+      showSuccess("Product added to wishlist successfully");
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message || 'Failed to add product to wishlist'
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to add product to wishlist"
       );
     },
   });
@@ -81,11 +82,12 @@ export function useRemoveFromWishlist() {
     mutationFn: removeFromWishlist,
     onSuccess: (data) => {
       queryClient.setQueryData(wishlistKeys.list(1), data);
-      showSuccess('Product removed from wishlist successfully');
+      showSuccess("Product removed from wishlist successfully");
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message || 'Failed to remove product from wishlist'
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to remove product from wishlist"
       );
     },
   });
@@ -98,10 +100,13 @@ export function useClearWishlist() {
     mutationFn: clearWishlist,
     onSuccess: (data) => {
       queryClient.setQueryData(wishlistKeys.list(1), data);
-      showSuccess('Wishlist cleared successfully');
+      showSuccess("Wishlist cleared successfully");
     },
-    onError: (error: any) => {
-      showError(error?.response?.data?.message || 'Failed to clear wishlist');
+    onError: (error: unknown) => {
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to clear wishlist"
+      );
     },
   });
 }

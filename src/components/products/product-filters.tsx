@@ -1,27 +1,27 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useDebounce } from '@/hooks/use-debounce';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useDebounce } from "@/hooks/useDebounce";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { Slider } from '@/components/ui/slider';
-import { SlidersHorizontal } from 'lucide-react';
+} from "@/components/ui/sheet";
+import { Slider } from "@/components/ui/slider";
+import { SlidersHorizontal } from "lucide-react";
 
 interface ProductFiltersProps {
   initialFilters?: {
@@ -35,7 +35,7 @@ interface ProductFiltersProps {
   categories: Array<{ id: number; name: string }>;
   brands: Array<{ id: number; name: string }>;
   priceRange: { min: number; max: number };
-  onFiltersChange: (filters: ProductFiltersProps['initialFilters']) => void;
+  onFiltersChange: (filters: ProductFiltersProps["initialFilters"]) => void;
 }
 
 export function ProductFilters({
@@ -45,7 +45,7 @@ export function ProductFilters({
   priceRange,
   onFiltersChange,
 }: ProductFiltersProps) {
-  const { t } = useTranslation('products');
+  const { t } = useTranslation("products");
   const [isOpen, setIsOpen] = useState(false);
   const [filters, setFilters] = useState(initialFilters);
   const [priceValues, setPriceValues] = useState([
@@ -100,20 +100,28 @@ export function ProductFilters({
     <div className="flex items-center gap-4">
       <div className="flex-1">
         <Input
-          placeholder={t('filters.searchPlaceholder')}
-          value={filters.search ?? ''}
+          placeholder={t("filters.searchPlaceholder")}
+          value={filters.search ?? ""}
           onChange={(e) => handleSearchChange(e.target.value)}
         />
       </div>
       <Select value={filters.sort_by} onValueChange={handleSortChange}>
         <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder={t('filters.sortBy')} />
+          <SelectValue placeholder={t("filters.sortBy")} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="newest">{t('filters.sortOptions.newest')}</SelectItem>
-          <SelectItem value="price_asc">{t('filters.sortOptions.priceAsc')}</SelectItem>
-          <SelectItem value="price_desc">{t('filters.sortOptions.priceDesc')}</SelectItem>
-          <SelectItem value="rating">{t('filters.sortOptions.rating')}</SelectItem>
+          <SelectItem value="newest">
+            {t("filters.sortOptions.newest")}
+          </SelectItem>
+          <SelectItem value="price_asc">
+            {t("filters.sortOptions.priceAsc")}
+          </SelectItem>
+          <SelectItem value="price_desc">
+            {t("filters.sortOptions.priceDesc")}
+          </SelectItem>
+          <SelectItem value="rating">
+            {t("filters.sortOptions.rating")}
+          </SelectItem>
         </SelectContent>
       </Select>
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -124,17 +132,17 @@ export function ProductFilters({
         </SheetTrigger>
         <SheetContent>
           <SheetHeader>
-            <SheetTitle>{t('filters.title')}</SheetTitle>
+            <SheetTitle>{t("filters.title")}</SheetTitle>
           </SheetHeader>
           <div className="mt-4 space-y-6">
             <div className="space-y-2">
-              <Label>{t('filters.category')}</Label>
+              <Label>{t("filters.category")}</Label>
               <Select
                 value={filters.category_id?.toString()}
                 onValueChange={handleCategoryChange}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={t('filters.allCategories')} />
+                  <SelectValue placeholder={t("filters.allCategories")} />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((category) => (
@@ -149,20 +157,17 @@ export function ProductFilters({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>{t('filters.brand')}</Label>
+              <Label>{t("filters.brand")}</Label>
               <Select
                 value={filters.brand_id?.toString()}
                 onValueChange={handleBrandChange}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={t('filters.allBrands')} />
+                  <SelectValue placeholder={t("filters.allBrands")} />
                 </SelectTrigger>
                 <SelectContent>
                   {brands.map((brand) => (
-                    <SelectItem
-                      key={brand.id}
-                      value={brand.id.toString()}
-                    >
+                    <SelectItem key={brand.id} value={brand.id.toString()}>
                       {brand.name}
                     </SelectItem>
                   ))}
@@ -170,7 +175,7 @@ export function ProductFilters({
               </Select>
             </div>
             <div className="space-y-4">
-              <Label>{t('filters.priceRange')}</Label>
+              <Label>{t("filters.priceRange")}</Label>
               <Slider
                 min={priceRange.min}
                 max={priceRange.max}
@@ -179,20 +184,12 @@ export function ProductFilters({
                 onValueChange={handlePriceChange}
               />
               <div className="flex items-center justify-between text-sm">
-                <span>
-                  {t('currency', { value: priceValues[0] })}
-                </span>
-                <span>
-                  {t('currency', { value: priceValues[1] })}
-                </span>
+                <span>{t("currency", { value: priceValues[0] })}</span>
+                <span>{t("currency", { value: priceValues[1] })}</span>
               </div>
             </div>
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={handleReset}
-            >
-              {t('filters.reset')}
+            <Button variant="outline" className="w-full" onClick={handleReset}>
+              {t("filters.reset")}
             </Button>
           </div>
         </SheetContent>

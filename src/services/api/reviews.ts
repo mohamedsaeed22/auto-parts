@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { axios } from '@/lib/axios';
-import { showError, showSuccess } from '@/lib/toast';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { axiosInstance as axios } from "@/lib/axios";
+import { showError, showSuccess } from "@/lib/toast";
 
 export interface Review {
   id: number;
@@ -44,11 +44,11 @@ export interface UpdateReviewData {
 }
 
 const reviewsKeys = {
-  all: ['reviews'] as const,
-  lists: () => [...reviewsKeys.all, 'list'] as const,
+  all: ["reviews"] as const,
+  lists: () => [...reviewsKeys.all, "list"] as const,
   list: (productId: number, page: number) =>
     [...reviewsKeys.lists(), { productId, page }] as const,
-  userReviews: () => [...reviewsKeys.all, 'user'] as const,
+  userReviews: () => [...reviewsKeys.all, "user"] as const,
 };
 
 const getReviews = async ({
@@ -66,7 +66,7 @@ const getReviews = async ({
 };
 
 const getUserReviews = async ({ page = 1 }: { page?: number }) => {
-  const { data } = await axios.get<ReviewsResponse>('/api/user/reviews', {
+  const { data } = await axios.get<ReviewsResponse>("/api/user/reviews", {
     params: { page },
   });
   return data;
@@ -130,14 +130,14 @@ export function useCreateReview() {
   return useMutation({
     mutationFn: createReview,
     onSuccess: (data, variables) => {
-      queryClient.setQueryData(
-        reviewsKeys.list(variables.product_id, 1),
-        data
-      );
-      showSuccess('Review submitted successfully');
+      queryClient.setQueryData(reviewsKeys.list(variables.product_id, 1), data);
+      showSuccess("Review submitted successfully");
     },
-    onError: (error: any) => {
-      showError(error?.response?.data?.message || 'Failed to submit review');
+    onError: (error: unknown) => {
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to submit review"
+      );
     },
   });
 }
@@ -147,12 +147,15 @@ export function useUpdateReview() {
 
   return useMutation({
     mutationFn: updateReview,
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: reviewsKeys.all });
-      showSuccess('Review updated successfully');
+      showSuccess("Review updated successfully");
     },
-    onError: (error: any) => {
-      showError(error?.response?.data?.message || 'Failed to update review');
+    onError: (error: unknown) => {
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to update review"
+      );
     },
   });
 }
@@ -164,10 +167,13 @@ export function useDeleteReview() {
     mutationFn: deleteReview,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: reviewsKeys.all });
-      showSuccess('Review deleted successfully');
+      showSuccess("Review deleted successfully");
     },
-    onError: (error: any) => {
-      showError(error?.response?.data?.message || 'Failed to delete review');
+    onError: (error: unknown) => {
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to delete review"
+      );
     },
   });
 }
@@ -179,11 +185,12 @@ export function useMarkAsHelpful() {
     mutationFn: markAsHelpful,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: reviewsKeys.all });
-      showSuccess('Review marked as helpful');
+      showSuccess("Review marked as helpful");
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message || 'Failed to mark review as helpful'
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to mark review as helpful"
       );
     },
   });
@@ -193,10 +200,13 @@ export function useReportAbuse() {
   return useMutation({
     mutationFn: reportAbuse,
     onSuccess: () => {
-      showSuccess('Review reported successfully');
+      showSuccess("Review reported successfully");
     },
-    onError: (error: any) => {
-      showError(error?.response?.data?.message || 'Failed to report review');
+    onError: (error: unknown) => {
+      showError(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to report review"
+      );
     },
   });
 }

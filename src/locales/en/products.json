@@ -66,5 +66,15 @@
     "addedToWishlist": "Product added to wishlist",
     "removedFromWishlist": "Product removed from wishlist",
     "reviewSubmitted": "Review submitted successfully"
-  }
+  },
+  "ourProducts": "Our Premium Auto Parts Collection",
+  "productsDescription": "Explore our extensive catalog of genuine auto parts, accessories, and components. Quality guaranteed for all vehicle makes and models with competitive pricing and fast delivery.",
+  "noProductsAvailable": "No products are currently available. Please check back later or contact us for assistance.",
+  "errorLoadingProducts": "Unable to Load Products",
+  "errorLoadingProductsDesc": "We encountered an issue while loading our product catalog. Please check your internet connection and try again.",
+  "tryAgain": "Retry",
+  "showingResults": "Showing {{start}} to {{end}} of {{total}} results",
+  "shareSuccess": "Product shared successfully!",
+  "linkCopied": "Link copied to clipboard!",
+  "shareError": "Failed to share or copy link"
 }

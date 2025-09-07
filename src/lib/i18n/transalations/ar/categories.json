@@ -1,31 +1,34 @@
 {
-  "backButton": "رجوع",
-  "categories": "الفئات",
   "hero": {
-    "title": "فئات المنتجات",
-    "subtitle": "استكشف مجموعتنا الشاملة من قطع غيار السيارات والملحقات",
-    "categories": "100+ فئة",
+    "title": "اقسام المنتجات",
+    "subtitle": "استكشف مجموعتنا الشاملة من قطع غيار السيارات والإكسسوارات",
+    "categories": "100+ قسم",
     "quality": "جودة عالية",
     "fast": "توصيل سريع"
   },
   "search": {
-    "placeholder": "البحث في الفئات..."
+    "placeholder": "البحث في الاقسام..."
   },
   "viewMode": "وضع العرض",
-  "foundCategories": "الفئات الموجودة",
-  "categoriesCount": "فئة متاحة",
-  "noResults": "لم يتم العثور على فئات",
-  "noResultsDesc": "جرب تعديل مصطلحات البحث.",
-  "noCategories": "لا توجد فئات متاحة",
-  "noCategoriesDesc": "تحقق لاحقاً من الفئات الجديدة.",
+  "backButton": "رجوع",
+  "categories": "الاقسام",
+  "foundCategories": "الاقسام الموجودة",
+  "categoriesCount": "{{count}} قسم متاحة",
+  "noResults": "لم يتم العثور على اقسام",
+  "noResultsDesc": "حاول تعديل مصطلحات البحث.",
+  "noCategories": "لا توجد اقسام متاحة",
+  "noCategoriesDesc": "تحقق مرة أخرى لاحقاً للحصول على اقسام جديدة.",
   "clearSearch": "مسح البحث",
+  "loading": "جاري تحميل الاقسام...",
   "error": {
-    "title": "تعذر تحميل الفئات",
-    "message": "حدث خطأ في تحميل الفئات. يرجى المحاولة مرة أخرى.",
+    "title": "غير قادر على تحميل الاقسام",
+    "message": "حدث خطأ في تحميل الاقسام. يرجى المحاولة مرة أخرى.",
     "retry": "حاول مرة أخرى"
   },
-  "subcategories": "فئات فرعية",
-  "quality": "الجودة",
-  "fast": "السرعه",
-  "reliable": "الموثوق"
+  "categoryFeatures": {
+    "subcategories": "اقسام فرعية",
+    "quality": "الجودة",
+    "fast": "السرعه",
+    "reliable": "موثوق"
+  }
 }

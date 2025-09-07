@@ -29,7 +29,7 @@ const DefaultFallbackComponent = () => (
         Access Denied
       </h2>
       <p className="text-gray-600">
-        You don't have permission to access this page.
+        You don&apos;t have permission to access this page.
       </p>
     </div>
   </div>
@@ -52,8 +52,7 @@ export function AuthGuard({
   fallback,
   loadingComponent,
 }: AuthGuardProps) {
-  const { isAuthenticated, isRegistrationComplete, isLoading, checkAccess } =
-    useAuthGuard(options);
+  const { isLoading, checkAccess } = useAuthGuard(options);
 
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
 

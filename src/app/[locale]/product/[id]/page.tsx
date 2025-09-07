@@ -8,8 +8,8 @@ import {
   Trash,
   ArrowLeft,
   Loader2,
-  Star,
   Heart,
+  Bookmark,
   Share2,
   Truck,
   Shield,
@@ -17,19 +17,21 @@ import {
   Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
+import { useFavouritesWishlist } from "@/hooks/useFavouritesWishlist";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useTranslation } from "react-i18next";
 import { useGetProductQuery, useAddToCartMutation } from "@/services/hooks";
+import { showSuccess, showError } from "@/lib/toast";
 
 // Loading Component
-const LoadingSpinner = () => (
+const LoadingSpinner = ({ t }: { t: (key: string) => string }) => (
   <div className="flex items-center justify-center min-h-[400px]">
     <div className="flex flex-col items-center gap-4">
       <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
-      <p className="text-gray-600">Loading product details...</p>
+      <p className="text-gray-600">{t("loading")}</p>
     </div>
   </div>
 );
@@ -38,17 +40,21 @@ const LoadingSpinner = () => (
 const ErrorMessage = ({
   message,
   onRetry,
+  t,
 }: {
   message: string;
   onRetry?: () => void;
+  t: (key: string) => string;
 }) => (
   <div className="flex items-center justify-center min-h-[400px]">
     <div className="text-center">
-      <div className="text-red-500 text-lg font-semibold mb-2">Error</div>
+      <div className="text-red-500 text-lg font-semibold mb-2">
+        {t("error")}
+      </div>
       <p className="text-gray-600 mb-4">{message}</p>
       {onRetry && (
         <Button onClick={onRetry} variant="outline">
-          Try Again
+          {t("tryAgain")}
         </Button>
       )}
     </div>
@@ -83,7 +89,7 @@ const ProductBadges = ({
   if (product.discount_info) {
     badges.push({
       type: "discount",
-      text: t("sale") || "SALE",
+      text: t("sale"),
       className: "bg-orange-500 text-white",
     });
   }
@@ -108,7 +114,30 @@ const ProductBadges = ({
   );
 };
 
-const ProductActions = ({ isRTL }: { isRTL: boolean }) => (
+type ProductForActions = {
+  id: number;
+  name?: string;
+};
+
+const ProductActions = ({
+  isRTL,
+  product,
+  isInFavourites,
+  isInWishlist,
+  onToggleFavourite,
+  onToggleWishlist,
+  onShare,
+  isLoading,
+}: {
+  isRTL: boolean;
+  product: ProductForActions;
+  isInFavourites: boolean;
+  isInWishlist: boolean;
+  onToggleFavourite: () => void;
+  onToggleWishlist: () => void;
+  onShare: () => void;
+  isLoading: (key: string) => boolean;
+}) => (
   <div
     className={`absolute top-4 ${
       isRTL ? "left-4" : "right-4"
@@ -117,82 +146,94 @@ const ProductActions = ({ isRTL }: { isRTL: boolean }) => (
     <Button
       variant="outline"
       size="sm"
-      className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm border-gray-200 hover:bg-white shadow-lg"
+      className={`w-10 h-10 rounded-full border-neutral-200 hover:bg-white shadow-lg transition-colors duration-300 ${
+        isInFavourites
+          ? "bg-red-500 border-red-500 hover:bg-red-600"
+          : "bg-white hover:bg-gray-50"
+      }`}
+      onClick={onToggleFavourite}
+      disabled={isLoading(`favourite-${product.id}`)}
     >
-      <Heart size={16} />
+      {isLoading(`favourite-${product.id}`) ? (
+        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-neutral-600"></div>
+      ) : (
+        <Heart
+          size={18}
+          className={`${
+            isInFavourites ? "text-white fill-white" : "text-neutral-700"
+          }`}
+        />
+      )}
     </Button>
     <Button
       variant="outline"
       size="sm"
-      className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm border-gray-200 hover:bg-white shadow-lg"
+      className={`w-10 h-10 rounded-full border-neutral-200 hover:bg-white shadow-lg transition-colors duration-300 ${
+        isInWishlist
+          ? "bg-blue-500 border-blue-500 hover:bg-blue-600"
+          : "bg-white hover:bg-gray-50"
+      }`}
+      onClick={onToggleWishlist}
+      disabled={isLoading(`wishlist-${product.id}`)}
     >
-      <Share2 size={16} />
-    </Button>
-  </div>
-);
-
-const ProductRating = ({ isRTL }: { isRTL: boolean }) => (
-  <div className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
-    <div className="flex items-center">
-      {[...Array(5)].map((_, i) => (
-        <Star
-          key={i}
-          size={16}
+      {isLoading(`wishlist-${product.id}`) ? (
+        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-neutral-600"></div>
+      ) : (
+        <Bookmark
+          size={18}
           className={`${
-            i < 4 ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+            isInWishlist ? "text-white fill-white" : "text-neutral-700"
           }`}
         />
-      ))}
-    </div>
-    <span className="text-sm text-gray-600">4.0 (24 reviews)</span>
+      )}
+    </Button>
+    <Button
+      variant="outline"
+      size="sm"
+      className="w-10 h-10 rounded-full border-neutral-200 bg-white hover:bg-gray-50 shadow-lg transition-colors duration-300"
+      onClick={onShare}
+    >
+      <Share2
+        size={18}
+        className="text-neutral-700 hover:text-neutral-900 transition-colors duration-300"
+      />
+    </Button>
   </div>
 );
 
 const ProductFeatures = ({ isRTL, t }: { isRTL: boolean; t: TranslateFn }) => (
   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 bg-gray-50 rounded-lg">
     <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
+      className={`flex items-center gap-3 ${isRTL ? "flex-row" : "flex-row"}`}
     >
       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
         <Truck size={20} className="text-blue-600" />
       </div>
       <div className={isRTL ? "text-right" : "text-left"}>
-        <p className="font-medium text-gray-900">
-          {t("freeShipping") || "Free Shipping"}
-        </p>
-        <p className="text-sm text-gray-500">
-          {t("freeShippingDesc") || "On orders over $50"}
-        </p>
+        <p className="font-medium text-gray-900">{t("freeShipping")}</p>
+        <p className="text-sm text-gray-500">{t("freeShippingDesc")}</p>
       </div>
     </div>
     <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
+      className={`flex items-center gap-3 ${isRTL ? "flex-row" : "flex-row"}`}
     >
       <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
         <Shield size={20} className="text-green-600" />
       </div>
       <div className={isRTL ? "text-right" : "text-left"}>
-        <p className="font-medium text-gray-900">
-          {t("warranty") || "Warranty"}
-        </p>
-        <p className="text-sm text-gray-500">
-          {t("warrantyDesc") || "1 year guarantee"}
-        </p>
+        <p className="font-medium text-gray-900">{t("warranty")}</p>
+        <p className="text-sm text-gray-500">{t("warrantyDesc")}</p>
       </div>
     </div>
     <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
+      className={`flex items-center gap-3 ${isRTL ? "flex-row" : "flex-row"}`}
     >
       <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
         <RotateCcw size={20} className="text-purple-600" />
       </div>
       <div className={isRTL ? "text-right" : "text-left"}>
-        <p className="font-medium text-gray-900">
-          {t("returns") || "Easy Returns"}
-        </p>
-        <p className="text-sm text-gray-500">
-          {t("returnsDesc") || "30 day policy"}
-        </p>
+        <p className="font-medium text-gray-900">{t("returns")}</p>
+        <p className="text-sm text-gray-500">{t("returnsDesc")}</p>
       </div>
     </div>
   </div>
@@ -222,7 +263,7 @@ const PriceSection = ({
     <div className="space-y-2">
       <div
         className={`flex items-center gap-3 ${
-          isRTL ? "flex-row-reverse justify-end" : "justify-start"
+          isRTL ? "flex-row justify-end" : "flex-row justify-end"
         }`}
       >
         <span className="text-3xl font-bold text-gray-900">
@@ -242,7 +283,7 @@ const PriceSection = ({
       {product.discount_info && (
         <div
           className={`inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium ${
-            isRTL ? "flex-row-reverse" : ""
+            isRTL ? "flex-row" : ""
           }`}
         >
           <Info size={14} />
@@ -252,7 +293,7 @@ const PriceSection = ({
 
       {hasDiscount && (
         <p className="text-sm text-green-600 font-medium">
-          {t("youSave") || "You save"}:{" "}
+          {t("youSave")}:{" "}
           {isRTL
             ? `${t("currency")} ${(Number(originalPrice) - finalPrice).toFixed(
                 2
@@ -267,14 +308,10 @@ const PriceSection = ({
 };
 
 const StockIndicator = ({ isRTL, t }: { isRTL: boolean; t: TranslateFn }) => (
-  <div className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
+  <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : "flex-row"}`}>
     <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-    <span className="text-sm font-medium text-green-600">
-      {t("inStock") || "In Stock"}
-    </span>
-    <span className="text-sm text-gray-500">
-      - {t("readyToShip") || "Ready to ship"}
-    </span>
+    <span className="text-sm font-medium text-green-600">{t("inStock")}</span>
+    <span className="text-sm text-gray-500">- {t("readyToShip")}</span>
   </div>
 );
 
@@ -282,7 +319,7 @@ export default function ProductDetails() {
   const router = useRouter();
   const params = useParams();
   const productId = parseInt(params.id as string);
-  const { t, i18n } = useTranslation("product");
+  const { t, i18n } = useTranslation("productDetails");
   const [selectedImage, setSelectedImage] = useState(0);
 
   const isRTL = i18n.language === "ar";
@@ -304,10 +341,35 @@ export default function ProductDetails() {
   // Use Redux hook for local cart state
   const { items, addToCart, removeFromCart, updateQuantity } = useCart();
 
+  // Use favourites/wishlist hook
+  const {
+    handleToggleFavourite,
+    handleToggleWishlist,
+    isLoading: isFavouritesLoading,
+  } = useFavouritesWishlist();
+
   const product = productResponse?.data?.product;
   const cartItem = items.find((item) => item.id === productId);
   const currentQuantity = cartItem?.quantity || 0;
   const isInCart = currentQuantity > 0;
+
+  // Local state for immediate visual feedback
+  const [localFavouriteState, setLocalFavouriteState] = useState<
+    boolean | null
+  >(null);
+  const [localWishlistState, setLocalWishlistState] = useState<boolean | null>(
+    null
+  );
+
+  // Check if product is in favourites or wishlist (use local state if available, otherwise use API data)
+  const isInFavourites =
+    localFavouriteState !== null
+      ? localFavouriteState
+      : product?.in_favourites === true;
+  const isInWishlist =
+    localWishlistState !== null
+      ? localWishlistState
+      : product?.in_wishlist === true;
 
   const handleAddToCart = async () => {
     if (!product) return;
@@ -332,7 +394,7 @@ export default function ProductDetails() {
       console.log("Added to cart successfully!");
     } catch (error) {
       console.error("Failed to add to cart:", error);
-      alert("Failed to add to cart");
+      showError(t("addToCartError"));
     }
   };
 
@@ -350,6 +412,65 @@ export default function ProductDetails() {
     router.back();
   };
 
+  // Enhanced toggle functions with immediate visual feedback
+  const handleToggleFavouriteWithFeedback = async () => {
+    if (!product) return;
+
+    // Immediately update local state for visual feedback
+    const newFavouriteState = !isInFavourites;
+    setLocalFavouriteState(newFavouriteState);
+
+    try {
+      await handleToggleFavourite(product.id);
+    } catch (error) {
+      // Revert local state if API call fails
+      console.error("Failed to toggle favourite:", error);
+      setLocalFavouriteState(!newFavouriteState);
+    }
+  };
+
+  const handleToggleWishlistWithFeedback = async () => {
+    if (!product) return;
+
+    // Immediately update local state for visual feedback
+    const newWishlistState = !isInWishlist;
+    setLocalWishlistState(newWishlistState);
+
+    try {
+      await handleToggleWishlist(product.id);
+    } catch (error) {
+      // Revert local state if API call fails
+      console.error("Failed to toggle wishlist:", error);
+      setLocalWishlistState(!newWishlistState);
+    }
+  };
+
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: product?.name || "Product",
+          url: window.location.href,
+        });
+        showSuccess(t("shareSuccess"));
+      } else {
+        // Fallback: copy to clipboard
+        await navigator.clipboard.writeText(window.location.href);
+        showSuccess(t("linkCopied"));
+      }
+    } catch (error) {
+      console.error("Failed to share:", error);
+      // Fallback: copy to clipboard
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        showSuccess(t("linkCopied"));
+      } catch (clipboardError) {
+        console.error("Failed to copy to clipboard:", clipboardError);
+        showError(t("shareError"));
+      }
+    }
+  };
+
   // Handle loading state
   if (isLoading) {
     return (
@@ -357,7 +478,7 @@ export default function ProductDetails() {
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
         dir={direction}
       >
-        <LoadingSpinner />
+        <LoadingSpinner t={t} />
       </div>
     );
   }
@@ -376,7 +497,7 @@ export default function ProductDetails() {
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
         dir={direction}
       >
-        <ErrorMessage message={errorMessage} onRetry={refetch} />
+        <ErrorMessage message={errorMessage} onRetry={refetch} t={t} />
       </div>
     );
   }
@@ -388,7 +509,7 @@ export default function ProductDetails() {
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
         dir={direction}
       >
-        <ErrorMessage message="Product not found" />
+        <ErrorMessage message={t("productNotFound")} t={t} />
       </div>
     );
   }
@@ -426,19 +547,19 @@ export default function ProductDetails() {
       {/* Enhanced Breadcrumb */}
       <nav
         className={`flex items-center gap-2 text-sm text-gray-500 mb-8 ${
-          isRTL ? "flex-row" : ""
+          isRTL ? "flex-row" : "flex-row"
         }`}
       >
         <button
           onClick={handleGoBack}
           className={`flex items-center gap-1 hover:text-gray-700 transition-colors ${
-            isRTL ? "flex-row-reverse" : ""
+            isRTL ? "flex-row" : "flex-row"
           }`}
         >
           {isRTL ? (
             <>
-              <span>{t("backButton")}</span>
               <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
+              <span>{t("backButton")}</span>
             </>
           ) : (
             <>
@@ -447,18 +568,7 @@ export default function ProductDetails() {
             </>
           )}
         </button>
-        <span>/</span>
-        {parentCategoryName && (
-          <>
-            <span className="capitalize hover:text-gray-700 cursor-pointer">
-              {parentCategoryName}
-            </span>
-            <span>/</span>
-          </>
-        )}
-        <span className="capitalize hover:text-gray-700 cursor-pointer">
-          {categoryName}
-        </span>
+
         <span>/</span>
         <span className="text-gray-900 truncate">{productName}</span>
       </nav>
@@ -473,7 +583,16 @@ export default function ProductDetails() {
         <div className="space-y-4">
           <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
             <ProductBadges product={product} isRTL={isRTL} t={t} />
-            <ProductActions isRTL={isRTL} />
+            <ProductActions
+              isRTL={isRTL}
+              product={product}
+              isInFavourites={isInFavourites}
+              isInWishlist={isInWishlist}
+              onToggleFavourite={handleToggleFavouriteWithFeedback}
+              onToggleWishlist={handleToggleWishlistWithFeedback}
+              onShare={handleShare}
+              isLoading={isFavouritesLoading}
+            />
 
             {productImages.length > 0 ? (
               <Image
@@ -588,7 +707,7 @@ export default function ProductDetails() {
             >
               <div
                 className={`flex items-center gap-3 ${
-                  isRTL ? "flex-row-reverse" : ""
+                  isRTL ? "flex-row" : "flex-row"
                 }`}
               >
                 {offerInfo.image && (
@@ -602,14 +721,13 @@ export default function ProductDetails() {
                 )}
                 <div>
                   <h4 className="font-semibold text-orange-800 flex items-center gap-2">
-                    <span>🎉</span> {t("specialOffer") || "Special Offer!"}
+                    <span>🎉</span> {t("specialOffer")}
                   </h4>
                   <p className="text-orange-700 text-sm font-medium">
-                    {offerInfo.discount_info} {t("discount") || "discount"}
+                    {offerInfo.discount_info} {t("discount")}
                   </p>
                   <p className="text-orange-600 text-xs">
-                    {offerInfo.products_count}{" "}
-                    {t("productsInOffer") || "products in this offer"}
+                    {offerInfo.products_count} {t("productsInOffer")}
                   </p>
                 </div>
               </div>
@@ -625,7 +743,7 @@ export default function ProductDetails() {
             >
               <div
                 className={`flex items-center gap-2 ${
-                  isRTL ? "flex-row-reverse" : ""
+                  isRTL ? "flex-row" : "flex-row"
                 }`}
               >
                 <Info size={16} className="text-blue-600" />
@@ -650,7 +768,7 @@ export default function ProductDetails() {
                   onClick={handleAddToCart}
                   disabled={isAddingToCart}
                   className={`w-full h-12 flex items-center justify-center gap-2 text-sm font-medium bg-primary text-white ${
-                    isRTL ? "flex-row-reverse" : ""
+                    isRTL ? "flex-row" : "flex-row"
                   }`}
                   size="sm"
                 >
@@ -669,10 +787,10 @@ export default function ProductDetails() {
                   )}
                 </Button>
               ) : (
-                <div className="w-full max-w-[200px] h-12 flex items-center justify-center bg-primary rounded-md">
+                <div className="w-full h-12 flex items-center justify-center bg-primary rounded-md">
                   <div
                     className={`flex items-center gap-2 ${
-                      isRTL ? "flex-row-reverse" : ""
+                      isRTL ? "flex-row" : "flex-row"
                     }`}
                   >
                     <button
@@ -710,13 +828,13 @@ export default function ProductDetails() {
                 isRTL ? "text-right" : "text-left"
               }`}
             >
-              {t("productDetails") || "Product Details"}
+              {t("productDetails")}
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div
                 className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg ${
-                  isRTL ? "flex-row-reverse" : ""
+                  isRTL ? "flex-row" : "flex-row"
                 }`}
               >
                 <span className="text-sm text-gray-600 font-medium">
@@ -726,7 +844,7 @@ export default function ProductDetails() {
               </div>
               <div
                 className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg ${
-                  isRTL ? "flex-row-reverse" : ""
+                  isRTL ? "flex-row" : "flex-row"
                 }`}
               >
                 <span className="text-sm text-gray-600 font-medium">
@@ -738,7 +856,7 @@ export default function ProductDetails() {
               </div>
               <div
                 className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg ${
-                  isRTL ? "flex-row-reverse" : ""
+                  isRTL ? "flex-row" : "flex-row"
                 }`}
               >
                 <span className="text-sm text-gray-600 font-medium">
@@ -751,11 +869,11 @@ export default function ProductDetails() {
               {brandName && (
                 <div
                   className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg ${
-                    isRTL ? "flex-row-reverse" : ""
+                    isRTL ? "flex-row" : ""
                   }`}
                 >
                   <span className="text-sm text-gray-600 font-medium">
-                    Brand:
+                    {t("brand")}:
                   </span>
                   <span className="text-sm font-semibold">{brandName}</span>
                 </div>

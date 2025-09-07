@@ -10,7 +10,7 @@
   "subtotal": "المجموع الفرعي",
   "discount": "الخصم",
   "total": "المجموع الكلي",
-  "currency": "{{value}} ج.م",
+  "currency": "{{value}} ر.س",
   "cancel": "إلغاء الطلب",
   "confirmCancel": "هل أنت متأكد من إلغاء هذا الطلب؟",
   "noOrders": "لم تقم بإجراء أي طلبات حتى الآن",

@@ -13,28 +13,27 @@ import {
   Building2,
   Star,
   Clock,
-  TrendingUp,
-  Filter,
-  Grid3X3,
-  List,
-  Search,
-  Flame,
   Award,
-  Zap,
   Shield,
   CheckCircle,
   Globe,
-  Users,
   Car,
-  Settings,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+// Types
+interface Brand {
+  id: number;
+  name: string;
+  image?: string;
+  products_count?: number;
+}
 
 // Loading Component
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center min-h-[400px]">
     <div className="flex flex-col items-center gap-4">
-      <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
+      <Loader2 className="h-8 w-8 animate-spin text-primary" />
       <p className="text-gray-600">Loading brands...</p>
     </div>
   </div>
@@ -63,28 +62,22 @@ const ErrorMessage = ({
 );
 
 // Hero Section Component
-const HeroSection = ({
-  isRTL,
-  t,
-}: {
-  isRTL: boolean;
-  t: (key: string) => string;
-}) => (
-  <div className="bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 text-white py-16">
+const HeroSection = ({ t }: { t: (key: string) => string }) => (
+  <div className="bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-white py-16">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className={`text-center ${isRTL ? "text-right" : "text-left"}`}>
+      <div className="text-center">
         <div className="flex items-center justify-center gap-3 mb-4">
-          <Building2 className="h-8 w-8 text-blue-200" />
+          <Building2 className="h-8 w-8 text-white/70" />
           <h1 className="text-4xl md:text-5xl font-bold">
             {t("hero.title") || "Premium Brands"}
           </h1>
-          <Award className="h-8 w-8 text-blue-200" />
+          <Award className="h-8 w-8 text-white/70" />
         </div>
-        <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto mb-6">
+        <p className="text-xl md:text-2xl text-white/80 max-w-3xl mx-auto mb-6">
           {t("hero.subtitle") ||
             "Discover world-class automotive brands and premium quality parts"}
         </p>
-        <div className="flex items-center justify-center gap-6 text-blue-100">
+        <div className="flex items-center justify-center gap-6 text-white/70">
           <div className="flex items-center gap-2">
             <Shield className="h-5 w-5" />
             <span>{t("hero.feature1") || "Trusted Quality"}</span>
@@ -110,7 +103,7 @@ const BrandCard = ({
   t,
   onViewBrand,
 }: {
-  brand: any;
+  brand: Brand;
   isRTL: boolean;
   t: (key: string) => string;
   onViewBrand: (id: number) => void;
@@ -119,21 +112,20 @@ const BrandCard = ({
     {/* Brand Image */}
     <div className="relative aspect-square overflow-hidden bg-gray-50">
       <Image
-        src={brand.image}
+        src={brand.image || "/placeholder-brand.png"}
         alt={brand.name}
         fill
         className="object-contain p-6 transition-transform duration-300 group-hover:scale-110"
       />
 
       {/* Premium Badge */}
-      <div className="absolute top-4 left-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1 shadow-lg">
+      <div
+        className={`absolute top-4 ${
+          isRTL ? "right-4" : "left-4"
+        } bg-primary text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1 shadow-lg`}
+      >
         <Star size={14} />
         {t("premium") || "Premium"}
-      </div>
-
-      {/* Products Count Badge */}
-      <div className="absolute top-4 right-4 bg-black bg-opacity-70 text-white px-2 py-1 rounded-full text-xs font-medium">
-        {brand.products_count || 0} {t("products") || "Products"}
       </div>
 
       {/* Hover Overlay */}
@@ -149,24 +141,26 @@ const BrandCard = ({
 
     {/* Brand Details */}
     <div className="p-6">
-      <div className={`space-y-3 ${isRTL ? "text-right" : "text-left"}`}>
-        <div className="flex items-center gap-2">
-          <Building2 className="text-blue-500" size={18} />
-          <h3 className="text-xl font-bold text-gray-900 truncate">
+      <div className="space-y-3">
+        <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}>
+          <Building2 className="text-primary" size={18} />
+          <h3
+            className="text-xl font-bold text-gray-900 truncate"
+            dir={isRTL ? "rtl" : "ltr"}
+          >
             {brand.name}
           </h3>
         </div>
 
         <div className="space-y-2">
-          <div
-            className={`flex items-center gap-2 ${
-              isRTL ? "flex-row-reverse" : ""
-            }`}
-          >
-            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-              <CheckCircle size={16} className="text-blue-600" />
+          <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}>
+            <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+              <CheckCircle size={16} className="text-primary" />
             </div>
-            <div>
+            <div
+              className={isRTL ? "text-right" : "text-left"}
+              dir={isRTL ? "rtl" : "ltr"}
+            >
               <p className="text-sm font-semibold text-gray-900">
                 {t("certified") || "Certified Brand"}
               </p>
@@ -176,15 +170,14 @@ const BrandCard = ({
             </div>
           </div>
 
-          <div
-            className={`flex items-center gap-2 ${
-              isRTL ? "flex-row-reverse" : ""
-            }`}
-          >
+          <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}>
             <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
               <Car size={16} className="text-green-600" />
             </div>
-            <div>
+            <div
+              className={isRTL ? "text-right" : "text-left"}
+              dir={isRTL ? "rtl" : "ltr"}
+            >
               <p className="text-sm font-semibold text-gray-900">
                 {brand.products_count || 0} {t("products") || "Products"}
               </p>
@@ -198,76 +191,10 @@ const BrandCard = ({
         <div className="pt-3 border-t border-gray-100">
           <Button
             onClick={() => onViewBrand(brand.id)}
-            className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white"
+            className="w-full bg-primary hover:bg-primary/90 text-white"
           >
             {t("exploreBrand") || "Explore Brand"}
           </Button>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-// Filter Bar Component
-const FilterBar = ({
-  isRTL,
-  t,
-  viewMode,
-  onViewModeChange,
-}: {
-  isRTL: boolean;
-  t: (key: string) => string;
-  viewMode: "grid" | "list";
-  onViewModeChange: (mode: "grid" | "list") => void;
-}) => (
-  <div className="bg-white border-b border-gray-200 py-4 sticky top-0 z-10">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div
-        className={`flex items-center justify-between ${
-          isRTL ? "flex-row-reverse" : ""
-        }`}
-      >
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Filter className="text-gray-600" size={20} />
-            <span className="text-gray-700 font-medium">
-              {t("filters") || "Filters"}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Search className="text-gray-600" size={20} />
-            <span className="text-gray-700 font-medium">
-              {t("search") || "Search"}
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="text-gray-700 font-medium">
-            {t("viewMode") || "View Mode"}:
-          </span>
-          <div className="flex bg-gray-100 rounded-lg p-1">
-            <button
-              onClick={() => onViewModeChange("grid")}
-              className={`p-2 rounded-md transition-colors ${
-                viewMode === "grid"
-                  ? "bg-white text-blue-600 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              <Grid3X3 size={18} />
-            </button>
-            <button
-              onClick={() => onViewModeChange("list")}
-              className={`p-2 rounded-md transition-colors ${
-                viewMode === "list"
-                  ? "bg-white text-blue-600 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              <List size={18} />
-            </button>
-          </div>
         </div>
       </div>
     </div>
@@ -283,13 +210,14 @@ const BrandFeatures = ({
   t: (key: string) => string;
 }) => (
   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 bg-gray-50 rounded-lg mb-8">
-    <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
-    >
-      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-        <Shield size={20} className="text-blue-600" />
+    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+        <Shield size={20} className="text-primary" />
       </div>
-      <div className={isRTL ? "text-right" : "text-left"}>
+      <div
+        className={isRTL ? "text-right" : "text-left"}
+        dir={isRTL ? "rtl" : "ltr"}
+      >
         <p className="font-medium text-gray-900">
           {t("certifiedBrands") || "Certified Brands"}
         </p>
@@ -298,13 +226,14 @@ const BrandFeatures = ({
         </p>
       </div>
     </div>
-    <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
-    >
+    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
       <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
         <CheckCircle size={20} className="text-green-600" />
       </div>
-      <div className={isRTL ? "text-right" : "text-left"}>
+      <div
+        className={isRTL ? "text-right" : "text-left"}
+        dir={isRTL ? "rtl" : "ltr"}
+      >
         <p className="font-medium text-gray-900">
           {t("qualityAssurance") || "Quality Assurance"}
         </p>
@@ -313,13 +242,14 @@ const BrandFeatures = ({
         </p>
       </div>
     </div>
-    <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row-reverse" : ""}`}
-    >
-      <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-        <Globe size={20} className="text-purple-600" />
+    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+        <Globe size={20} className="text-primary" />
       </div>
-      <div className={isRTL ? "text-right" : "text-left"}>
+      <div
+        className={isRTL ? "text-right" : "text-left"}
+        dir={isRTL ? "rtl" : "ltr"}
+      >
         <p className="font-medium text-gray-900">
           {t("globalStandards") || "Global Standards"}
         </p>
@@ -334,7 +264,7 @@ const BrandFeatures = ({
 export default function BrandsPage() {
   const router = useRouter();
   const { t, i18n } = useTranslation("brands");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewMode] = useState<"grid" | "list">("grid");
 
   const isRTL = i18n.language === "ar";
   const direction = isRTL ? "rtl" : "ltr";
@@ -364,7 +294,7 @@ export default function BrandsPage() {
   if (isLoading) {
     return (
       <div dir={direction}>
-        <HeroSection isRTL={isRTL} t={t} />
+        <HeroSection t={t} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <LoadingSpinner />
         </div>
@@ -383,7 +313,7 @@ export default function BrandsPage() {
 
     return (
       <div dir={direction}>
-        <HeroSection isRTL={isRTL} t={t} />
+        <HeroSection t={t} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <ErrorMessage message={errorMessage} onRetry={refetch} />
         </div>
@@ -394,7 +324,7 @@ export default function BrandsPage() {
   return (
     <div dir={direction}>
       {/* Hero Section */}
-      <HeroSection isRTL={isRTL} t={t} />
+      <HeroSection t={t} />
 
       {/* Filter Bar */}
       {/* <FilterBar
@@ -415,7 +345,7 @@ export default function BrandsPage() {
           <button
             onClick={handleGoBack}
             className={`flex items-center gap-1 hover:text-gray-700 transition-colors ${
-              isRTL ? "flex-row-reverse" : ""
+              isRTL ? "flex-row" : ""
             }`}
           >
             {isRTL ? (
@@ -469,7 +399,7 @@ export default function BrandsPage() {
                 : "space-y-6"
             }
           >
-            {brands.map((brand: any) => (
+            {brands.map((brand: Brand) => (
               <BrandCard
                 key={brand.id}
                 brand={brand}
@@ -484,7 +414,7 @@ export default function BrandsPage() {
         {/* Bottom CTA */}
         {brands.length > 0 && (
           <div className="mt-16 text-center">
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-200">
+            <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-2xl p-8 border border-primary/20">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
                 {t("stayUpdated") || "Stay Updated"}
               </h3>
@@ -493,7 +423,7 @@ export default function BrandsPage() {
                   "Don't miss out on new brands and exclusive partnerships. Subscribe to our newsletter for early access!"}
               </p>
               <div className="flex items-center justify-center gap-4">
-                <Clock className="text-blue-500" size={20} />
+                <Clock className="text-primary" size={20} />
                 <span className="text-gray-700 font-medium">
                   {t("newBrandsRegularly") || "New brands added regularly"}
                 </span>

@@ -40,19 +40,19 @@ export const useFavouritesWishlist = () => {
   const checkAuthStatus = () => {
     const isAuthenticated = storage.isAuthenticated();
     const isRegistrationComplete = storage.isRegistrationComplete();
-    
+
     return { isAuthenticated, isRegistrationComplete };
   };
 
   // Handle authentication check for favourites/wishlist actions
-  const handleAuthCheck = (action: "favourite" | "wishlist") => {
+  const handleAuthCheck = () => {
     const { isAuthenticated, isRegistrationComplete } = checkAuthStatus();
-    
+
     if (!isAuthenticated) {
       showError(t("auth.loginRequired"));
       return false;
     }
-    
+
     if (!isRegistrationComplete) {
       showWarning(t("auth.completeRegistrationRequired"));
       // Store current page for redirect after registration
@@ -61,13 +61,13 @@ export const useFavouritesWishlist = () => {
       router.push(`/${currentLocale}/complete-registration`);
       return false;
     }
-    
+
     return true;
   };
 
   const handleToggleFavourite = async (productId: number) => {
     // Check authentication first
-    if (!handleAuthCheck("favourite")) {
+    if (!handleAuthCheck()) {
       return;
     }
 
@@ -85,7 +85,7 @@ export const useFavouritesWishlist = () => {
 
   const handleToggleWishlist = async (productId: number) => {
     // Check authentication first
-    if (!handleAuthCheck("wishlist")) {
+    if (!handleAuthCheck()) {
       return;
     }
 
@@ -103,7 +103,7 @@ export const useFavouritesWishlist = () => {
 
   const handleAddFavourite = async (productId: number) => {
     // Check authentication first
-    if (!handleAuthCheck("favourite")) {
+    if (!handleAuthCheck()) {
       return;
     }
 
@@ -121,7 +121,7 @@ export const useFavouritesWishlist = () => {
 
   const handleRemoveFavourite = async (productId: number) => {
     // Check authentication first
-    if (!handleAuthCheck("favourite")) {
+    if (!handleAuthCheck()) {
       return;
     }
 
@@ -139,7 +139,7 @@ export const useFavouritesWishlist = () => {
 
   const handleAddToWishlist = async (productId: number) => {
     // Check authentication first
-    if (!handleAuthCheck("wishlist")) {
+    if (!handleAuthCheck()) {
       return;
     }
 
@@ -157,7 +157,7 @@ export const useFavouritesWishlist = () => {
 
   const handleRemoveFromWishlist = async (productId: number) => {
     // Check authentication first
-    if (!handleAuthCheck("wishlist")) {
+    if (!handleAuthCheck()) {
       return;
     }
 

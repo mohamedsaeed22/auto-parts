@@ -1,225 +1,87 @@
-import { useForm } from "react-hook-form";
+import { useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useLocale } from "@/hooks/useLocale";
+import { useEffect } from "react";
 import { storage } from "@/lib/storage";
-import { showError } from "@/lib/toast";
-import { useTranslation } from "react-i18next";
 import {
   userPricingSchema,
   type UserPricingFormData,
-  type SavedFormData,
   defaultValues,
 } from "@/lib/validations/userPricingSchema";
+import { useShopPricingForm } from "./useShopPricingForm";
+import { useWorkshopPricingForm } from "./useWorkshopPricingForm";
 
 export function useUserPricingForm() {
-  const [savedForms, setSavedForms] = useState<SavedFormData[]>([]);
-  const [partImagePreview, setPartImagePreview] = useState<string | null>(null);
-  const [requestImagePreview, setRequestImagePreview] = useState<string | null>(
-    null
-  );
-  const [formImagePreview, setFormImagePreview] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSendingToBackend, setIsSendingToBackend] = useState(false);
-
-  const router = useRouter();
-  const { currentLocale } = useLocale();
-  const { t } = useTranslation("userPricing");
-
   // Get user type from local storage
   const getUserTypeFromStorage = () => {
     const user = storage.getUser();
-    return user?.type || "store"; // Default to "store" if no user type found
+    return user?.type || "shop"; // Default to "shop" if no user type found
   };
+
+  // Check if user is authenticated
+  const isAuthenticated = storage.isAuthenticated();
 
   const form = useForm<UserPricingFormData>({
     resolver: zodResolver(userPricingSchema),
     defaultValues: {
       ...defaultValues,
-      userType: getUserTypeFromStorage() as "workshop" | "store",
+      // Only set userType from storage if user is authenticated
+      // Otherwise, let the UserTypeSelector handle it
+      userType: isAuthenticated
+        ? getUserTypeFromStorage() === "shop"
+          ? "store"
+          : "workshop"
+        : "workshop",
     },
     mode: "onChange",
   });
 
-  // Set user type from local storage when component mounts
+  // Set user type from local storage when component mounts (only if authenticated)
   useEffect(() => {
-    const userType = getUserTypeFromStorage();
-    form.setValue("userType", userType as "workshop" | "store");
-  }, [form]);
-
-  // Check authentication status
-  const checkAuthStatus = () => {
-    const isAuthenticated = storage.isAuthenticated();
-    const isRegistrationComplete = storage.isRegistrationComplete();
-
-    return { isAuthenticated, isRegistrationComplete };
-  };
-
-  // Handle authentication check for form submission
-  const handleAuthCheck = (action: "submit" | "sendToBackend") => {
-    const { isAuthenticated, isRegistrationComplete } = checkAuthStatus();
-
-    if (!isAuthenticated) {
-      showError(
-        t("auth.loginRequired") || "Please login to access this feature"
-      );
-      return false;
+    if (isAuthenticated) {
+      const userType = getUserTypeFromStorage();
+      form.setValue("userType", userType === "shop" ? "store" : "workshop");
     }
+  }, [form, isAuthenticated]);
 
-    if (!isRegistrationComplete) {
-      showError(
-        t("auth.completeRegistrationRequired") ||
-          "Please complete your registration to access this feature"
-      );
-      // Navigate to complete registration page
-      router.push(`/${currentLocale}/complete-registration`);
-      return false;
-    }
+  // Get current user type from form
+  const userType = form.watch("userType");
 
-    return true;
-  };
+  // Use separate hooks based on user type
+  const shopForm = useShopPricingForm();
+  const workshopForm = useWorkshopPricingForm();
 
-  const createFilePreview = (file: File): Promise<string> => {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = (e) => resolve(e.target?.result as string);
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const handleImageChange = async (
-    file: File | undefined,
-    field: "partImage" | "requestImage" | "formImage"
-  ) => {
-    if (!file) {
-      // Clear image and preview
-      form.setValue(field, undefined);
-      if (field === "partImage") setPartImagePreview(null);
-      if (field === "requestImage") setRequestImagePreview(null);
-      if (field === "formImage") setFormImagePreview(null);
-      return;
-    }
-
-    // Set the file in form
-    form.setValue(field, file);
-
-    // Create and set preview
-    try {
-      const preview = await createFilePreview(file);
-      if (field === "partImage") setPartImagePreview(preview);
-      if (field === "requestImage") setRequestImagePreview(preview);
-      if (field === "formImage") setFormImagePreview(preview);
-    } catch (error) {
-      console.error("Error creating file preview:", error);
-    }
-  };
-
-  const removeImage = (field: "partImage" | "requestImage" | "formImage") => {
-    form.setValue(field, undefined);
-    if (field === "partImage") setPartImagePreview(null);
-    if (field === "requestImage") setRequestImagePreview(null);
-    if (field === "formImage") setFormImagePreview(null);
-  };
-
-  const onSubmit = async (data: UserPricingFormData) => {
-    // Check authentication before allowing form submission
-    if (!handleAuthCheck("submit")) {
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      // Create saved form data
-      const newSavedForm: SavedFormData = {
-        ...data,
-        id: Date.now().toString(),
-        partImagePreview,
-        requestImagePreview,
-        formImagePreview,
-        submittedAt: new Date(),
-      };
-
-      setSavedForms((prev) => [...prev, newSavedForm]);
-
-      // Reset form and previews
-      form.reset(defaultValues);
-      setPartImagePreview(null);
-      setRequestImagePreview(null);
-      setFormImagePreview(null);
-    } catch (error) {
-      console.error("Error saving form:", error);
-      alert("حدث خطأ أثناء حفظ البيانات");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const deleteSavedForm = (id: string) => {
-    setSavedForms((prev) => prev.filter((form) => form.id !== id));
-  };
-
-  const sendAllToBackend = async () => {
-    // Check authentication before allowing backend operation
-    if (!handleAuthCheck("sendToBackend")) {
-      return;
-    }
-
-    if (savedForms.length === 0) {
-      alert("لا توجد بيانات لإرسالها!");
-      return;
-    }
-
-    setIsSendingToBackend(true);
-
-    try {
-      // Prepare data for backend
-      const dataToSend = savedForms.map((form) => ({
-        id: form.id,
-        userType: form.userType,
-        userCode: form.userCode,
-        partName: form.partName,
-        hasPartImage: form.partImage !== undefined,
-        partImageName: form.partImage?.name || null,
-        hasRequestImage: form.requestImage !== undefined,
-        requestImageName: form.requestImage?.name || null,
-        hasFormImage: form.formImage !== undefined,
-        formImageName: form.formImage?.name || null,
-        quantity: form.quantity,
-        chassisNumber: form.chassisNumber,
-        submittedAt: form.submittedAt.toISOString(),
-      }));
-
-      console.log("Sending data to backend:", dataToSend);
-      console.log("Full saved forms with images:", savedForms);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Clear saved forms after successful submission
-      setSavedForms([]);
-      alert("تم إرسال جميع البيانات بنجاح!");
-    } catch (error) {
-      console.error("Error sending data:", error);
-      alert("حدث خطأ أثناء الإرسال. حاول مرة أخرى.");
-    } finally {
-      setIsSendingToBackend(false);
-    }
-  };
-
-  return {
-    form,
-    savedForms,
-    partImagePreview,
-    requestImagePreview,
-    formImagePreview,
-    isSubmitting,
-    isSendingToBackend,
-    handleImageChange,
-    removeImage,
-    onSubmit,
-    deleteSavedForm,
-    sendAllToBackend,
-  };
+  // Return the appropriate form data based on user type
+  if (userType === "store") {
+    return {
+      form: shopForm.form as unknown as UseFormReturn<UserPricingFormData>,
+      savedForms: shopForm.savedForms as unknown[], // Type assertion for compatibility
+      partImagePreview: shopForm.partImagePreview,
+      requestImagePreview: shopForm.requestImagePreview,
+      formImagePreview: shopForm.formImagePreview,
+      isSubmitting: shopForm.isSubmitting,
+      isSendingToBackend: shopForm.isSendingToBackend,
+      handleImageChange: shopForm.handleImageChange,
+      removeImage: shopForm.removeImage,
+      onSubmit: shopForm.onSubmit as unknown as (
+        data: UserPricingFormData
+      ) => void,
+      deleteSavedForm: shopForm.deleteSavedForm,
+      sendAllToBackend: shopForm.sendAllToBackend,
+    };
+  } else {
+    return {
+      form: workshopForm.form as UseFormReturn<UserPricingFormData>,
+      savedForms: workshopForm.savedForms as unknown[], // Type assertion for compatibility
+      partImagePreview: workshopForm.partImagePreview,
+      requestImagePreview: workshopForm.requestImagePreview,
+      formImagePreview: workshopForm.formImagePreview,
+      isSubmitting: workshopForm.isSubmitting,
+      isSendingToBackend: workshopForm.isSendingToBackend,
+      handleImageChange: workshopForm.handleImageChange,
+      removeImage: workshopForm.removeImage,
+      onSubmit: workshopForm.onSubmit as (data: UserPricingFormData) => void,
+      deleteSavedForm: workshopForm.deleteSavedForm,
+      sendAllToBackend: workshopForm.sendAllToBackend,
+    };
+  }
 }

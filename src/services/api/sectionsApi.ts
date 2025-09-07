@@ -1,6 +1,7 @@
 import { api } from "./baseApi";
+import { Product } from "./types";
 
-export interface SectionProduct {
+export interface SectionProduct extends Product {
   id: number;
   name: string;
   price: string;
@@ -11,7 +12,7 @@ export interface SectionProduct {
   is_active: boolean;
 }
 
-export interface Section {
+export interface SectionData {
   id: number;
   title: string;
   image: string;
@@ -24,7 +25,7 @@ export interface SectionsResponse {
   message: string;
   errors: string[];
   data: {
-    items: Section[];
+    items: SectionData[];
     pagination: {
       total: number;
       per_page: number;

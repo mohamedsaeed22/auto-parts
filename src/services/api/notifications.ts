@@ -1,10 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { axios } from '@/lib/axios';
-import { showError, showSuccess } from '@/lib/toast';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { axiosInstance as axios } from "@/lib/axios";
+import { showError, showSuccess } from "@/lib/toast";
 
 export interface Notification {
   id: number;
-  type: 'order_status' | 'order_delivery' | 'promotion' | 'system';
+  type: "order_status" | "order_delivery" | "promotion" | "system";
   title: string;
   message: string;
   read_at: string | null;
@@ -24,15 +24,18 @@ export interface NotificationsResponse {
 }
 
 const notificationsKeys = {
-  all: ['notifications'] as const,
-  lists: () => [...notificationsKeys.all, 'list'] as const,
+  all: ["notifications"] as const,
+  lists: () => [...notificationsKeys.all, "list"] as const,
   list: (page: number) => [...notificationsKeys.lists(), { page }] as const,
 };
 
 const getNotifications = async ({ page = 1 }: { page?: number }) => {
-  const { data } = await axios.get<NotificationsResponse>('/api/notifications', {
-    params: { page },
-  });
+  const { data } = await axios.get<NotificationsResponse>(
+    "/api/notifications",
+    {
+      params: { page },
+    }
+  );
   return data;
 };
 
@@ -45,7 +48,7 @@ const markAsRead = async (id: number) => {
 
 const markAllAsRead = async () => {
   const { data } = await axios.post<NotificationsResponse>(
-    '/api/notifications/read-all'
+    "/api/notifications/read-all"
   );
   return data;
 };
@@ -58,7 +61,9 @@ const deleteNotification = async (id: number) => {
 };
 
 const deleteAllNotifications = async () => {
-  const { data } = await axios.delete<NotificationsResponse>('/api/notifications');
+  const { data } = await axios.delete<NotificationsResponse>(
+    "/api/notifications"
+  );
   return data;
 };
 
@@ -76,11 +81,12 @@ export function useMarkAsRead() {
     mutationFn: markAsRead,
     onSuccess: (data) => {
       queryClient.setQueryData(notificationsKeys.list(1), data);
-      showSuccess('Notification marked as read');
+      showSuccess("Notification marked as read");
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message || 'Failed to mark notification as read'
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to mark notification as read"
       );
     },
   });
@@ -93,12 +99,12 @@ export function useMarkAllAsRead() {
     mutationFn: markAllAsRead,
     onSuccess: (data) => {
       queryClient.setQueryData(notificationsKeys.list(1), data);
-      showSuccess('All notifications marked as read');
+      showSuccess("All notifications marked as read");
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message ||
-          'Failed to mark all notifications as read'
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to mark all notifications as read"
       );
     },
   });
@@ -111,11 +117,12 @@ export function useDeleteNotification() {
     mutationFn: deleteNotification,
     onSuccess: (data) => {
       queryClient.setQueryData(notificationsKeys.list(1), data);
-      showSuccess('Notification deleted successfully');
+      showSuccess("Notification deleted successfully");
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message || 'Failed to delete notification'
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to delete notification"
       );
     },
   });
@@ -128,11 +135,12 @@ export function useDeleteAllNotifications() {
     mutationFn: deleteAllNotifications,
     onSuccess: (data) => {
       queryClient.setQueryData(notificationsKeys.list(1), data);
-      showSuccess('All notifications deleted successfully');
+      showSuccess("All notifications deleted successfully");
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       showError(
-        error?.response?.data?.message || 'Failed to delete all notifications'
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to delete all notifications"
       );
     },
   });
