@@ -18,6 +18,7 @@ import "swiper/css/effect-fade";
 import I18NProvider from "@/components/i18n/i18n-provider";
 import { serverSideTranslation } from "@/lib/i18n";
 import { NuqsAdapter } from "nuqs/adapters/react";
+import { AuthProvider } from "@/contexts/auth-context";
 
 const cairo = Cairo({
   variable: "--font-cairo",
@@ -65,15 +66,17 @@ export default async function LocaleLayout({
     >
       <I18NProvider locale={locale} namespaces={ns} resources={resources}>
         <Providers>
-          <NuqsAdapter>
-            <LocaleProvider initialLocale={locale}>
-              <Header />
-              <main className="flex-1">{children}</main>
-              <Footer />
-              <Cart />
-              <WhatsAppButton />
-            </LocaleProvider>
-          </NuqsAdapter>
+          <AuthProvider>
+            <NuqsAdapter>
+              <LocaleProvider initialLocale={locale}>
+                <Header />
+                <main className="flex-1">{children}</main>
+                <Footer />
+                <Cart />
+                <WhatsAppButton />
+              </LocaleProvider>
+            </NuqsAdapter>
+          </AuthProvider>
         </Providers>
       </I18NProvider>
     </div>

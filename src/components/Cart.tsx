@@ -11,7 +11,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCart } from "@/hooks/useCart"; // Use Redux hook
+import { useEnhancedCart } from "@/hooks/useEnhancedCart"; // Use Enhanced Redux hook
 import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { useRouter } from "next/navigation";
@@ -23,7 +23,7 @@ const Cart: React.FC = () => {
   const [showClearCartDialog, setShowClearCartDialog] = useState(false);
   const { t, i18n } = useTranslation("cart");
   const isRTL = i18n.language === "ar";
-  // Use Redux hook
+  // Use Enhanced Redux hook
   const {
     isOpen,
     items,
@@ -34,7 +34,7 @@ const Cart: React.FC = () => {
     updateQuantity,
     clearCart,
     setCartOpen,
-  } = useCart();
+  } = useEnhancedCart();
 
   // Close cart on escape key
   useEffect(() => {

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useCart } from "@/hooks/useCart";
+import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import { ProtectedPageGuard } from "@/components/auth/AuthGuard";
 import {
   CheckoutProgress,
@@ -25,7 +25,7 @@ const CheckoutPage = () => {
     clearCart,
     updateQuantity,
     removeFromCart,
-  } = useCart();
+  } = useEnhancedCart();
   const [currentStep, setCurrentStep] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [isProcessing, setIsProcessing] = useState(false);

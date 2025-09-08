@@ -19,7 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { useCart } from "@/hooks/useCart";
+import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import { useFavouritesWishlist } from "@/hooks/useFavouritesWishlist";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useTranslation } from "react-i18next";
@@ -339,7 +339,7 @@ export default function ProductDetails() {
   const [addToCartApi, { isLoading: isAddingToCart }] = useAddToCartMutation();
 
   // Use Redux hook for local cart state
-  const { items, addToCart, removeFromCart, updateQuantity } = useCart();
+  const { items, addToCart, removeFromCart, updateQuantity } = useEnhancedCart();
 
   // Use favourites/wishlist hook
   const {

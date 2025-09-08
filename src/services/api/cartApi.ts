@@ -3,6 +3,7 @@ import type {
   ApiResponse,
   Cart,
   AddToCartRequest,
+  AddManyToCartRequest,
   UpdateCartRequest,
   ApplyCouponRequest,
 } from "./types";
@@ -30,23 +31,39 @@ export const cartApi = api.injectEndpoints({
       invalidatesTags: ["Cart"],
     }),
 
+    addManyToCart: builder.mutation<ApiResponse<Cart>, AddManyToCartRequest>({
+      query: (data) => {
+        const formData = new FormData();
+        data.product_ids.forEach((id, index) => {
+          formData.append(`product_ids[${index}]`, id.toString());
+        });
+        data.quantities.forEach((quantity, index) => {
+          formData.append(`quantities[${index}]`, quantity.toString());
+        });
+
+        return {
+          url: "/cart/add-many",
+          method: "POST",
+          body: formData,
+        };
+      },
+      invalidatesTags: ["Cart"],
+    }),
+
     updateCartItem: builder.mutation<
       ApiResponse<Cart>,
       { id: number } & UpdateCartRequest
     >({
-      query: ({ id, ...data }) => {
-        const formData = new URLSearchParams();
-        formData.append("quantity", data.quantity.toString());
-
-        return {
-          url: `/cart/update/${id}`,
-          method: "PUT",
-          body: formData,
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        };
-      },
+      query: ({ id, ...data }) => ({
+        url: `/cart/update/${id}`,
+        method: "PUT",
+        body: {
+          quantity: data.quantity,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
       invalidatesTags: ["Cart"],
     }),
 
@@ -82,6 +99,7 @@ export const cartApi = api.injectEndpoints({
 export const {
   useGetCartQuery,
   useAddToCartMutation,
+  useAddManyToCartMutation,
   useUpdateCartItemMutation,
   useClearCartMutation,
   useApplyCouponMutation,

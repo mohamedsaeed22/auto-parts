@@ -241,6 +241,11 @@ export interface AddToCartRequest {
   quantity: number;
 }
 
+export interface AddManyToCartRequest {
+  product_ids: number[];
+  quantities: number[];
+}
+
 export interface UpdateCartRequest {
   quantity: number;
 }

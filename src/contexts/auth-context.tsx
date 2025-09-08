@@ -1,3 +1,5 @@
+"use client";
+
 import {
   createContext,
   useContext,
@@ -8,15 +10,16 @@ import {
 import { useRouter } from "next/navigation";
 import { storage, AuthData } from "@/lib/storage";
 import { User } from "@/services/api/auth";
+import { CartSyncService } from "@/services/cartSyncService";
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isRegistrationComplete: boolean;
   isLoading: boolean;
-  login: (token: string, user: User) => void;
-  logout: () => void;
-  updateUser: (user: User) => void;
+  login: (token: string, user: User) => Promise<void>;
+  logout: () => Promise<void>;
+  updateUser: (user: User) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -35,23 +38,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
   }, []);
 
-  const login = (token: string, user: User) => {
+  const login = async (token: string, user: User) => {
     storage.setAuth({
       token,
       user: user as AuthData["user"], // Type conversion needed due to nullable fields
     });
     setUser(user);
+    
+    // Handle cart synchronization after login
+    try {
+      await CartSyncService.handleLoginSync(user.is_registration_complete ?? false);
+    } catch (error) {
+      console.error("Failed to sync cart on login:", error);
+    }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    // Clear cart data on logout
+    try {
+      await CartSyncService.clearAllCarts();
+    } catch (error) {
+      console.error("Failed to clear carts on logout:", error);
+    }
+    
     storage.removeAuth();
     setUser(null);
     router.push("/");
   };
 
-  const updateUser = (updatedUser: User) => {
+  const updateUser = async (updatedUser: User) => {
+    const wasRegistrationIncomplete = !user?.is_registration_complete;
+    const isNowComplete = updatedUser.is_registration_complete;
+    
     storage.updateUser(updatedUser as AuthData["user"]);
     setUser(updatedUser);
+    
+    // Handle cart synchronization when registration is completed
+    if (wasRegistrationIncomplete && isNowComplete) {
+      try {
+        await CartSyncService.handleRegistrationComplete();
+      } catch (error) {
+        console.error("Failed to sync cart on registration completion:", error);
+      }
+    }
   };
 
   const value = {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useCart } from "@/hooks/useCart";
+import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import { useTranslation } from "react-i18next";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,7 +18,7 @@ import { useLocale } from "@/hooks/useLocale";
 import { useHeaderSearch } from "@/hooks/useHeaderSearch";
 
 export default function Header() {
-  const { totalItems, setCartOpen } = useCart();
+  const { totalItems, setCartOpen } = useEnhancedCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);

@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import {
   ShoppingBag,
@@ -7,10 +9,13 @@ import {
   Plus,
   Minus,
   Trash,
+  RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useTranslation } from "react-i18next";
+import { useEnhancedCart } from "@/hooks/useEnhancedCart";
+import { showError, showSuccess } from "@/lib/toast";
 
 interface CartReviewStepProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,6 +35,34 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({
 }) => {
   const { t, i18n } = useTranslation("checkout");
   const isRTL = i18n.language === "ar";
+  const [isSyncing, setIsSyncing] = useState(false);
+  
+  const {
+    isAuthenticated,
+    isRegistrationComplete,
+    shouldUseAPI,
+    syncLocalCartToAPI,
+  } = useEnhancedCart();
+
+  const handleContinueToShipping = async () => {
+    // If user is authenticated and registration is complete, sync cart before proceeding
+    if (shouldUseAPI && items.length > 0) {
+      setIsSyncing(true);
+      try {
+        await syncLocalCartToAPI();
+        showSuccess(t("cartReview.syncSuccess", "Cart synchronized successfully"));
+        onNext();
+      } catch (error) {
+        console.error("Cart sync failed:", error);
+        showError(t("cartReview.syncError", "Failed to sync cart. Please try again."));
+      } finally {
+        setIsSyncing(false);
+      }
+    } else {
+      // For unauthenticated users or incomplete registration, proceed directly
+      onNext();
+    }
+  };
 
   return (
     <div dir={isRTL ? "rtl" : "ltr"}>
@@ -164,13 +197,28 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({
       </div>
 
       <div className="p-6 border-t border-gray-200">
+        {shouldUseAPI && (
+          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-center text-sm text-blue-800">
+              <RefreshCw className={`w-4 h-4 ${isRTL ? "ml-2" : "mr-2"}`} />
+              {t("cartReview.syncInfo", "Your cart will be synchronized with the server before checkout.")}
+            </div>
+          </div>
+        )}
+        
         <Button
-          onClick={onNext}
-          className={`flex-1 bg-black hover:bg-gray-800 text-white py-3 rounded-lg font-medium w-full flex items-center justify-center ${
+          onClick={handleContinueToShipping}
+          disabled={isSyncing}
+          className={`flex-1 bg-black hover:bg-gray-800 disabled:bg-gray-400 text-white py-3 rounded-lg font-medium w-full flex items-center justify-center ${
             isRTL ? "flex-row" : ""
           }`}
         >
-          {isRTL ? (
+          {isSyncing ? (
+            <>
+              <RefreshCw className={`w-5 h-5 animate-spin ${isRTL ? "ml-2" : "mr-2"}`} />
+              {t("cartReview.syncing", "Synchronizing...")}
+            </>
+          ) : isRTL ? (
             <>
               <ArrowLeft className="w-5 h-5 mr-2" />
               {t("cartReview.continueToShipping")}

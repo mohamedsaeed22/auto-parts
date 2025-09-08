@@ -10,7 +10,7 @@ import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import type { RegistrationIncompleteErrorResponse } from "@/services/api/baseApi";
 import { Heart, Trash2, ShoppingCart, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/hooks/useCart";
+import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
@@ -24,7 +24,7 @@ export default function FavouritesPage() {
   const { t } = useTranslation("favourites");
   const { data: favouritesData, isLoading, error } = useGetFavouritesQuery();
   const [toggleFavourite] = useToggleFavouriteMutation();
-  const { addToCart } = useCart();
+  const { addToCart } = useEnhancedCart();
   const { handleToggleWishlist, isLoading: isWishlistLoading } =
     useFavouritesWishlist();
   const [removingId, setRemovingId] = useState<number | null>(null);

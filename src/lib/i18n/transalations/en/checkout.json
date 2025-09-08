@@ -74,7 +74,11 @@
     "items": "items",
     "inStock": "In Stock",
     "piece": "piece",
-    "continueToShipping": "Continue to Shipping Info"
+    "continueToShipping": "Continue to Shipping Info",
+    "syncInfo": "Your cart will be synchronized with the server before checkout.",
+    "syncing": "Synchronizing...",
+    "syncSuccess": "Cart synchronized successfully",
+    "syncError": "Failed to sync cart. Please try again."
   },
   "emptyCart": {
     "title": "Shopping Cart is Empty",

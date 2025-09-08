@@ -5,7 +5,7 @@ import { useGetWishlistQuery, useToggleWishlistMutation } from "@/services/api";
 import { WishlistItem } from "@/services/api/wishlistApi";
 import { Bookmark, Trash2, ShoppingCart, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/hooks/useCart";
+import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
@@ -21,7 +21,7 @@ export default function WishlistPage() {
   const { t } = useTranslation("wishlist");
   const { data: wishlistData, isLoading, error } = useGetWishlistQuery();
   const [toggleWishlist] = useToggleWishlistMutation();
-  const { addToCart } = useCart();
+  const { addToCart } = useEnhancedCart();
   const { handleToggleFavourite, isLoading: isFavouriteLoading } =
     useFavouritesWishlist();
   const [removingId, setRemovingId] = useState<number | null>(null);

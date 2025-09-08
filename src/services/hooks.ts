@@ -48,6 +48,7 @@ export { useGetSectionsQuery } from "./api/sectionsApi";
 export {
   useGetCartQuery,
   useAddToCartMutation,
+  useAddManyToCartMutation,
   useUpdateCartItemMutation,
   useClearCartMutation,
   useApplyCouponMutation,

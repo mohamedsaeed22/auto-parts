@@ -3,6 +3,7 @@ export { useAuth } from "./useAuth";
 
 // Cart hooks
 export { useCart } from "./useCart";
+export { useEnhancedCart } from "./useEnhancedCart";
 
 // Favourites and Wishlist hooks
 export { useFavouritesWishlist } from "./useFavouritesWishlist";

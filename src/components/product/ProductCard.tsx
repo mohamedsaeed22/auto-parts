@@ -1,4 +1,4 @@
-import { useCart } from "@/hooks/useCart";
+import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import { useFavouritesWishlist } from "@/hooks/useFavouritesWishlist";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -23,7 +23,7 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { t, i18n } = useTranslation("product");
   const isRTL = i18n.language === "ar";
-  const { items, addToCart, updateQuantity, removeFromCart } = useCart();
+  const { items, addToCart, updateQuantity, removeFromCart } = useEnhancedCart();
   const { handleToggleFavourite, handleToggleWishlist, isLoading } =
     useFavouritesWishlist();
   const cartItem = items.find((item) => item.id === product.id);
