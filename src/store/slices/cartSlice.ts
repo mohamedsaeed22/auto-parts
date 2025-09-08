@@ -16,6 +16,7 @@ interface CartState {
   totalItems: number;
   isOpen: boolean;
   loading: boolean;
+  loadingItems: number[]; // Track which items are currently loading
   error: string | null;
 }
 
@@ -34,6 +35,7 @@ const initialState: CartState = {
   totalItems: 0,
   isOpen: false,
   loading: false,
+  loadingItems: [],
   error: null,
 };
 
@@ -101,6 +103,17 @@ const cartSlice = createSlice({
       state.error = action.payload;
     },
 
+    setItemLoading: (state, action: PayloadAction<{ id: number; loading: boolean }>) => {
+      const { id, loading } = action.payload;
+      if (loading) {
+        if (!state.loadingItems.includes(id)) {
+          state.loadingItems.push(id);
+        }
+      } else {
+        state.loadingItems = state.loadingItems.filter(itemId => itemId !== id);
+      }
+    },
+
     addMultipleToCart: (state, action: PayloadAction<CartItem[]>) => {
       action.payload.forEach((newItem) => {
         const existing = state.items.find((i) => i.id === newItem.id);
@@ -126,6 +139,7 @@ export const {
   setCartOpen,
   setLoading,
   setError,
+  setItemLoading,
   addMultipleToCart,
 } = cartSlice.actions;
 

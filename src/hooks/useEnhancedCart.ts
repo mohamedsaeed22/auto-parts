@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { store } from "@/store";
 import { useAuthContext } from "@/contexts/auth-context";
 import {
   addToCart as addToCartAction,
@@ -11,6 +12,7 @@ import {
   setCartOpen,
   setLoading,
   setError,
+  setItemLoading,
 } from "@/store/slices/cartSlice";
 import {
   selectCartItems,
@@ -18,8 +20,10 @@ import {
   selectCartTotalItems,
   selectCartIsOpen,
   selectCartLoading,
+  selectCartLoadingItems,
   selectCartError,
   selectCartIsEmpty,
+  selectIsItemLoading,
 } from "@/store/selectors/cartSelectors";
 import {
   useGetCartQuery,
@@ -163,7 +167,7 @@ export const useEnhancedCart = () => {
   const handleUpdateQuantity = useCallback(
     async (id: number, quantity: number) => {
       try {
-        dispatch(setLoading(true));
+        dispatch(setItemLoading({ id, loading: true }));
 
         if (shouldUseAPI) {
           // Use the product ID directly for the API call
@@ -172,11 +176,9 @@ export const useEnhancedCart = () => {
             id: id, // This is the product ID
             quantity,
           }).unwrap();
-          showSuccess("Quantity updated successfully");
         } else {
           // Use local storage only - always succeeds
           dispatch(updateQuantity({ id, quantity }));
-          showSuccess("Quantity updated successfully");
           return; // Exit early for localStorage operations
         }
       } catch (error) {
@@ -187,10 +189,9 @@ export const useEnhancedCart = () => {
         } else {
           // For localStorage, still update even if there's an error
           dispatch(updateQuantity({ id, quantity }));
-          showSuccess("Quantity updated successfully");
         }
       } finally {
-        dispatch(setLoading(false));
+        dispatch(setItemLoading({ id, loading: false }));
       }
     },
     [shouldUseAPI, updateCartItemAPI, dispatch]
@@ -202,18 +203,16 @@ export const useEnhancedCart = () => {
   const handleRemoveFromCart = useCallback(
     async (id: number) => {
       try {
-        dispatch(setLoading(true));
+        dispatch(setItemLoading({ id, loading: true }));
 
         if (shouldUseAPI) {
           // Call update endpoint with quantity 0 to remove the product
           await updateCartItemAPI({ id, quantity: 0 }).unwrap();
           // Also update local state to keep it in sync
           dispatch(removeFromCart(id));
-          showSuccess("Product removed from cart");
         } else {
           // Use local storage only - always succeeds
           dispatch(removeFromCart(id));
-          showSuccess("Product removed from cart");
           return; // Exit early for localStorage operations
         }
       } catch (error) {
@@ -224,10 +223,9 @@ export const useEnhancedCart = () => {
         } else {
           // For localStorage, still remove even if there's an error
           dispatch(removeFromCart(id));
-          showSuccess("Product removed from cart");
         }
       } finally {
-        dispatch(setLoading(false));
+        dispatch(setItemLoading({ id, loading: false }));
       }
     },
     [shouldUseAPI, updateCartItemAPI, dispatch]
@@ -266,10 +264,21 @@ export const useEnhancedCart = () => {
    * Set cart open state
    */
   const handleSetCartOpen = useCallback(
-    (open: boolean) => {
-      dispatch(setCartOpen(open));
+    (isOpen: boolean) => {
+      dispatch(setCartOpen(isOpen));
     },
     [dispatch]
+  );
+
+  /**
+   * Check if a specific item is loading
+   */
+  const isItemLoading = useCallback(
+    (id: number) => {
+      const state = store.getState();
+      return selectIsItemLoading(id)(state);
+    },
+    []
   );
 
   /**
@@ -325,6 +334,7 @@ export const useEnhancedCart = () => {
     setCartOpen: handleSetCartOpen,
     setLoading: handleSetLoading,
     setError: handleSetError,
+    isItemLoading,
 
     // Sync functions
     syncLocalCartToAPI,

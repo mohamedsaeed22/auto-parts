@@ -34,7 +34,8 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
     shouldUseAPI,
     syncLocalCartToAPI,
     updateQuantity,
-    removeFromCart
+    removeFromCart,
+    isItemLoading
   } = useEnhancedCart();
 
   const handleContinueToShipping = async () => {
@@ -131,13 +132,16 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
                           updateQuantity(item.id, Math.max(1, item.quantity - 1));
                         }
                       }}
-                      className={`h-8 w-8 p-0 hover:bg-gray-100 text-gray-700 rounded-none flex items-center justify-center ${
+                      disabled={isItemLoading(item.id)}
+                      className={`h-8 w-8 p-0 hover:bg-gray-100 text-gray-700 rounded-none flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed ${
                         isRTL
                           ? "border-l border-gray-300"
                           : "border-r border-gray-300"
                       }`}
                     >
-                      {item.quantity === 1 ? (
+                      {isItemLoading(item.id) ? (
+                        <div className="animate-spin rounded-full h-3 w-3 border border-gray-600 border-t-transparent"></div>
+                      ) : item.quantity === 1 ? (
                         <Trash size={16} />
                       ) : (
                         <Minus size={16} />
@@ -154,13 +158,18 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
                       onClick={() =>
                         updateQuantity(item.id, item.quantity + 1)
                       }
-                      className={`h-8 w-8 p-0 hover:bg-gray-100 text-gray-700 rounded-none flex items-center justify-center ${
+                      disabled={isItemLoading(item.id)}
+                      className={`h-8 w-8 p-0 hover:bg-gray-100 text-gray-700 rounded-none flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed ${
                         isRTL
                           ? "border-r border-gray-300"
                           : "border-l border-gray-300"
                       }`}
                     >
-                      <Plus size={14} />
+                      {isItemLoading(item.id) ? (
+                        <div className="animate-spin rounded-full h-3 w-3 border border-gray-600 border-t-transparent"></div>
+                      ) : (
+                        <Plus size={14} />
+                      )}
                     </button>
                   </div>
                 </div>

@@ -34,6 +34,7 @@ const Cart: React.FC = () => {
     updateQuantity,
     clearCart,
     setCartOpen,
+    isItemLoading,
   } = useEnhancedCart();
 
   // Close cart on escape key
@@ -120,12 +121,7 @@ const Cart: React.FC = () => {
 
               {/* Cart Items */}
               <div className="flex-1 overflow-y-auto">
-                {loading ? (
-                  <div className="flex flex-col items-center justify-center h-full space-y-4">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                    <p className="text-neutral-500 text-sm">{t("loading")}</p>
-                  </div>
-                ) : items.length === 0 ? (
+                {items.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full p-8 text-center">
                     <ShoppingBag size={64} className="text-neutral-300 mb-4" />
                     <h3 className="text-lg font-medium text-neutral-900 mb-2">
@@ -170,10 +166,15 @@ const Cart: React.FC = () => {
                               {item.quantity === 1 ? (
                                 <button
                                   onClick={() => handleRemoveItem(item.id)}
-                                  className="p-0.5 text-accent hover:bg-accent-50 rounded transition-colors"
+                                  disabled={isItemLoading(item.id)}
+                                  className="p-0.5 text-accent hover:bg-accent-50 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[20px] min-h-[20px]"
                                   aria-label={t("items.remove")}
                                 >
-                                  <Trash2 size={14} />
+                                  {isItemLoading(item.id) ? (
+                                    <div className="animate-spin rounded-full h-3 w-3 border border-accent border-t-transparent"></div>
+                                  ) : (
+                                    <Trash2 size={14} />
+                                  )}
                                 </button>
                               ) : (
                                 <button
@@ -183,9 +184,14 @@ const Cart: React.FC = () => {
                                       item.quantity - 1
                                     )
                                   }
-                                  className="p-0.5 hover:bg-neutral-200 rounded transition-colors"
+                                  disabled={isItemLoading(item.id)}
+                                  className="p-0.5 hover:bg-neutral-200 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[20px] min-h-[20px]"
                                 >
-                                  <Minus size={14} />
+                                  {isItemLoading(item.id) ? (
+                                    <div className="animate-spin rounded-full h-3 w-3 border border-neutral-400 border-t-transparent"></div>
+                                  ) : (
+                                    <Minus size={14} />
+                                  )}
                                 </button>
                               )}
                               <span className="text-xs font-medium w-6 text-center">
@@ -198,9 +204,14 @@ const Cart: React.FC = () => {
                                     item.quantity + 1
                                   )
                                 }
-                                className="p-0.5 hover:bg-neutral-200 rounded transition-colors"
+                                disabled={isItemLoading(item.id)}
+                                className="p-0.5 hover:bg-neutral-200 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[20px] min-h-[20px]"
                               >
-                                <Plus size={14} />
+                                {isItemLoading(item.id) ? (
+                                  <div className="animate-spin rounded-full h-3 w-3 border border-neutral-400 border-t-transparent"></div>
+                                ) : (
+                                  <Plus size={14} />
+                                )}
                               </button>
                             </div>
                           </div>
