@@ -34,7 +34,7 @@ import { CartSyncService } from "@/services/cartSyncService";
 
 /**
  * Enhanced cart hook that manages both local storage and API synchronization
- * 
+ *
  * Logic:
  * - If user is not logged in: All cart operations are stored in local storage only
  * - If user is logged in but registration incomplete: Cart operations stay in local storage
@@ -44,7 +44,7 @@ import { CartSyncService } from "@/services/cartSyncService";
 export const useEnhancedCart = () => {
   const dispatch = useAppDispatch();
   const { isAuthenticated, isRegistrationComplete } = useAuthContext();
-  
+
   // Redux state selectors
   const items = useAppSelector(selectCartItems);
   const total = useAppSelector(selectCartTotal);
@@ -56,11 +56,11 @@ export const useEnhancedCart = () => {
 
   // API hooks - only used when user is authenticated and registration complete
   const shouldUseAPI = isAuthenticated && isRegistrationComplete;
-  
+
   const { data: apiCart, refetch: refetchCart } = useGetCartQuery(undefined, {
     skip: !shouldUseAPI,
   });
-  
+
   const [addToCartAPI] = useAddToCartMutation();
   const [addManyToCartAPI] = useAddManyToCartMutation();
   const [updateCartItemAPI] = useUpdateCartItemMutation();
@@ -98,86 +98,140 @@ export const useEnhancedCart = () => {
   }, [shouldUseAPI, apiCart, syncAPICartToLocal]);
 
   /**
+   * Effect to listen for cart sync completion events
+   */
+  useEffect(() => {
+    const handleCartSyncComplete = async () => {
+      if (shouldUseAPI) {
+        try {
+          await refetchCart();
+          await syncAPICartToLocal();
+        } catch (error) {
+          console.error("Failed to refresh cart after sync:", error);
+        }
+      }
+    };
+
+    window.addEventListener("cartSyncComplete", handleCartSyncComplete);
+
+    return () => {
+      window.removeEventListener("cartSyncComplete", handleCartSyncComplete);
+    };
+  }, [shouldUseAPI, refetchCart, syncAPICartToLocal]);
+
+  /**
    * Add item to cart
    */
-  const addToCart = useCallback(async (item: Omit<CartItem, "quantity">) => {
-    try {
-      dispatch(setLoading(true));
-      
-      if (shouldUseAPI) {
-        // Use API
-        await addToCartAPI({
-          product_id: item.id,
-          quantity: 1,
-        }).unwrap();
-        
-        showSuccess("Product added to cart");
-      } else {
-        // Use local storage only
-        dispatch(addToCartAction(item));
-        showSuccess("Product added to cart");
+  const addToCart = useCallback(
+    async (item: Omit<CartItem, "quantity">) => {
+      try {
+        dispatch(setLoading(true));
+
+        if (shouldUseAPI) {
+          // Use API
+          await addToCartAPI({
+            product_id: item.id,
+            quantity: 1,
+          }).unwrap();
+          showSuccess("Product added to cart");
+        } else {
+          // Use local storage only - always succeeds
+          dispatch(addToCartAction(item));
+          showSuccess("Product added to cart");
+          return; // Exit early for localStorage operations
+        }
+      } catch (error) {
+        // Only show error for API operations
+        if (shouldUseAPI) {
+          console.error("Failed to add to cart:", error);
+          showError("Failed to add product to cart");
+        } else {
+          // For localStorage, still add the item even if there's an error
+          dispatch(addToCartAction(item));
+          showSuccess("Product added to cart");
+        }
+      } finally {
+        dispatch(setLoading(false));
       }
-    } catch (error) {
-      console.error("Failed to add to cart:", error);
-      showError("Failed to add product to cart");
-    } finally {
-      dispatch(setLoading(false));
-    }
-  }, [shouldUseAPI, addToCartAPI, dispatch]);
+    },
+    [shouldUseAPI, addToCartAPI, dispatch]
+  );
 
   /**
    * Update item quantity
    */
-  const handleUpdateQuantity = useCallback(async (id: number, quantity: number) => {
-    try {
-      dispatch(setLoading(true));
-      
-      if (shouldUseAPI) {
-        // Use the product ID directly for the API call
-        // The backend expects the product ID in the URL, not the cart item ID
-        await updateCartItemAPI({
-          id: id, // This is the product ID
-          quantity,
-        }).unwrap();
-      } else {
-        // Use local storage only
-        dispatch(updateQuantity({ id, quantity }));
+  const handleUpdateQuantity = useCallback(
+    async (id: number, quantity: number) => {
+      try {
+        dispatch(setLoading(true));
+
+        if (shouldUseAPI) {
+          // Use the product ID directly for the API call
+          // The backend expects the product ID in the URL, not the cart item ID
+          await updateCartItemAPI({
+            id: id, // This is the product ID
+            quantity,
+          }).unwrap();
+          showSuccess("Quantity updated successfully");
+        } else {
+          // Use local storage only - always succeeds
+          dispatch(updateQuantity({ id, quantity }));
+          showSuccess("Quantity updated successfully");
+          return; // Exit early for localStorage operations
+        }
+      } catch (error) {
+        // Only show error for API operations
+        if (shouldUseAPI) {
+          console.error("Failed to update quantity:", error);
+          showError("Failed to update quantity");
+        } else {
+          // For localStorage, still update even if there's an error
+          dispatch(updateQuantity({ id, quantity }));
+          showSuccess("Quantity updated successfully");
+        }
+      } finally {
+        dispatch(setLoading(false));
       }
-    } catch (error) {
-      console.error("Failed to update quantity:", error);
-      showError("Failed to update quantity");
-    } finally {
-      dispatch(setLoading(false));
-    }
-  }, [shouldUseAPI, updateCartItemAPI, dispatch]);
+    },
+    [shouldUseAPI, updateCartItemAPI, dispatch]
+  );
 
   /**
    * Remove item from cart
    */
-  const handleRemoveFromCart = useCallback(async (id: number) => {
-    try {
-      dispatch(setLoading(true));
-      
-      if (shouldUseAPI) {
-        // Use the product ID directly for the API call
-        // The backend expects the product ID in the URL, not the cart item ID
-        await updateCartItemAPI({
-          id: id, // This is the product ID
-          quantity: 0, // Setting quantity to 0 removes the item
-        }).unwrap();
-      } else {
-        // Use local storage only
-        dispatch(removeFromCart(id));
+  const handleRemoveFromCart = useCallback(
+    async (id: number) => {
+      try {
+        dispatch(setLoading(true));
+
+        if (shouldUseAPI) {
+          // Call update endpoint with quantity 0 to remove the product
+          await updateCartItemAPI({ id, quantity: 0 }).unwrap();
+          // Also update local state to keep it in sync
+          dispatch(removeFromCart(id));
+          showSuccess("Product removed from cart");
+        } else {
+          // Use local storage only - always succeeds
+          dispatch(removeFromCart(id));
+          showSuccess("Product removed from cart");
+          return; // Exit early for localStorage operations
+        }
+      } catch (error) {
+        // Only show error for API operations
+        if (shouldUseAPI) {
+          console.error("Failed to remove from cart:", error);
+          showError("Failed to remove product from cart");
+        } else {
+          // For localStorage, still remove even if there's an error
+          dispatch(removeFromCart(id));
+          showSuccess("Product removed from cart");
+        }
+      } finally {
+        dispatch(setLoading(false));
       }
-      
-      showSuccess("Product removed from cart");
-    } catch (error) {
-      console.error("Failed to remove from cart:", error);
-      showError("Failed to remove product from cart");
-    } finally {
-      dispatch(setLoading(false));
-    }
-  }, [shouldUseAPI, updateCartItemAPI, dispatch]);
+    },
+    [shouldUseAPI, updateCartItemAPI, dispatch]
+  );
 
   /**
    * Clear entire cart
@@ -185,13 +239,13 @@ export const useEnhancedCart = () => {
   const handleClearCart = useCallback(async () => {
     try {
       dispatch(setLoading(true));
-      
+
       if (shouldUseAPI) {
         await clearCartAPI().unwrap();
       } else {
         dispatch(clearCart());
       }
-      
+
       showSuccess("Cart cleared successfully");
     } catch (error) {
       console.error("Failed to clear cart:", error);
@@ -211,39 +265,57 @@ export const useEnhancedCart = () => {
   /**
    * Set cart open state
    */
-  const handleSetCartOpen = useCallback((open: boolean) => {
-    dispatch(setCartOpen(open));
-  }, [dispatch]);
+  const handleSetCartOpen = useCallback(
+    (open: boolean) => {
+      dispatch(setCartOpen(open));
+    },
+    [dispatch]
+  );
 
   /**
    * Set loading state
    */
-  const handleSetLoading = useCallback((loading: boolean) => {
-    dispatch(setLoading(loading));
-  }, [dispatch]);
+  const handleSetLoading = useCallback(
+    (loading: boolean) => {
+      dispatch(setLoading(loading));
+    },
+    [dispatch]
+  );
 
   /**
    * Set error state
    */
-  const handleSetError = useCallback((error: string | null) => {
-    dispatch(setError(error));
-  }, [dispatch]);
+  const handleSetError = useCallback(
+    (error: string | null) => {
+      dispatch(setError(error));
+    },
+    [dispatch]
+  );
+
+  /**
+   * Force refresh cart data
+   */
+  const refreshCart = useCallback(async () => {
+    if (shouldUseAPI) {
+      await refetchCart();
+    }
+  }, [shouldUseAPI, refetchCart]);
 
   return {
     // State
     items, // Always use local items as they are synced from API when needed
-    total: shouldUseAPI ? (apiCart?.data?.cart_total || 0) : total,
-    totalItems: shouldUseAPI ? (apiCart?.data?.item_count || 0) : totalItems,
+    total: shouldUseAPI ? apiCart?.data?.cart_total || 0 : total,
+    totalItems: shouldUseAPI ? apiCart?.data?.item_count || 0 : totalItems,
     isOpen,
     loading,
     error,
-    isEmpty: shouldUseAPI ? (apiCart?.data?.item_count === 0) : isEmpty,
-    
+    isEmpty: shouldUseAPI ? apiCart?.data?.item_count === 0 : isEmpty,
+
     // Authentication state
     isAuthenticated,
     isRegistrationComplete,
     shouldUseAPI,
-    
+
     // Actions
     addToCart,
     removeFromCart: handleRemoveFromCart,
@@ -253,9 +325,10 @@ export const useEnhancedCart = () => {
     setCartOpen: handleSetCartOpen,
     setLoading: handleSetLoading,
     setError: handleSetError,
-    
+
     // Sync functions
     syncLocalCartToAPI,
     syncAPICartToLocal,
+    refreshCart,
   };
 };

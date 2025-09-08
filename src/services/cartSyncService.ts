@@ -98,13 +98,67 @@ export class CartSyncService {
     const hasLocalItems = localCartItems.length > 0;
 
     if (isRegistrationComplete) {
-      // User has completed registration - sync everything to API
-      if (hasLocalItems) {
-        // Sync local cart to API
-        await this.syncLocalCartToAPI();
-      } else {
-        // No local items, sync API cart to local for immediate UI update
-        await this.syncAPICartToLocal();
+      try {
+        // First, get the API cart
+        const response = await store.dispatch(
+          cartApi.endpoints.getCart.initiate()
+        ).unwrap();
+
+        // Clear local cart first
+        store.dispatch(clearCart());
+
+        // Add API items to local storage
+        if (response.code === 200 && response.data?.cart_items) {
+          const cartItems: CartItem[] = response.data.cart_items.map(item => ({
+            id: item.product.id,
+            title: item.product.name,
+            price: Number(item.product.final_price) || Number(item.product.price) || 0,
+            image: item.product.primary_image || "",
+            quantity: item.quantity,
+            category: item.product.category?.name || "Unknown Category",
+            description: item.product.description || "",
+          }));
+          store.dispatch(addMultipleToCart(cartItems));
+        }
+
+        // If there were local items, add them to the API cart
+        if (hasLocalItems) {
+          const product_ids = localCartItems.map(item => item.id);
+          const quantities = localCartItems.map(item => item.quantity);
+
+          await store.dispatch(
+            cartApi.endpoints.addManyToCart.initiate({
+              product_ids,
+              quantities,
+            })
+          ).unwrap();
+
+          // After adding local items to API, get the updated cart and sync to local
+          const updatedResponse = await store.dispatch(
+            cartApi.endpoints.getCart.initiate()
+          ).unwrap();
+
+          // Clear local cart and add the complete updated cart
+          store.dispatch(clearCart());
+          if (updatedResponse.code === 200 && updatedResponse.data?.cart_items) {
+            const updatedCartItems: CartItem[] = updatedResponse.data.cart_items.map(item => ({
+              id: item.product.id,
+              title: item.product.name,
+              price: Number(item.product.final_price) || Number(item.product.price) || 0,
+              image: item.product.primary_image || "",
+              quantity: item.quantity,
+              category: item.product.category?.name || "Unknown Category",
+              description: item.product.description || "",
+            }));
+            store.dispatch(addMultipleToCart(updatedCartItems));
+           }
+        }
+
+        // Invalidate cart cache to ensure fresh data
+        store.dispatch(cartApi.util.invalidateTags(['Cart']));
+      } catch (error) {
+        console.error("Failed to sync cart on login:", error);
+        toast.error("Failed to sync cart");
       }
     } else {
       // User hasn't completed registration - sync API cart to local storage

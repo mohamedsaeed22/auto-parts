@@ -18,30 +18,23 @@ import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import { showError, showSuccess } from "@/lib/toast";
 
 interface CartReviewStepProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  items: any[];
-  totalItems: number;
   onNext: () => void;
-  onUpdateQuantity: (id: string, quantity: number) => void;
-  onRemoveItem: (id: string) => void;
 }
 
-const CartReviewStep: React.FC<CartReviewStepProps> = ({
-  items,
-  totalItems,
-  onNext,
-  onUpdateQuantity,
-  onRemoveItem,
-}) => {
+const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
   const { t, i18n } = useTranslation("checkout");
   const isRTL = i18n.language === "ar";
   const [isSyncing, setIsSyncing] = useState(false);
   
   const {
+    items,
+    totalItems,
     isAuthenticated,
     isRegistrationComplete,
     shouldUseAPI,
     syncLocalCartToAPI,
+    updateQuantity,
+    removeFromCart
   } = useEnhancedCart();
 
   const handleContinueToShipping = async () => {
@@ -133,12 +126,9 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({
                     <button
                       onClick={() => {
                         if (item.quantity === 1) {
-                          onRemoveItem(item.id);
+                          removeFromCart(item.id);
                         } else {
-                          onUpdateQuantity(
-                            item.id,
-                            Math.max(1, item.quantity - 1)
-                          );
+                          updateQuantity(item.id, Math.max(1, item.quantity - 1));
                         }
                       }}
                       className={`h-8 w-8 p-0 hover:bg-gray-100 text-gray-700 rounded-none flex items-center justify-center ${
@@ -162,7 +152,7 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({
 
                     <button
                       onClick={() =>
-                        onUpdateQuantity(item.id, item.quantity + 1)
+                        updateQuantity(item.id, item.quantity + 1)
                       }
                       className={`h-8 w-8 p-0 hover:bg-gray-100 text-gray-700 rounded-none flex items-center justify-center ${
                         isRTL

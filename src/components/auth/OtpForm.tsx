@@ -13,7 +13,7 @@ import {
 } from "@/lib/validations/authSchema";
 import { useFormErrorTranslation } from "@/hooks/useFormErrorTranslation";
 import { useVerifyOtpMutation, useSendOtpMutation } from "@/services/hooks";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/contexts/auth-context";
 import { useRouter } from "next/navigation";
 import { showSuccess, showError } from "@/lib/toast";
 
@@ -33,7 +33,7 @@ export default function OtpForm({
   const router = useRouter();
   const [verifyOtp, { isLoading: isVerifying }] = useVerifyOtpMutation();
   const [sendOtp, { isLoading: isResending }] = useSendOtpMutation();
-  const { login } = useAuth();
+  const { login } = useAuthContext();
 
   // Counter state for resend button
   const [countdown, setCountdown] = useState(60);
@@ -73,11 +73,14 @@ export default function OtpForm({
       }).unwrap();
 
       if (response.code === 200 && response.data) {
-        // Store auth data in browser using hook
-        login(response.data);
+        // Use AuthContext login which handles cart synchronization
+        await login(response.data.token, response.data.user);
 
-        // Call success callback
-        onAuthSuccess(response.data);
+        // Call success callback with the auth data structure expected
+        onAuthSuccess({
+          token: response.data.token,
+          user: response.data.user
+        });
 
         // Redirect to home page after successful login
         router.push("/");

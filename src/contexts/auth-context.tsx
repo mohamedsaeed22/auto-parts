@@ -48,6 +48,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Handle cart synchronization after login
     try {
       await CartSyncService.handleLoginSync(user.is_registration_complete ?? false);
+      // Force a small delay to ensure state updates are processed
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('cartSyncComplete'));
+      }, 100);
     } catch (error) {
       console.error("Failed to sync cart on login:", error);
     }

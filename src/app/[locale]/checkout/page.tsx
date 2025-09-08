@@ -154,15 +154,7 @@ const CheckoutPage = () => {
                   className="bg-white rounded-2xl shadow-sm border border-gray-200"
                 >
                   {currentStep === 1 && (
-                    <CartReviewStep
-                      items={items}
-                      totalItems={totalItems}
-                      onNext={handleNext}
-                      onUpdateQuantity={(id: string, quantity: number) =>
-                        updateQuantity(Number(id), quantity)
-                      }
-                      onRemoveItem={(id: string) => removeFromCart(Number(id))}
-                    />
+                    <CartReviewStep onNext={handleNext} />
                   )}
 
                   {currentStep === 2 && (
