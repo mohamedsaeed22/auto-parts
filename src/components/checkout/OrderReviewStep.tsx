@@ -25,7 +25,7 @@ interface OrderReviewStepProps {
   selectedAddress: Address | null;
   paymentMethod: string;
   isProcessing: boolean;
-  onPlaceOrder: () => void;
+  onPlaceOrder: (order: import("@/services/api/ordersApi").Order) => void;
   onBack: () => void;
   couponCode?: string;
 }
@@ -89,8 +89,18 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
         })
       );
 
-      // Call the original onPlaceOrder callback
-      onPlaceOrder();
+      // Call the original onPlaceOrder callback with created order
+      // result is ApiResponse<{ order: Order }>
+      if (result && (result as any).data && (result as any).data.order) {
+        onPlaceOrder((result as any).data.order);
+      } else {
+        showError(
+          t("orderReview.orderError", {
+            defaultValue: "Failed to create order. Please try again.",
+          })
+        );
+        return;
+      }
     } catch (error) {
       console.error("Error creating order:", error);
       showError(

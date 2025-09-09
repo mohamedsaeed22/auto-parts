@@ -105,7 +105,7 @@
   },
   "orderComplete": {
     "title": "تم الطلب بنجاح!",
-    "orderNumber": "رقم الطلب: #12345",
+    "orderNumber": "رقم الطلب",
     "deliveryTime": "سيتم توصيل طلبك خلال 2-3 أيام عمل",
     "backToShopping": "العودة للتسوق",
     "trackOrder": "تتبع الطلب"

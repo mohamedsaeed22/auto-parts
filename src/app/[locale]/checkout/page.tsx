@@ -32,6 +32,9 @@ const CheckoutPage = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
+  const [createdOrder, setCreatedOrder] = useState<
+    import("@/services/api/ordersApi").Order | null
+  >(null);
   const [couponCode, setCouponCode] = useState("");
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
@@ -52,10 +55,15 @@ const CheckoutPage = () => {
     }
   };
 
-  const handlePlaceOrder = async () => {
+  const handlePlaceOrder = async (
+    order?: import("@/services/api/ordersApi").Order
+  ) => {
     setIsProcessing(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 200));
     setIsProcessing(false);
+    if (order) {
+      setCreatedOrder(order);
+    }
     setOrderComplete(true);
     clearCart();
   };
@@ -114,7 +122,12 @@ const CheckoutPage = () => {
     }
 
     if (orderComplete) {
-      return <OrderComplete onBackToShopping={handleBackToShopping} />;
+      return (
+        <OrderComplete
+          onBackToShopping={handleBackToShopping}
+          order={createdOrder}
+        />
+      );
     }
 
     return (

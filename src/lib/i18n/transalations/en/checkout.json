@@ -105,7 +105,7 @@
   },
   "orderComplete": {
     "title": "Order Placed Successfully!",
-    "orderNumber": "Order Number: #12345",
+    "orderNumber": "Order Number",
     "deliveryTime": "Your order will be delivered within 2-3 business days",
     "backToShopping": "Back to Shopping",
     "trackOrder": "Track Order"
