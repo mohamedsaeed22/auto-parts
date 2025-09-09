@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   X,
   Plus,
@@ -13,14 +13,14 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useEnhancedCart } from "@/hooks/useEnhancedCart"; // Use Enhanced Redux hook
 import { Button } from "@/components/ui/button";
-import ConfirmDialog from "@/components/ui/ConfirmDialog";
+// import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useTranslation } from "react-i18next";
 
 const Cart: React.FC = () => {
   const router = useRouter();
-  const [showClearCartDialog, setShowClearCartDialog] = useState(false);
+  // const [showClearCartDialog, setShowClearCartDialog] = useState(false);
   const { t, i18n } = useTranslation("cart");
   const isRTL = i18n.language === "ar";
   // Use Enhanced Redux hook
@@ -29,10 +29,10 @@ const Cart: React.FC = () => {
     items,
     total,
     totalItems,
-    loading,
+    // loading,
     removeFromCart,
     updateQuantity,
-    clearCart,
+    // clearCart,
     setCartOpen,
     isItemLoading,
   } = useEnhancedCart();
@@ -58,14 +58,14 @@ const Cart: React.FC = () => {
     updateQuantity(id, quantity);
   };
 
-  const handleClearCart = () => {
-    setShowClearCartDialog(true);
-  };
+  // const handleClearCart = () => {
+  //   setShowClearCartDialog(true);
+  // };
 
-  const confirmClearCart = () => {
-    clearCart();
-    setShowClearCartDialog(false);
-  };
+  // const confirmClearCart = () => {
+  //   clearCart();
+  //   setShowClearCartDialog(false);
+  // };
 
   const handleCheckout = () => {
     setCartOpen(false);
@@ -105,8 +105,8 @@ const Cart: React.FC = () => {
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-border">
                 <div className="flex items-center space-x-3">
-                  <ShoppingBag size={24} className="text-neutral-700" />
-                  <h2 className="text-xl font-bold text-neutral-900 mx-2">
+                  <ShoppingBag size={24} className="text-logo-gold" />
+                  <h2 className="text-xl font-bold text-logo-black mx-2">
                     {t("title")}
                   </h2>
                 </div>
@@ -157,7 +157,7 @@ const Cart: React.FC = () => {
                           <h3 className="font-medium text-neutral-900 text-xs line-clamp-2 mb-1">
                             {item.title}
                           </h3>
-                          <p className="text-primary font-semibold text-xs mb-1">
+                          <p className="text-logo-gold font-semibold text-xs mb-1">
                             {item.price.toFixed(2)} {t("items.price")}
                           </p>
 
@@ -216,7 +216,7 @@ const Cart: React.FC = () => {
                             </div>
                           </div>
 
-                          <p className="text-xs text-neutral-500 mt-1">
+                          <p className="text-xs text-neutral-600 mt-1">
                             {t("items.itemTotal")}:{" "}
                             {(item.price * item.quantity).toFixed(2)}{" "}
                             {t("items.price")}
@@ -244,7 +244,7 @@ const Cart: React.FC = () => {
                     </div>
                     <div className="flex justify-between items-center text-lg font-bold">
                       <span>{t("summary.grandTotal")}:</span>
-                      <span className="text-primary">
+                      <span className="text-logo-gold">
                         {total.toFixed(2)} {t("items.price")}
                       </span>
                     </div>
@@ -253,13 +253,13 @@ const Cart: React.FC = () => {
                   <div className="space-y-3">
                     <Button
                       onClick={handleCheckout}
-                      className="w-full bg-secondary hover:bg-secondary-dark flex items-center"
+                      className="w-full bg-logo-gold hover:bg-logo-gold/90 text-black flex items-center"
                       size="lg"
                     >
                       {isRTL ? (
                         <>
-                          <ArrowLeft size={18} className="mx-2" />
                           <span>{t("actions.checkout")}</span>
+                          <ArrowLeft size={18} className="mx-2" />
                         </>
                       ) : (
                         <>
@@ -273,17 +273,9 @@ const Cart: React.FC = () => {
                       <Button
                         onClick={handleContinueShopping}
                         variant="outline"
-                        className="flex-1"
+                        className="flex-1 border-logo-gold text-logo-black hover:bg-logo-gold/10"
                       >
                         {t("actions.continueShopping")}
-                      </Button>
-                      <Button
-                        onClick={handleClearCart}
-                        variant="outline"
-                        className="text-accent border-accent-200 hover:bg-accent-50"
-                        title={t("actions.clearCart")}
-                      >
-                        <Trash2 size={16} />
                       </Button>
                     </div>
                   </div>
@@ -293,19 +285,6 @@ const Cart: React.FC = () => {
           </>
         )}
       </AnimatePresence>
-
-      {/* Clear Cart Confirmation Dialog */}
-      <ConfirmDialog
-        open={showClearCartDialog}
-        onOpenChange={setShowClearCartDialog}
-        title={t("dialog.clearTitle")}
-        description={t("dialog.clearDescription")}
-        cancelLabel={t("dialog.cancel")}
-        confirmLabel={t("dialog.confirm")}
-        onConfirm={confirmClearCart}
-        confirmVariant="destructive"
-        dir={isRTL ? "rtl" : "ltr"}
-      />
     </>
   );
 };

@@ -37,7 +37,7 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
     removeFromCart,
     isItemLoading
   } = useEnhancedCart();
-
+console.log(items);
   const handleContinueToShipping = async () => {
     // If user is authenticated and registration is complete, sync cart before proceeding
     if (shouldUseAPI && items.length > 0) {
