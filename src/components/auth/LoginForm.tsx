@@ -120,7 +120,7 @@ export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
           </label>
           <input
             type="tel"
-            value="01018205802"
+            value="01018205803"
             placeholder={t("login.phonePlaceholder")}
             {...register("phoneNumber")}
             className="w-full px-3 py-3 border border-neutral-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"

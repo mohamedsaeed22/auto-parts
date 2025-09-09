@@ -19,6 +19,7 @@ import {
   FileText,
 } from "lucide-react";
 import { storage } from "@/lib/storage";
+import { CartSyncService } from "@/services/cartSyncService";
 import FormInput from "@/components/ui/FormInput";
 import {
   Select,
@@ -295,6 +296,20 @@ export default function CompleteRegistrationPage() {
 
         // Update only the user data, don't replace the entire auth structure
         storage.updateUser(updatedUser);
+
+        // Sync local cart to API now that registration is complete
+        try {
+          await CartSyncService.handleRegistrationComplete();
+          // Optional: let listeners refresh cart state
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent("cartSyncComplete"));
+          }, 100);
+        } catch (syncError) {
+          console.error(
+            "Cart sync after registration completion failed:",
+            syncError
+          );
+        }
 
         // Verify the update worked
         const storedAuth = storage.getAuth();
