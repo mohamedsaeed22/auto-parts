@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Truck, ArrowLeft, ArrowRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
@@ -68,6 +68,17 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
       // silently fail; upstream toasts (if any) will handle
     }
   };
+
+  // Auto-select first address if none selected
+  useEffect(() => {
+    if (
+      hasAddresses &&
+      (!selectedAddress ||
+        !addresses.some((a: any) => a.id === selectedAddress))
+    ) {
+      onAddressSelect(addresses[0].id);
+    }
+  }, [hasAddresses, addresses, selectedAddress, onAddressSelect]);
 
   return (
     <div dir={isRTL ? "rtl" : "ltr"}>

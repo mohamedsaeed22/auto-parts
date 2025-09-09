@@ -148,8 +148,8 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
           >
             {isRTL ? (
               <>
-                {t("payment.back")}
                 <ArrowRight className="w-4 h-4 mx-2" />
+                {t("payment.back")}
               </>
             ) : (
               <>
@@ -164,13 +164,13 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
           >
             {isRTL ? (
               <>
-                <ArrowLeft className="w-4 h-4 mx-2" />
                 {t("payment.orderReview")}
+                <ArrowLeft className="w-4 h-4 mx-2" />
               </>
             ) : (
               <>
-                <ArrowRight className="w-4 h-4 mx-2" />
                 {t("payment.orderReview")}
+                <ArrowRight className="w-4 h-4 mx-2" />
               </>
             )}
           </Button>
