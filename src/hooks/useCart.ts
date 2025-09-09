@@ -12,6 +12,13 @@ import {
   setError,
 } from "@/store/slices/cartSlice";
 import {
+  addToCartAPI,
+  updateCartAPI,
+  removeFromCartAPI,
+  clearCartAPI,
+} from "@/store/slices/cartSlice";
+import { useAuthContext } from "@/contexts/auth-context";
+import {
   selectCartItems,
   selectCartTotal,
   selectCartTotalItems,
@@ -24,6 +31,8 @@ import type { CartItem } from "@/store/slices/cartSlice";
 
 export const useCart = () => {
   const dispatch = useAppDispatch();
+  const { isAuthenticated, isRegistrationComplete } = useAuthContext();
+  const shouldUseAPI = isAuthenticated && isRegistrationComplete;
 
   // Selectors
   const items = useAppSelector(selectCartItems);
@@ -37,23 +46,39 @@ export const useCart = () => {
   // Actions
   const handleAddToCart = useCallback(
     (item: Omit<CartItem, "quantity">) => {
-      dispatch(addToCart(item));
+      if (shouldUseAPI) {
+        // optimistic: update locally first
+        dispatch(addToCart(item));
+        dispatch(addToCartAPI({ productId: item.id }));
+      } else {
+        dispatch(addToCart(item));
+      }
     },
-    [dispatch]
+    [dispatch, shouldUseAPI]
   );
 
   const handleRemoveFromCart = useCallback(
     (id: number) => {
-      dispatch(removeFromCart(id));
+      if (shouldUseAPI) {
+        dispatch(removeFromCart(id));
+        dispatch(removeFromCartAPI({ productId: id }));
+      } else {
+        dispatch(removeFromCart(id));
+      }
     },
-    [dispatch]
+    [dispatch, shouldUseAPI]
   );
 
   const handleUpdateQuantity = useCallback(
     (id: number, quantity: number) => {
-      dispatch(updateQuantity({ id, quantity }));
+      if (shouldUseAPI) {
+        dispatch(updateQuantity({ id, quantity }));
+        dispatch(updateCartAPI({ productId: id, quantity }));
+      } else {
+        dispatch(updateQuantity({ id, quantity }));
+      }
     },
-    [dispatch]
+    [dispatch, shouldUseAPI]
   );
 
   const handleAddMultipleToCart = useCallback(
@@ -64,8 +89,13 @@ export const useCart = () => {
   );
 
   const handleClearCart = useCallback(() => {
-    dispatch(clearCart());
-  }, [dispatch]);
+    if (shouldUseAPI) {
+      dispatch(clearCart());
+      dispatch(clearCartAPI());
+    } else {
+      dispatch(clearCart());
+    }
+  }, [dispatch, shouldUseAPI]);
 
   const handleToggleCart = useCallback(() => {
     dispatch(toggleCart());

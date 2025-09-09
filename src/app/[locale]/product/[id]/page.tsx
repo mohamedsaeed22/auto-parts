@@ -23,7 +23,7 @@ import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import { useFavouritesWishlist } from "@/hooks/useFavouritesWishlist";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useTranslation } from "react-i18next";
-import { useGetProductQuery, useAddToCartMutation } from "@/services/hooks";
+import { useGetProductQuery } from "@/services/hooks";
 import { showSuccess, showError } from "@/lib/toast";
 
 // Loading Component
@@ -336,10 +336,11 @@ export default function ProductDetails() {
     refetch,
   } = useGetProductQuery(productId);
 
-  const [addToCartApi, { isLoading: isAddingToCart }] = useAddToCartMutation();
+  // Remove direct API add; rely on enhanced cart hook to decide (guest vs API)
 
   // Use Redux hook for local cart state
-  const { items, addToCart, removeFromCart, updateQuantity } = useEnhancedCart();
+  const { items, addToCart, removeFromCart, updateQuantity, loading } =
+    useEnhancedCart();
 
   // Use favourites/wishlist hook
   const {
@@ -373,29 +374,15 @@ export default function ProductDetails() {
 
   const handleAddToCart = async () => {
     if (!product) return;
-
-    try {
-      // Add to API cart
-      await addToCartApi({
-        product_id: product.id,
-        quantity: 1,
-      }).unwrap();
-
-      // Add to local Redux cart for immediate UI update
-      addToCart({
-        id: product.id,
-        title: product.name || "Product",
-        price: Number(product.final_price) || Number(product.price) || 0,
-        image: product.primary_image || "",
-        category: product.category?.name || "Unknown Category",
-        description: product.description || "",
-      });
-
-      console.log("Added to cart successfully!");
-    } catch (error) {
-      console.error("Failed to add to cart:", error);
-      showError(t("addToCartError"));
-    }
+    // Delegate logic to enhanced hook (guest => localStorage only; logged-in => API)
+    addToCart({
+      id: product.id,
+      title: product.name || "Product",
+      price: Number(product.final_price) || Number(product.price) || 0,
+      image: product.primary_image || "",
+      category: product.category?.name || "Unknown Category",
+      description: product.description || "",
+    });
   };
 
   const handleQuantityChange = (newQuantity: number) => {
@@ -766,13 +753,13 @@ export default function ProductDetails() {
               {!isInCart ? (
                 <Button
                   onClick={handleAddToCart}
-                  disabled={isAddingToCart}
+                  disabled={loading}
                   className={`w-full h-12 flex items-center justify-center gap-2 text-sm font-medium bg-primary text-white ${
                     isRTL ? "flex-row" : "flex-row"
                   }`}
                   size="sm"
                 >
-                  {isAddingToCart ? (
+                  {loading ? (
                     <Loader2 size={16} className="animate-spin" />
                   ) : isRTL ? (
                     <>

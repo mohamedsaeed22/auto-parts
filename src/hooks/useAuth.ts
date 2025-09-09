@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import { storage, type AuthData } from "@/lib/storage";
+import { store, persistor } from "@/store";
+import { clearCart, setCartOpen } from "@/store/slices/cartSlice";
+import { api } from "@/services/api";
 
 export function useAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -44,7 +47,21 @@ export function useAuth() {
     };
   }, []);
 
-  const logout = () => {
+  const logout = async () => {
+    // Clear Redux state first so UI updates immediately
+    store.dispatch(clearCart());
+    store.dispatch(setCartOpen(false));
+    store.dispatch(api.util.resetApiState());
+
+    // Purge persisted storage
+    try {
+      await persistor.purge();
+      await persistor.flush();
+    } catch (e) {
+      // ignore
+    }
+
+    // Remove auth and update local hook state
     storage.removeAuth();
     setIsAuthenticated(false);
     setUser(null);

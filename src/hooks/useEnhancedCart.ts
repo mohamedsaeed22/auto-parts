@@ -35,6 +35,7 @@ import {
 import type { CartItem } from "@/store/slices/cartSlice";
 import { showError, showSuccess } from "@/lib/toast";
 import { CartSyncService } from "@/services/cartSyncService";
+import { storage } from "@/lib/storage";
 
 /**
  * Enhanced cart hook that manages both local storage and API synchronization
@@ -59,7 +60,9 @@ export const useEnhancedCart = () => {
   const isEmpty = useAppSelector(selectCartIsEmpty);
 
   // API hooks - only used when user is authenticated and registration complete
-  const shouldUseAPI = isAuthenticated && isRegistrationComplete;
+  // Also require a valid token in storage to avoid race conditions immediately after logout
+  const hasToken = Boolean(storage.getAuth()?.token);
+  const shouldUseAPI = isAuthenticated && isRegistrationComplete && hasToken;
 
   const { data: apiCart, refetch: refetchCart } = useGetCartQuery(undefined, {
     skip: !shouldUseAPI,
@@ -273,13 +276,10 @@ export const useEnhancedCart = () => {
   /**
    * Check if a specific item is loading
    */
-  const isItemLoading = useCallback(
-    (id: number) => {
-      const state = store.getState();
-      return selectIsItemLoading(id)(state);
-    },
-    []
-  );
+  const isItemLoading = useCallback((id: number) => {
+    const state = store.getState();
+    return selectIsItemLoading(id)(state);
+  }, []);
 
   /**
    * Set loading state

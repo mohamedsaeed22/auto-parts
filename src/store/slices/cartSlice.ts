@@ -1,4 +1,9 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { cartApi } from "@/services/api/cartApi";
+import type { RootState } from "@/store";
+import type { ApiResponse, Cart } from "@/services/api/types";
+import { CartSyncService } from "@/services/cartSyncService";
+import { PURGE } from "redux-persist";
 
 export interface CartItem {
   id: number;
@@ -39,10 +44,120 @@ const initialState: CartState = {
   error: null,
 };
 
+// Helper to map API cart response into local CartItem[]
+type ApiCartItem = {
+  product: {
+    id: number;
+    name: string;
+    final_price?: number | string;
+    price?: number | string;
+    primary_image?: string;
+    category?: { name?: string } | null;
+    description?: string;
+  };
+  quantity: number;
+};
+
+const mapApiCartToItems = (
+  apiCart: Cart | { cart_items?: ApiCartItem[] } | undefined
+): CartItem[] => {
+  const items = (apiCart as { cart_items?: ApiCartItem[] } | undefined)
+    ?.cart_items;
+  if (!items) return [];
+  return items.map((item: ApiCartItem) => ({
+    id: item.product.id,
+    title: item.product.name,
+    price:
+      Number(item.product?.final_price) || Number(item.product?.price) || 0,
+    image: item.product?.primary_image || "",
+    quantity: item.quantity,
+    category: item.product?.category?.name || "Unknown Category",
+    description: item.product?.description || "",
+  }));
+};
+
+// Async thunks
+export const syncCartOnLogin = createAsyncThunk<
+  CartItem[],
+  { isRegistrationComplete: boolean },
+  { state: RootState }
+>("cart/syncCartOnLogin", async ({ isRegistrationComplete }, thunkAPI) => {
+  await CartSyncService.handleLoginSync(isRegistrationComplete);
+  const response = (await thunkAPI
+    .dispatch(cartApi.endpoints.getCart.initiate())
+    .unwrap()) as ApiResponse<Cart>;
+  return mapApiCartToItems(response.data);
+});
+
+export const addToCartAPI = createAsyncThunk<
+  CartItem[],
+  { productId: number; quantity?: number }
+>("cart/addToCartAPI", async ({ productId, quantity = 1 }, thunkAPI) => {
+  const res = (await thunkAPI
+    .dispatch(
+      cartApi.endpoints.addToCart.initiate({ product_id: productId, quantity })
+    )
+    .unwrap()) as ApiResponse<Cart>;
+  return mapApiCartToItems(res.data);
+});
+
+export const addManyToCartAPI = createAsyncThunk<
+  CartItem[],
+  { productIds: number[]; quantities: number[] }
+>("cart/addManyToCartAPI", async ({ productIds, quantities }, thunkAPI) => {
+  const res = (await thunkAPI
+    .dispatch(
+      cartApi.endpoints.addManyToCart.initiate({
+        product_ids: productIds,
+        quantities,
+      })
+    )
+    .unwrap()) as ApiResponse<Cart>;
+  return mapApiCartToItems(res.data);
+});
+
+export const updateCartAPI = createAsyncThunk<
+  CartItem[],
+  { productId: number; quantity: number }
+>("cart/updateCartAPI", async ({ productId, quantity }, thunkAPI) => {
+  const res = (await thunkAPI
+    .dispatch(
+      cartApi.endpoints.updateCartItem.initiate({ id: productId, quantity })
+    )
+    .unwrap()) as ApiResponse<Cart>;
+  return mapApiCartToItems(res.data);
+});
+
+export const removeFromCartAPI = createAsyncThunk<
+  CartItem[],
+  { productId: number }
+>("cart/removeFromCartAPI", async ({ productId }, thunkAPI) => {
+  const res = (await thunkAPI
+    .dispatch(
+      cartApi.endpoints.updateCartItem.initiate({ id: productId, quantity: 0 })
+    )
+    .unwrap()) as ApiResponse<Cart>;
+  return mapApiCartToItems(res.data);
+});
+
+export const clearCartAPI = createAsyncThunk<CartItem[], void>(
+  "cart/clearCartAPI",
+  async (_, thunkAPI) => {
+    await thunkAPI.dispatch(cartApi.endpoints.clearCart.initiate()).unwrap();
+    return [];
+  }
+);
+
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
+    setCart: (state, action: PayloadAction<CartItem[]>) => {
+      state.items = action.payload;
+      const totals = calculateTotals(state.items);
+      state.total = totals.total;
+      state.totalItems = totals.totalItems;
+    },
     addToCart: (state, action: PayloadAction<Omit<CartItem, "quantity">>) => {
       const existing = state.items.find(
         (item) => item.id === action.payload.id
@@ -103,14 +218,19 @@ const cartSlice = createSlice({
       state.error = action.payload;
     },
 
-    setItemLoading: (state, action: PayloadAction<{ id: number; loading: boolean }>) => {
+    setItemLoading: (
+      state,
+      action: PayloadAction<{ id: number; loading: boolean }>
+    ) => {
       const { id, loading } = action.payload;
       if (loading) {
         if (!state.loadingItems.includes(id)) {
           state.loadingItems.push(id);
         }
       } else {
-        state.loadingItems = state.loadingItems.filter(itemId => itemId !== id);
+        state.loadingItems = state.loadingItems.filter(
+          (itemId) => itemId !== id
+        );
       }
     },
 
@@ -128,9 +248,61 @@ const cartSlice = createSlice({
       state.totalItems = totals.totalItems;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(syncCartOnLogin.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(syncCartOnLogin.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items = action.payload;
+        const totals = calculateTotals(state.items);
+        state.total = totals.total;
+        state.totalItems = totals.totalItems;
+      })
+      .addCase(syncCartOnLogin.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to sync cart";
+      })
+      .addCase(addToCartAPI.fulfilled, (state, action) => {
+        state.items = action.payload;
+        const totals = calculateTotals(state.items);
+        state.total = totals.total;
+        state.totalItems = totals.totalItems;
+      })
+      .addCase(addManyToCartAPI.fulfilled, (state, action) => {
+        state.items = action.payload;
+        const totals = calculateTotals(state.items);
+        state.total = totals.total;
+        state.totalItems = totals.totalItems;
+      })
+      .addCase(updateCartAPI.fulfilled, (state, action) => {
+        state.items = action.payload;
+        const totals = calculateTotals(state.items);
+        state.total = totals.total;
+        state.totalItems = totals.totalItems;
+      })
+      .addCase(removeFromCartAPI.fulfilled, (state, action) => {
+        state.items = action.payload;
+        const totals = calculateTotals(state.items);
+        state.total = totals.total;
+        state.totalItems = totals.totalItems;
+      })
+      .addCase(clearCartAPI.fulfilled, (state) => {
+        state.items = [];
+        state.total = 0;
+        state.totalItems = 0;
+      })
+      // Handle PURGE action to reset state when logging out
+      .addCase(PURGE, () => {
+        return initialState;
+      });
+  },
 });
 
 export const {
+  setCart,
   addToCart,
   removeFromCart,
   updateQuantity,
@@ -144,3 +316,5 @@ export const {
 } = cartSlice.actions;
 
 export default cartSlice.reducer;
+
+export type { CartState };

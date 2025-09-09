@@ -11,6 +11,10 @@ import { useRouter } from "next/navigation";
 import { storage, AuthData } from "@/lib/storage";
 import { User } from "@/services/api/auth";
 import { CartSyncService } from "@/services/cartSyncService";
+import { persistor, store } from "@/store";
+import { clearCart, setCartOpen } from "@/store/slices/cartSlice";
+import { api } from "@/services/api";
+import { PURGE } from "redux-persist";
 
 interface AuthContextType {
   user: User | null;
@@ -44,13 +48,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user: user as AuthData["user"], // Type conversion needed due to nullable fields
     });
     setUser(user);
-    
+
     // Handle cart synchronization after login
     try {
-      await CartSyncService.handleLoginSync(user.is_registration_complete ?? false);
+      await CartSyncService.handleLoginSync(
+        user.is_registration_complete ?? false
+      );
       // Force a small delay to ensure state updates are processed
       setTimeout(() => {
-        window.dispatchEvent(new CustomEvent('cartSyncComplete'));
+        window.dispatchEvent(new CustomEvent("cartSyncComplete"));
       }, 100);
     } catch (error) {
       console.error("Failed to sync cart on login:", error);
@@ -60,11 +66,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     // Clear cart data on logout
     try {
+      // Clear Redux state FIRST to update UI immediately
+      store.dispatch(clearCart());
+      store.dispatch(setCartOpen(false));
+
+      // Reset cached queries (e.g., cart) to avoid any stale data
+      store.dispatch(api.util.resetApiState());
+
+      // Dispatch PURGE action to the cart slice specifically
+      store.dispatch({
+        type: PURGE,
+        key: "cart-storage",
+        result: () => null,
+      });
+
+      // Clear backend cart
       await CartSyncService.clearAllCarts();
+
+      // Purge localStorage AFTER clearing Redux state
+      await persistor.purge();
+
+      // Force persist to flush immediately
+      await persistor.flush();
     } catch (error) {
       console.error("Failed to clear carts on logout:", error);
+      // Even if clearing fails, still clear the UI
+      store.dispatch(clearCart());
+      store.dispatch(setCartOpen(false));
+      try {
+        await persistor.purge();
+      } catch (purgeError) {
+        console.error("Failed to purge persistor:", purgeError);
+      }
     }
-    
+
     storage.removeAuth();
     setUser(null);
     router.push("/");
@@ -73,10 +108,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const updateUser = async (updatedUser: User) => {
     const wasRegistrationIncomplete = !user?.is_registration_complete;
     const isNowComplete = updatedUser.is_registration_complete;
-    
+
     storage.updateUser(updatedUser as AuthData["user"]);
     setUser(updatedUser);
-    
+
     // Handle cart synchronization when registration is completed
     if (wasRegistrationIncomplete && isNowComplete) {
       try {
