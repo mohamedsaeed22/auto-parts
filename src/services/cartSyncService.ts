@@ -187,8 +187,10 @@ export class CartSyncService {
    * Handle cart synchronization when registration is completed
    */
   static async handleRegistrationComplete(): Promise<void> {
-    // When registration is completed, sync local cart to API
+    // When registration is completed, first sync local cart to API
     await this.syncLocalCartToAPI();
+    // Then fetch the authoritative cart from API and store it locally
+    await this.syncAPICartToLocal();
   }
 
   /**
