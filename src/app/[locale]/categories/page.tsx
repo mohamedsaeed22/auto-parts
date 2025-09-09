@@ -6,6 +6,9 @@ import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import { useGetCategoriesQuery } from "@/services/api/categoriesApi";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import { SEOMetadata } from "@/components/seo/SEOMetadata";
+import { StructuredData } from "@/components/seo/StructuredData";
+import { seoConfig } from "@/lib/seo/config";
 import {
   ArrowLeft,
   Package,
@@ -312,7 +315,12 @@ const ErrorMessage = ({
   </div>
 );
 
-export default function CategoriesPage() {
+export default function CategoriesPage({
+  params,
+}: {
+  params: { locale: string };
+}) {
+  const { locale } = params;
   const router = useRouter();
   const { t, i18n } = useTranslation("categories");
   const [searchQuery, setSearchQuery] = useState("");
@@ -363,6 +371,22 @@ export default function CategoriesPage() {
 
   return (
     <div dir={direction}>
+      <SEOMetadata
+        title={seoConfig.pages.categories.title[locale as keyof typeof seoConfig.pages.categories.title] || seoConfig.pages.categories.title.en}
+        description={seoConfig.pages.categories.description[locale as keyof typeof seoConfig.pages.categories.description] || seoConfig.pages.categories.description.en}
+        keywords={seoConfig.pages.categories.keywords[locale as keyof typeof seoConfig.pages.categories.keywords] || seoConfig.pages.categories.keywords.en}
+        locale={locale}
+        type="website"
+      />
+      <StructuredData
+        type="category"
+        data={{
+          name: seoConfig.pages.categories.title[locale as keyof typeof seoConfig.pages.categories.title] || seoConfig.pages.categories.title.en,
+          description: seoConfig.pages.categories.description[locale as keyof typeof seoConfig.pages.categories.description] || seoConfig.pages.categories.description.en,
+          url: `${seoConfig.siteUrl}/${locale}/categories`,
+        }}
+        locale={locale}
+      />
       <HeroSection t={t} />
 
       <SearchAndFilter

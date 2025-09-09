@@ -4,6 +4,9 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import { SEOMetadata } from "@/components/seo/SEOMetadata";
+import { StructuredData } from "@/components/seo/StructuredData";
+import { seoConfig } from "@/lib/seo/config";
 import {
   ArrowLeft,
   Building2 as Building2Icon,
@@ -454,11 +457,12 @@ const ContactCTA = ({ t }: { t: (key: string) => string }) => (
   </div>
 );
 
-export default function AboutPage() {
+export default function AboutPage({ params }: { params: { locale: string } }) {
   const router = useRouter();
   const { t, i18n } = useTranslation("about");
   const isRTL = i18n.language === "ar";
   const direction = isRTL ? "rtl" : "ltr";
+  const { locale } = params;
 
   // Scroll to top when component mounts
   useScrollToTop();
@@ -469,6 +473,23 @@ export default function AboutPage() {
 
   return (
     <div dir={direction}>
+      <SEOMetadata
+        title={seoConfig.defaultMetadata.about.title[locale as 'en' | 'ar']}
+        description={seoConfig.defaultMetadata.about.description[locale as 'en' | 'ar']}
+        keywords={`${seoConfig.company.keywords[locale as 'en' | 'ar'].slice(0, 10).join(', ')}, about us, company history, automotive expertise`}
+        locale={locale}
+        type="website"
+      />
+      
+      <StructuredData
+        type="organization"
+        data={{
+          name: seoConfig.company.name,
+          description: seoConfig.company.description[locale as 'en' | 'ar'],
+          url: `${seoConfig.siteUrl}/${locale}/about`,
+        }}
+        locale={locale}
+      />
       <HeroSection t={t} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

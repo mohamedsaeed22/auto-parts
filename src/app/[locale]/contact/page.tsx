@@ -4,6 +4,9 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import { SEOMetadata } from "@/components/seo/SEOMetadata";
+import { StructuredData } from "@/components/seo/StructuredData";
+import { seoConfig, getKeywords } from "@/lib/seo/config";
 import {
   ArrowLeft,
   Mail as MailIcon,
@@ -537,7 +540,12 @@ const SocialMedia = ({ t }: { t: (key: string) => string }) => (
   </div>
 );
 
-export default function ContactPage() {
+export default async function ContactPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
   const router = useRouter();
   const { t, i18n } = useTranslation("contact");
   const isRTL = i18n.language === "ar";
@@ -552,6 +560,25 @@ export default function ContactPage() {
 
   return (
     <div dir={direction}>
+      <SEOMetadata
+        title={seoConfig.defaultMetadata.contact.title[locale as keyof typeof seoConfig.defaultMetadata.contact.title] || seoConfig.defaultMetadata.contact.title.en}
+        description={seoConfig.defaultMetadata.contact.description[locale as keyof typeof seoConfig.defaultMetadata.contact.description] || seoConfig.defaultMetadata.contact.description.en}
+        keywords={getKeywords(locale)}
+        locale={locale}
+        type="website"
+      />
+      <StructuredData
+        type="organization"
+        data={{
+          name: seoConfig.company.name,
+          description: seoConfig.company.description[locale as keyof typeof seoConfig.company.description] || seoConfig.company.description.en,
+          url: `${seoConfig.siteUrl}/${locale}/contact`,
+          address: seoConfig.company.address,
+          phone: seoConfig.company.phone,
+          email: seoConfig.company.email,
+        }}
+        locale={locale}
+      />
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-logo-gold via-amber-500 to-amber-600 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

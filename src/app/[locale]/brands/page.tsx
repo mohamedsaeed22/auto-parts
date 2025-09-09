@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useGetBrandsQuery } from "@/services/hooks";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import { SEOMetadata } from "@/components/seo/SEOMetadata";
+import { StructuredData } from "@/components/seo/StructuredData";
+import { seoConfig, getKeywords } from "@/lib/seo/config";
 import {
   ArrowLeft,
   Loader2,
@@ -261,7 +264,12 @@ const BrandFeatures = ({
   </div>
 );
 
-export default function BrandsPage() {
+export default async function BrandsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
   const router = useRouter();
   const { t, i18n } = useTranslation("brands");
   const [viewMode] = useState<"grid" | "list">("grid");
@@ -323,6 +331,22 @@ export default function BrandsPage() {
 
   return (
     <div dir={direction}>
+      <SEOMetadata
+        title={seoConfig.defaultMetadata.brands.title[locale as keyof typeof seoConfig.defaultMetadata.brands.title] || seoConfig.defaultMetadata.brands.title.en}
+        description={seoConfig.defaultMetadata.brands.description[locale as keyof typeof seoConfig.defaultMetadata.brands.description] || seoConfig.defaultMetadata.brands.description.en}
+        keywords={getKeywords(locale)}
+        locale={locale}
+        type="website"
+      />
+      <StructuredData
+        type="brand"
+        data={{
+          name: seoConfig.pages.brands.title[locale as keyof typeof seoConfig.pages.brands.title] || seoConfig.pages.brands.title.en,
+          description: seoConfig.pages.brands.description[locale as keyof typeof seoConfig.pages.brands.description] || seoConfig.pages.brands.description.en,
+          url: `${seoConfig.siteUrl}/${locale}/brands`,
+        }}
+        locale={locale}
+      />
       {/* Hero Section */}
       <HeroSection t={t} />
 
