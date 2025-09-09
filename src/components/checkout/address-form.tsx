@@ -5,10 +5,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
-  Address,
-  useCreateAddress,
-  useUpdateAddress,
-} from "@/services/api/checkout";
+  useCreateAddressMutation,
+  useUpdateAddressMutation,
+} from "@/services/api/addressesApi";
+import type { Address } from "@/services/api/types";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -24,9 +24,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 const addressSchema = z.object({
   name: z.string().min(1, "Name is required"),
   phone: z.string().min(1, "Phone is required"),
-  address: z.string().min(1, "Address is required"),
+  detailed_address: z.string().min(1, "Address is required"),
   city: z.string().min(1, "City is required"),
-  state: z.string().min(1, "State is required"),
+  postal_code: z.string().min(1, "Postal code is required"),
+  address_type: z.enum(["home", "office", "other"]),
   is_default: z.boolean(),
 });
 
@@ -39,31 +40,37 @@ interface AddressFormProps {
 
 export function AddressForm({ address, onSuccess }: AddressFormProps) {
   const { t } = useTranslation("checkout");
-  const createAddressMutation = useCreateAddress();
-  const updateAddressMutation = useUpdateAddress();
+  const [createAddress] = useCreateAddressMutation();
+  const [updateAddress] = useUpdateAddressMutation();
 
   const form = useForm<AddressFormValues>({
     resolver: zodResolver(addressSchema),
     defaultValues: {
       name: address?.name || "",
       phone: address?.phone || "",
-      address: address?.address || "",
+      detailed_address: address?.detailed_address || "",
       city: address?.city || "",
-      state: address?.state || "",
+      postal_code: address?.postal_code || "",
+      address_type: address?.address_type || "home",
       is_default: address?.is_default || false,
     },
   });
 
   const onSubmit = async (values: AddressFormValues) => {
-    if (address) {
-      await updateAddressMutation.mutateAsync({
-        id: address.id,
-        ...values,
-      });
-    } else {
-      await createAddressMutation.mutateAsync(values);
+    try {
+      if (address) {
+        await updateAddress({
+          id: address.id,
+          ...values,
+        }).unwrap();
+      } else {
+        await createAddress(values).unwrap();
+      }
+      onSuccess?.();
+    } catch (error) {
+      // Error handling is done by the mutations
+      console.error("Address form submission error:", error);
     }
-    onSuccess?.();
   };
 
   return (
@@ -74,9 +81,14 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("address.name")}</FormLabel>
+              <FormLabel className="text-logo-black">
+                {t("address.name")}
+              </FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input
+                  {...field}
+                  className="border-neutral-300 focus:border-logo-gold focus:ring-logo-gold"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -87,9 +99,14 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("address.phone")}</FormLabel>
+              <FormLabel className="text-logo-black">
+                {t("address.phone")}
+              </FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input
+                  {...field}
+                  className="border-neutral-300 focus:border-logo-gold focus:ring-logo-gold"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -97,12 +114,17 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
         />
         <FormField
           control={form.control}
-          name="address"
+          name="detailed_address"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("address.address")}</FormLabel>
+              <FormLabel className="text-logo-black">
+                {t("address.address")}
+              </FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input
+                  {...field}
+                  className="border-neutral-300 focus:border-logo-gold focus:ring-logo-gold"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -113,9 +135,14 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
           name="city"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("address.city")}</FormLabel>
+              <FormLabel className="text-logo-black">
+                {t("address.city")}
+              </FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input
+                  {...field}
+                  className="border-neutral-300 focus:border-logo-gold focus:ring-logo-gold"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -123,12 +150,39 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
         />
         <FormField
           control={form.control}
-          name="state"
+          name="postal_code"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("address.state")}</FormLabel>
+              <FormLabel className="text-logo-black">
+                {t("address.postalCode")}
+              </FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input
+                  {...field}
+                  className="border-neutral-300 focus:border-logo-gold focus:ring-logo-gold"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="address_type"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-logo-black">
+                {t("address.type")}
+              </FormLabel>
+              <FormControl>
+                <select
+                  {...field}
+                  className="w-full border border-neutral-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-logo-gold bg-white"
+                >
+                  <option value="home">{t("address.typeHome")}</option>
+                  <option value="office">{t("address.typeOffice")}</option>
+                  <option value="other">{t("address.typeOther")}</option>
+                </select>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -147,9 +201,10 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
                       checked as boolean
                     )
                   }
+                  className="border-logo-gold data-[state=checked]:bg-logo-gold"
                 />
               </FormControl>
-              <FormLabel className="!mt-0">
+              <FormLabel className="!mt-0 text-logo-black">
                 {t("address.makeDefault")}
               </FormLabel>
             </FormItem>
@@ -157,10 +212,8 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
         />
         <Button
           type="submit"
-          className="w-full"
-          disabled={
-            createAddressMutation.isPending || updateAddressMutation.isPending
-          }
+          className="w-full bg-logo-gold hover:bg-logo-gold/90 text-logo-black"
+          disabled={form.formState.isSubmitting}
         >
           {address ? t("address.update") : t("address.add")}
         </Button>

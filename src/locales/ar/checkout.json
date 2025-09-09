@@ -23,6 +23,11 @@
     "address": "العنوان",
     "city": "المدينة",
     "state": "المحافظة",
+    "postalCode": "الرمز البريدي",
+    "type": "نوع العنوان",
+    "typeHome": "المنزل",
+    "typeOffice": "المكتب",
+    "typeOther": "أخرى",
     "update": "تحديث العنوان",
     "noAddresses": "لا توجد عناوين",
     "confirmDelete": "هل أنت متأكد من حذف هذا العنوان؟"
@@ -44,5 +49,20 @@
     "addressUpdated": "تم تحديث العنوان بنجاح",
     "addressDeleted": "تم حذف العنوان بنجاح",
     "orderPlaced": "تم تأكيد الطلب بنجاح"
+  },
+  "shipping": {
+    "title": "معلومات الشحن",
+    "description": "اختر عنوان التوصيل",
+    "back": "العودة للسلة",
+    "paymentMethod": "متابعة للدفع",
+    "default": "الافتراضي",
+    "edit": "تعديل",
+    "addNewAddress": "إضافة عنوان جديد",
+    "addAddressTitle": "إضافة عنوان جديد",
+    "addAddressDesc": "املأ النموذج أدناه لحفظ عنوانك",
+    "noAddresses": "لا توجد عناوين محفوظة بعد."
+  },
+  "dialog": {
+    "cancel": "إلغاء"
   }
 }

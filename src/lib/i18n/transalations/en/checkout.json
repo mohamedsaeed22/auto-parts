@@ -19,8 +19,26 @@
     "freeDelivery": "Free delivery within two days",
     "orderWithin": "Order within 5 hours and 23 minutes to get delivery on your scheduled time",
     "back": "Back",
-    "paymentMethod": "Payment Method"
+    "paymentMethod": "Payment Method",
+    "addAddressTitle": "Add New Address",
+    "addAddressDesc": "Fill the form below to save your address",
+    "noAddresses": "No saved addresses yet."
   },
+  "address": {
+    "name": "Full Name",
+    "phone": "Phone Number",
+    "address": "Street Address",
+    "city": "City",
+    "postalCode": "Postal Code",
+    "type": "Address Type",
+    "typeHome": "Home",
+    "typeOffice": "Office",
+    "typeOther": "Other",
+    "makeDefault": "Set as default address",
+    "add": "Add Address",
+    "update": "Update Address"
+  },
+  "dialog": { "cancel": "Cancel" },
   "payment": {
     "title": "Payment Method",
     "description": "Choose the appropriate payment method",

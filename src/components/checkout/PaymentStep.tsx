@@ -169,8 +169,8 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
               </>
             ) : (
               <>
-                {t("payment.orderReview")}
                 <ArrowRight className="w-4 h-4 mx-2" />
+                {t("payment.orderReview")}
               </>
             )}
           </Button>
