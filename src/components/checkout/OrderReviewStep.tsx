@@ -15,12 +15,11 @@ import { useTranslation } from "react-i18next";
 
 interface Address {
   id: number;
-  label: string;
   name: string;
-  address: string;
   city: string;
   phone: string;
-  isDefault: boolean;
+  detailed_address: string;
+  is_default: boolean;
 }
 
 interface OrderReviewStepProps {
@@ -48,19 +47,19 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
 
   return (
     <div dir={isRTL ? "rtl" : "ltr"}>
-      <div className="p-6 border-b border-gray-200">
-        <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-          <Package className="w-6 h-6 mx-3" />
+      <div className="p-6 border-b border-logo-gold/30">
+        <h2 className="text-2xl font-bold text-logo-black flex items-center">
+          <Package className="w-6 h-6 mx-3 text-logo-gold" />
           {t("orderReview.title")}
         </h2>
-        <p className="text-gray-600 mt-1">{t("orderReview.description")}</p>
+        <p className="text-neutral-600 mt-1">{t("orderReview.description")}</p>
       </div>
 
       <div className="p-6 space-y-6">
         {/* Order Items Summary */}
-        <div className="bg-gray-50 rounded-xl p-4">
-          <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
-            <ShoppingBag className="w-4 h-4 mx-2" />
+        <div className="bg-logo-gold/5 rounded-xl p-4">
+          <h3 className="font-semibold text-logo-black mb-3 flex items-center">
+            <ShoppingBag className="w-4 h-4 mx-2 text-logo-gold" />
             {t("orderReview.products")} ({totalItems})
           </h3>
           <div className="space-y-3">
@@ -75,14 +74,14 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
                   />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-sm font-medium text-gray-900">
+                  <h4 className="text-sm font-medium text-logo-black">
                     {item.title}
                   </h4>
-                  <p className="text-xs text-gray-600">
+                  <p className="text-xs text-neutral-600">
                     {t("orderReview.quantity")}: {item.quantity}
                   </p>
                 </div>
-                <p className="text-sm font-medium">
+                <p className="text-sm font-medium text-logo-black">
                   {(item.price * item.quantity).toFixed(2)} {t("currency")}
                 </p>
               </div>
@@ -91,29 +90,45 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
         </div>
 
         {/* Shipping Address */}
-        <div className="bg-gray-50 rounded-xl p-4">
-          <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
-            <MapPin className="w-4 h-4 mx-2" />
+        <div className="bg-logo-gold/5 rounded-xl p-4">
+          <h3 className="font-semibold text-logo-black mb-3 flex items-center">
+            <MapPin className="w-4 h-4 mx-2 text-logo-gold" />
             {t("orderReview.shippingAddress")}
           </h3>
-          <div className="text-sm text-gray-600 space-y-1">
-            <p className="font-medium text-gray-900">{selectedAddress.name}</p>
-            <p>{selectedAddress.address}</p>
-            <p>{selectedAddress.city}</p>
-            <p dir="ltr">{selectedAddress.phone}</p>
-          </div>
+          {selectedAddress ? (
+            <div className="text-sm text-neutral-700 space-y-1">
+              <p className="font-medium text-logo-black">
+                {selectedAddress.name}
+              </p>
+              <p>{selectedAddress.detailed_address}</p>
+              <p>{selectedAddress.city}</p>
+              <p dir="ltr">{selectedAddress.phone}</p>
+            </div>
+          ) : (
+            <div className="text-sm text-neutral-600">
+              {t("shipping.selectAddress")}
+            </div>
+          )}
         </div>
 
         {/* Payment Method */}
-        <div className="bg-gray-50 rounded-xl p-4">
-          <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
-            <CreditCard className="w-4 h-4 mx-2" />
+        <div className="bg-logo-gold/5 rounded-xl p-4">
+          <h3 className="font-semibold text-logo-black mb-3 flex items-center">
+            <CreditCard className="w-4 h-4 mx-2 text-logo-gold" />
             {t("orderReview.paymentMethod")}
           </h3>
-          <p className="text-sm text-gray-600">
-            {paymentMethod === "card"
+          <p className="text-sm text-neutral-700">
+            {paymentMethod === "credit_card"
               ? t("orderReview.creditCard")
-              : t("orderReview.cashOnDelivery")}
+              : paymentMethod === "cash"
+              ? t("orderReview.cashOnDelivery")
+              : paymentMethod === "paypal"
+              ? "PayPal"
+              : paymentMethod === "stripe"
+              ? "Stripe"
+              : paymentMethod === "bank_transfer"
+              ? t("payment.bankTransfer", { defaultValue: "Bank Transfer" })
+              : "-"}
           </p>
         </div>
 
@@ -121,8 +136,8 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
           <Button
             variant="outline"
             onClick={onBack}
-            className="flex-1 py-3 flex items-center"
-          > 
+            className="flex-1 py-3 flex items-center border-logo-gold text-logo-black hover:bg-logo-gold/10"
+          >
             {isRTL ? (
               <>
                 {t("orderReview.back")}
@@ -138,16 +153,16 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
           <Button
             onClick={onPlaceOrder}
             disabled={isProcessing}
-            className="flex-1 bg-black hover:bg-gray-800 text-white py-3 flex items-center justify-center"
+            className="flex-1 bg-logo-gold hover:bg-logo-gold/90 text-logo-black py-3 flex items-center justify-center disabled:bg-logo-gold/50"
           >
             {isProcessing ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin mx-2" />
+                <Loader2 className="w-4 h-4 animate-spin mx-2 text-logo-gold" />
                 {t("orderReview.processing")}
               </>
             ) : (
               <>
-                <Shield className="w-4 h-4 mx-2" />
+                <Shield className="w-4 h-4 mx-2 text-logo-black" />
                 {t("orderReview.confirmOrder")}
               </>
             )}

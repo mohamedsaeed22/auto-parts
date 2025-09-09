@@ -27,7 +27,7 @@ const CheckoutPage = () => {
     removeFromCart,
   } = useEnhancedCart();
   const [currentStep, setCurrentStep] = useState(1);
-  const [paymentMethod, setPaymentMethod] = useState("card");
+  const [paymentMethod, setPaymentMethod] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
   const [couponCode, setCouponCode] = useState("");
