@@ -13,17 +13,22 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Product } from "@/services/api/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface ProductCardProps {
   product: Product;
   index?: number;
+  variant?: "default" | "favourites" | "wishlist";
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = ({
+  product,
+  variant = "default",
+}) => {
   const { t, i18n } = useTranslation("product");
   const isRTL = i18n.language === "ar";
-  const { items, addToCart, updateQuantity, removeFromCart } = useEnhancedCart();
+  const { items, addToCart, updateQuantity, removeFromCart } =
+    useEnhancedCart();
   const { handleToggleFavourite, handleToggleWishlist, isLoading } =
     useFavouritesWishlist();
   const cartItem = items.find((item) => item.id === product.id);
@@ -36,6 +41,21 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [localWishlistState, setLocalWishlistState] = useState<boolean | null>(
     null
   );
+
+  // Sync local states with incoming props only when no optimistic override is active
+  useEffect(() => {
+    if (localFavouriteState === null) {
+      setLocalFavouriteState(product.in_favourites === true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product.in_favourites]);
+
+  useEffect(() => {
+    if (localWishlistState === null) {
+      setLocalWishlistState(product.in_wishlist === true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product.in_wishlist]);
 
   // Safe access to product properties
   const productName = product.name || "Product Name Unavailable";
@@ -143,54 +163,149 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 isRTL ? "left-2" : "right-2"
               } flex flex-col gap-1`}
             >
-              <Button
-                size="sm"
-                variant="outline"
-                className={`w-10 h-10 rounded-full border-neutral-200 hover:bg-white shadow-lg transition-colors duration-300 ${
-                  isInFavourites
-                    ? "bg-red-500 border-red-500 hover:bg-red-600"
-                    : "bg-white hover:bg-gray-50"
-                }`}
-                onClick={handleToggleFavouriteWithFeedback}
-                disabled={isLoading(`favourite-${product.id}`)}
-              >
-                {isLoading(`favourite-${product.id}`) ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-neutral-600"></div>
-                ) : (
-                  <Heart
-                    size={22}
-                    className={`${
-                      isInFavourites
-                        ? "text-white fill-white"
-                        : "text-neutral-700"
-                    }`}
-                  />
-                )}
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className={`w-10 h-10 rounded-full border-neutral-200 hover:bg-white shadow-lg transition-colors duration-300 ${
-                  isInWishlist
-                    ? "bg-blue-500 border-blue-500 hover:bg-blue-600"
-                    : "bg-white hover:bg-gray-50"
-                }`}
-                onClick={handleToggleWishlistWithFeedback}
-                disabled={isLoading(`wishlist-${product.id}`)}
-              >
-                {isLoading(`wishlist-${product.id}`) ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-neutral-600"></div>
-                ) : (
-                  <Bookmark
-                    size={22}
-                    className={`${
+              {variant === "default" && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className={`w-10 h-10 rounded-full border-neutral-200 hover:bg-white shadow-lg transition-colors duration-300 ${
+                    isInFavourites
+                      ? "bg-red-500 border-red-500 hover:bg-red-600"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
+                  onClick={handleToggleFavouriteWithFeedback}
+                  disabled={isLoading(`favourite-${product.id}`)}
+                >
+                  {isLoading(`favourite-${product.id}`) ? (
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-neutral-600"></div>
+                  ) : (
+                    <Heart
+                      size={22}
+                      className={`${
+                        isInFavourites
+                          ? "text-white fill-white"
+                          : "text-neutral-700"
+                      }`}
+                    />
+                  )}
+                </Button>
+              )}
+
+              {variant === "favourites" ? (
+                <>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className={`w-10 h-10 rounded-full border-neutral-200 hover:bg-white shadow-lg transition-colors duration-300 ${
                       isInWishlist
-                        ? "text-white fill-white"
-                        : "text-neutral-700"
+                        ? "bg-blue-500 border-blue-500 hover:bg-blue-600"
+                        : "bg-white hover:bg-gray-50"
                     }`}
-                  />
-                )}
-              </Button>
+                    onClick={handleToggleWishlistWithFeedback}
+                    disabled={isLoading(`wishlist-${product.id}`)}
+                  >
+                    {isLoading(`wishlist-${product.id}`) ? (
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-neutral-600"></div>
+                    ) : (
+                      <Bookmark
+                        size={22}
+                        className={`${
+                          isInWishlist
+                            ? "text-white fill-white"
+                            : "text-neutral-700"
+                        }`}
+                      />
+                    )}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    className="w-10 h-10 rounded-full shadow-lg transition-colors duration-300"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      // Remove from favourites by toggling
+                      handleToggleFavouriteWithFeedback(e);
+                    }}
+                    disabled={isLoading(`favourite-${product.id}`)}
+                  >
+                    {isLoading(`favourite-${product.id}`) ? (
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    ) : (
+                      <Trash size={18} />
+                    )}
+                  </Button>
+                </>
+              ) : variant === "wishlist" ? (
+                <>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className={`w-10 h-10 rounded-full border-neutral-200 hover:bg-white shadow-lg transition-colors duration-300 ${
+                      isInFavourites
+                        ? "bg-red-500 border-red-500 hover:bg-red-600"
+                        : "bg-white hover:bg-gray-50"
+                    }`}
+                    onClick={handleToggleFavouriteWithFeedback}
+                    disabled={isLoading(`favourite-${product.id}`)}
+                  >
+                    {isLoading(`favourite-${product.id}`) ? (
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-neutral-600"></div>
+                    ) : (
+                      <Heart
+                        size={22}
+                        className={`${
+                          isInFavourites
+                            ? "text-white fill-white"
+                            : "text-neutral-700"
+                        }`}
+                      />
+                    )}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    className="w-10 h-10 rounded-full shadow-lg transition-colors duration-300"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      // Remove from wishlist by toggling
+                      handleToggleWishlistWithFeedback(e);
+                    }}
+                    disabled={isLoading(`wishlist-${product.id}`)}
+                  >
+                    {isLoading(`wishlist-${product.id}`) ? (
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    ) : (
+                      <Trash size={18} />
+                    )}
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className={`w-10 h-10 rounded-full border-neutral-200 hover:bg-white shadow-lg transition-colors duration-300 ${
+                    isInWishlist
+                      ? "bg-blue-500 border-blue-500 hover:bg-blue-600"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
+                  onClick={handleToggleWishlistWithFeedback}
+                  disabled={isLoading(`wishlist-${product.id}`)}
+                >
+                  {isLoading(`wishlist-${product.id}`) ? (
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-neutral-600"></div>
+                  ) : (
+                    <Bookmark
+                      size={22}
+                      className={`${
+                        isInWishlist
+                          ? "text-white fill-white"
+                          : "text-neutral-700"
+                      }`}
+                    />
+                  )}
+                </Button>
+              )}
             </div>
 
             {/* Discount Badge */}
