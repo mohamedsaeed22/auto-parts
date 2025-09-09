@@ -8,7 +8,7 @@ import {
   useCreateAddressMutation,
   useUpdateAddressMutation,
 } from "@/services/api/addressesApi";
-import type { Address } from "@/services/api/types";
+import type { Address } from "@/services/api/checkout";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -24,10 +24,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 const addressSchema = z.object({
   name: z.string().min(1, "Name is required"),
   phone: z.string().min(1, "Phone is required"),
-  detailed_address: z.string().min(1, "Address is required"),
+  address: z.string().min(1, "Address is required"),
   city: z.string().min(1, "City is required"),
-  postal_code: z.string().min(1, "Postal code is required"),
-  address_type: z.enum(["home", "office", "other"]),
+  state: z.string().min(1, "State is required"),
   is_default: z.boolean(),
 });
 
@@ -48,23 +47,33 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
     defaultValues: {
       name: address?.name || "",
       phone: address?.phone || "",
-      detailed_address: address?.detailed_address || "",
+      address: address?.address || "",
       city: address?.city || "",
-      postal_code: address?.postal_code || "",
-      address_type: address?.address_type || "home",
+      state: address?.state || "",
       is_default: address?.is_default || false,
     },
   });
 
   const onSubmit = async (values: AddressFormValues) => {
     try {
+      // Transform form values to match API expectations
+      const apiData = {
+        name: values.name,
+        phone: values.phone,
+        detailed_address: values.address,
+        city: values.city,
+        postal_code: values.state,
+        address_type: "home" as const,
+        is_default: values.is_default,
+      };
+
       if (address) {
         await updateAddress({
           id: address.id,
-          ...values,
+          ...apiData,
         }).unwrap();
       } else {
-        await createAddress(values).unwrap();
+        await createAddress(apiData).unwrap();
       }
       onSuccess?.();
     } catch (error) {
@@ -114,7 +123,7 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
         />
         <FormField
           control={form.control}
-          name="detailed_address"
+          name="address"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-logo-black">
@@ -150,11 +159,11 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
         />
         <FormField
           control={form.control}
-          name="postal_code"
+          name="state"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-logo-black">
-                {t("address.postalCode")}
+                {t("address.state")}
               </FormLabel>
               <FormControl>
                 <Input
@@ -166,28 +175,7 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="address_type"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-logo-black">
-                {t("address.type")}
-              </FormLabel>
-              <FormControl>
-                <select
-                  {...field}
-                  className="w-full border border-neutral-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-logo-gold bg-white"
-                >
-                  <option value="home">{t("address.typeHome")}</option>
-                  <option value="office">{t("address.typeOffice")}</option>
-                  <option value="other">{t("address.typeOther")}</option>
-                </select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+
         <FormField
           control={form.control}
           name="is_default"

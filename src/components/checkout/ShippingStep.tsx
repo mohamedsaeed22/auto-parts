@@ -65,8 +65,7 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
   useEffect(() => {
     if (
       hasAddresses &&
-      (!selectedAddress ||
-        !addresses.some((a: any) => a.id === selectedAddress))
+      (!selectedAddress || !addresses.some((a) => a.id === selectedAddress))
     ) {
       onAddressSelect(addresses[0].id);
     }
@@ -228,7 +227,10 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
                     onChange={(e) =>
                       setFormState({
                         ...formState,
-                        address_type: e.target.value as any,
+                        address_type: e.target.value as
+                          | "home"
+                          | "office"
+                          | "other",
                       })
                     }
                   >

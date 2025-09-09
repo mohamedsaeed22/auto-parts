@@ -71,6 +71,7 @@ export default function CompleteRegistrationPage() {
     zip?: string;
     state?: string;
     tax_number?: string;
+    type?: string;
     commercial_register?: string;
     avatar?: string;
   }>({});
@@ -252,7 +253,7 @@ export default function CompleteRegistrationPage() {
       const requestData = {
         name: formData.name,
         email: formData.email.trim() || undefined, // Only send if not empty
-        type: formData.type,
+        type: formData.type as "shop" | "workshop", // Ensure type is not empty string
         manager_name: formData.manager_name,
         address: formData.address,
         city: formData.city,

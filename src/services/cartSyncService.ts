@@ -65,8 +65,8 @@ export class CartSyncService {
       // Clear local cart first to avoid quantity conflicts
       store.dispatch(clearCart());
 
-      if (response.code === 200 && response.data?.cart_items) {
-        const cartItems: CartItem[] = response.data.cart_items.map((item) => ({
+      if (response.code === 200 && response.data?.items) {
+        const cartItems: CartItem[] = response.data.items.map((item) => ({
           id: item.product.id,
           title: item.product.name,
           price:
@@ -111,8 +111,8 @@ export class CartSyncService {
         store.dispatch(clearCart());
 
         // Add API items to local storage
-        if (response.code === 200 && response.data?.cart_items) {
-          const cartItems: CartItem[] = response.data.cart_items.map(
+        if (response.code === 200 && response.data?.items) {
+          const cartItems: CartItem[] = response.data.items.map(
             (item) => ({
               id: item.product.id,
               title: item.product.name,
@@ -152,10 +152,10 @@ export class CartSyncService {
           store.dispatch(clearCart());
           if (
             updatedResponse.code === 200 &&
-            updatedResponse.data?.cart_items
+            updatedResponse.data?.items
           ) {
             const updatedCartItems: CartItem[] =
-              updatedResponse.data.cart_items.map((item) => ({
+              updatedResponse.data.items.map((item) => ({
                 id: item.product.id,
                 title: item.product.name,
                 price:
@@ -212,8 +212,8 @@ export class CartSyncService {
         .dispatch(cartApi.endpoints.getCart.initiate())
         .unwrap();
 
-      if (response.code === 200 && response.data?.cart_items) {
-        const apiCartItems = response.data.cart_items;
+      if (response.code === 200 && response.data?.items) {
+        const apiCartItems = response.data.items;
 
         // Create a map of API items for easy lookup
         const apiItemsMap = new Map(

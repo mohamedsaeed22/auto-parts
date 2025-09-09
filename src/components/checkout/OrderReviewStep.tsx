@@ -15,12 +15,21 @@ import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
 import { useTranslation } from "react-i18next";
 import { useCreateOrderMutation } from "@/services/api/ordersApi";
+import type { ApiResponse } from "@/services/api/types";
+import type { Order } from "@/services/api/ordersApi";
 import { Address } from "@/services/api/types";
 import { showSuccess, showError } from "@/lib/toast";
 
+interface CartItemPreview {
+  id: number;
+  image: string;
+  title: string;
+  quantity: number;
+  price: number;
+}
+
 interface OrderReviewStepProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  items: any[];
+  items: CartItemPreview[];
   totalItems: number;
   selectedAddress: Address | null;
   paymentMethod: string;
@@ -75,12 +84,12 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
       });
 
       // Create order using the API
-      const result = await createOrder({
+      const result = (await createOrder({
         payment_method: paymentMethod,
         address_id: selectedAddress.id,
         coupon_code: couponCode || "",
         notes: notes || "",
-      }).unwrap();
+      }).unwrap()) as ApiResponse<{ order: Order }>;
       console.log("Order created successfully:", result);
 
       showSuccess(
@@ -91,8 +100,8 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
 
       // Call the original onPlaceOrder callback with created order
       // result is ApiResponse<{ order: Order }>
-      if (result && (result as any).data && (result as any).data.order) {
-        onPlaceOrder((result as any).data.order);
+      if (result && result.data && result.data.order) {
+        onPlaceOrder(result.data.order);
       } else {
         showError(
           t("orderReview.orderError", {

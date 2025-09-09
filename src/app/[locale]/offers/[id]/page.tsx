@@ -29,6 +29,8 @@ interface OfferProduct {
   description: string;
   hover_text: string;
   product_identifier: string;
+  in_favorites?: boolean;
+  in_wishlist?: boolean;
 }
 
 interface OfferDetails {
@@ -253,8 +255,7 @@ export default function OfferPage() {
     refetch,
   } = useGetOfferQuery(offerId);
 
-  const offerData = offerResponse?.data as { offer: OfferDetails };
-  const offer = offerData?.offer;
+  const offer = offerResponse?.data as OfferDetails;
   const products = offer?.products || [];
 
   const handleGoBack = () => {

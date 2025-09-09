@@ -39,7 +39,7 @@ const locationSchema = z.object({
 // Login schema (phone number: must start with 010/011/012/015 and total length 11)
 export const loginSchema = z.object({
   phoneNumber: z
-    .string({ required_error: "validation.phone.required" })
+    .string({ message: "validation.phone.required" })
     .min(11, "validation.phone.length")
     .max(11, "validation.phone.length")
     .regex(/^(010|011|012|015)[0-9]{8}$/, "validation.phone.invalid"),

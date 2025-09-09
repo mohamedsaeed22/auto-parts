@@ -90,7 +90,7 @@ export const useEnhancedCart = () => {
    */
   useEffect(() => {
     const syncCartOnLoad = async () => {
-      if (shouldUseAPI && apiCart?.data?.cart_items) {
+      if (shouldUseAPI && apiCart?.data?.items) {
         // Always sync API cart to local storage when user is authenticated and registered
         // This ensures quantities and items are always in sync with the server
         try {
@@ -313,12 +313,12 @@ export const useEnhancedCart = () => {
   return {
     // State
     items, // Always use local items as they are synced from API when needed
-    total: shouldUseAPI ? apiCart?.data?.cart_total || 0 : total,
-    totalItems: shouldUseAPI ? apiCart?.data?.item_count || 0 : totalItems,
+    total: shouldUseAPI ? apiCart?.data?.total || 0 : total,
+    totalItems: shouldUseAPI ? apiCart?.data?.items?.length || 0 : totalItems,
     isOpen,
     loading,
     error,
-    isEmpty: shouldUseAPI ? apiCart?.data?.item_count === 0 : isEmpty,
+    isEmpty: shouldUseAPI ? (apiCart?.data?.items?.length || 0) === 0 : isEmpty,
 
     // Authentication state
     isAuthenticated,
