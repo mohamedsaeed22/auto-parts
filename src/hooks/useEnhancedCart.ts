@@ -222,7 +222,7 @@ export const useEnhancedCart = () => {
         // Only show error for API operations
         if (shouldUseAPI) {
           console.error("Failed to remove from cart:", error);
-          showError("Failed to remove product from cart");
+          // showError("Failed to remove product from cart");
         } else {
           // For localStorage, still remove even if there's an error
           dispatch(removeFromCart(id));
