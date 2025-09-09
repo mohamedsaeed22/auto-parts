@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Clock,
   X,
@@ -8,6 +8,9 @@ import {
   Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useApplyCouponMutation, cartApi } from "@/services/api/cartApi";
+import { useAppDispatch } from "@/store/hooks";
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { useTranslation } from "react-i18next";
 
 interface OrderSummaryProps {
@@ -40,6 +43,27 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   const { t, i18n } = useTranslation("checkout");
   const isRTL = i18n.language === "ar";
   const finalTotal = total * 1.15 - couponDiscount;
+  const dispatch = useAppDispatch();
+  const [applyCoupon, { isLoading: isApplying }] = useApplyCouponMutation();
+  const [localError, setLocalError] = useState<string>("");
+
+  const handleApplyCoupon = async () => {
+    setLocalError("");
+    try {
+      await applyCoupon({ coupon_code: couponCode.trim() }).unwrap();
+      // Refresh cart data from backend
+      dispatch(cartApi.util.invalidateTags(["Cart"]));
+      onApplyCoupon();
+      setLocalError("");
+    } catch (err) {
+      let msg = t("orderSummary.applyError", "Failed to apply coupon");
+      const e = err as FetchBaseQueryError & { data?: { message?: unknown } };
+      if (e?.data && typeof e.data.message === "string") {
+        msg = e.data.message as string;
+      }
+      setLocalError(msg);
+    }
+  };
 
   return (
     <div
@@ -90,12 +114,14 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                 </Button>
               ) : (
                 <Button
-                  onClick={onApplyCoupon}
-                  disabled={!couponCode.trim() || isApplyingCoupon}
+                  onClick={handleApplyCoupon}
+                  disabled={
+                    !couponCode.trim() || isApplyingCoupon || isApplying
+                  }
                   size="sm"
                   className="px-3 py-2 text-xs bg-logo-gold hover:bg-logo-gold/90 text-white"
                 >
-                  {isApplyingCoupon
+                  {isApplyingCoupon || isApplying
                     ? t("orderSummary.applying")
                     : t("orderSummary.apply")}
                 </Button>
@@ -103,6 +129,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             </div>
             {couponError && (
               <p className="text-xs text-logo-red mt-2">{couponError}</p>
+            )}
+            {localError && !couponError && (
+              <p className="text-xs text-logo-red mt-2">{localError}</p>
             )}
             {couponDiscount > 0 && (
               <div className="mt-2 p-3 bg-logo-gold/10 rounded-lg">

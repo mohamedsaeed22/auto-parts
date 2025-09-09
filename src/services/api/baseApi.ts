@@ -119,7 +119,7 @@ const baseQueryWithAuth: BaseQueryFn<
   return result;
 };
 
-// Enhanced base query that includes locale in cache key
+// Enhanced base query that includes locale in cache key for GET requests only
 const enhancedBaseQuery: BaseQueryFn<
   string | FetchArgs,
   unknown,
@@ -128,11 +128,26 @@ const enhancedBaseQuery: BaseQueryFn<
   const state = api.getState() as RootState;
   const currentLocale = state.locale?.currentLocale || "en";
 
-  // Add locale to the query key for cache invalidation
-  const enhancedArgs =
-    typeof args === "string"
-      ? { url: args, params: { locale: currentLocale } }
-      : { ...args, params: { ...args.params, locale: currentLocale } };
+  // Only attach locale as a query param for GET requests to avoid breaking POST bodies
+  let enhancedArgs: string | FetchArgs;
+  if (typeof args === "string") {
+    // string implies GET
+    enhancedArgs = {
+      url: args,
+      params: { locale: currentLocale },
+    } as FetchArgs;
+  } else {
+    const method = (args.method || "GET").toUpperCase();
+    if (method === "GET") {
+      enhancedArgs = {
+        ...args,
+        params: { ...args.params, locale: currentLocale },
+      } as FetchArgs;
+    } else {
+      // For non-GET, keep args unchanged; locale is already added as a header in prepareHeaders
+      enhancedArgs = args;
+    }
+  }
 
   return baseQueryWithAuth(enhancedArgs, api, extraOptions);
 };
