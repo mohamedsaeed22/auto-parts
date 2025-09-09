@@ -108,10 +108,10 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
                 )}
                 {key === "credit_card" && (
                   <div className="flex items-center space-x-2">
-                    <div className="w-8 h-5 bg-black/80 rounded text-white text-xs flex items-center justify-center">
+                    <div className="w-8 h-5 bg-logo-black rounded text-white text-xs flex items-center justify-center">
                       VISA
                     </div>
-                    <div className="w-8 h-5 bg-logo-gold rounded text-black text-xs flex items-center justify-center">
+                    <div className="w-8 h-5 bg-logo-red rounded text-white text-xs flex items-center justify-center">
                       MC
                     </div>
                   </div>
@@ -180,7 +180,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
           <Button
             variant="outline"
             onClick={onBack}
-            className="flex-1 py-3 flex items-center border-logo-gold text-logo-black hover:bg-logo-gold/10"
+            className="flex-1 py-3 flex items-center border-logo-gold text-logo-black hover:bg-logo-gold/10 hover:text-logo-black"
           >
             {isRTL ? (
               <>
@@ -196,7 +196,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
           </Button>
           <Button
             onClick={onNext}
-            className="flex-1 bg-logo-gold hover:bg-logo-gold/90 text-logo-black py-3 flex items-center justify-center"
+            className="flex-1 bg-logo-gold hover:bg-logo-gold/90 text-white py-3 flex items-center justify-center"
           >
             {isRTL ? (
               <>

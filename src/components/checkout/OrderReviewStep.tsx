@@ -136,7 +136,7 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
           <Button
             variant="outline"
             onClick={onBack}
-            className="flex-1 py-3 flex items-center border-logo-gold text-logo-black hover:bg-logo-gold/10"
+            className="flex-1 py-3 flex items-center border-logo-gold text-logo-black hover:bg-logo-gold/10 hover:text-logo-black"
           >
             {isRTL ? (
               <>
@@ -153,16 +153,16 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
           <Button
             onClick={onPlaceOrder}
             disabled={isProcessing}
-            className="flex-1 bg-logo-gold hover:bg-logo-gold/90 text-logo-black py-3 flex items-center justify-center disabled:bg-logo-gold/50"
+            className="flex-1 bg-logo-gold hover:bg-logo-gold/90 text-white py-3 flex items-center justify-center disabled:bg-logo-gold/50 disabled:text-white/70"
           >
             {isProcessing ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin mx-2 text-logo-gold" />
+                <Loader2 className="w-4 h-4 animate-spin mx-2 text-white" />
                 {t("orderReview.processing")}
               </>
             ) : (
               <>
-                <Shield className="w-4 h-4 mx-2 text-logo-black" />
+                <Shield className="w-4 h-4 mx-2 text-white" />
                 {t("orderReview.confirmOrder")}
               </>
             )}

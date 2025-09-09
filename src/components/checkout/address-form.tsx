@@ -212,7 +212,7 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
         />
         <Button
           type="submit"
-          className="w-full bg-logo-gold hover:bg-logo-gold/90 text-logo-black"
+          className="w-full bg-logo-gold hover:bg-logo-gold/90 text-white"
           disabled={form.formState.isSubmitting}
         >
           {address ? t("address.update") : t("address.add")}

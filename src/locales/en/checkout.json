@@ -60,9 +60,77 @@
     "addNewAddress": "Add New Address",
     "addAddressTitle": "Add New Address",
     "addAddressDesc": "Fill the form below to save your address",
-    "noAddresses": "No saved addresses yet."
+    "noAddresses": "No saved addresses yet.",
+    "selectAddress": "Select Address"
   },
   "dialog": {
     "cancel": "Cancel"
+  },
+  "payment": {
+    "title": "Payment Method",
+    "description": "Choose your preferred payment method",
+    "cashOnDelivery": "Cash on Delivery",
+    "cashOnDeliveryDesc": "Pay when your order is delivered",
+    "creditCard": "Credit/Debit Card",
+    "creditCardDesc": "Pay securely with your card",
+    "cardNumber": "Card Number",
+    "expiryDate": "Expiry Date",
+    "cvv": "CVV",
+    "cardholderName": "Cardholder Name",
+    "cardholderPlaceholder": "Enter cardholder name",
+    "back": "Back to Shipping",
+    "orderReview": "Continue to Review"
+  },
+  "orderReview": {
+    "title": "Order Review",
+    "description": "Review your order details before placing",
+    "products": "Products",
+    "quantity": "Quantity",
+    "shippingAddress": "Shipping Address",
+    "paymentMethod": "Payment Method",
+    "creditCard": "Credit Card",
+    "cashOnDelivery": "Cash on Delivery",
+    "back": "Back to Payment",
+    "processing": "Processing...",
+    "confirmOrder": "Confirm Order"
+  },
+  "orderComplete": {
+    "title": "Order Confirmed!",
+    "orderNumber": "Order Number",
+    "deliveryTime": "Estimated delivery in 3-5 business days",
+    "backToShopping": "Back to Shopping",
+    "trackOrder": "Track Order"
+  },
+  "emptyCart": {
+    "title": "Your cart is empty",
+    "description": "Looks like you haven't added any items to your cart yet",
+    "backToShopping": "Start Shopping"
+  },
+  "cartReview": {
+    "title": "Cart Review",
+    "items": "items",
+    "inStock": "In Stock",
+    "piece": "piece",
+    "continueToShipping": "Continue to Shipping"
+  },
+  "orderSummary": {
+    "title": "Order Summary",
+    "freeDelivery": "Free Delivery",
+    "orderWithin": "Order within",
+    "couponPlaceholder": "Enter coupon code",
+    "applying": "Applying...",
+    "apply": "Apply",
+    "discountApplied": "Discount Applied",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "free": "Free",
+    "tax": "Tax (15%)",
+    "discount": "Discount",
+    "total": "Total",
+    "processing": "Processing...",
+    "confirmOrder": "Confirm Order",
+    "securePayment": "Secure Payment",
+    "returnPolicy": "30-Day Return Policy",
+    "customerSupport": "24/7 Customer Support"
   }
 }

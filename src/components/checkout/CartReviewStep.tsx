@@ -184,7 +184,7 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
         <Button
           onClick={handleContinueToShipping}
           disabled={isSyncing}
-          className={`flex-1 bg-logo-gold hover:bg-logo-gold/90 disabled:bg-logo-gold/50 text-logo-black py-3 rounded-lg font-medium w-full flex items-center justify-center ${
+          className={`flex-1 bg-logo-gold hover:bg-logo-gold/90 disabled:bg-logo-gold/50 text-white disabled:text-white/70 py-3 rounded-lg font-medium w-full flex items-center justify-center ${
             isRTL ? "flex-row" : ""
           }`}
         >
@@ -199,13 +199,13 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
             </>
           ) : isRTL ? (
             <>
-              <ArrowLeft className="w-5 h-5 mr-2 text-logo-black" />
               {t("cartReview.continueToShipping")}
+              <ArrowLeft className="w-5 h-5 mr-2 text-white" />
             </>
           ) : (
             <>
               {t("cartReview.continueToShipping")}
-              <ArrowRight className="w-5 h-5 ml-2 text-logo-black" />
+              <ArrowRight className="w-5 h-5 ml-2 text-white" />
             </>
           )}
         </Button>

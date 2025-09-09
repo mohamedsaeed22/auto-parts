@@ -274,7 +274,7 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
               </DialogClose>
               <Button
                 onClick={handleCreateAddress}
-                className="bg-logo-gold hover:bg-logo-gold/90 text-logo-black"
+                className="bg-logo-gold hover:bg-logo-gold/90 text-white"
               >
                 {t("address.add")}
               </Button>
@@ -286,7 +286,7 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
           <Button
             variant="outline"
             onClick={onBack}
-            className="flex-1 py-3 flex items-center border-logo-gold text-logo-black hover:bg-logo-gold/10"
+            className="flex-1 py-3 flex items-center border-logo-gold text-logo-black hover:bg-logo-gold/10 hover:text-logo-black"
           >
             {isRTL ? (
               <>
@@ -303,7 +303,7 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
           <Button
             onClick={onNext}
             disabled={!hasAddresses}
-            className="flex-1 bg-logo-gold hover:bg-logo-gold/90 text-logo-black py-3 flex items-center justify-center disabled:bg-logo-gold/50"
+            className="flex-1 bg-logo-gold hover:bg-logo-gold/90 text-white py-3 flex items-center justify-center disabled:bg-logo-gold/50 disabled:text-white/70"
           >
             {isRTL ? (
               <>

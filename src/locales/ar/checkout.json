@@ -60,9 +60,77 @@
     "addNewAddress": "إضافة عنوان جديد",
     "addAddressTitle": "إضافة عنوان جديد",
     "addAddressDesc": "املأ النموذج أدناه لحفظ عنوانك",
-    "noAddresses": "لا توجد عناوين محفوظة بعد."
+    "noAddresses": "لا توجد عناوين محفوظة بعد.",
+    "selectAddress": "اختر العنوان"
   },
   "dialog": {
     "cancel": "إلغاء"
+  },
+  "payment": {
+    "title": "طريقة الدفع",
+    "description": "اختر طريقة الدفع المفضلة لديك",
+    "cashOnDelivery": "الدفع عند الاستلام",
+    "cashOnDeliveryDesc": "ادفع عند توصيل طلبك",
+    "creditCard": "بطاقة ائتمان/خصم",
+    "creditCardDesc": "ادفع بأمان باستخدام بطاقتك",
+    "cardNumber": "رقم البطاقة",
+    "expiryDate": "تاريخ الانتهاء",
+    "cvv": "رمز الأمان",
+    "cardholderName": "اسم حامل البطاقة",
+    "cardholderPlaceholder": "أدخل اسم حامل البطاقة",
+    "back": "العودة للشحن",
+    "orderReview": "متابعة للمراجعة"
+  },
+  "orderReview": {
+    "title": "مراجعة الطلب",
+    "description": "راجع تفاصيل طلبك قبل التأكيد",
+    "products": "المنتجات",
+    "quantity": "الكمية",
+    "shippingAddress": "عنوان الشحن",
+    "paymentMethod": "طريقة الدفع",
+    "creditCard": "بطاقة ائتمان",
+    "cashOnDelivery": "الدفع عند الاستلام",
+    "back": "العودة للدفع",
+    "processing": "جاري المعالجة...",
+    "confirmOrder": "تأكيد الطلب"
+  },
+  "orderComplete": {
+    "title": "تم تأكيد الطلب!",
+    "orderNumber": "رقم الطلب",
+    "deliveryTime": "التوصيل المتوقع خلال 3-5 أيام عمل",
+    "backToShopping": "العودة للتسوق",
+    "trackOrder": "تتبع الطلب"
+  },
+  "emptyCart": {
+    "title": "سلة التسوق فارغة",
+    "description": "يبدو أنك لم تضف أي منتجات إلى سلة التسوق بعد",
+    "backToShopping": "ابدأ التسوق"
+  },
+  "cartReview": {
+    "title": "مراجعة السلة",
+    "items": "منتجات",
+    "inStock": "متوفر",
+    "piece": "قطعة",
+    "continueToShipping": "متابعة للشحن"
+  },
+  "orderSummary": {
+    "title": "ملخص الطلب",
+    "freeDelivery": "توصيل مجاني",
+    "orderWithin": "اطلب خلال",
+    "couponPlaceholder": "أدخل كود الخصم",
+    "applying": "جاري التطبيق...",
+    "apply": "تطبيق",
+    "discountApplied": "تم تطبيق الخصم",
+    "subtotal": "المجموع الفرعي",
+    "shipping": "الشحن",
+    "free": "مجاني",
+    "tax": "الضريبة (15%)",
+    "discount": "الخصم",
+    "total": "المجموع الكلي",
+    "processing": "جاري المعالجة...",
+    "confirmOrder": "تأكيد الطلب",
+    "securePayment": "دفع آمن",
+    "returnPolicy": "سياسة الإرجاع خلال 30 يوم",
+    "customerSupport": "دعم العملاء على مدار الساعة"
   }
 }
