@@ -112,30 +112,20 @@ export interface Order {
 
 // Orders response interface
 export interface OrdersResponse {
-  code: number;
-  message: string;
-  errors: string[];
-  data: {
-    items: Order[];
-    pagination: {
-      total: number;
-      per_page: number;
-      current_page: number;
-      last_page: number;
-      from: number;
-      to: number;
-    };
+  items: Order[];
+  pagination: {
+    total: number;
+    per_page: number;
+    current_page: number;
+    last_page: number;
+    from: number;
+    to: number;
   };
 }
 
 // Order details response interface
 export interface OrderDetailsResponse {
-  code: number;
-  message: string;
-  errors: string[];
-  data: {
-    order: DetailedOrder;
-  };
+  order: DetailedOrder;
 }
 
 // Detailed order interface for the API response
@@ -258,6 +248,38 @@ export interface OrdersRequest {
 // Create orders API using injectEndpoints
 export const ordersApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    createOrder: builder.mutation<
+      ApiResponse,
+      | FormData
+      | {
+          payment_method: string;
+          address_id: number;
+          coupon_code?: string;
+          notes?: string;
+        }
+    >({
+      query: (data) => {
+        let body: FormData;
+
+        if (data instanceof FormData) {
+          body = data;
+        } else {
+          const formData = new FormData();
+          formData.append("payment_method", data.payment_method);
+          formData.append("address_id", String(data.address_id));
+          formData.append("coupon_code", data.coupon_code || "");
+          formData.append("notes", data.notes || "");
+          body = formData;
+        }
+
+        return {
+          url: "/orders",
+          method: "POST",
+          body,
+        };
+      },
+      invalidatesTags: ["Cart", "Orders"],
+    }),
     getOrders: builder.query<ApiResponse<OrdersResponse>, OrdersRequest>({
       query: (params) => {
         const searchParams = new URLSearchParams();
@@ -302,4 +324,8 @@ export const ordersApi = api.injectEndpoints({
   }),
 });
 
-export const { useGetOrdersQuery, useGetOrderDetailsQuery } = ordersApi;
+export const {
+  useGetOrdersQuery,
+  useGetOrderDetailsQuery,
+  useCreateOrderMutation,
+} = ordersApi;

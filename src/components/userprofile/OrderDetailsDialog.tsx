@@ -51,7 +51,7 @@ export default function OrderDetailsDialog({
     skip: !isOpen || !order?.order_number,
   });
 
-  const orderDetails = orderDetailsResponse?.data?.data?.order;
+  const orderDetails = orderDetailsResponse?.data?.order;
 
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat(isCurrentRTL ? "ar-SA" : "en-US", {

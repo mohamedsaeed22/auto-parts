@@ -189,7 +189,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           </div>
         </div>
 
-        {currentStep === 4 && (
+        {/* {currentStep === 4 && (
           <Button
             onClick={onPlaceOrder}
             disabled={isProcessing}
@@ -207,7 +207,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               </>
             )}
           </Button>
-        )}
+        )} */}
 
         {/* Security Features */}
         <div className="mt-6 space-y-3">

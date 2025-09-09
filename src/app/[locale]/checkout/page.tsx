@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import { ProtectedPageGuard } from "@/components/auth/AuthGuard";
+import { useGetAddressesQuery } from "@/services/api/addressesApi";
 import {
   CheckoutProgress,
   CartReviewStep,
@@ -26,6 +27,7 @@ const CheckoutPage = () => {
     updateQuantity,
     removeFromCart,
   } = useEnhancedCart();
+  const { data: addressesResp } = useGetAddressesQuery();
   const [currentStep, setCurrentStep] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -34,28 +36,7 @@ const CheckoutPage = () => {
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [couponError, setCouponError] = useState("");
-  const [selectedAddress, setSelectedAddress] = useState(0);
-
-  const savedAddresses = [
-    {
-      id: 0,
-      label: "المنزل",
-      name: "أحمد محمد",
-      address: "شارع الملك فهد، حي النزهة",
-      city: "الرياض",
-      phone: "+966 50 123 4567",
-      isDefault: true,
-    },
-    {
-      id: 1,
-      label: "العمل",
-      name: "أحمد محمد",
-      address: "مركز الملك عبدالله المالي، طريق الملك فهد",
-      city: "الرياض",
-      phone: "+966 11 234 5678",
-      isDefault: false,
-    },
-  ];
+  const [selectedAddress, setSelectedAddress] = useState<number | null>(null);
 
   const handleNext = () => {
     if (currentStep < 4) {
@@ -153,13 +134,11 @@ const CheckoutPage = () => {
                   transition={{ duration: 0.3 }}
                   className="bg-white rounded-2xl shadow-sm border border-gray-200"
                 >
-                  {currentStep === 1 && (
-                    <CartReviewStep onNext={handleNext} />
-                  )}
+                  {currentStep === 1 && <CartReviewStep onNext={handleNext} />}
 
                   {currentStep === 2 && (
                     <ShippingStep
-                      savedAddresses={savedAddresses}
+                      savedAddresses={addressesResp?.data?.addresses || []}
                       selectedAddress={selectedAddress}
                       onAddressSelect={handleAddressSelect}
                       onNext={handleNext}
@@ -180,11 +159,18 @@ const CheckoutPage = () => {
                     <OrderReviewStep
                       items={items}
                       totalItems={totalItems}
-                      selectedAddress={savedAddresses[selectedAddress]}
+                      selectedAddress={
+                        selectedAddress !== null
+                          ? addressesResp?.data?.addresses?.find(
+                              (addr) => addr.id === selectedAddress
+                            ) || null
+                          : null
+                      }
                       paymentMethod={paymentMethod}
                       isProcessing={isProcessing}
                       onPlaceOrder={handlePlaceOrder}
                       onBack={handleBack}
+                      couponCode={couponCode}
                     />
                   )}
                 </motion.div>
