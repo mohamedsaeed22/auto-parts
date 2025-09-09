@@ -29,7 +29,7 @@ interface LoginFormProps {
 
 export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
   const { t } = useTranslation("auth");
-  const { translateError } = useFormErrorTranslation();
+  const { translateError, getValidationMessage } = useFormErrorTranslation();
   const { login } = useAuth();
   const router = useRouter();
   const googleButtonRef = useRef<HTMLDivElement>(null);
@@ -99,7 +99,7 @@ export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
   }, [handleGoogleCredentialResponse]);
 
   const handleSendOtp = async (data: LoginFormData) => {
-    // Simple: get phone number from form data and send it
+    // Enforce phone number format: 11 digits starting with 010/011/012/015
     const phoneNumber = data.phoneNumber || "";
     console.log("Form submitted with phone:", phoneNumber);
     console.log("Full form data:", data);
@@ -120,7 +120,6 @@ export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
           </label>
           <input
             type="tel"
-            value="01018205804"
             placeholder={t("login.phonePlaceholder")}
             {...register("phoneNumber")}
             className="w-full px-3 py-3 border border-neutral-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
@@ -128,7 +127,10 @@ export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
           />
           {errors.phoneNumber && (
             <p className="text-sm text-red-500">
-              {translateError(errors.phoneNumber)}
+              {translateError(errors.phoneNumber) ||
+                getValidationMessage(
+                  errors.phoneNumber.message?.replace("validation.", "") || ""
+                )}
             </p>
           )}
         </div>

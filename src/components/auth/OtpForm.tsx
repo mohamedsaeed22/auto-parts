@@ -1,21 +1,19 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 import { useState, useEffect } from "react";
 import {
-  otpSchema,
   type OtpFormData,
   otpDefaultValues,
 } from "@/lib/validations/authSchema";
-import { useFormErrorTranslation } from "@/hooks/useFormErrorTranslation";
 import { useVerifyOtpMutation, useSendOtpMutation } from "@/services/hooks";
 import { useAuthContext } from "@/contexts/auth-context";
 import { useRouter } from "next/navigation";
 import { showSuccess, showError } from "@/lib/toast";
+import { useDirection } from "@/hooks/use-direction";
 
 interface OtpFormProps {
   onGoBack: () => void;
@@ -29,7 +27,7 @@ export default function OtpForm({
   onAuthSuccess,
 }: OtpFormProps) {
   const { t } = useTranslation("auth");
-  const { translateError } = useFormErrorTranslation();
+  const { isRTL } = useDirection();
   const router = useRouter();
   const [verifyOtp, { isLoading: isVerifying }] = useVerifyOtpMutation();
   const [sendOtp, { isLoading: isResending }] = useSendOtpMutation();
@@ -42,9 +40,9 @@ export default function OtpForm({
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<OtpFormData>({
-    resolver: zodResolver(otpSchema),
+    // Remove validation; keep default value
     defaultValues: otpDefaultValues,
   });
 
@@ -74,12 +72,15 @@ export default function OtpForm({
 
       if (response.code === 200 && response.data) {
         // Use AuthContext login which handles cart synchronization
-        await login(response.data.token, response.data.user);
+        await login(
+          response.data.token,
+          response.data.user as unknown as import("@/services/api/auth").User
+        );
 
         // Call success callback with the auth data structure expected
         onAuthSuccess({
           token: response.data.token,
-          user: response.data.user
+          user: response.data.user,
         });
 
         // Redirect to home page after successful login
@@ -128,16 +129,10 @@ export default function OtpForm({
             value="1000"
             maxLength={4}
             dir="ltr"
-            className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-center text-lg tracking-widest ${
-              errors.otp ? "border-accent" : "border-neutral-300"
-            }`}
+            readOnly
+            className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-center text-lg tracking-widest ${"border-neutral-300"}`}
             placeholder={t("otp.placeholder")}
           />
-          {errors.otp && (
-            <p className="mt-1 text-sm text-accent text-center">
-              {translateError(errors.otp)}
-            </p>
-          )}
         </div>
 
         <div className="flex gap-2">
@@ -148,8 +143,17 @@ export default function OtpForm({
             className="flex-1 py-3"
             disabled={isVerifying || isResending}
           >
-            {t("otp.backButton")}
-            <ArrowRight className="w-4 h-4 ml-2" />
+            {isRTL ? (
+              <>
+                <ArrowRight className="w-4 h-4 mx-2" />
+                {t("otp.backButton")}
+              </>
+            ) : (
+              <>
+                <ArrowLeft className="w-4 h-4 mx-2" />
+                {t("otp.backButton")}
+              </>
+            )}
           </Button>
           <Button
             type="submit"

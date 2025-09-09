@@ -36,9 +36,13 @@ const locationSchema = z.object({
   formattedAddress: z.string().min(1, "validation.location.formattedAddress"),
 });
 
-// Login schema (phone number only)
+// Login schema (phone number: must start with 010/011/012/015 and total length 11)
 export const loginSchema = z.object({
-  phoneNumber: z.string().optional(),
+  phoneNumber: z
+    .string({ required_error: "validation.phone.required" })
+    .min(11, "validation.phone.length")
+    .max(11, "validation.phone.length")
+    .regex(/^(010|011|012|015)[0-9]{8}$/, "validation.phone.invalid"),
 });
 
 // Registration schema
@@ -116,7 +120,7 @@ export const registrationDefaultValues: Partial<RegistrationFormData> = {
 };
 
 export const otpDefaultValues: Partial<OtpFormData> = {
-  otp: "",
+  otp: "1000",
 };
 
 // Validation utilities - removed phone validation since it's optional now
