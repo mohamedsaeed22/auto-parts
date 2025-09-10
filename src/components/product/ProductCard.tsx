@@ -35,6 +35,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const cartItem = items.find((item) => item.id === product.id);
   const isInCart = !!cartItem;
 
+  // Debug cart item state
+  console.log("🛒 Cart Debug:", {
+    productId: product.id,
+    cartItem,
+    isInCart,
+    totalCartItems: items.length,
+    allCartItems: items.map((item) => ({
+      id: item.id,
+      title: item.title,
+      quantity: item.quantity,
+    })),
+  });
+
   // Local state for immediate visual feedback
   const [localFavouriteState, setLocalFavouriteState] = useState<
     boolean | null
@@ -71,6 +84,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const isAuthenticated = storage.isAuthenticated();
   const isRegistrationComplete = storage.isRegistrationComplete();
   const canShowOptimisticUpdates = isAuthenticated && isRegistrationComplete;
+
+  // Debug authentication state
+  console.log("🔐 Auth Debug:", {
+    isAuthenticated,
+    isRegistrationComplete,
+    canShowOptimisticUpdates,
+    userExists: !!storage.getUser(),
+    tokenExists: !!storage.getToken(),
+  });
 
   // Check if product is in favourites or wishlist (use local state only if user is authenticated and registered)
   const isInFavourites =
@@ -135,48 +157,24 @@ const ProductCard: React.FC<ProductCardProps> = ({
     e.preventDefault();
     e.stopPropagation();
 
-    console.log("Add to cart button clicked!");
-    console.log("Product:", product);
-    console.log("canShowOptimisticUpdates:", canShowOptimisticUpdates);
+    console.log("🛒 Add to cart button clicked!");
+    console.log("🛒 Product:", product);
+    console.log("🛒 canShowOptimisticUpdates:", canShowOptimisticUpdates);
+    console.log("🛒 isAuthenticated:", isAuthenticated);
+    console.log("🛒 isRegistrationComplete:", isRegistrationComplete);
 
-    // Only show optimistic updates if user is authenticated and registration is complete
-    if (canShowOptimisticUpdates) {
-      console.log("Using optimistic updates");
-      // Optimistic update: set local cart state immediately
-      setLocalCartState(true);
-
-      try {
-        await addToCart({
-          id: product.id,
-          title: productName,
-          price: productFinalPrice,
-          image: productImage,
-          category: categoryName,
-          description: product.description || "",
-        });
-        console.log("Add to cart completed successfully");
-      } catch (error) {
-        // Revert local state if add to cart fails
-        console.error("Failed to add to cart:", error);
-        setLocalCartState(false);
-      }
-    } else {
-      console.log("Using regular add to cart");
-      // Just call addToCart without optimistic updates
-      // The cart system will handle authentication checks and show appropriate messages
-      try {
-        await addToCart({
-          id: product.id,
-          title: productName,
-          price: productFinalPrice,
-          image: productImage,
-          category: categoryName,
-          description: product.description || "",
-        });
-        console.log("Add to cart completed successfully");
-      } catch (error) {
-        console.error("Failed to add to cart:", error);
-      }
+    try {
+      await addToCart({
+        id: product.id,
+        title: productName,
+        price: productFinalPrice,
+        image: productImage,
+        category: categoryName,
+        description: product.description || "",
+      });
+      console.log("✅ Add to cart completed successfully");
+    } catch (error) {
+      console.error("❌ Failed to add to cart:", error);
     }
   };
 
@@ -370,11 +368,29 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 </div>
 
                 {/* Add to Cart Section */}
+                {console.log(
+                  "🎯 Rendering Add to Cart section - isInCart:",
+                  isInCart
+                )}
                 {!isInCart ? (
                   <Button
                     size="sm"
-                    className="bg-primary hover:bg-primary/90 text-white rounded px-2 py-1 flex items-center gap-1 transition-colors duration-200 text-xs"
-                    onClick={handleAddToCart}
+                    className="bg-primary hover:bg-primary/90 text-white rounded px-2 py-1 flex items-center gap-1 transition-colors duration-200 text-xs relative z-10"
+                    onClick={(e) => {
+                      console.log("🔥 Button click detected!");
+                      console.log("🔥 Event:", e);
+                      console.log("🔥 Event target:", e.target);
+                      console.log("🔥 Button element:", e.currentTarget);
+                      console.log(
+                        "🔥 Button disabled:",
+                        e.currentTarget.disabled
+                      );
+                      handleAddToCart(e);
+                    }}
+                    disabled={false}
+                    style={{ pointerEvents: "auto", cursor: "pointer" }}
+                    onMouseEnter={() => console.log("🖱️ Mouse entered button")}
+                    onMouseLeave={() => console.log("🖱️ Mouse left button")}
                   >
                     <ShoppingCart size={12} />
                     <span>{t("addToCart")}</span>
