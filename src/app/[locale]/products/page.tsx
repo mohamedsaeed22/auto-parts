@@ -719,7 +719,7 @@ export default function ProductsPage({
                       discount_amount: string | null;
                       images: string[];
                       hover_text: string;
-                      in_favourites?: boolean | null;
+                      in_favorites?: boolean | null;
                       in_wishlist?: boolean | null;
                     }) => (
                       <ProductCard
@@ -743,7 +743,7 @@ export default function ProductsPage({
                           discount_amount: product.discount_amount,
                           images: product.images,
                           hover_text: product.hover_text,
-                          in_favourites: product.in_favourites || false,
+                          in_favorites: product.in_favorites || false,
                           in_wishlist: product.in_wishlist || false,
                         }}
                       />

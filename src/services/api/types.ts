@@ -161,7 +161,7 @@ export interface Product {
   hover_text: string;
   product_identifier: string;
   // Add new fields for favourites and wishlist status
-  in_favourites: boolean | null;
+  in_favorites: boolean | null;
   in_wishlist: boolean | null;
 }
 

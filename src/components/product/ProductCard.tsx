@@ -48,28 +48,66 @@ const ProductCard: React.FC<ProductCardProps> = ({
     })),
   });
 
-  // Local state for immediate visual feedback
-  const [localFavouriteState, setLocalFavouriteState] = useState<
-    boolean | null
-  >(null);
-  const [localWishlistState, setLocalWishlistState] = useState<boolean | null>(
-    null
+  // Local state for immediate visual feedback - Initialize with server values
+  const [localFavouriteState, setLocalFavouriteState] = useState<boolean>(
+    product.in_favorites === true
+  );
+  const [localWishlistState, setLocalWishlistState] = useState<boolean>(
+    product.in_wishlist === true
   );
 
-  // Sync local states with incoming props only when no optimistic override is active
+  // Track if we've made optimistic updates that haven't been confirmed by server
+  const [hasOptimisticFavUpdate, setHasOptimisticFavUpdate] = useState(false);
+  const [hasOptimisticWishUpdate, setHasOptimisticWishUpdate] = useState(false);
+
+  // Sync with server response when product data changes
   useEffect(() => {
-    if (localFavouriteState === null) {
-      setLocalFavouriteState(product.in_favourites === true);
+    // Only update local state if we don't have pending optimistic updates
+    if (!hasOptimisticFavUpdate) {
+      const serverFavState = product.in_favorites === true;
+      setLocalFavouriteState(serverFavState);
+
+      console.log("🔄 Syncing favorites from server:", {
+        productId: product.id,
+        serverState: product.in_favorites,
+        newLocalState: serverFavState,
+        hasOptimisticUpdate: hasOptimisticFavUpdate,
+      });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [product.in_favourites]);
+  }, [product.in_favorites, hasOptimisticFavUpdate, product.id]);
 
   useEffect(() => {
-    if (localWishlistState === null) {
-      setLocalWishlistState(product.in_wishlist === true);
+    // Only update local state if we don't have pending optimistic updates
+    if (!hasOptimisticWishUpdate) {
+      const serverWishState = product.in_wishlist === true;
+      setLocalWishlistState(serverWishState);
+
+      console.log("🔄 Syncing wishlist from server:", {
+        productId: product.id,
+        serverState: product.in_wishlist,
+        newLocalState: serverWishState,
+        hasOptimisticUpdate: hasOptimisticWishUpdate,
+      });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [product.in_wishlist]);
+  }, [product.in_wishlist, hasOptimisticWishUpdate, product.id]);
+
+  // Reset optimistic flags when server state matches local state
+  useEffect(() => {
+    if (
+      hasOptimisticFavUpdate &&
+      product.in_favorites === localFavouriteState
+    ) {
+      setHasOptimisticFavUpdate(false);
+      console.log("✅ Favorites optimistic update confirmed by server");
+    }
+  }, [product.in_favorites, localFavouriteState, hasOptimisticFavUpdate]);
+
+  useEffect(() => {
+    if (hasOptimisticWishUpdate && product.in_wishlist === localWishlistState) {
+      setHasOptimisticWishUpdate(false);
+      console.log("✅ Wishlist optimistic update confirmed by server");
+    }
+  }, [product.in_wishlist, localWishlistState, hasOptimisticWishUpdate]);
 
   // Safe access to product properties
   const productName = product.name || "Product Name Unavailable";
@@ -94,15 +132,23 @@ const ProductCard: React.FC<ProductCardProps> = ({
     tokenExists: !!storage.getToken(),
   });
 
-  // Check if product is in favourites or wishlist (use local state only if user is authenticated and registered)
-  const isInFavourites =
-    canShowOptimisticUpdates && localFavouriteState !== null
-      ? localFavouriteState
-      : product.in_favourites === true;
-  const isInWishlist =
-    canShowOptimisticUpdates && localWishlistState !== null
-      ? localWishlistState
-      : product.in_wishlist === true;
+  // Use local state for UI display
+  const isInFavourites = localFavouriteState;
+  const isInWishlist = localWishlistState;
+
+  // Debug favorites state
+  console.log("❤️ Favorites Debug:", {
+    productId: product.id,
+    productInFavorites: product.in_favorites,
+    localFavouriteState,
+    isInFavourites,
+    hasOptimisticFavUpdate,
+    canShowOptimisticUpdates,
+    buttonShouldBeRed: isInFavourites,
+    expectedClassName: isInFavourites
+      ? "bg-red-500 border-red-500 hover:bg-red-600"
+      : "bg-white hover:bg-gray-50",
+  });
 
   // Enhanced toggle functions with conditional visual feedback
   const handleToggleFavouriteWithFeedback = async (e: React.MouseEvent) => {
@@ -114,13 +160,33 @@ const ProductCard: React.FC<ProductCardProps> = ({
       // Immediately update local state for visual feedback
       const newFavouriteState = !isInFavourites;
       setLocalFavouriteState(newFavouriteState);
+      setHasOptimisticFavUpdate(true);
+
+      console.log("🚀 Optimistic favorite update:", {
+        productId: product.id,
+        oldState: isInFavourites,
+        newState: newFavouriteState,
+      });
+
+      // Set a timeout to reset optimistic flag if server doesn't respond
+      const timeoutId = setTimeout(() => {
+        console.log(
+          "⏰ Optimistic update timeout, resetting flag:",
+          product.id
+        );
+        setHasOptimisticFavUpdate(false);
+      }, 5000); // 5 second timeout
 
       try {
         await handleToggleFavourite(product.id);
+        clearTimeout(timeoutId);
+        // The useEffect will handle resetting the optimistic flag when server confirms
       } catch (error) {
+        clearTimeout(timeoutId);
         // Revert local state if API call fails
         console.error("Failed to toggle favourite:", error);
         setLocalFavouriteState(!newFavouriteState);
+        setHasOptimisticFavUpdate(false);
       }
     } else {
       // Just call the handler without optimistic updates
@@ -138,13 +204,22 @@ const ProductCard: React.FC<ProductCardProps> = ({
       // Immediately update local state for visual feedback
       const newWishlistState = !isInWishlist;
       setLocalWishlistState(newWishlistState);
+      setHasOptimisticWishUpdate(true);
+
+      console.log("🚀 Optimistic wishlist update:", {
+        productId: product.id,
+        oldState: isInWishlist,
+        newState: newWishlistState,
+      });
 
       try {
         await handleToggleWishlist(product.id);
+        // The useEffect will handle resetting the optimistic flag when server confirms
       } catch (error) {
         // Revert local state if API call fails
         console.error("Failed to toggle wishlist:", error);
         setLocalWishlistState(!newWishlistState);
+        setHasOptimisticWishUpdate(false);
       }
     } else {
       // Just call the handler without optimistic updates
@@ -220,13 +295,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
               {variant === "default" && (
                 <Button
                   size="sm"
-                  variant="outline"
-                  className={`w-10 h-10 rounded-full border-neutral-200 hover:bg-white shadow-lg transition-colors duration-300 ${
+                  variant={isInFavourites ? "default" : "outline"}
+                  className={`w-10 h-10 rounded-full shadow-lg transition-colors duration-300 ${
                     isInFavourites
-                      ? "bg-red-500 border-red-500 hover:bg-red-600"
-                      : "bg-white hover:bg-gray-50"
+                      ? "bg-red-500 border-red-500 hover:bg-red-600 text-white"
+                      : "bg-white border-neutral-200 hover:bg-gray-50"
                   }`}
-                  onClick={handleToggleFavouriteWithFeedback}
+                  onClick={(e) => {
+                    console.log(
+                      "❤️ Heart button clicked - isInFavourites:",
+                      isInFavourites
+                    );
+                    handleToggleFavouriteWithFeedback(e);
+                  }}
                   disabled={isLoading(`favourite-${product.id}`)}
                 >
                   {isLoading(`favourite-${product.id}`) ? (
@@ -286,11 +367,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 <Button
                   size="sm"
                   variant="outline"
-                  className={`w-10 h-10 rounded-full border-neutral-200 hover:bg-white shadow-lg transition-colors duration-300 ${
+                  className={`w-10 h-10 rounded-full shadow-lg transition-colors duration-300 !border-2 ${
                     isInWishlist
-                      ? "bg-blue-500 border-blue-500 hover:bg-blue-600"
-                      : "bg-white hover:bg-gray-50"
+                      ? "!bg-blue-500 !border-blue-500 hover:!bg-blue-600 !text-white"
+                      : "!bg-white !border-neutral-200 hover:!bg-gray-50 !text-neutral-700"
                   }`}
+                  style={{
+                    backgroundColor: isInWishlist ? "#3b82f6" : "#ffffff",
+                    borderColor: isInWishlist ? "#3b82f6" : "#e5e5e5",
+                    color: isInWishlist ? "#ffffff" : "#374151",
+                  }}
                   onClick={handleToggleWishlistWithFeedback}
                   disabled={isLoading(`wishlist-${product.id}`)}
                 >
@@ -299,11 +385,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   ) : (
                     <Bookmark
                       size={22}
-                      className={`${
-                        isInWishlist
-                          ? "text-white fill-white"
-                          : "text-neutral-700"
-                      }`}
+                      className={isInWishlist ? "fill-current" : ""}
+                      style={{
+                        color: isInWishlist ? "#ffffff" : "#374151",
+                        fill: isInWishlist ? "#ffffff" : "none",
+                      }}
                     />
                   )}
                 </Button>

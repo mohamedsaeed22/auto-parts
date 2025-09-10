@@ -409,7 +409,7 @@ export default function OfferPage() {
                   discount_amount: product.discount_amount,
                   images: product.images,
                   hover_text: product.hover_text,
-                  in_favourites: product.in_favorites || false,
+                  in_favorites: product.in_favorites || false,
                   in_wishlist: product.in_wishlist || false,
                 }}
               />

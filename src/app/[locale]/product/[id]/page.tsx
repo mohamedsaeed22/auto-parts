@@ -366,7 +366,7 @@ export default function ProductDetails() {
   const isInFavourites =
     localFavouriteState !== null
       ? localFavouriteState
-      : product?.in_favourites === true;
+      : product?.in_favorites === true;
   const isInWishlist =
     localWishlistState !== null
       ? localWishlistState
