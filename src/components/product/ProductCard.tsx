@@ -28,7 +28,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const { t, i18n } = useTranslation("product");
   const isRTL = i18n.language === "ar";
-  const { items, addToCart, updateQuantity, removeFromCart } =
+  const { items, addToCart, updateQuantity, removeFromCart, isItemLoading } =
     useEnhancedCart();
   const { handleToggleFavourite, handleToggleWishlist, isLoading } =
     useFavouritesWishlist();
@@ -387,12 +387,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
                       );
                       handleAddToCart(e);
                     }}
-                    disabled={false}
+                    disabled={isItemLoading(product.id)}
                     style={{ pointerEvents: "auto", cursor: "pointer" }}
                     onMouseEnter={() => console.log("🖱️ Mouse entered button")}
                     onMouseLeave={() => console.log("🖱️ Mouse left button")}
                   >
-                    <ShoppingCart size={12} />
+                    {isItemLoading(product.id) ? (
+                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                    ) : (
+                      <ShoppingCart size={12} />
+                    )}
                     <span>{t("addToCart")}</span>
                   </Button>
                 ) : (
@@ -402,8 +406,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
                       size="sm"
                       variant="ghost"
                       className="h-7 w-7 p-0 hover:bg-red-50 text-red-600 hover:text-red-700 rounded-none border-r border-primary/10 transition-colors duration-200"
+                      disabled={isItemLoading(product.id)}
                     >
-                      {cartItem?.quantity === 1 ? (
+                      {isItemLoading(product.id) ? (
+                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-red-600"></div>
+                      ) : cartItem?.quantity === 1 ? (
                         <Trash size={12} />
                       ) : (
                         <Minus size={12} />
@@ -421,8 +428,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
                       size="sm"
                       variant="ghost"
                       className="h-7 w-7 p-0 hover:bg-green-50 text-green-600 hover:text-green-700 rounded-none border-l border-primary/10 transition-colors duration-200"
+                      disabled={isItemLoading(product.id)}
                     >
-                      <Plus size={12} />
+                      {isItemLoading(product.id) ? (
+                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-green-600"></div>
+                      ) : (
+                        <Plus size={12} />
+                      )}
                     </Button>
                   </div>
                 )}
