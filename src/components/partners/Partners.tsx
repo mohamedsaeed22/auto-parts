@@ -20,10 +20,12 @@ const Partners = () => {
 
   // Auto-scroll effect
   useEffect(() => {
-    if (!containerRef.current || isHovered || partners.length === 0) return;
+    if (isHovered || partners.length === 0) return;
 
     const container = containerRef.current;
-    const scrollSpeed = 1; // pixels per frame
+    if (!container) return;
+
+    const scrollSpeed = 1;
     let animationId: number;
 
     const scroll = () => {
@@ -31,7 +33,6 @@ const Partners = () => {
         container.scrollLeft >=
         container.scrollWidth - container.clientWidth
       ) {
-        // Reset to beginning when reaching the end
         container.scrollLeft = 0;
       } else {
         container.scrollLeft += scrollSpeed;
@@ -57,14 +58,10 @@ const Partners = () => {
             <h2 className="text-2xl md:text-3xl font-bold text-neutral-800 mb-4">
               {t("partners.title") || "Our Trusted Partners"}
             </h2>
-            <p className="text-neutral-600 max-w-2xl mx-auto">
-              {t("partners.description") ||
-                "Working with leading companies worldwide"}
-            </p>
           </div>
-          <div className="flex items-center justify-center min-h-[120px]">
+          <div className="flex items-center justify-center py-12">
             <div className="flex flex-col items-center gap-4">
-              <Loader2 className="h-6 w-6 animate-spin text-neutral-600" />
+              <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
               <p className="text-neutral-600 text-sm">
                 {t("loadingPartners") || "Loading partners..."}
               </p>
@@ -80,29 +77,17 @@ const Partners = () => {
     return (
       <section className="py-12 bg-background" dir={isRTL ? "rtl" : "ltr"}>
         <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-neutral-800 mb-4">
-              {t("partners.title") || "Our Trusted Partners"}
-            </h2>
-            <p className="text-neutral-600 max-w-2xl mx-auto">
-              {t("partners.description") ||
-                "Working with leading companies worldwide"}
+          <div className="text-center">
+            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <p className="text-red-600">
+              {t("partnersError") || "Failed to load partners"}
             </p>
-          </div>
-          <div className="flex items-center justify-center min-h-[120px]">
-            <div className="text-center">
-              <AlertCircle className="h-8 w-8 text-accent mx-auto mb-2" />
-              <p className="text-neutral-600 text-sm">
-                {t("errorLoadingPartners") || "Error loading partners"}
-              </p>
-            </div>
           </div>
         </div>
       </section>
     );
   }
 
-  // No partners found
   if (partners.length === 0) {
     return (
       <section className="py-12 bg-background" dir={isRTL ? "rtl" : "ltr"}>
@@ -111,20 +96,11 @@ const Partners = () => {
             <h2 className="text-2xl md:text-3xl font-bold text-neutral-800 mb-4">
               {t("partners.title") || "Our Trusted Partners"}
             </h2>
-            <p className="text-neutral-600 max-w-2xl mx-auto">
-              {t("partners.description") ||
-                "Working with leading companies worldwide"}
-            </p>
           </div>
-          <div className="flex items-center justify-center min-h-[120px]">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                <AlertCircle className="text-neutral-400" size={20} />
-              </div>
-              <p className="text-neutral-600 text-sm">
-                {t("noPartners") || "No partners available"}
-              </p>
-            </div>
+          <div className="text-center py-12">
+            <p className="text-neutral-600">
+              {t("noPartners") || "No partners available at the moment"}
+            </p>
           </div>
         </div>
       </section>
@@ -134,7 +110,7 @@ const Partners = () => {
   return (
     <section className="py-12 bg-background" dir={isRTL ? "rtl" : "ltr"}>
       <div className="container mx-auto px-4">
-        {/* Section Header */}
+        {/* Header */}
         <div className="text-center mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-neutral-800 mb-4">
             {t("partners.title") || "Our Trusted Partners"}
@@ -145,16 +121,15 @@ const Partners = () => {
           </p>
         </div>
 
-        {/* Partners Logos Container */}
+        {/* Partners Carousel */}
         <div className="relative">
-          {/* Gradient Overlays for smooth edges */}
+          {/* Gradient overlays */}
           <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
 
-          {/* Scrolling Container */}
+          {/* Scrollable container */}
           <div
             ref={containerRef}
-            dir="ltr"
             className="flex items-center gap-8 md:gap-12 overflow-x-auto scrollbar-hide"
             style={{
               scrollbarWidth: "none",
@@ -174,13 +149,12 @@ const Partners = () => {
                     height={60}
                     className="max-w-full max-h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
                     onError={(e) => {
-                      // Fallback to a placeholder if image fails to load
                       const target = e.target as HTMLImageElement;
                       target.style.display = "none";
                       target.nextElementSibling?.classList.remove("hidden");
                     }}
                   />
-                  {/* Fallback placeholder */}
+                  {/* Fallback for broken images */}
                   <div className="hidden w-16 h-8 bg-neutral-100 rounded flex items-center justify-center">
                     <span className="text-neutral-400 text-xs font-medium">
                       Partner
@@ -192,7 +166,7 @@ const Partners = () => {
           </div>
         </div>
 
-        {/* Scroll Indicator */}
+        {/* Scroll hint */}
         <div className="text-center mt-6">
           <div className="inline-flex items-center gap-2 text-neutral-500 text-sm">
             <div className="w-2 h-2 bg-neutral-300 rounded-full animate-pulse" />
@@ -204,7 +178,7 @@ const Partners = () => {
         </div>
       </div>
 
-      {/* Custom CSS for hiding scrollbar */}
+      {/* Hide scrollbar styles */}
       <style jsx>{`
         .scrollbar-hide::-webkit-scrollbar {
           display: none;

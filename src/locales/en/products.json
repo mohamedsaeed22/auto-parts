@@ -29,7 +29,9 @@
     "outOfStock": "Out of Stock",
     "addToCart": "Add to Cart",
     "addToWishlist": "Add to Wishlist",
-    "removeFromWishlist": "Remove from Wishlist"
+    "removeFromWishlist": "Remove from Wishlist",
+    "loading": "Loading...",
+    "currency": "$"
   },
   "reviews": {
     "title": "Customer Reviews",

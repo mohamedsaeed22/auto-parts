@@ -25,6 +25,7 @@ import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useTranslation } from "react-i18next";
 import { useGetProductQuery } from "@/services/hooks";
 import { showSuccess, showError } from "@/lib/toast";
+import RelatedProducts from "@/components/product/RelatedProducts";
 
 // Loading Component
 const LoadingSpinner = ({ t }: { t: (key: string) => string }) => (
@@ -869,6 +870,15 @@ export default function ProductDetails() {
           </div>
         </div>
       </div>
+
+      {/* Related Products Section */}
+      {product.category?.id && (
+        <RelatedProducts
+          categoryId={product.category.id}
+          currentProductId={product.id}
+          isRTL={isRTL}
+        />
+      )}
     </div>
   );
 }

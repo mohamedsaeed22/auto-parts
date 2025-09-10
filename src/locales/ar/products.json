@@ -29,7 +29,9 @@
     "outOfStock": "نفذ من المخزن",
     "addToCart": "أضف إلى السلة",
     "addToWishlist": "أضف إلى قائمة الرغبات",
-    "removeFromWishlist": "إزالة من قائمة الرغبات"
+    "removeFromWishlist": "إزالة من قائمة الرغبات",
+    "loading": "جاري التحميل...",
+    "currency": "ر.س"
   },
   "reviews": {
     "title": "تقييمات العملاء",
