@@ -62,14 +62,15 @@ export default function Header() {
     if (searchQuery.trim()) {
       // Submit search query (updates URL)
       submitSearchQuery(searchQuery.trim());
+
       // Navigate to products page with search parameter
       const locale = currentLocale;
       router.push(
         `/${locale}/products?search=${encodeURIComponent(searchQuery.trim())}`
       );
+
       setIsSearchOpen(false);
-      // Clear the local search query after navigation
-      updateSearchQuery("");
+      // Don't clear the search query - let the URL sync handle it
     }
   };
 

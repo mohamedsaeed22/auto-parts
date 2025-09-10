@@ -38,6 +38,7 @@ export default function SearchAutocomplete({
   const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const lastSelectedProduct = useRef<string>("");
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const { currentLocale } = useLocale();
@@ -47,10 +48,24 @@ export default function SearchAutocomplete({
 
   const [searchProducts] = useSearchProductsMutation();
 
+  // Initialize lastSelectedProduct with current search query on mount (for page reloads)
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      lastSelectedProduct.current = searchQuery.trim();
+    }
+  }, []); // Only run on mount
+
   // Fetch search suggestions
   useEffect(() => {
     const fetchSuggestions = async () => {
-      if (debouncedSearchQuery.trim().length < 2) {
+      if (debouncedSearchQuery.trim().length < 1) {
+        setSuggestions([]);
+        setShowSuggestions(false);
+        return;
+      }
+
+      // Don't show suggestions if the current query exactly matches the last selected product
+      if (debouncedSearchQuery.trim() === lastSelectedProduct.current) {
         setSuggestions([]);
         setShowSuggestions(false);
         return;
@@ -83,7 +98,12 @@ export default function SearchAutocomplete({
     setSearchQuery(value);
     setSelectedIndex(-1);
 
-    if (value.trim().length >= 2) {
+    // Clear the last selected product if user is typing something different
+    if (value !== lastSelectedProduct.current) {
+      lastSelectedProduct.current = "";
+    }
+
+    if (value.trim().length >= 1) {
       setShowSuggestions(true);
     } else {
       setShowSuggestions(false);
@@ -96,6 +116,9 @@ export default function SearchAutocomplete({
     setShowSuggestions(false);
     setSuggestions([]);
 
+    // Store the selected product name to prevent showing suggestions again
+    lastSelectedProduct.current = product.name;
+
     // Call the suggestion select callback if provided
     if (onSuggestionSelect) {
       onSuggestionSelect(product.name);
@@ -106,10 +129,7 @@ export default function SearchAutocomplete({
       `/${currentLocale}/products?search=${encodeURIComponent(product.name)}`
     );
 
-    // Clear the search input after navigation
-    setTimeout(() => {
-      setSearchQuery("");
-    }, 100);
+    // Don't clear the search input - let the URL sync handle it
   };
 
   // Handle keyboard navigation
