@@ -7,6 +7,9 @@ import { useGetProductsMutation } from "@/services/hooks";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useProductFilters } from "@/hooks/useProductFilters";
 import { useFilterData } from "@/hooks/useFilterData";
+import { SEOMetadata } from "@/components/seo/SEOMetadata";
+import { StructuredData } from "@/components/seo/StructuredData";
+import { seoConfig } from "@/lib/seo/config";
 import {
   ArrowLeft,
   Loader2,
@@ -376,12 +379,13 @@ const ViewModeToggle = ({
   </div>
 );
 
-export default function ProductsPage() {
+export default function ProductsPage({ params }: { params: { locale: string } }) {
   const router = useRouter();
   const { t, i18n } = useTranslation("products");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const isRTL = i18n.language === "ar";
+  const { locale } = params;
   const direction = isRTL ? "rtl" : "ltr";
 
   // Scroll to top when component mounts
@@ -483,6 +487,24 @@ export default function ProductsPage() {
 
   return (
     <div dir={direction}>
+      <SEOMetadata
+        title={seoConfig.defaultMetadata.products.title[locale as 'en' | 'ar']}
+        description={seoConfig.defaultMetadata.products.description[locale as 'en' | 'ar']}
+        keywords={seoConfig.company.keywords[locale as 'en' | 'ar'].join(', ')}
+        locale={locale}
+        type="website"
+      />
+      
+      <StructuredData
+        type="website"
+        data={{
+          name: `${seoConfig.company.name} - Products`,
+          description: seoConfig.defaultMetadata.products.description[locale as 'en' | 'ar'],
+          url: `${seoConfig.siteUrl}/${locale}/products`,
+        }}
+        locale={locale}
+      />
+      
       {/* Hero Section */}
       <HeroSection t={t} />
 

@@ -1,11 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, use as usePromise } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import { useGetCategoriesQuery } from "@/services/api/categoriesApi";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import { SEOMetadata } from "@/components/seo/SEOMetadata";
+import { StructuredData } from "@/components/seo/StructuredData";
+import { seoConfig } from "@/lib/seo/config";
 import {
   ArrowLeft,
   Package,
@@ -312,7 +315,16 @@ const ErrorMessage = ({
   </div>
 );
 
-export default function CategoriesPage() {
+export default function CategoriesPage({
+  params,
+}: {
+  params: Promise<{ locale: string }> | { locale: string };
+}) {
+  // Unwrap params if it's a Promise (Next.js 15+)
+  const { locale } =
+    typeof (params as any)?.then === "function"
+      ? usePromise(params as Promise<{ locale: string }>)
+      : (params as { locale: string });
   const router = useRouter();
   const { t, i18n } = useTranslation("categories");
   const [searchQuery, setSearchQuery] = useState("");
@@ -363,6 +375,61 @@ export default function CategoriesPage() {
 
   return (
     <div dir={direction}>
+      {(() => {
+        const catSEO =
+          seoConfig?.pages?.categories ??
+          ({
+            title: { en: "Categories" },
+            description: { en: "Explore categories" },
+            keywords: { en: "categories" },
+          } as any);
+        const title =
+          catSEO.title?.[locale as keyof typeof catSEO.title] ??
+          catSEO.title?.en ??
+          "Categories";
+        const description =
+          catSEO.description?.[locale as keyof typeof catSEO.description] ??
+          catSEO.description?.en ??
+          "";
+        const keywords =
+          catSEO.keywords?.[locale as keyof typeof catSEO.keywords] ??
+          catSEO.keywords?.en ??
+          "";
+        return (
+          <SEOMetadata
+            title={title}
+            description={description}
+            keywords={keywords}
+            locale={locale}
+            type="website"
+          />
+        );
+      })()}
+      <StructuredData
+        type="category"
+        data={(() => {
+          const catSEO =
+            seoConfig?.pages?.categories ??
+            ({
+              title: { en: "Categories" },
+              description: { en: "Explore categories" },
+            } as any);
+          const name =
+            catSEO.title?.[locale as keyof typeof catSEO.title] ??
+            catSEO.title?.en ??
+            "Categories";
+          const description =
+            catSEO.description?.[locale as keyof typeof catSEO.description] ??
+            catSEO.description?.en ??
+            "";
+          return {
+            name,
+            description,
+            url: `${seoConfig.siteUrl}/${locale}/categories`,
+          };
+        })()}
+        locale={locale}
+      />
       <HeroSection t={t} />
 
       <SearchAndFilter
