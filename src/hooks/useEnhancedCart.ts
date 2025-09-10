@@ -140,11 +140,11 @@ export const useEnhancedCart = () => {
             product_id: item.id,
             quantity: 1,
           }).unwrap();
-          showSuccess("Product added to cart");
+          // showSuccess("Product added to cart");
         } else {
           // Use local storage only - always succeeds
           dispatch(addToCartAction(item));
-          showSuccess("Product added to cart");
+          // showSuccess("Product added to cart");
           return; // Exit early for localStorage operations
         }
       } catch (error) {
@@ -155,7 +155,7 @@ export const useEnhancedCart = () => {
         } else {
           // For localStorage, still add the item even if there's an error
           dispatch(addToCartAction(item));
-          showSuccess("Product added to cart");
+          // showSuccess("Product added to cart");
         }
       } finally {
         dispatch(setLoading(false));

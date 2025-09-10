@@ -1,12 +1,17 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
-import { Minus, Plus, Trash2 } from 'lucide-react';
-import { CartItem as CartItemType, useRemoveFromCart, useUpdateCartItem } from '@/services/api/cart';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import Image from "next/image";
+import Link from "next/link";
+import { useTranslation } from "react-i18next";
+import { Minus, Plus, Trash2 } from "lucide-react";
+import {
+  CartItem as CartItemType,
+  useRemoveFromCart,
+  useUpdateCartItem,
+} from "@/services/api/cart";
+import { Button } from "@/components/ui/button";
+import { LazyImage } from "@/components/ui/LazyImage";
+import { cn } from "@/lib/utils";
 
 interface CartItemProps {
   item: CartItemType;
@@ -14,7 +19,7 @@ interface CartItemProps {
 }
 
 export function CartItem({ item, className }: CartItemProps) {
-  const { t } = useTranslation('cart');
+  const { t } = useTranslation("cart");
   const updateCartItemMutation = useUpdateCartItem();
   const removeFromCartMutation = useRemoveFromCart();
 
@@ -31,20 +36,27 @@ export function CartItem({ item, className }: CartItemProps) {
   };
 
   const isDiscounted = item.product.discount_price !== null;
-  const price = isDiscounted ? item.product.discount_price! : item.product.price;
+  const price = isDiscounted
+    ? item.product.discount_price!
+    : item.product.price;
   const totalPrice = price * item.quantity;
 
   return (
-    <div className={cn('flex gap-4', className)}>
+    <div className={cn("flex gap-4", className)}>
       <Link
         href={`/products/${item.product.id}`}
         className="relative aspect-square h-24 w-24 overflow-hidden rounded-lg"
       >
-        <Image
-          src={item.product.images[0]}
+        <LazyImage
+          src={
+            item.product.images?.[0] ||
+            item.product.primary_image ||
+            "/products/product1.jpg"
+          }
           alt={item.product.name}
           fill
           className="object-cover"
+          showLoadingIndicator={false}
         />
       </Link>
       <div className="flex flex-1 flex-col justify-between">
@@ -57,11 +69,11 @@ export function CartItem({ item, className }: CartItemProps) {
           </Link>
           <div className="flex items-center gap-2">
             <span className="text-sm font-bold">
-              {t('currency', { value: price })}
+              {t("currency", { value: price })}
             </span>
             {isDiscounted && (
               <span className="text-sm text-muted-foreground line-through">
-                {t('currency', { value: item.product.price })}
+                {t("currency", { value: item.product.price })}
               </span>
             )}
           </div>
@@ -98,7 +110,7 @@ export function CartItem({ item, className }: CartItemProps) {
           </div>
           <div className="flex items-center gap-4">
             <span className="font-bold">
-              {t('currency', { value: totalPrice })}
+              {t("currency", { value: totalPrice })}
             </span>
             <Button
               variant="ghost"

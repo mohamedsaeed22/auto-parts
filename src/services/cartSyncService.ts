@@ -40,7 +40,7 @@ export class CartSyncService {
       if (response.code === 200) {
         // Clear local cart after successful sync
         store.dispatch(clearCart());
-        toast.success("Cart synced successfully");
+        // toast.success("Cart synced successfully");
         return true;
       } else {
         throw new Error(response.message || "Failed to sync cart");

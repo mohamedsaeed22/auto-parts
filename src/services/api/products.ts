@@ -9,6 +9,7 @@ export interface Product {
   price: number;
   discount_price: number | null;
   images: string[];
+  primary_image?: string;
   category_id: number;
   brand_id: number;
   is_favorite: boolean;

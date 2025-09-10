@@ -203,7 +203,7 @@ const FilterPanel = ({
                   onChange={(e) => {
                     const value = e.target.checked ? category.id : null;
                     onFilterChange("category_id", value);
-                  }}//
+                  }} //
                   className="border-gray-300 text-green-600 focus:ring-green-500"
                 />
                 <span className="text-sm text-gray-700">{category.name}</span>
@@ -379,13 +379,17 @@ const ViewModeToggle = ({
   </div>
 );
 
-export default function ProductsPage({ params }: { params: { locale: string } }) {
+export default function ProductsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const router = useRouter();
   const { t, i18n } = useTranslation("products");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const isRTL = i18n.language === "ar";
-  const { locale } = params;
+  const { locale } = React.use(params);
   const direction = isRTL ? "rtl" : "ltr";
 
   // Scroll to top when component mounts
@@ -488,23 +492,28 @@ export default function ProductsPage({ params }: { params: { locale: string } })
   return (
     <div dir={direction}>
       <SEOMetadata
-        title={seoConfig.defaultMetadata.products.title[locale as 'en' | 'ar']}
-        description={seoConfig.defaultMetadata.products.description[locale as 'en' | 'ar']}
-        keywords={seoConfig.company.keywords[locale as 'en' | 'ar'].join(', ')}
+        title={seoConfig.defaultMetadata.products.title[locale as "en" | "ar"]}
+        description={
+          seoConfig.defaultMetadata.products.description[locale as "en" | "ar"]
+        }
+        keywords={seoConfig.company.keywords[locale as "en" | "ar"].join(", ")}
         locale={locale}
         type="website"
       />
-      
+
       <StructuredData
         type="website"
         data={{
           name: `${seoConfig.company.name} - Products`,
-          description: seoConfig.defaultMetadata.products.description[locale as 'en' | 'ar'],
+          description:
+            seoConfig.defaultMetadata.products.description[
+              locale as "en" | "ar"
+            ],
           url: `${seoConfig.siteUrl}/${locale}/products`,
         }}
         locale={locale}
       />
-      
+
       {/* Hero Section */}
       <HeroSection t={t} />
 

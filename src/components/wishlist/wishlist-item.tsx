@@ -45,7 +45,11 @@ export function WishlistItem({ item, className }: WishlistItemProps) {
         className="relative aspect-square h-24 w-24 overflow-hidden rounded-lg"
       >
         <Image
-          src={item.product.images[0]}
+          src={
+            item.product.images?.[0] ||
+            item.product.primary_image ||
+            "/products/product1.jpg"
+          }
           alt={item.product.name}
           fill
           className="object-cover"

@@ -33,27 +33,28 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const localizedMeta = getLocalizedMetadata('home', locale);
+  const localizedMeta = getLocalizedMetadata("home", locale);
   const keywords = getKeywords(locale);
-  
+
   return {
     title: {
       default: localizedMeta.title,
-      template: `%s | ${seoConfig.company.name}`
+      template: `%s | ${seoConfig.company.name}`,
     },
     description: localizedMeta.description,
     keywords: keywords,
     openGraph: {
       title: localizedMeta.title,
       description: localizedMeta.description,
-      locale: locale === 'ar' ? 'ar_SA' : 'en_US',
-      alternateLocale: locale === 'ar' ? 'en_US' : 'ar_SA',
+      locale: locale === "ar" ? "ar_SA" : "en_US",
+      alternateLocale: locale === "ar" ? "en_US" : "ar_SA",
     },
     alternates: {
-      canonical: locale === 'en' ? seoConfig.siteUrl : `${seoConfig.siteUrl}/${locale}`,
+      canonical:
+        locale === "en" ? seoConfig.siteUrl : `${seoConfig.siteUrl}/${locale}`,
       languages: {
-        'en': seoConfig.siteUrl,
-        'ar': `${seoConfig.siteUrl}/ar`,
+        en: seoConfig.siteUrl,
+        ar: `${seoConfig.siteUrl}/ar`,
       },
     },
   };
@@ -78,6 +79,7 @@ export default async function LocaleLayout({
     "userProfile",
     "categories",
     "categoryDetail",
+    "auth",
   ];
   const { resources } = await serverSideTranslation(locale, ns);
   const direction = getDirection(locale);
