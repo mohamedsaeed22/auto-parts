@@ -379,13 +379,13 @@ const ViewModeToggle = ({
   </div>
 );
 
-export default function ProductsPage({ params }: { params: { locale: string } }) {
+export default function ProductsPage({ params }: { params: Promise<{ locale: string }> }) {
   const router = useRouter();
   const { t, i18n } = useTranslation("products");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const isRTL = i18n.language === "ar";
-  const { locale } = params;
+  const { locale } = React.use(params);
   const direction = isRTL ? "rtl" : "ltr";
 
   // Scroll to top when component mounts

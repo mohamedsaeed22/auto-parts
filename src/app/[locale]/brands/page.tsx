@@ -264,12 +264,20 @@ const BrandFeatures = ({
   </div>
 );
 
-export default async function BrandsPage({
+export default function BrandsPage({
   params,
 }: {
-  params: Promise<{ locale: string }>;
+  params: { locale: string } | Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
+  // Next.js may provide params as a Promise in newer versions; unwrap with React.use if available
+  const resolvedParams = (
+    React as unknown as { use?: <T>(promise: Promise<T>) => T }
+  ).use
+    ? (React as unknown as { use: <T>(promise: Promise<T>) => T }).use(
+        params as Promise<{ locale: string }>
+      )
+    : (params as { locale: string });
+  const { locale } = resolvedParams;
   const router = useRouter();
   const { t, i18n } = useTranslation("brands");
   const [viewMode] = useState<"grid" | "list">("grid");
@@ -332,8 +340,16 @@ export default async function BrandsPage({
   return (
     <div dir={direction}>
       <SEOMetadata
-        title={seoConfig.defaultMetadata.brands.title[locale as keyof typeof seoConfig.defaultMetadata.brands.title] || seoConfig.defaultMetadata.brands.title.en}
-        description={seoConfig.defaultMetadata.brands.description[locale as keyof typeof seoConfig.defaultMetadata.brands.description] || seoConfig.defaultMetadata.brands.description.en}
+        title={
+          seoConfig.defaultMetadata.brands.title[
+            locale as keyof typeof seoConfig.defaultMetadata.brands.title
+          ] || seoConfig.defaultMetadata.brands.title.en
+        }
+        description={
+          seoConfig.defaultMetadata.brands.description[
+            locale as keyof typeof seoConfig.defaultMetadata.brands.description
+          ] || seoConfig.defaultMetadata.brands.description.en
+        }
         keywords={getKeywords(locale)}
         locale={locale}
         type="website"
@@ -341,8 +357,14 @@ export default async function BrandsPage({
       <StructuredData
         type="brand"
         data={{
-          name: seoConfig.pages.brands.title[locale as keyof typeof seoConfig.pages.brands.title] || seoConfig.pages.brands.title.en,
-          description: seoConfig.pages.brands.description[locale as keyof typeof seoConfig.pages.brands.description] || seoConfig.pages.brands.description.en,
+          name:
+            seoConfig.defaultMetadata.brands.title[
+              locale as keyof typeof seoConfig.defaultMetadata.brands.title
+            ] || seoConfig.defaultMetadata.brands.title.en,
+          description:
+            seoConfig.defaultMetadata.brands.description[
+              locale as keyof typeof seoConfig.defaultMetadata.brands.description
+            ] || seoConfig.defaultMetadata.brands.description.en,
           url: `${seoConfig.siteUrl}/${locale}/brands`,
         }}
         locale={locale}

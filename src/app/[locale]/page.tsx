@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import HeroSwiper from "@/components/swiper/HeroSwiper";
 import Brands from "@/components/brand/Brands";
 import OffersSwiper from "@/components/offers/OffersSwiper";
@@ -12,11 +13,11 @@ import { SEOMetadata } from "@/components/seo/SEOMetadata";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { seoConfig } from "@/lib/seo/config";
 
-export default function Home({ params }: { params: { locale: string } }) {
+export default function Home({ params }: { params: Promise<{ locale: string }> }) {
   // Scroll to top when page loads
   useScrollToTop();
 
-  const { locale } = params;
+  const { locale } = React.use(params);
 
   return (
     <div>
