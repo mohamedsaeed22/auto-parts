@@ -14,6 +14,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { Product } from "@/services/api/types";
 import { useEffect, useState } from "react";
+import { storage } from "@/lib/storage";
 
 interface ProductCardProps {
   product: Product;
@@ -66,31 +67,41 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const hasDiscount = product.discount_type || product.offer;
   const discountInfo = product.discount_info;
 
-  // Check if product is in favourites or wishlist (use local state if available, otherwise use API data)
-  const isInFavourites =
-    localFavouriteState !== null
-      ? localFavouriteState
-      : product.in_favourites === true;
-  const isInWishlist =
-    localWishlistState !== null
-      ? localWishlistState
-      : product.in_wishlist === true;
+  // Check authentication and registration status for visual feedback
+  const isAuthenticated = storage.isAuthenticated();
+  const isRegistrationComplete = storage.isRegistrationComplete();
+  const canShowOptimisticUpdates = isAuthenticated && isRegistrationComplete;
 
-  // Enhanced toggle functions with immediate visual feedback
+  // Check if product is in favourites or wishlist (use local state only if user is authenticated and registered)
+  const isInFavourites = canShowOptimisticUpdates && localFavouriteState !== null
+    ? localFavouriteState
+    : product.in_favourites === true;
+  const isInWishlist = canShowOptimisticUpdates && localWishlistState !== null
+    ? localWishlistState
+    : product.in_wishlist === true;
+
+  // Enhanced toggle functions with conditional visual feedback
   const handleToggleFavouriteWithFeedback = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
-    // Immediately update local state for visual feedback
-    const newFavouriteState = !isInFavourites;
-    setLocalFavouriteState(newFavouriteState);
+    // Only show optimistic updates if user is authenticated and registration is complete
+    if (canShowOptimisticUpdates) {
+      // Immediately update local state for visual feedback
+      const newFavouriteState = !isInFavourites;
+      setLocalFavouriteState(newFavouriteState);
 
-    try {
+      try {
+        await handleToggleFavourite(product.id);
+      } catch (error) {
+        // Revert local state if API call fails
+        console.error("Failed to toggle favourite:", error);
+        setLocalFavouriteState(!newFavouriteState);
+      }
+    } else {
+      // Just call the handler without optimistic updates
+      // The useFavouritesWishlist hook will handle showing appropriate messages
       await handleToggleFavourite(product.id);
-    } catch (error) {
-      // Revert local state if API call fails
-      console.error("Failed to toggle favourite:", error);
-      setLocalFavouriteState(!newFavouriteState);
     }
   };
 
@@ -98,30 +109,61 @@ const ProductCard: React.FC<ProductCardProps> = ({
     e.preventDefault();
     e.stopPropagation();
 
-    // Immediately update local state for visual feedback
-    const newWishlistState = !isInWishlist;
-    setLocalWishlistState(newWishlistState);
+    // Only show optimistic updates if user is authenticated and registration is complete
+    if (canShowOptimisticUpdates) {
+      // Immediately update local state for visual feedback
+      const newWishlistState = !isInWishlist;
+      setLocalWishlistState(newWishlistState);
 
-    try {
+      try {
+        await handleToggleWishlist(product.id);
+      } catch (error) {
+        // Revert local state if API call fails
+        console.error("Failed to toggle wishlist:", error);
+        setLocalWishlistState(!newWishlistState);
+      }
+    } else {
+      // Just call the handler without optimistic updates
+      // The useFavouritesWishlist hook will handle showing appropriate messages
       await handleToggleWishlist(product.id);
-    } catch (error) {
-      // Revert local state if API call fails
-      console.error("Failed to toggle wishlist:", error);
-      setLocalWishlistState(!newWishlistState);
     }
   };
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    addToCart({
-      id: product.id,
-      title: productName,
-      price: productFinalPrice,
-      image: productImage,
-      category: categoryName,
-      description: product.description || "",
-    });
+    
+    // Only show optimistic updates if user is authenticated and registration is complete
+    if (canShowOptimisticUpdates) {
+      // Optimistic update: set local cart state immediately
+      setLocalCartState(true);
+      
+      try {
+        addToCart({
+          id: product.id,
+          title: productName,
+          price: productFinalPrice,
+          image: productImage,
+          category: categoryName,
+          description: product.description || "",
+        });
+      } catch (error) {
+        // Revert local state if add to cart fails
+        console.error("Failed to add to cart:", error);
+        setLocalCartState(false);
+      }
+    } else {
+      // Just call addToCart without optimistic updates
+      // The cart system will handle authentication checks and show appropriate messages
+      addToCart({
+        id: product.id,
+        title: productName,
+        price: productFinalPrice,
+        image: productImage,
+        category: categoryName,
+        description: product.description || "",
+      });
+    }
   };
 
   const handleIncreaseQuantity = (e: React.MouseEvent) => {
@@ -191,95 +233,43 @@ const ProductCard: React.FC<ProductCardProps> = ({
               )}
 
               {variant === "favourites" ? (
-                <>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className={`w-10 h-10 rounded-full border-neutral-200 hover:bg-white shadow-lg transition-colors duration-300 ${
-                      isInWishlist
-                        ? "bg-blue-500 border-blue-500 hover:bg-blue-600"
-                        : "bg-white hover:bg-gray-50"
-                    }`}
-                    onClick={handleToggleWishlistWithFeedback}
-                    disabled={isLoading(`wishlist-${product.id}`)}
-                  >
-                    {isLoading(`wishlist-${product.id}`) ? (
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-neutral-600"></div>
-                    ) : (
-                      <Bookmark
-                        size={22}
-                        className={`${
-                          isInWishlist
-                            ? "text-white fill-white"
-                            : "text-neutral-700"
-                        }`}
-                      />
-                    )}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    className="w-10 h-10 rounded-full shadow-lg transition-colors duration-300"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      // Remove from favourites by toggling
-                      handleToggleFavouriteWithFeedback(e);
-                    }}
-                    disabled={isLoading(`favourite-${product.id}`)}
-                  >
-                    {isLoading(`favourite-${product.id}`) ? (
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    ) : (
-                      <Trash size={18} />
-                    )}
-                  </Button>
-                </>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  className="w-10 h-10 rounded-full shadow-lg transition-colors duration-300"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    // Remove from favourites by toggling
+                    handleToggleFavouriteWithFeedback(e);
+                  }}
+                  disabled={isLoading(`favourite-${product.id}`)}
+                >
+                  {isLoading(`favourite-${product.id}`) ? (
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  ) : (
+                    <Trash size={18} />
+                  )}
+                </Button>
               ) : variant === "wishlist" ? (
-                <>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className={`w-10 h-10 rounded-full border-neutral-200 hover:bg-white shadow-lg transition-colors duration-300 ${
-                      isInFavourites
-                        ? "bg-red-500 border-red-500 hover:bg-red-600"
-                        : "bg-white hover:bg-gray-50"
-                    }`}
-                    onClick={handleToggleFavouriteWithFeedback}
-                    disabled={isLoading(`favourite-${product.id}`)}
-                  >
-                    {isLoading(`favourite-${product.id}`) ? (
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-neutral-600"></div>
-                    ) : (
-                      <Heart
-                        size={22}
-                        className={`${
-                          isInFavourites
-                            ? "text-white fill-white"
-                            : "text-neutral-700"
-                        }`}
-                      />
-                    )}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    className="w-10 h-10 rounded-full shadow-lg transition-colors duration-300"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      // Remove from wishlist by toggling
-                      handleToggleWishlistWithFeedback(e);
-                    }}
-                    disabled={isLoading(`wishlist-${product.id}`)}
-                  >
-                    {isLoading(`wishlist-${product.id}`) ? (
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    ) : (
-                      <Trash size={18} />
-                    )}
-                  </Button>
-                </>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  className="w-10 h-10 rounded-full shadow-lg transition-colors duration-300"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    // Remove from wishlist by toggling
+                    handleToggleWishlistWithFeedback(e);
+                  }}
+                  disabled={isLoading(`wishlist-${product.id}`)}
+                >
+                  {isLoading(`wishlist-${product.id}`) ? (
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  ) : (
+                    <Trash size={18} />
+                  )}
+                </Button>
               ) : (
                 <Button
                   size="sm"
