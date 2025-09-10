@@ -260,7 +260,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   {isLoading(`favourite-${product.id}`) ? (
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                   ) : (
-                    <Trash size={18} />
+                    <Trash size={18} className="text-white" />
                   )}
                 </Button>
               ) : variant === "wishlist" ? (
@@ -279,7 +279,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   {isLoading(`wishlist-${product.id}`) ? (
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                   ) : (
-                    <Trash size={18} />
+                    <Trash size={18} className="text-white" />
                   )}
                 </Button>
               ) : (
