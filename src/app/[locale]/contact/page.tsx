@@ -134,9 +134,7 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
                 required
                 value={formData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
-                placeholder={
-                  t("form.emailPlaceholder") || "Enter your email"
-                }
+                placeholder={t("form.emailPlaceholder") || "Enter your email"}
                 className="w-full"
               />
             </div>
@@ -178,27 +176,16 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
                 <SelectTrigger>
                   <SelectValue
                     placeholder={
-                      t("form.selectInquiry") ||
-                      "Select inquiry type"
+                      t("form.selectInquiry") || "Select inquiry type"
                     }
                   />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="sales">
-                    Sales
-                  </SelectItem>
-                  <SelectItem value="support">
-                    Customer Support
-                  </SelectItem>
-                  <SelectItem value="technical">
-                    Technical Support
-                  </SelectItem>
-                  <SelectItem value="billing">
-                    Billing
-                  </SelectItem>
-                  <SelectItem value="general">
-                    General Inquiry
-                  </SelectItem>
+                  <SelectItem value="sales">Sales</SelectItem>
+                  <SelectItem value="support">Customer Support</SelectItem>
+                  <SelectItem value="technical">Technical Support</SelectItem>
+                  <SelectItem value="billing">Billing</SelectItem>
+                  <SelectItem value="general">General Inquiry</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -218,9 +205,7 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
               required
               value={formData.subject}
               onChange={(e) => handleInputChange("subject", e.target.value)}
-              placeholder={
-                t("form.subjectPlaceholder") || "Enter subject"
-              }
+              placeholder={t("form.subjectPlaceholder") || "Enter subject"}
               className="w-full"
             />
           </div>
@@ -238,9 +223,7 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
               required
               value={formData.message}
               onChange={(e) => handleInputChange("message", e.target.value)}
-              placeholder={
-                t("form.messagePlaceholder") || "Enter your message"
-              }
+              placeholder={t("form.messagePlaceholder") || "Enter your message"}
               className="w-full min-h-[120px] resize-none"
             />
           </div>
@@ -595,17 +578,13 @@ export default function ContactPage() {
               isRTL ? "flex-row" : ""
             }`}
           >
-            {isRTL ? (
-              <>
-                <span>{t("backButton") || "Back"}</span>
-                <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
-              </>
-            ) : (
-              <>
-                <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
-                <span>{t("backButton") || "Back"}</span>
-              </>
-            )}
+            <>
+              <ArrowLeft
+                size={16}
+                className={isRTL ? "transform rotate-180" : ""}
+              />
+              <span>{t("backButton") || "Back"}</span>
+            </>
           </button>
           <span>/</span>
           <span className="text-gray-900">{t("contact") || "Contact"}</span>

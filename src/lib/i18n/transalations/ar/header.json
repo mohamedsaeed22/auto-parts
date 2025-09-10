@@ -2,7 +2,7 @@
   "navigation": {
     "about": "من نحن",
     "contact": "اتصل بنا",
-    "categories": "الأقسام",
+    "categories": "الفئات",
     "brands": "البراندات",
     "offers": "اخر العروض",
     "products": "المنتجات",
@@ -38,7 +38,7 @@
   },
   "bottomNav": {
     "home": "الرئيسية",
-    "categories": "الأقسام",
+    "categories": "الفئات",
     "favourites": "المفضلة",
     "wishlist": "قائمة الأمنيات",
     "cart": "السلة"

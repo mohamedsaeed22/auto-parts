@@ -70,7 +70,7 @@
     },
     "bottomNav": {
       "home": "الرئيسية",
-      "categories": "الأقسام",
+      "categories": "الفئات",
       "offers": "العروض",
       "wishlist": "المفضلة",
       "cart": "السلة"
@@ -82,16 +82,16 @@
     }
   },
   "categories": {
-    "title": "تسوق حسب القسم",
+    "title": "تسوق حسب الفئة",
     "subtitle": "ابحث عن القطع المثالية لسيارتك من مجموعتنا الشاملة",
-    "viewAll": "عرض جميع الاقسام",
-    "subcategories": "اقسام فرعية",
+    "viewAll": "عرض جميع الفئات",
+    "subcategories": "فئات فرعية",
     "quality": "الجودة",
     "fast": "السرعه",
-    "error": "تعذر تحميل الاقسام. يرجى المحاولة مرة أخرى لاحقاً.",
+    "error": "تعذر تحميل الفئات. يرجى المحاولة مرة أخرى لاحقاً.",
     "retry": "حاول مرة أخرى",
-    "noCategories": "لا توجد اقسام متاحة",
-    "noCategoriesDesc": "تحقق لاحقاً من الاقسام الجديدة."
+    "noCategories": "لا توجد فئات متاحة",
+    "noCategoriesDesc": "تحقق لاحقاً من الفئات الجديدة."
   },
   "userPricing": {
     "hero": {
@@ -201,7 +201,7 @@
   "footer": {
     "sections": {
       "siteCategories": {
-        "title": "اقسام الموقع",
+        "title": "فئات الموقع",
         "links": {
           "partsRequests": "طلبات قطع الغيار",
           "partsStore": "متجر القطع",
