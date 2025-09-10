@@ -19,6 +19,7 @@ import I18NProvider from "@/components/i18n/i18n-provider";
 import { serverSideTranslation } from "@/lib/i18n";
 import { NuqsAdapter } from "nuqs/adapters/react";
 import { AuthProvider } from "@/contexts/auth-context";
+import { seoConfig, getLocalizedMetadata, getKeywords } from "@/lib/seo/config";
 
 const cairo = Cairo({
   variable: "--font-cairo",
@@ -26,10 +27,37 @@ const cairo = Cairo({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "فال الغربية",
-  description: "فال الغربية",
+type Props = {
+  params: { locale: Locale };
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const localizedMeta = getLocalizedMetadata('home', locale);
+  const keywords = getKeywords(locale);
+  
+  return {
+    title: {
+      default: localizedMeta.title,
+      template: `%s | ${seoConfig.company.name}`
+    },
+    description: localizedMeta.description,
+    keywords: keywords,
+    openGraph: {
+      title: localizedMeta.title,
+      description: localizedMeta.description,
+      locale: locale === 'ar' ? 'ar_SA' : 'en_US',
+      alternateLocale: locale === 'ar' ? 'en_US' : 'ar_SA',
+    },
+    alternates: {
+      canonical: locale === 'en' ? seoConfig.siteUrl : `${seoConfig.siteUrl}/${locale}`,
+      languages: {
+        'en': seoConfig.siteUrl,
+        'ar': `${seoConfig.siteUrl}/ar`,
+      },
+    },
+  };
+}
 
 export default async function LocaleLayout({
   children,

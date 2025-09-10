@@ -1,6 +1,26 @@
 {
   "backButton": "Back",
   "contact": "Contact",
+  "form": {
+    "title": "Get in Touch",
+    "subtitle": "We'd love to hear from you. Send us a message and we'll respond as soon as possible.",
+    "name": "Full Name ",
+    "namePlaceholder": "Enter your full name",
+    "email": "Email Address ",
+    "emailPlaceholder": "Enter your email",
+    "phone": "Phone Number",
+    "phonePlaceholder": "Enter your phone number",
+    "inquiryType": "Inquiry Type",
+    "selectInquiry": "Select inquiry type",
+    "subject": "Subject ",
+    "subjectPlaceholder": "Enter subject",
+    "message": "Message ",
+    "messagePlaceholder": "Tell us how we can help you...",
+    "sending": "Sending...",
+    "sendMessage": "Send Message",
+    "successMessage": "Message sent successfully! We'll get back to you soon.",
+    "errorMessage": "Something went wrong. Please try again."
+  },
   "hero": {
     "title": "Contact Fal Parts",
     "subtitle": "Get in touch with our team for expert automotive parts and exceptional service",

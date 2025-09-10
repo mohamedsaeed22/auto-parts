@@ -91,10 +91,10 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl font-bold text-gray-900">
-          {t("contactForm.title") || "Get in Touch"}
+          {t("form.title") || "Get in Touch"}
         </CardTitle>
         <CardDescription className="text-gray-600">
-          {t("contactForm.subtitle") ||
+          {t("form.subtitle") ||
             "We'd love to hear from you. Send us a message and we'll respond as soon as possible."}
         </CardDescription>
       </CardHeader>
@@ -107,7 +107,7 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
                 htmlFor="name"
                 className="text-sm font-medium text-gray-700"
               >
-                {t("contactForm.name") || "Full Name"} *
+                {t("form.name") || "Full Name"} *
               </Label>
               <Input
                 id="name"
@@ -116,7 +116,7 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
                 value={formData.name}
                 onChange={(e) => handleInputChange("name", e.target.value)}
                 placeholder={
-                  t("contactForm.namePlaceholder") || "Enter your full name"
+                  t("form.namePlaceholder") || "Enter your full name"
                 }
                 className="w-full"
               />
@@ -126,7 +126,7 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
                 htmlFor="email"
                 className="text-sm font-medium text-gray-700"
               >
-                {t("contactForm.email") || "Email Address"} *
+                {t("form.email") || "Email Address"} *
               </Label>
               <Input
                 id="email"
@@ -135,7 +135,7 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
                 value={formData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
                 placeholder={
-                  t("contactForm.emailPlaceholder") || "Enter your email"
+                  t("form.emailPlaceholder") || "Enter your email"
                 }
                 className="w-full"
               />
@@ -149,7 +149,7 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
                 htmlFor="phone"
                 className="text-sm font-medium text-gray-700"
               >
-                {t("contactForm.phone") || "Phone Number"}
+                {t("form.phone") || "Phone Number"}
               </Label>
               <Input
                 id="phone"
@@ -157,7 +157,7 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
                 value={formData.phone}
                 onChange={(e) => handleInputChange("phone", e.target.value)}
                 placeholder={
-                  t("contactForm.phonePlaceholder") || "Enter your phone number"
+                  t("form.phonePlaceholder") || "Enter your phone number"
                 }
                 className="w-full"
               />
@@ -167,7 +167,7 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
                 htmlFor="department"
                 className="text-sm font-medium text-gray-700"
               >
-                {t("contactForm.department") || "Department"}
+                {t("form.inquiryType") || "Inquiry Type"}
               </Label>
               <Select
                 value={formData.department}
@@ -178,26 +178,26 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
                 <SelectTrigger>
                   <SelectValue
                     placeholder={
-                      t("contactForm.departmentPlaceholder") ||
-                      "Select department"
+                      t("form.selectInquiry") ||
+                      "Select inquiry type"
                     }
                   />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="sales">
-                    {t("contactForm.sales") || "Sales"}
+                    Sales
                   </SelectItem>
                   <SelectItem value="support">
-                    {t("contactForm.support") || "Customer Support"}
+                    Customer Support
                   </SelectItem>
                   <SelectItem value="technical">
-                    {t("contactForm.technical") || "Technical Support"}
+                    Technical Support
                   </SelectItem>
                   <SelectItem value="billing">
-                    {t("contactForm.billing") || "Billing"}
+                    Billing
                   </SelectItem>
                   <SelectItem value="general">
-                    {t("contactForm.general") || "General Inquiry"}
+                    General Inquiry
                   </SelectItem>
                 </SelectContent>
               </Select>
@@ -210,7 +210,7 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
               htmlFor="subject"
               className="text-sm font-medium text-gray-700"
             >
-              {t("contactForm.subject") || "Subject"} *
+              {t("form.subject") || "Subject"} *
             </Label>
             <Input
               id="subject"
@@ -219,7 +219,7 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
               value={formData.subject}
               onChange={(e) => handleInputChange("subject", e.target.value)}
               placeholder={
-                t("contactForm.subjectPlaceholder") || "Enter subject"
+                t("form.subjectPlaceholder") || "Enter subject"
               }
               className="w-full"
             />
@@ -231,7 +231,7 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
               htmlFor="message"
               className="text-sm font-medium text-gray-700"
             >
-              {t("contactForm.message") || "Message"} *
+              {t("form.message") || "Message"} *
             </Label>
             <Textarea
               id="message"
@@ -239,7 +239,7 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
               value={formData.message}
               onChange={(e) => handleInputChange("message", e.target.value)}
               placeholder={
-                t("contactForm.messagePlaceholder") || "Enter your message"
+                t("form.messagePlaceholder") || "Enter your message"
               }
               className="w-full min-h-[120px] resize-none"
             />
@@ -252,14 +252,14 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
             className="w-full bg-logo-gold hover:bg-amber-600 text-black py-3"
           >
             {isSubmitting ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-white">
                 <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                {t("contactForm.sending") || "Sending..."}
+                {t("form.sending") || "Sending..."}
               </div>
             ) : (
-              <div className="flex items-center gap-2">
-                <SendIcon className="h-4 w-4" />
-                {t("contactForm.sendMessage") || "Send Message"}
+              <div className="flex items-center gap-2 text-white">
+                <SendIcon className="h-4 w-4 " />
+                {t("form.sendMessage") || "Send Message"}
               </div>
             )}
           </Button>
@@ -269,7 +269,7 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
             <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
               <CheckCircleIcon className="h-5 w-5 text-green-600" />
               <span className="text-green-800 text-sm">
-                {t("contactForm.successMessage") ||
+                {t("form.successMessage") ||
                   "Message sent successfully! We'll get back to you soon."}
               </span>
             </div>
@@ -279,7 +279,7 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
             <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
               <AlertCircleIcon className="h-5 w-5 text-red-600" />
               <span className="text-red-800 text-sm">
-                {t("contactForm.errorMessage") ||
+                {t("form.errorMessage") ||
                   "Something went wrong. Please try again."}
               </span>
             </div>
