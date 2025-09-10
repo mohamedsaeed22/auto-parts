@@ -24,21 +24,8 @@
     "addAddressDesc": "Fill the form below to save your address",
     "noAddresses": "No saved addresses yet."
   },
-  "address": {
-    "name": "Full Name",
-    "phone": "Phone Number",
-    "address": "Street Address",
-    "city": "City",
-    "postalCode": "Postal Code",
-    "type": "Address Type",
-    "typeHome": "Home",
-    "typeOffice": "Office",
-    "typeOther": "Other",
-    "makeDefault": "Set as default address",
-    "add": "Add Address",
-    "update": "Update Address"
-  },
-  "dialog": { "cancel": "Cancel" },
+  "addressRef": "@userProfile.addresses",
+  "dialogRef": "@userProfile.addresses",
   "payment": {
     "title": "Payment Method",
     "description": "Choose the appropriate payment method",

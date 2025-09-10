@@ -99,17 +99,15 @@
     }
   },
   "validation": {
+    "requiredRef": "@validation.required",
     "partName": {
-      "required": "اسم القطعة مطلوب",
       "minLength": "اسم القطعة يجب أن يكون أكثر من حرف واحد",
       "maxLength": "اسم القطعة طويل جداً"
     },
     "quantity": {
-      "required": "الكمية مطلوبة",
       "positive": "الكمية يجب أن تكون رقم موجب"
     },
     "userCode": {
-      "required": "كود الورشة مطلوب",
       "minLength": "كود الورشة يجب أن يكون على الأقل 3 أحرف",
       "maxLength": "كود الورشة طويل جداً"
     }

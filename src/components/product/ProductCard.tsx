@@ -1,8 +1,7 @@
 import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import { useFavouritesWishlist } from "@/hooks/useFavouritesWishlist";
-import { Button } from "@/components/ui/button";
+import { Button, LazyImage } from "@/components/ui";
 import Link from "next/link";
-import Image from "next/image";
 import {
   ShoppingCart,
   Trash,
@@ -191,12 +190,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {/* Image Container with Badges */}
           <div className="relative aspect-square overflow-hidden bg-neutral-100">
             {/* Product Image */}
-            <Image
+            <LazyImage
               src={productImage}
               alt={productName}
               width={300}
               height={300}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              loadingClassName="bg-neutral-100"
             />
 
             {/* Action Buttons - Always Visible */}

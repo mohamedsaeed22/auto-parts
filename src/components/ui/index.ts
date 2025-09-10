@@ -23,3 +23,5 @@ export {
   CardTitle,
 } from "./card";
 export { Badge } from "./badge";
+export * from "./LazyLoad";
+export * from "./LazyImage";

@@ -7,7 +7,7 @@ import {
   ProductsResponse,
   useProducts,
 } from "@/services/api/products";
-import { ProductCard } from "@/components/ui/product-card";
+import ProductCard from "@/components/product/ProductCard";
 import { Grid } from "@/components/ui/grid";
 import { Loader2 } from "lucide-react";
 

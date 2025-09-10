@@ -24,21 +24,8 @@
     "addAddressDesc": "املأ النموذج أدناه لحفظ عنوانك",
     "noAddresses": "لا توجد عناوين محفوظة بعد."
   },
-  "address": {
-    "name": "الاسم الكامل",
-    "phone": "رقم الهاتف",
-    "address": "العنوان",
-    "city": "المدينة",
-    "postalCode": "الرمز البريدي",
-    "type": "نوع العنوان",
-    "typeHome": "المنزل",
-    "typeOffice": "المكتب",
-    "typeOther": "أخرى",
-    "makeDefault": "تعيين كعنوان افتراضي",
-    "add": "إضافة عنوان",
-    "update": "تحديث العنوان"
-  },
-  "dialog": { "cancel": "إلغاء" },
+  "addressRef": "@userProfile.addresses",
+  "dialogRef": "@userProfile.addresses",
   "payment": {
     "title": "طريقة الدفع",
     "description": "اختر الطريقة المناسبة للدفع",

@@ -2,7 +2,7 @@
 
 import { forwardRef } from "react";
 import { Upload, X } from "lucide-react";
-import Image from "next/image";
+import { LazyImage } from "@/components/ui";
 import { Image as ImageIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
@@ -83,12 +83,13 @@ export const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
           {/* Show preview when there's an image */}
           {preview && (
             <div className="relative">
-              <Image
+              <LazyImage
                 src={preview}
                 alt={isRTL ? `معاينة ${label}` : `Preview ${label}`}
                 className="w-full h-48 object-cover rounded-lg border-2 border-logo-gold"
                 width={100}
                 height={100}
+                loadingClassName="bg-gray-100"
               />
               <button
                 type="button"

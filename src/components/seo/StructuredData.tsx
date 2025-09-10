@@ -1,6 +1,7 @@
 'use client';
 
-import { seoConfig } from '@/lib/seo/config';
+import { seoConfig, getCanonicalUrl } from '@/lib/seo/config';
+import { usePathname } from 'next/navigation';
 
 // Base interfaces for structured data
 interface BaseStructuredData {
@@ -116,34 +117,241 @@ interface FAQData extends BaseStructuredData {
 
 // Props for the StructuredData component
 interface StructuredDataProps {
-  type: 'product' | 'category' | 'brand' | 'breadcrumb' | 'website' | 'faq' | 'organization' | 'localBusiness';
+  type: 'product' | 'category' | 'brand' | 'breadcrumb' | 'website' | 'faq' | 'organization' | 'localBusiness' | 'article';
   data?: any;
   locale?: string;
 }
 
 export function StructuredData({ type, data, locale = 'en' }: StructuredDataProps) {
+  const pathname = usePathname();
+  const canonicalUrl = getCanonicalUrl(pathname, locale);
+  
   const generateStructuredData = () => {
     const baseContext = 'https://schema.org';
     
     switch (type) {
       case 'product':
-        return generateProductData(data, baseContext);
+        return {
+          '@context': baseContext,
+          '@type': 'Product',
+          name: data.name,
+          description: data.description,
+          image: Array.isArray(data.image) ? data.image : [data.image],
+          url: data.url || canonicalUrl,
+          inLanguage: locale === 'ar' ? 'ar-SA' : 'en-US',
+          brand: {
+            '@type': 'Brand',
+            name: data.brand || seoConfig.company.name
+          },
+          category: data.category,
+          sku: data.sku,
+          mpn: data.mpn,
+          productID: data.productID,
+          gtin: data.gtin,
+          gtin13: data.gtin13,
+          offers: {
+            '@type': 'Offer',
+            price: data.price,
+            priceCurrency: data.currency || 'SAR',
+            availability: `https://schema.org/${data.availability || 'InStock'}`,
+            url: data.url || canonicalUrl,
+            priceValidUntil: data.priceValidUntil || new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
+            seller: {
+              '@type': 'Organization',
+              name: seoConfig.company.name
+            },
+            validFrom: data.validFrom,
+            validThrough: data.validThrough,
+            itemCondition: data.itemCondition || 'https://schema.org/NewCondition'
+          },
+          ...(data.aggregateRating && {
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: data.aggregateRating.ratingValue,
+              reviewCount: data.aggregateRating.reviewCount,
+              bestRating: data.aggregateRating.bestRating || 5,
+              worstRating: data.aggregateRating.worstRating || 1
+            }
+          }),
+          ...(data.review && {
+            review: data.review.map((review: any) => ({
+              '@type': 'Review',
+              author: {
+                '@type': 'Person',
+                name: review.author.name
+              },
+              reviewRating: {
+                '@type': 'Rating',
+                ratingValue: review.reviewRating.ratingValue,
+                bestRating: review.reviewRating.bestRating || 5,
+                worstRating: review.reviewRating.worstRating || 1
+              },
+              reviewBody: review.reviewBody,
+              datePublished: review.datePublished
+            }))
+          })
+        };
       case 'category':
-        return generateCategoryData(data, baseContext);
+        return {
+          '@context': baseContext,
+          '@type': 'ItemList',
+          name: data.name,
+          description: data.description,
+          url: data.url || canonicalUrl,
+          inLanguage: locale === 'ar' ? 'ar-SA' : 'en-US',
+          numberOfItems: data.numberOfItems,
+          itemListElement: data.itemListElement.map((item: any, index: number) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            item: {
+              '@type': 'Product',
+              name: item.name,
+              image: item.image,
+              url: item.url,
+              description: item.description,
+              sku: item.sku,
+              mpn: item.mpn,
+              brand: {
+                '@type': 'Brand',
+                name: item.brand
+              },
+              offers: {
+                '@type': 'Offer',
+                price: item.price,
+                priceCurrency: item.currency || 'SAR',
+                availability: `https://schema.org/${item.availability || 'InStock'}`,
+                url: item.url,
+                priceValidUntil: item.priceValidUntil || new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
+                itemCondition: item.itemCondition || 'https://schema.org/NewCondition'
+              }
+            }
+          }))
+        };
       case 'brand':
-        return generateBrandData(data, baseContext);
+        return {
+          '@context': baseContext,
+          '@type': 'Brand',
+          name: data.name,
+          description: data.description,
+          logo: data.logo,
+          url: data.url || canonicalUrl,
+          inLanguage: locale === 'ar' ? 'ar-SA' : 'en-US',
+          image: data.image || data.logo,
+          slogan: data.slogan,
+          ...(data.potentialAction && {
+            potentialAction: {
+              '@type': 'SearchAction',
+              target: {
+                '@type': 'EntryPoint',
+                urlTemplate: data.potentialAction.urlTemplate
+              },
+              'query-input': 'required name=search_term_string'
+            }
+          }),
+          ...(data.sameAs && { sameAs: data.sameAs })
+        };
       case 'breadcrumb':
-        return generateBreadcrumbData(data, baseContext);
+        return {
+          '@context': baseContext,
+          '@type': 'BreadcrumbList',
+          itemListElement: data.itemListElement.map((item: any, index: number) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            name: item.name,
+            item: item.item || `${seoConfig.siteUrl}${item.path}`
+          }))
+        };
       case 'website':
-        return generateWebsiteData(baseContext);
+        return {
+          '@context': baseContext,
+          '@type': 'WebSite',
+          name: data?.name || seoConfig.siteName,
+          url: data?.url || canonicalUrl,
+          description: data?.description || seoConfig.company.description[locale as keyof typeof seoConfig.company.description],
+          inLanguage: locale === 'ar' ? 'ar-SA' : 'en-US',
+          potentialAction: {
+            '@type': 'SearchAction',
+            target: {
+              '@type': 'EntryPoint',
+              urlTemplate: `${seoConfig.siteUrl}/${locale}/search?q={search_term_string}`
+            },
+            'query-input': 'required name=search_term_string'
+          }
+        };
       case 'faq':
         return generateFAQData(data, baseContext);
       case 'organization':
-        return seoConfig.structuredData.organization;
+        return {
+          '@context': baseContext,
+          '@type': 'Organization',
+          name: data?.name || seoConfig.company.name,
+          url: data?.url || canonicalUrl,
+          logo: {
+            '@type': 'ImageObject',
+            url: data?.logo || `${seoConfig.siteUrl}/logo.png`,
+            width: data?.logoWidth || 180,
+            height: data?.logoHeight || 60
+          },
+          description: data?.description || seoConfig.company.description[locale as keyof typeof seoConfig.company.description],
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: data?.streetAddress || seoConfig.company.address?.street,
+            addressLocality: data?.addressLocality || seoConfig.company.address?.city,
+            addressRegion: data?.addressRegion || seoConfig.company.address?.region,
+            postalCode: data?.postalCode || seoConfig.company.address?.postalCode,
+            addressCountry: data?.addressCountry || 'SA'
+          },
+          contactPoint: [
+            {
+              '@type': 'ContactPoint',
+              telephone: data?.telephone || seoConfig.company.contact.phone,
+              contactType: 'customer service',
+              email: data?.email || seoConfig.company.contact.email,
+              areaServed: data?.areaServed || 'SA',
+              availableLanguage: ['English', 'Arabic']
+            }
+          ],
+          sameAs: data?.sameAs || [
+            seoConfig.company.social.facebook,
+            seoConfig.company.social.twitter,
+            seoConfig.company.social.instagram,
+            seoConfig.company.social.linkedin
+          ]
+        };
       case 'localBusiness':
         return seoConfig.structuredData.localBusiness;
+      case 'article':
+        return {
+          '@context': baseContext,
+          '@type': 'Article',
+          headline: data.headline || data.title,
+          description: data.description,
+          image: Array.isArray(data.image) ? data.image : [data.image],
+          author: {
+            '@type': 'Person',
+            name: data.author?.name || seoConfig.company.name
+          },
+          publisher: {
+            '@type': 'Organization',
+            name: data.publisher?.name || seoConfig.company.name,
+            logo: {
+              '@type': 'ImageObject',
+              url: data.publisher?.logo || `${seoConfig.siteUrl}/logo.png`,
+              width: data.publisher?.logoWidth || 180,
+              height: data.publisher?.logoHeight || 60
+            }
+          },
+          datePublished: data.datePublished,
+          dateModified: data.dateModified || data.datePublished,
+          mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': data.url || canonicalUrl
+          },
+          url: data.url || canonicalUrl,
+          inLanguage: locale === 'ar' ? 'ar-SA' : 'en-US'
+        };
       default:
-        return null;
+        return {};
     }
   };
 

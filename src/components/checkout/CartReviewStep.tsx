@@ -11,8 +11,7 @@ import {
   Trash,
   RefreshCw,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import { Button, LazyImage } from "@/components/ui";
 import { useTranslation } from "react-i18next";
 import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import { showError, showSuccess } from "@/lib/toast";
@@ -72,11 +71,12 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
               }`}
             >
               <div className="relative w-24 h-24 bg-logo-gold/10 rounded-xl overflow-hidden flex-shrink-0">
-                <Image
+                <LazyImage
                   src={item.image}
                   alt={item.title}
                   fill
                   className="object-cover"
+                  loadingClassName="bg-logo-gold/10"
                 />
               </div>
 

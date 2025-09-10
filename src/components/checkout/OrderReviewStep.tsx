@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import Image from "next/image";
+import { LazyImage } from "@/components/ui";
 import { useTranslation } from "react-i18next";
 import { useCreateOrderMutation } from "@/services/api/ordersApi";
 import { Address } from "@/services/api/types";
@@ -132,11 +132,12 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
             {items.map((item) => (
               <div key={item.id} className="flex items-center space-x-3">
                 <div className="relative w-12 h-12 bg-white rounded-lg overflow-hidden">
-                  <Image
+                  <LazyImage
                     src={item.image}
                     alt={item.title}
                     fill
                     className="object-cover"
+                    loadingClassName="bg-white"
                   />
                 </div>
                 <div className="flex-1">

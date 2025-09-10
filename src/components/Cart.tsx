@@ -12,10 +12,9 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEnhancedCart } from "@/hooks/useEnhancedCart"; // Use Enhanced Redux hook
-import { Button } from "@/components/ui/button";
+import { Button, LazyImage } from "@/components/ui";
 // import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { useTranslation } from "react-i18next";
 
 const Cart: React.FC = () => {
@@ -145,11 +144,12 @@ const Cart: React.FC = () => {
                         className="flex items-start space-x-3 p-3 bg-neutral-50 rounded-lg border border-border"
                       >
                         <div className="relative w-16 h-16 flex-shrink-0 mx-2">
-                          <Image
+                          <LazyImage
                             src={item.image}
                             alt={item.title}
                             fill
                             className="object-cover rounded-md"
+                            loadingClassName="bg-logo-gold/10"
                           />
                         </div>
 

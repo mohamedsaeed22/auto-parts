@@ -2,7 +2,7 @@
 
 import Head from 'next/head';
 import { usePathname } from 'next/navigation';
-import { seoConfig, getCanonicalUrl, getAlternateUrls } from '@/lib/seo/config';
+import { seoConfig, getCanonicalUrl, getAlternateUrls, getKeywords } from '@/lib/seo/config';
 
 interface SEOMetadataProps {
   title?: string;
@@ -55,6 +55,7 @@ export function SEOMetadata({
   const finalTitle = title || seoConfig.defaultMetadata.home.title[locale as keyof typeof seoConfig.defaultMetadata.home.title];
   const finalDescription = description || seoConfig.defaultMetadata.home.description[locale as keyof typeof seoConfig.defaultMetadata.home.description];
   const finalImage = image || `${seoConfig.siteUrl}/og-image.jpg`;
+  const finalKeywords = keywords || getKeywords(locale);
   
   // Robots meta content
   const robotsContent = [
@@ -99,7 +100,7 @@ export function SEOMetadata({
       {/* Basic Meta Tags */}
       <title>{finalTitle}</title>
       <meta name="description" content={finalDescription} />
-      {keywords && <meta name="keywords" content={keywords} />}
+      <meta name="keywords" content={finalKeywords} />
       <meta name="robots" content={robotsContent} />
       <meta name="language" content={locale} />
       <meta name="author" content={author || seoConfig.company.name} />
@@ -202,10 +203,12 @@ export function generateMetadata({
   const finalDescription = description || seoConfig.defaultMetadata.home.description[locale as keyof typeof seoConfig.defaultMetadata.home.description];
   const finalImage = image || `${seoConfig.siteUrl}/og-image.jpg`;
   
+  const finalKeywords = keywords || getKeywords(locale);
+  
   return {
     title: finalTitle,
     description: finalDescription,
-    keywords: keywords,
+    keywords: finalKeywords,
     robots: {
       index: !noIndex,
       follow: !noFollow
