@@ -233,95 +233,43 @@ const ProductCard: React.FC<ProductCardProps> = ({
               )}
 
               {variant === "favourites" ? (
-                <>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className={`w-10 h-10 rounded-full border-neutral-200 hover:bg-white shadow-lg transition-colors duration-300 ${
-                      isInWishlist
-                        ? "bg-blue-500 border-blue-500 hover:bg-blue-600"
-                        : "bg-white hover:bg-gray-50"
-                    }`}
-                    onClick={handleToggleWishlistWithFeedback}
-                    disabled={isLoading(`wishlist-${product.id}`)}
-                  >
-                    {isLoading(`wishlist-${product.id}`) ? (
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-neutral-600"></div>
-                    ) : (
-                      <Bookmark
-                        size={22}
-                        className={`${
-                          isInWishlist
-                            ? "text-white fill-white"
-                            : "text-neutral-700"
-                        }`}
-                      />
-                    )}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    className="w-10 h-10 rounded-full shadow-lg transition-colors duration-300"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      // Remove from favourites by toggling
-                      handleToggleFavouriteWithFeedback(e);
-                    }}
-                    disabled={isLoading(`favourite-${product.id}`)}
-                  >
-                    {isLoading(`favourite-${product.id}`) ? (
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    ) : (
-                      <Trash size={18} />
-                    )}
-                  </Button>
-                </>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  className="w-10 h-10 rounded-full shadow-lg transition-colors duration-300"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    // Remove from favourites by toggling
+                    handleToggleFavouriteWithFeedback(e);
+                  }}
+                  disabled={isLoading(`favourite-${product.id}`)}
+                >
+                  {isLoading(`favourite-${product.id}`) ? (
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  ) : (
+                    <Trash size={18} />
+                  )}
+                </Button>
               ) : variant === "wishlist" ? (
-                <>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className={`w-10 h-10 rounded-full border-neutral-200 hover:bg-white shadow-lg transition-colors duration-300 ${
-                      isInFavourites
-                        ? "bg-red-500 border-red-500 hover:bg-red-600"
-                        : "bg-white hover:bg-gray-50"
-                    }`}
-                    onClick={handleToggleFavouriteWithFeedback}
-                    disabled={isLoading(`favourite-${product.id}`)}
-                  >
-                    {isLoading(`favourite-${product.id}`) ? (
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-neutral-600"></div>
-                    ) : (
-                      <Heart
-                        size={22}
-                        className={`${
-                          isInFavourites
-                            ? "text-white fill-white"
-                            : "text-neutral-700"
-                        }`}
-                      />
-                    )}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    className="w-10 h-10 rounded-full shadow-lg transition-colors duration-300"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      // Remove from wishlist by toggling
-                      handleToggleWishlistWithFeedback(e);
-                    }}
-                    disabled={isLoading(`wishlist-${product.id}`)}
-                  >
-                    {isLoading(`wishlist-${product.id}`) ? (
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    ) : (
-                      <Trash size={18} />
-                    )}
-                  </Button>
-                </>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  className="w-10 h-10 rounded-full shadow-lg transition-colors duration-300"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    // Remove from wishlist by toggling
+                    handleToggleWishlistWithFeedback(e);
+                  }}
+                  disabled={isLoading(`wishlist-${product.id}`)}
+                >
+                  {isLoading(`wishlist-${product.id}`) ? (
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  ) : (
+                    <Trash size={18} />
+                  )}
+                </Button>
               ) : (
                 <Button
                   size="sm"
