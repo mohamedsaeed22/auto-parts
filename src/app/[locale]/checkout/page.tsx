@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import { ProtectedPageGuard } from "@/components/auth/AuthGuard";
+import { useGetAddressesQuery } from "@/services/api/addressesApi";
 import {
   CheckoutProgress,
   CartReviewStep,
@@ -26,36 +27,19 @@ const CheckoutPage = () => {
     updateQuantity,
     removeFromCart,
   } = useEnhancedCart();
+  const { data: addressesResp } = useGetAddressesQuery();
   const [currentStep, setCurrentStep] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
+  const [createdOrder, setCreatedOrder] = useState<
+    import("@/services/api/ordersApi").Order | null
+  >(null);
   const [couponCode, setCouponCode] = useState("");
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [couponError, setCouponError] = useState("");
-  const [selectedAddress, setSelectedAddress] = useState(0);
-
-  const savedAddresses = [
-    {
-      id: 0,
-      label: "المنزل",
-      name: "أحمد محمد",
-      address: "شارع الملك فهد، حي النزهة",
-      city: "الرياض",
-      phone: "+966 50 123 4567",
-      isDefault: true,
-    },
-    {
-      id: 1,
-      label: "العمل",
-      name: "أحمد محمد",
-      address: "مركز الملك عبدالله المالي، طريق الملك فهد",
-      city: "الرياض",
-      phone: "+966 11 234 5678",
-      isDefault: false,
-    },
-  ];
+  const [selectedAddress, setSelectedAddress] = useState<number | null>(null);
 
   const handleNext = () => {
     if (currentStep < 4) {
@@ -71,10 +55,15 @@ const CheckoutPage = () => {
     }
   };
 
-  const handlePlaceOrder = async () => {
+  const handlePlaceOrder = async (
+    order?: import("@/services/api/ordersApi").Order
+  ) => {
     setIsProcessing(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 200));
     setIsProcessing(false);
+    if (order) {
+      setCreatedOrder(order);
+    }
     setOrderComplete(true);
     clearCart();
   };
@@ -133,7 +122,12 @@ const CheckoutPage = () => {
     }
 
     if (orderComplete) {
-      return <OrderComplete onBackToShopping={handleBackToShopping} />;
+      return (
+        <OrderComplete
+          onBackToShopping={handleBackToShopping}
+          order={createdOrder}
+        />
+      );
     }
 
     return (
@@ -153,13 +147,11 @@ const CheckoutPage = () => {
                   transition={{ duration: 0.3 }}
                   className="bg-white rounded-2xl shadow-sm border border-gray-200"
                 >
-                  {currentStep === 1 && (
-                    <CartReviewStep onNext={handleNext} />
-                  )}
+                  {currentStep === 1 && <CartReviewStep onNext={handleNext} />}
 
                   {currentStep === 2 && (
                     <ShippingStep
-                      savedAddresses={savedAddresses}
+                      savedAddresses={addressesResp?.data?.addresses || []}
                       selectedAddress={selectedAddress}
                       onAddressSelect={handleAddressSelect}
                       onNext={handleNext}
@@ -180,11 +172,18 @@ const CheckoutPage = () => {
                     <OrderReviewStep
                       items={items}
                       totalItems={totalItems}
-                      selectedAddress={savedAddresses[selectedAddress]}
+                      selectedAddress={
+                        selectedAddress !== null
+                          ? addressesResp?.data?.addresses?.find(
+                              (addr) => addr.id === selectedAddress
+                            ) || null
+                          : null
+                      }
                       paymentMethod={paymentMethod}
                       isProcessing={isProcessing}
                       onPlaceOrder={handlePlaceOrder}
                       onBack={handleBack}
+                      couponCode={couponCode}
                     />
                   )}
                 </motion.div>

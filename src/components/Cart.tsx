@@ -258,13 +258,17 @@ const Cart: React.FC = () => {
                     >
                       {isRTL ? (
                         <>
-                          <span>{t("actions.checkout")}</span>
-                          <ArrowLeft size={18} className="mx-2" />
+                          <span className="text-white">
+                            {t("actions.checkout")}
+                          </span>
+                          <ArrowLeft size={18} className="mx-2 text-white" />
                         </>
                       ) : (
                         <>
-                          <span>{t("actions.checkout")}</span>
-                          <ArrowRight size={18} className="mx-2" />
+                          <span className="text-white">
+                            {t("actions.checkout")}
+                          </span>
+                          <ArrowRight size={18} className="mx-2 text-white" />
                         </>
                       )}
                     </Button>
@@ -273,7 +277,7 @@ const Cart: React.FC = () => {
                       <Button
                         onClick={handleContinueShopping}
                         variant="outline"
-                        className="flex-1 border-logo-gold text-logo-black hover:bg-logo-gold/10"
+                        className="flex-1 border-logo-gold text-logo-black "
                       >
                         {t("actions.continueShopping")}
                       </Button>

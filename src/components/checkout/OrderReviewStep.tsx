@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Package,
   ShoppingBag,
@@ -8,29 +8,26 @@ import {
   Loader2,
   ArrowRight,
   ArrowLeft,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
 import { useTranslation } from "react-i18next";
-
-interface Address {
-  id: number;
-  name: string;
-  city: string;
-  phone: string;
-  detailed_address: string;
-  is_default: boolean;
-}
+import { useCreateOrderMutation } from "@/services/api/ordersApi";
+import { Address } from "@/services/api/types";
+import { showSuccess, showError } from "@/lib/toast";
 
 interface OrderReviewStepProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   items: any[];
   totalItems: number;
-  selectedAddress: Address;
+  selectedAddress: Address | null;
   paymentMethod: string;
   isProcessing: boolean;
-  onPlaceOrder: () => void;
+  onPlaceOrder: (order: import("@/services/api/ordersApi").Order) => void;
   onBack: () => void;
+  couponCode?: string;
 }
 
 const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
@@ -41,9 +38,78 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
   isProcessing,
   onPlaceOrder,
   onBack,
+  couponCode,
 }) => {
   const { t, i18n } = useTranslation("checkout");
   const isRTL = i18n.language === "ar";
+  const [notes, setNotes] = useState("");
+  const [createOrder, { isLoading: isCreatingOrder }] =
+    useCreateOrderMutation();
+
+  const handlePlaceOrder = async () => {
+    try {
+      // Validate required data
+      if (selectedAddress?.id === undefined || selectedAddress?.id === null) {
+        showError(
+          t("orderReview.selectAddressFirst", {
+            defaultValue: "Please select a shipping address first",
+          })
+        );
+        return;
+      }
+
+      if (!paymentMethod) {
+        showError(
+          t("orderReview.selectPaymentFirst", {
+            defaultValue: "Please select a payment method first",
+          })
+        );
+        return;
+      }
+
+      console.log("Creating order with data:", {
+        payment_method: paymentMethod,
+        address_id: selectedAddress.id,
+        coupon_code: couponCode || "",
+        notes: notes || "",
+      });
+
+      // Create order using the API
+      const result = await createOrder({
+        payment_method: paymentMethod,
+        address_id: selectedAddress.id,
+        coupon_code: couponCode || "",
+        notes: notes || "",
+      }).unwrap();
+      console.log("Order created successfully:", result);
+
+      showSuccess(
+        t("orderReview.orderCreated", {
+          defaultValue: "Order created successfully!",
+        })
+      );
+
+      // Call the original onPlaceOrder callback with created order
+      // result is ApiResponse<{ order: Order }>
+      if (result && (result as any).data && (result as any).data.order) {
+        onPlaceOrder((result as any).data.order);
+      } else {
+        showError(
+          t("orderReview.orderError", {
+            defaultValue: "Failed to create order. Please try again.",
+          })
+        );
+        return;
+      }
+    } catch (error) {
+      console.error("Error creating order:", error);
+      showError(
+        t("orderReview.orderError", {
+          defaultValue: "Failed to create order. Please try again.",
+        })
+      );
+    }
+  };
 
   return (
     <div dir={isRTL ? "rtl" : "ltr"}>
@@ -103,6 +169,13 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
               <p>{selectedAddress.detailed_address}</p>
               <p>{selectedAddress.city}</p>
               <p dir="ltr">{selectedAddress.phone}</p>
+              <p className="text-xs text-neutral-500">
+                {selectedAddress.address_type === "home"
+                  ? t("address.home", { defaultValue: "Home" })
+                  : selectedAddress.address_type === "office"
+                  ? t("address.office", { defaultValue: "Office" })
+                  : t("address.other", { defaultValue: "Other" })}
+              </p>
             </div>
           ) : (
             <div className="text-sm text-neutral-600">
@@ -132,6 +205,40 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
           </p>
         </div>
 
+        {/* Order Notes */}
+        <div className="bg-logo-gold/5 rounded-xl p-4">
+          <h3 className="font-semibold text-logo-black mb-3 flex items-center">
+            <FileText className="w-4 h-4 mx-2 text-logo-gold" />
+            {t("orderReview.notes", { defaultValue: "Order Notes" })}
+          </h3>
+          <Textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder={t("orderReview.notesPlaceholder", {
+              defaultValue:
+                "Add any special instructions or notes for your order (optional)",
+            })}
+            className="min-h-[80px] resize-none border-logo-gold/30 focus:border-logo-gold"
+            maxLength={500}
+          />
+          <p className="text-xs text-neutral-500 mt-1">
+            {notes.length}/500{" "}
+            {t("orderReview.characters", { defaultValue: "characters" })}
+          </p>
+        </div>
+
+        {/* Address Warning */}
+        {(selectedAddress?.id === undefined ||
+          selectedAddress?.id === null) && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+            <p className="text-red-600 text-sm">
+              {t("orderReview.selectAddressWarning", {
+                defaultValue: "Please select a shipping address to continue",
+              })}
+            </p>
+          </div>
+        )}
+
         <div className="flex gap-2">
           <Button
             variant="outline"
@@ -151,11 +258,16 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
             )}
           </Button>
           <Button
-            onClick={onPlaceOrder}
-            disabled={isProcessing}
+            onClick={handlePlaceOrder}
+            disabled={
+              isProcessing ||
+              isCreatingOrder ||
+              selectedAddress?.id === undefined ||
+              selectedAddress?.id === null
+            }
             className="flex-1 bg-logo-gold hover:bg-logo-gold/90 text-white py-3 flex items-center justify-center disabled:bg-logo-gold/50 disabled:text-white/70"
           >
-            {isProcessing ? (
+            {isProcessing || isCreatingOrder ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin mx-2 text-white" />
                 {t("orderReview.processing")}

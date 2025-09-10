@@ -1,4 +1,5 @@
 import axios from "axios";
+import https from "https";
 
 // Create axios instance with default config
 export const axiosInstance = axios.create({
@@ -7,6 +8,10 @@ export const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  // Bypass SSL certificate verification for development
+  httpsAgent: new https.Agent({
+    rejectUnauthorized: false
+  })
 });
 
 // Request interceptor to add auth token

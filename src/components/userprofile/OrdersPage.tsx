@@ -7,7 +7,6 @@ import {
   CheckCircle,
   Clock,
   Eye,
-  Download,
   Filter,
   CreditCard,
   X,
@@ -179,8 +178,8 @@ export default function OrdersPage() {
     setIsDetailsDialogOpen(true);
   };
 
-  const orders = ordersResponse?.data?.data?.items || [];
-  const pagination = ordersResponse?.data?.data?.pagination;
+  const orders = ordersResponse?.data?.items || [];
+  const pagination = ordersResponse?.data?.pagination;
 
   return (
     <div className="p-4 sm:p-6 lg:p-8" dir={isRTL ? "rtl" : "ltr"}>

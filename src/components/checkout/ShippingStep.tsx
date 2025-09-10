@@ -17,19 +17,11 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 
-interface Address {
-  id: number;
-  label: string;
-  name: string;
-  address: string;
-  city: string;
-  phone: string;
-  isDefault: boolean;
-}
+import { Address } from "@/services/api/types";
 
 interface ShippingStepProps {
   savedAddresses: Address[];
-  selectedAddress: number;
+  selectedAddress: number | null;
   onAddressSelect: (id: number) => void;
   onNext: () => void;
   onBack: () => void;

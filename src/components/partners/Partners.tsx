@@ -154,6 +154,7 @@ const Partners = () => {
           {/* Scrolling Container */}
           <div
             ref={containerRef}
+            dir="ltr"
             className="flex items-center gap-8 md:gap-12 overflow-x-auto scrollbar-hide"
             style={{
               scrollbarWidth: "none",
