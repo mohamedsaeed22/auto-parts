@@ -131,23 +131,33 @@ export const useEnhancedCart = () => {
    */
   const addToCart = useCallback(
     async (item: Omit<CartItem, "quantity">) => {
+      console.log("addToCart called with:", item);
+      console.log("shouldUseAPI:", shouldUseAPI);
+      console.log("isAuthenticated:", isAuthenticated);
+      console.log("isRegistrationComplete:", isRegistrationComplete);
+      console.log("hasToken:", Boolean(storage.getAuth()?.token));
+
       try {
         dispatch(setLoading(true));
 
         if (shouldUseAPI) {
+          console.log("Using API to add to cart");
           // Use API
-          await addToCartAPI({
+          const result = await addToCartAPI({
             product_id: item.id,
             quantity: 1,
           }).unwrap();
+          console.log("API add to cart result:", result);
           showSuccess("Product added to cart");
         } else {
+          console.log("Using localStorage to add to cart");
           // Use local storage only - always succeeds
           dispatch(addToCartAction(item));
           showSuccess("Product added to cart");
           return; // Exit early for localStorage operations
         }
       } catch (error) {
+        console.error("addToCart error:", error);
         // Only show error for API operations
         if (shouldUseAPI) {
           console.error("Failed to add to cart:", error);
@@ -161,7 +171,13 @@ export const useEnhancedCart = () => {
         dispatch(setLoading(false));
       }
     },
-    [shouldUseAPI, addToCartAPI, dispatch]
+    [
+      shouldUseAPI,
+      addToCartAPI,
+      dispatch,
+      isAuthenticated,
+      isRegistrationComplete,
+    ]
   );
 
   /**

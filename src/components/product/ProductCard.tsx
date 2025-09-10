@@ -73,12 +73,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const canShowOptimisticUpdates = isAuthenticated && isRegistrationComplete;
 
   // Check if product is in favourites or wishlist (use local state only if user is authenticated and registered)
-  const isInFavourites = canShowOptimisticUpdates && localFavouriteState !== null
-    ? localFavouriteState
-    : product.in_favourites === true;
-  const isInWishlist = canShowOptimisticUpdates && localWishlistState !== null
-    ? localWishlistState
-    : product.in_wishlist === true;
+  const isInFavourites =
+    canShowOptimisticUpdates && localFavouriteState !== null
+      ? localFavouriteState
+      : product.in_favourites === true;
+  const isInWishlist =
+    canShowOptimisticUpdates && localWishlistState !== null
+      ? localWishlistState
+      : product.in_wishlist === true;
 
   // Enhanced toggle functions with conditional visual feedback
   const handleToggleFavouriteWithFeedback = async (e: React.MouseEvent) => {
@@ -132,14 +134,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
+    console.log("Add to cart button clicked!");
+    console.log("Product:", product);
+    console.log("canShowOptimisticUpdates:", canShowOptimisticUpdates);
+
     // Only show optimistic updates if user is authenticated and registration is complete
     if (canShowOptimisticUpdates) {
+      console.log("Using optimistic updates");
       // Optimistic update: set local cart state immediately
       setLocalCartState(true);
-      
+
       try {
-        addToCart({
+        await addToCart({
           id: product.id,
           title: productName,
           price: productFinalPrice,
@@ -147,22 +154,29 @@ const ProductCard: React.FC<ProductCardProps> = ({
           category: categoryName,
           description: product.description || "",
         });
+        console.log("Add to cart completed successfully");
       } catch (error) {
         // Revert local state if add to cart fails
         console.error("Failed to add to cart:", error);
         setLocalCartState(false);
       }
     } else {
+      console.log("Using regular add to cart");
       // Just call addToCart without optimistic updates
       // The cart system will handle authentication checks and show appropriate messages
-      addToCart({
-        id: product.id,
-        title: productName,
-        price: productFinalPrice,
-        image: productImage,
-        category: categoryName,
-        description: product.description || "",
-      });
+      try {
+        await addToCart({
+          id: product.id,
+          title: productName,
+          price: productFinalPrice,
+          image: productImage,
+          category: categoryName,
+          description: product.description || "",
+        });
+        console.log("Add to cart completed successfully");
+      } catch (error) {
+        console.error("Failed to add to cart:", error);
+      }
     }
   };
 
