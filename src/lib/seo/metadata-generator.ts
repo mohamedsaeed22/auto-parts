@@ -12,7 +12,7 @@ import {
 } from "./config";
 
 // Base metadata for all pages
-export function generateBaseMetadata(locale: string = "en"): Metadata {
+export function generateBaseMetadata(locale: string = "ar"): Metadata {
   const baseUrl = seoConfig.siteUrl;
   const isArabic = locale === "ar";
 
@@ -105,7 +105,7 @@ export function generateBaseMetadata(locale: string = "en"): Metadata {
 }
 
 // Home page metadata
-export function generateHomeMetadata(locale: string = "en"): Metadata {
+export function generateHomeMetadata(locale: string = "ar"): Metadata {
   const baseMetadata = generateBaseMetadata(locale);
   const homeMetadata = seoConfig.defaultMetadata.home;
 
@@ -134,7 +134,7 @@ export function generateHomeMetadata(locale: string = "en"): Metadata {
 }
 
 // Products page metadata
-export function generateProductsMetadata(locale: string = "en"): Metadata {
+export function generateProductsMetadata(locale: string = "ar"): Metadata {
   const baseMetadata = generateBaseMetadata(locale);
   const productsMetadata = seoConfig.defaultMetadata.products;
   const url =
@@ -182,7 +182,7 @@ export function generateProductsMetadata(locale: string = "en"): Metadata {
 // Product detail page metadata
 export function generateProductDetailMetadata(
   product: any,
-  locale: string = "en"
+  locale: string = "ar"
 ): Metadata {
   const baseMetadata = generateBaseMetadata(locale);
   const productMetadata = generateProductMetadata(product, locale);
@@ -236,7 +236,7 @@ export function generateProductDetailMetadata(
 // Category page metadata
 export function generateCategoryMetadata(
   category: any,
-  locale: string = "en"
+  locale: string = "ar"
 ): Metadata {
   const baseMetadata = generateBaseMetadata(locale);
   const categoryMetadata = generateCategoryMetadata(category, locale);
@@ -273,7 +273,7 @@ export function generateCategoryMetadata(
 // Brand page metadata
 export function generateBrandPageMetadata(
   brand: any,
-  locale: string = "en"
+  locale: string = "ar"
 ): Metadata {
   const baseMetadata = generateBaseMetadata(locale);
   const brandMetadata = generateBrandMetadata(brand, locale);
@@ -319,7 +319,7 @@ export function generateBrandPageMetadata(
 // Offer page metadata
 export function generateOfferMetadata(
   offer: any,
-  locale: string = "en"
+  locale: string = "ar"
 ): Metadata {
   const baseMetadata = generateBaseMetadata(locale);
   const offerMetadata = generateOfferMetadata(offer, locale);
@@ -366,7 +366,7 @@ export function generateOfferMetadata(
 // Search results metadata
 export function generateSearchMetadata(
   query: string,
-  locale: string = "en"
+  locale: string = "ar"
 ): Metadata {
   const baseMetadata = generateBaseMetadata(locale);
   const searchMetadata = generateSearchMetadata(query, locale);
@@ -403,7 +403,7 @@ export function generateSearchMetadata(
 // User pages metadata (wishlist, favorites, cart, etc.)
 export function generateUserPageMetadata(
   pageType: "wishlist" | "favourites" | "cart" | "checkout",
-  locale: string = "en"
+  locale: string = "ar"
 ): Metadata {
   const baseMetadata = generateBaseMetadata(locale);
   const pageMetadata = seoConfig.defaultMetadata[pageType];
@@ -445,7 +445,7 @@ export function generateUserPageMetadata(
 }
 
 // Contact page metadata
-export function generateContactMetadata(locale: string = "en"): Metadata {
+export function generateContactMetadata(locale: string = "ar"): Metadata {
   const baseMetadata = generateBaseMetadata(locale);
   const contactMetadata = seoConfig.defaultMetadata.contact;
   const url =
@@ -490,7 +490,7 @@ export function generateContactMetadata(locale: string = "en"): Metadata {
 }
 
 // About page metadata
-export function generateAboutMetadata(locale: string = "en"): Metadata {
+export function generateAboutMetadata(locale: string = "ar"): Metadata {
   const baseMetadata = generateBaseMetadata(locale);
   const aboutMetadata = seoConfig.defaultMetadata.about;
   const url =

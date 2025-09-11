@@ -4,8 +4,8 @@ export const seoConfig = {
   // Basic site information
   siteName: "FalParts",
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.com",
-  defaultLocale: "en",
-  supportedLocales: ["en", "ar"],
+  defaultLocale: "ar",
+  supportedLocales: ["ar", "en"],
 
   // Company information
   company: {
@@ -408,7 +408,7 @@ export const seoConfig = {
 // Helper function to get localized metadata
 export function getLocalizedMetadata(
   pageType: keyof typeof seoConfig.defaultMetadata,
-  locale: string = "en"
+  locale: string = "ar"
 ) {
   const metadata = seoConfig.defaultMetadata[pageType];
   return {
@@ -422,7 +422,7 @@ export function getLocalizedMetadata(
 }
 
 // Helper function to generate keywords
-export function getKeywords(locale: string = "en"): string {
+export function getKeywords(locale: string = "ar"): string {
   const keywords =
     seoConfig.company.keywords[
       locale as keyof typeof seoConfig.company.keywords
@@ -460,7 +460,7 @@ export function getAlternateUrls(
 // Helper function to generate product metadata
 export function generateProductMetadata(
   product: { name?: string; compatibility?: string },
-  locale: string = "en"
+  locale: string = "ar"
 ) {
   const template = seoConfig.defaultMetadata.product;
   const title = template.title[locale as keyof typeof template.title]
@@ -479,7 +479,7 @@ export function generateProductMetadata(
 // Helper function to generate category metadata
 export function generateCategoryMetadata(
   category: { name?: string },
-  locale: string = "en"
+  locale: string = "ar"
 ) {
   const template = seoConfig.defaultMetadata.category;
   const title = template.title[locale as keyof typeof template.title].replace(
@@ -497,7 +497,7 @@ export function generateCategoryMetadata(
 // Helper function to generate brand metadata
 export function generateBrandMetadata(
   brand: { name?: string },
-  locale: string = "en"
+  locale: string = "ar"
 ) {
   const template = seoConfig.defaultMetadata.brand;
   const title = template.title[locale as keyof typeof template.title].replace(
@@ -515,7 +515,7 @@ export function generateBrandMetadata(
 // Helper function to generate offer metadata
 export function generateOfferMetadata(
   offer: { title?: string; expiryDate?: string },
-  locale: string = "en"
+  locale: string = "ar"
 ) {
   const template = seoConfig.defaultMetadata.offer;
   const title = template.title[locale as keyof typeof template.title].replace(

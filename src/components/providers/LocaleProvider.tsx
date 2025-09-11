@@ -19,7 +19,7 @@ export default function LocaleProvider({
 
   useEffect(() => {
     // Initialize locale state with the current i18n language or initial locale
-    const currentLocale = initialLocale || i18n.language || "en";
+    const currentLocale = initialLocale || i18n.language || "ar";
     dispatch(setLocale(currentLocale));
   }, [dispatch, i18n.language, initialLocale]);
 
