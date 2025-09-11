@@ -58,9 +58,33 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
         router.push("/");
       }
       // If not protected, stay on current page
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error logging out:", error);
-      showError("حدث خطأ أثناء تسجيل الخروج");
+
+      // Check if it's a 404 error (route not found)
+      const is404Error = error?.status === 404 || error?.data?.code === 404;
+
+      if (is404Error) {
+        // If logout endpoint doesn't exist (404), still clear local auth data
+        console.log(
+          "Logout endpoint not found (404), clearing local auth data anyway"
+        );
+        logout();
+
+        // Show success message since we successfully cleared local data
+        showSuccess("تم تسجيل الخروج بنجاح");
+
+        // Close dropdown
+        setIsOpen(false);
+
+        // Smart redirect: only redirect to home if current page is protected
+        if (shouldRedirectToHomeOnLogout(pathname)) {
+          router.push("/");
+        }
+      } else {
+        // For other errors, show error message
+        showError("حدث خطأ أثناء تسجيل الخروج");
+      }
     }
   };
 
