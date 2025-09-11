@@ -50,10 +50,11 @@ export default function SearchAutocomplete({
 
   // Initialize lastSelectedProduct with current search query on mount (for page reloads)
   useEffect(() => {
-    if (searchQuery.trim()) {
+    // Only set lastSelectedProduct if searchQuery exists and we haven't set it yet
+    if (searchQuery.trim() && !lastSelectedProduct.current) {
       lastSelectedProduct.current = searchQuery.trim();
     }
-  }, []); // Only run on mount
+  }, [searchQuery]); // Run when searchQuery changes
 
   // Fetch search suggestions
   useEffect(() => {
