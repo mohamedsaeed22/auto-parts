@@ -102,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     storage.removeAuth();
     setUser(null);
-    router.push("/");
+    // Don't redirect automatically - let components handle their own redirect logic
   };
 
   const updateUser = async (updatedUser: User) => {

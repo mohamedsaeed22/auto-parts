@@ -2,12 +2,13 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, LogOut, Settings, ChevronDown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLogoutMutation } from "@/services/hooks";
 import { showSuccess, showError } from "@/lib/toast";
+import { shouldRedirectToHomeOnLogout } from "@/lib/utils/routeUtils";
 
 interface UserDropdownProps {
   isRTL: boolean;
@@ -18,6 +19,7 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation("header");
   const router = useRouter();
+  const pathname = usePathname();
   const [logoutApi, { isLoading: isLoggingOut }] = useLogoutMutation();
   const { user, logout } = useAuth();
   console.log("user", user);
@@ -51,11 +53,11 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
       // Close dropdown
       setIsOpen(false);
 
-      // Redirect to home page
-      router.push("/");
-      // clear all local storage
-      localStorage.clear();
-      
+      // Smart redirect: only redirect to home if current page is protected
+      if (shouldRedirectToHomeOnLogout(pathname)) {
+        router.push("/");
+      }
+      // If not protected, stay on current page
     } catch (error) {
       console.error("Error logging out:", error);
       showError("حدث خطأ أثناء تسجيل الخروج");

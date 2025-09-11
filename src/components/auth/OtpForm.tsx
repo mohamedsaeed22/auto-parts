@@ -11,7 +11,6 @@ import {
 } from "@/lib/validations/authSchema";
 import { useVerifyOtpMutation, useSendOtpMutation } from "@/services/hooks";
 import { useAuthContext } from "@/contexts/auth-context";
-import { useRouter } from "next/navigation";
 import { showSuccess, showError } from "@/lib/toast";
 import { useDirection } from "@/hooks/use-direction";
 
@@ -28,7 +27,6 @@ export default function OtpForm({
 }: OtpFormProps) {
   const { t } = useTranslation("auth");
   const { isRTL } = useDirection();
-  const router = useRouter();
   const [verifyOtp, { isLoading: isVerifying }] = useVerifyOtpMutation();
   const [sendOtp, { isLoading: isResending }] = useSendOtpMutation();
   const { login } = useAuthContext();
@@ -83,8 +81,8 @@ export default function OtpForm({
           user: response.data.user,
         });
 
-        // Redirect to home page after successful login
-        router.push("/");
+        // Keep user on the same page after successful login
+        // No navigation needed
       }
     } catch (error) {
       console.error("Error verifying OTP:", error);

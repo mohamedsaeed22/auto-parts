@@ -10,7 +10,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { User } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
 // Import validation schemas and types
@@ -39,7 +38,6 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
     LoginFormData | RegistrationFormData | null
   >(null);
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
   const [sendOtp, { isLoading: isSendingOtp }] = useSendOtpMutation();
 
   const onLoginSubmit = async (data: LoginFormData) => {
@@ -145,8 +143,8 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
               showSuccess(t("success.loginSuccess"));
               handleDialogChange(false);
 
-              // Redirect to home page after successful login
-              router.push("/");
+              // Keep user on the same page after successful login
+              // No navigation needed
             }}
           />
         )}

@@ -58,8 +58,8 @@ export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
           // Show success message
           showSuccess(t("success.loginSuccess"));
 
-          // Redirect to home page after successful login
-          router.push("/");
+          // Keep user on the same page after successful login
+          // No navigation needed
         } else {
           throw new Error("Invalid response from backend");
         }
