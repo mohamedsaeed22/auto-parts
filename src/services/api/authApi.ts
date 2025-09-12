@@ -121,6 +121,7 @@ export const authApi = api.injectEndpoints({
         if (data.city) formData.append("city", data.city);
         if (data.zip) formData.append("zip", data.zip);
         if (data.state) formData.append("state", data.state);
+        if (data.tax_number) formData.append("tax_number", data.tax_number);
         if (data.latitude) formData.append("latitude", data.latitude);
         if (data.longitude) formData.append("longitude", data.longitude);
 

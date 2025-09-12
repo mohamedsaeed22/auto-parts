@@ -74,12 +74,7 @@ export const profileUpdateSchema = z.object({
     .min(3, "validation.zip.minLength")
     .max(10, "validation.zip.maxLength"),
 
-  tax_number: z
-    .string()
-    .min(1, "validation.taxNumber.required")
-    .regex(/^[0-9]+$/, "validation.taxNumber.invalid")
-    .min(6, "validation.taxNumber.minLength")
-    .max(20, "validation.taxNumber.maxLength"),
+  tax_number: z.string().optional(),
 
   latitude: z.string().optional(),
 

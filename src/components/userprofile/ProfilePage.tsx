@@ -113,7 +113,6 @@ export default function ProfilePage() {
         city: profile.city || "",
         state: profile.state || "",
         zip: profile.zip || "",
-        tax_number: profile.tax_number || "",
         latitude: profile.latitude || "",
         longitude: profile.longitude || "",
         avatar: undefined,
@@ -187,7 +186,6 @@ export default function ProfilePage() {
         city: profile.city || "",
         state: profile.state || "",
         zip: profile.zip || "",
-        tax_number: profile.tax_number || "",
         latitude: profile.latitude || "",
         longitude: profile.longitude || "",
         avatar: undefined,
@@ -207,7 +205,6 @@ export default function ProfilePage() {
         city: profile.city || "",
         state: profile.state || "",
         zip: profile.zip || "",
-        tax_number: profile.tax_number || "",
         latitude: profile.latitude || "",
         longitude: profile.longitude || "",
         avatar: undefined,
@@ -451,107 +448,76 @@ export default function ProfilePage() {
 
         {/* Name */}
         <div className="col-span-full sm:col-span-1">
-          {isEditing ? (
-            <FormInput
-              label={t("profile.name")}
-              type="text"
-              icon={User}
-              required
-              value={watch("name")}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue("name", e.target.value, {
-                  shouldValidate: true,
-                  shouldDirty: true,
-                })
-              }
-              error={errors.name?.message}
-              placeholder={t("profile.name")}
-            />
-          ) : (
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                {t("profile.name")} *
-              </label>
-              <div
-                className={`w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base ${
-                  isRTL ? "flex-row" : ""
-                }`}
-              >
-                <User size={16} className="text-gray-400 flex-shrink-0" />
-                <span
-                  className={`${isRTL ? "text-right" : "text-left"} truncate`}
-                >
-                  {profile.name}
-                </span>
-              </div>
-            </div>
-          )}
+          <FormInput
+            label={t("profile.name")}
+            type="text"
+            icon={User}
+            required
+            disabled={!isEditing}
+            value={watch("name")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("name", e.target.value, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            error={
+              errors.name?.message
+                ? t(errors.name.message, { ns: "validation" })
+                : undefined
+            }
+            placeholder={t("profile.name")}
+          />
         </div>
 
         {/* Email */}
         <div className="col-span-full sm:col-span-1">
-          {isEditing ? (
-            <FormInput
-              label={t("profile.email")}
-              type="email"
-              icon={Mail}
-              value={watch("email")}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue("email", e.target.value, {
-                  shouldValidate: true,
-                  shouldDirty: true,
-                })
-              }
-              error={errors.email?.message}
-              placeholder={t(
-                "profile.emailPlaceholder",
-                "Enter email (optional)"
-              )}
-            />
-          ) : (
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                {t("profile.email")}
-              </label>
-              <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
-                <Mail size={16} className="text-gray-400 flex-shrink-0" />
-                <span className="truncate">
-                  {profile.email || t("profile.noEmail")}
-                </span>
-              </div>
-            </div>
-          )}
+          <FormInput
+            label={t("profile.email")}
+            type="email"
+            icon={Mail}
+            disabled={!isEditing}
+            value={watch("email")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("email", e.target.value, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            error={
+              errors.email?.message
+                ? t(errors.email.message, { ns: "validation" })
+                : undefined
+            }
+            placeholder={t(
+              "profile.emailPlaceholder",
+              "Enter email (optional)"
+            )}
+          />
         </div>
 
         {/* Phone */}
         <div className="col-span-full sm:col-span-1">
-          {isEditing ? (
-            <FormInput
-              label={t("profile.phone")}
-              type="tel"
-              icon={Phone}
-              required
-              value={watch("phone")}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue("phone", e.target.value, {
-                  shouldValidate: true,
-                  shouldDirty: true,
-                })
-              }
-              error={errors.phone?.message}
-              placeholder={t("profile.phone")}
-            />
-          ) : (
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                {t("profile.phone")} *
-              </label>
-              <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
-                <Phone size={16} className="text-gray-400 flex-shrink-0" />
-                <span className="truncate">{profile.phone}</span>
-              </div>
-            </div>
-          )}
+          <FormInput
+            label={t("profile.phone")}
+            type="tel"
+            icon={Phone}
+            required
+            disabled={!isEditing}
+            value={watch("phone")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("phone", e.target.value, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            error={
+              errors.phone?.message
+                ? t(errors.phone.message, { ns: "validation" })
+                : undefined
+            }
+            placeholder={t("profile.phone")}
+          />
         </div>
 
         {/* Type */}
@@ -573,188 +539,135 @@ export default function ProfilePage() {
 
         {/* Manager Name */}
         <div className="col-span-full sm:col-span-1">
-          {isEditing ? (
-            <FormInput
-              label={t("profile.managerName")}
-              type="text"
-              icon={User}
-              required
-              value={watch("manager_name")}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue("manager_name", e.target.value, {
-                  shouldValidate: true,
-                  shouldDirty: true,
-                })
-              }
-              error={errors.manager_name?.message}
-              placeholder={t("profile.managerName")}
-            />
-          ) : (
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                {t("profile.managerName")} *
-              </label>
-              <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
-                <User size={16} className="text-gray-400 flex-shrink-0" />
-                <span className="truncate">{profile.manager_name}</span>
-              </div>
-            </div>
-          )}
+          <FormInput
+            label={t("profile.managerName")}
+            type="text"
+            icon={User}
+            required
+            disabled={!isEditing}
+            value={watch("manager_name")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("manager_name", e.target.value, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            error={
+              errors.manager_name?.message
+                ? t(errors.manager_name.message, { ns: "validation" })
+                : undefined
+            }
+            placeholder={t("profile.managerName")}
+          />
         </div>
 
         {/* Address */}
         <div className="col-span-full sm:col-span-1">
-          {isEditing ? (
-            <FormInput
-              label={t("profile.address")}
-              type="text"
-              icon={MapPin}
-              required
-              value={watch("address")}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue("address", e.target.value, {
-                  shouldValidate: true,
-                  shouldDirty: true,
-                })
-              }
-              error={errors.address?.message}
-              placeholder={t("profile.address")}
-            />
-          ) : (
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                {t("profile.address")} *
-              </label>
-              <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
-                <MapPin size={16} className="text-gray-400 flex-shrink-0" />
-                <span className="truncate">{profile.address}</span>
-              </div>
-            </div>
-          )}
+          <FormInput
+            label={t("profile.address")}
+            type="text"
+            icon={MapPin}
+            required
+            disabled={!isEditing}
+            value={watch("address")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("address", e.target.value, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            error={
+              errors.address?.message
+                ? t(errors.address.message, { ns: "validation" })
+                : undefined
+            }
+            placeholder={t("profile.address")}
+          />
         </div>
 
         {/* City */}
         <div className="col-span-full sm:col-span-1">
-          {isEditing ? (
-            <FormInput
-              label={t("profile.city")}
-              type="text"
-              icon={MapPin}
-              required
-              value={watch("city")}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue("city", e.target.value, {
-                  shouldValidate: true,
-                  shouldDirty: true,
-                })
-              }
-              error={errors.city?.message}
-              placeholder={t("profile.city")}
-            />
-          ) : (
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                {t("profile.city")} *
-              </label>
-              <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
-                <MapPin size={16} className="text-gray-400 flex-shrink-0" />
-                <span className="truncate">{profile.city}</span>
-              </div>
-            </div>
-          )}
+          <FormInput
+            label={t("profile.city")}
+            type="text"
+            icon={MapPin}
+            required
+            disabled={!isEditing}
+            value={watch("city")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("city", e.target.value, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            error={
+              errors.city?.message
+                ? t(errors.city.message, { ns: "validation" })
+                : undefined
+            }
+            placeholder={t("profile.city")}
+          />
         </div>
 
         {/* State */}
         <div className="col-span-full sm:col-span-1">
-          {isEditing ? (
-            <FormInput
-              label={t("profile.state")}
-              type="text"
-              icon={MapPin}
-              required
-              value={watch("state")}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue("state", e.target.value, {
-                  shouldValidate: true,
-                  shouldDirty: true,
-                })
-              }
-              error={errors.state?.message}
-              placeholder={t("profile.state")}
-            />
-          ) : (
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                {t("profile.state")} *
-              </label>
-              <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
-                <MapPin size={16} className="text-gray-400 flex-shrink-0" />
-                <span className="truncate">{profile.state}</span>
-              </div>
-            </div>
-          )}
+          <FormInput
+            label={t("profile.state")}
+            type="text"
+            icon={MapPin}
+            required
+            disabled={!isEditing}
+            value={watch("state")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("state", e.target.value, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            error={
+              errors.state?.message
+                ? t(errors.state.message, { ns: "validation" })
+                : undefined
+            }
+            placeholder={t("profile.state")}
+          />
         </div>
 
         {/* ZIP */}
         <div className="col-span-full sm:col-span-1">
-          {isEditing ? (
-            <FormInput
-              label={t("profile.zip")}
-              type="text"
-              icon={MapPin}
-              required
-              value={watch("zip")}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue("zip", e.target.value, {
-                  shouldValidate: true,
-                  shouldDirty: true,
-                })
-              }
-              error={errors.zip?.message}
-              placeholder={t("profile.zip")}
-            />
-          ) : (
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                {t("profile.zip")} *
-              </label>
-              <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
-                <MapPin size={16} className="text-gray-400 flex-shrink-0" />
-                <span className="truncate">{profile.zip}</span>
-              </div>
-            </div>
-          )}
+          <FormInput
+            label={t("profile.zip")}
+            type="text"
+            icon={MapPin}
+            required
+            disabled={!isEditing}
+            value={watch("zip")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("zip", e.target.value, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            error={
+              errors.zip?.message
+                ? t(errors.zip.message, { ns: "validation" })
+                : undefined
+            }
+            placeholder={t("profile.zip")}
+          />
         </div>
 
         {/* Tax Number */}
         <div className="col-span-full sm:col-span-1">
-          {isEditing ? (
-            <FormInput
-              label={t("profile.taxNumber")}
-              type="text"
-              icon={FileText}
-              required
-              value={watch("tax_number")}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue("tax_number", e.target.value, {
-                  shouldValidate: true,
-                  shouldDirty: true,
-                })
-              }
-              error={errors.tax_number?.message}
-              placeholder={t("profile.taxNumber")}
-            />
-          ) : (
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                {t("profile.taxNumber")} *
-              </label>
-              <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
-                <FileText size={16} className="text-gray-400 flex-shrink-0" />
-                <span className="truncate">{profile.tax_number}</span>
-              </div>
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              {t("profile.taxNumber")} *
+            </label>
+            <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-gray-600 text-sm sm:text-base">
+              <FileText size={16} className="text-gray-400 flex-shrink-0" />
+              <span className="truncate">{profile.tax_number}</span>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Latitude */}

@@ -221,7 +221,7 @@ const FormInput = forwardRef<
               errorClassName
             )}
           >
-            {t(error) || error}
+            {error}
           </p>
         )}
       </div>
