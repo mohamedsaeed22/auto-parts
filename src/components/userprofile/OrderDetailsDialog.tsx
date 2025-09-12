@@ -140,323 +140,307 @@ export default function OrderDetailsDialog({
             </p>
           </div>
         ) : orderDetails ? (
-          <div className="space-y-8 py-4">
-            {/* Order Header Card */}
-            <div className="bg-gradient-to-r from-[#fdfbf7] to-[#f9f5ed] border border-[#f3e9d8] rounded-xl p-6">
-              <div className="flex flex-wrap items-center justify-between gap-6 mb-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-[#b3984a] rounded-lg flex items-center justify-center">
-                    <Hash size={24} className="text-white" />
+          <div className="space-y-6 py-4">
+            {/* Order Header - Simplified */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-[#b3984a] rounded-lg flex items-center justify-center">
+                    <Hash size={20} className="text-white" />
                   </div>
                   <div>
-                    <div className="text-sm text-gray-600 mb-1">
+                    <div className="text-sm text-gray-500 mb-1">
                       {t("orders.orderNumber")}
                     </div>
-                    <div className="text-2xl font-bold text-[#272627] font-mono">
+                    <div className="text-xl font-bold text-[#272627] font-mono">
                       {orderDetails.order_number}
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  <div className="text-right">
-                    <div className="text-sm text-gray-600 mb-1">
-                      {t("orders.orderDate")}
-                    </div>
-                    <div className="text-lg font-semibold text-[#272627]">
-                      {formatDate(orderDetails.created_at)}
-                    </div>
-                  </div>
+                <div className="text-sm text-gray-600">
+                  {formatDate(orderDetails.created_at)}
                 </div>
               </div>
 
-              {/* Status Pills */}
-              <div className="flex flex-wrap gap-3">
+              {/* Status Row - Simplified */}
+              <div className="flex flex-wrap gap-2">
                 {(() => {
                   const statusInfo = getStatusIcon(orderDetails.status);
                   const StatusIcon = statusInfo.icon;
                   return (
-                    <div
-                      className={`${statusInfo.bg} ${statusInfo.color} px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2`}
+                    <span
+                      className={`${statusInfo.bg} ${statusInfo.color} px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2`}
                     >
-                      <StatusIcon size={16} />
-                      {t("orders.status")}: {orderDetails.status}
-                    </div>
+                      <StatusIcon size={14} />
+                      {t(
+                        `orders.statuses.${orderDetails.status}`,
+                        orderDetails.status
+                      )}
+                    </span>
                   );
                 })()}
 
-                <div className="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
-                  <CreditCard size={16} />
-                  {t("orders.paymentStatus")}: {orderDetails.payment_status}
-                </div>
+                <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">
+                  <CreditCard size={14} />
+                  {t(
+                    `orders.paymentStatuses.${orderDetails.payment_status}`,
+                    orderDetails.payment_status
+                  )}
+                </span>
 
-                <div className="bg-purple-50 text-purple-700 px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
-                  <Package size={16} />
-                  {orderDetails.payment_method}
-                </div>
+                <span className="bg-gray-50 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">
+                  {t(
+                    `orders.paymentMethods.${orderDetails.payment_method}`,
+                    orderDetails.payment_method
+                  )}
+                </span>
               </div>
             </div>
 
-            {/* Order Summary Card */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-              <h3 className="text-xl font-bold text-[#272627] mb-6 flex items-center gap-3">
-                <div className="w-1 h-6 bg-[#b3984a] rounded-full"></div>
+            {/* Order Summary - Simplified */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-[#272627] mb-4 flex items-center gap-2">
+                <div className="w-1 h-5 bg-[#b3984a] rounded-full"></div>
                 {t("orders.orderSummary")}
               </h3>
 
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 items-center mb-6">
-                <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <div className="text-sm text-gray-600 mb-1">
-                    {t("orders.subtotal")}
-                  </div>
-                  <div className="text-lg font-bold text-[#272627]">
+              <div className="space-y-3">
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-gray-600">{t("orders.subtotal")}</span>
+                  <span className="font-medium text-[#272627]">
                     {formatCurrency(
                       orderDetails.pricing.subtotal,
                       orderDetails.pricing.currency
                     )}
-                  </div>
+                  </span>
                 </div>
 
                 {orderDetails.pricing.discount_amount > 0 && (
-                  <div className="text-center p-4 bg-green-50 rounded-lg">
-                    <div className="text-sm text-gray-600 mb-1">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span className="text-gray-600">
                       {t("orders.discount")}
-                    </div>
-                    <div className="text-lg font-bold text-green-600">
+                    </span>
+                    <span className="font-medium text-green-600">
                       -
                       {formatCurrency(
                         orderDetails.pricing.discount_amount,
                         orderDetails.pricing.currency
                       )}
-                    </div>
+                    </span>
                   </div>
                 )}
 
-                <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <div className="text-sm text-gray-600 mb-1">
-                    {t("orders.shipping")}
-                  </div>
-                  <div className="text-lg font-bold text-[#272627]">
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-gray-600">{t("orders.shipping")}</span>
+                  <span className="font-medium text-[#272627]">
                     {formatCurrency(
                       orderDetails.pricing.shipping_cost,
                       orderDetails.pricing.currency
                     )}
-                  </div>
+                  </span>
                 </div>
 
                 {orderDetails.pricing.tax_amount > 0 && (
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <div className="text-sm text-gray-600 mb-1">
-                      {t("orders.tax")}
-                    </div>
-                    <div className="text-lg font-bold text-[#272627]">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span className="text-gray-600">{t("orders.tax")}</span>
+                    <span className="font-medium text-[#272627]">
                       {formatCurrency(
                         orderDetails.pricing.tax_amount,
                         orderDetails.pricing.currency
                       )}
-                    </div>
+                    </span>
                   </div>
                 )}
 
-                <div className="text-center p-6   rounded-lg">
-                  <div className="text-sm font-medium mb-1">
+                <div className="flex justify-between items-center py-3 bg-[#b3984a]/5 rounded-lg px-4">
+                  <span className="text-lg font-semibold text-[#272627]">
                     {t("orders.total")}
-                  </div>
-                  <div className="text-2xl font-bold">
+                  </span>
+                  <span className="text-xl font-bold text-[#b3984a]">
                     {formatCurrency(
                       orderDetails.pricing.grand_total,
                       orderDetails.pricing.currency
                     )}
-                  </div>
+                  </span>
                 </div>
               </div>
 
-              {/* Coupon Row */}
+              {/* Coupon - Simplified */}
               {orderDetails.coupon?.code && (
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                        <Percent size={20} className="text-green-600" />
-                      </div>
-                      <div>
-                        <span className="font-semibold text-green-800">
-                          {t("orders.couponApplied")}:{" "}
-                        </span>
-                        <span className="font-mono font-bold text-green-700">
+                <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Percent size={16} className="text-green-600" />
+                      <span className="text-sm text-green-700">
+                        {t("orders.couponApplied")}:{" "}
+                        <span className="font-mono font-bold">
                           {orderDetails.coupon.code}
                         </span>
-                      </div>
+                      </span>
                     </div>
-                    <div className="text-right">
-                      <div className="text-sm text-green-600">
-                        {t("orders.savedAmount")}
-                      </div>
-                      <div className="text-xl font-bold text-green-700">
-                        -
-                        {formatCurrency(
-                          orderDetails.coupon.discount,
-                          orderDetails.pricing.currency
-                        )}
-                      </div>
-                    </div>
+                    <span className="text-sm font-bold text-green-700">
+                      -
+                      {formatCurrency(
+                        orderDetails.coupon.discount,
+                        orderDetails.pricing.currency
+                      )}
+                    </span>
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Products and Details Grid */}
-            <div className="space-y-6">
-              {/* Shipping Address - Full Width */}
-              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                <h3 className="text-xl font-bold text-[#272627] mb-6 flex items-center gap-3">
-                  <div className="w-8 h-8 bg-[#b3984a] rounded-lg flex items-center justify-center">
-                    <MapPin size={20} className="text-white" />
-                  </div>
-                  {t("orders.shippingAddress")}
-                </h3>
+            {/* Shipping Address - Simplified */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-[#272627] mb-4 flex items-center gap-2">
+                <div className="w-1 h-5 bg-[#b3984a] rounded-full"></div>
+                {t("orders.shippingAddress")}
+              </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                    <User size={18} className="text-[#b3984a]" />
-                    <span className="font-semibold text-[#272627]">
-                      {orderDetails.address.first_name}{" "}
-                      {orderDetails.address.last_name}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                    <Phone size={18} className="text-[#b3984a]" />
-                    <span className="font-medium text-[#272627]">
-                      {orderDetails.address.phone}
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                    <MapPin size={18} className="text-[#b3984a] mt-1" />
-                    <div className="text-sm text-[#272627]">
-                      <p className="font-medium">
-                        {orderDetails.address.address}
-                      </p>
-                      {orderDetails.address.apartment && (
-                        <p>
-                          {t("orders.apartment")}{" "}
-                          {orderDetails.address.apartment}
-                        </p>
-                      )}
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                  <User size={16} className="text-[#b3984a]" />
+                  <span className="font-medium text-[#272627]">
+                    {orderDetails.address.first_name}{" "}
+                    {orderDetails.address.last_name}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                  <Phone size={16} className="text-[#b3984a]" />
+                  <span className="font-medium text-[#272627]">
+                    {orderDetails.address.phone}
+                  </span>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                  <MapPin size={16} className="text-[#b3984a] mt-1" />
+                  <div className="text-sm text-[#272627]">
+                    <p className="font-medium">
+                      {orderDetails.address.address}
+                    </p>
+                    {orderDetails.address.apartment && (
                       <p>
-                        {orderDetails.address.city}
-                        {orderDetails.address.state &&
-                          `, ${orderDetails.address.state}`}
-                        {orderDetails.address.country &&
-                          `, ${orderDetails.address.country}`}
-                        {orderDetails.address.zip_code &&
-                          ` ${orderDetails.address.zip_code}`}
+                        {t("orders.apartment")} {orderDetails.address.apartment}
                       </p>
-                    </div>
+                    )}
+                    <p>
+                      {orderDetails.address.city}
+                      {orderDetails.address.state &&
+                        `, ${orderDetails.address.state}`}
+                      {orderDetails.address.country &&
+                        `, ${orderDetails.address.country}`}
+                      {orderDetails.address.zip_code &&
+                        ` ${orderDetails.address.zip_code}`}
+                    </p>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Products - Full Width Rows */}
-              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                <h3 className="text-xl font-bold text-[#272627] mb-6 flex items-center gap-3">
-                  <div className="w-8 h-8 bg-[#b3984a] rounded-lg flex items-center justify-center">
-                    <Package size={20} className="text-white" />
-                  </div>
-                  {t("orders.products")} ({orderDetails.products.length})
-                </h3>
+            {/* Products - Simplified */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-[#272627] mb-4 flex items-center gap-2">
+                <div className="w-1 h-5 bg-[#b3984a] rounded-full"></div>
+                {t("orders.products")} ({orderDetails.products.length})
+              </h3>
 
-                <div className="space-y-4">
-                  {orderDetails.products.map((product) => (
-                    <div
-                      key={product.id}
-                      className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                    >
-                      <div className="flex items-center gap-4">
-                        <Image
-                          src={`https://brave.iseek.name/storage/${product.product_image}`}
-                          alt={product.product_name}
-                          width={64}
-                          height={64}
-                          className="w-16 h-16 object-cover rounded-lg flex-shrink-0 border border-gray-200"
-                        />
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-[#272627] mb-2 truncate">
-                            {product.product_name}
-                          </h4>
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
-                            <span>
-                              <span className="font-medium">SKU:</span>{" "}
-                              {product.product_sku}
-                            </span>
-                            <span>
-                              <span className="font-medium">Qty:</span>{" "}
-                              {product.quantity}
-                            </span>
-                            <span>
-                              <span className="font-medium">Price:</span>{" "}
+              <div className="space-y-3">
+                {orderDetails.products.map((product) => (
+                  <div
+                    key={product.id}
+                    className="border border-gray-200 rounded-lg p-4 hover:border-[#b3984a]/30 transition-colors"
+                  >
+                    <div className="flex items-center gap-4">
+                      <Image
+                        src={`https://brave.iseek.name/storage/${product.product_image}`}
+                        alt={product.product_name}
+                        width={60}
+                        height={60}
+                        className="w-15 h-15 object-cover rounded-lg flex-shrink-0 border border-gray-200"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-[#272627] mb-2 truncate">
+                          {product.product_name}
+                        </h4>
+                        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                          <span>
+                            <span className="font-medium">SKU:</span>{" "}
+                            {product.product_sku}
+                          </span>
+                          <span>
+                            <span className="font-medium">Qty:</span>{" "}
+                            {product.quantity}
+                          </span>
+                          <span>
+                            <span className="font-medium">Price:</span>{" "}
+                            {formatCurrency(
+                              product.final_unit_price,
+                              orderDetails.pricing.currency
+                            )}
+                          </span>
+                          {product.discount_amount > 0 && (
+                            <span className="text-green-600 font-medium">
+                              -
                               {formatCurrency(
-                                product.final_unit_price,
+                                product.discount_amount,
                                 orderDetails.pricing.currency
                               )}
                             </span>
-                            {product.discount_amount > 0 && (
-                              <span className="text-green-600 font-medium">
-                                -
-                                {formatCurrency(
-                                  product.discount_amount,
-                                  orderDetails.pricing.currency
-                                )}
-                              </span>
-                            )}
-                          </div>
+                          )}
                         </div>
-                        <div className="text-right">
-                          <div className="text-lg font-bold text-[#b3984a]">
-                            {formatCurrency(
-                              product.total,
-                              orderDetails.pricing.currency
-                            )}
-                          </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-lg font-bold text-[#b3984a]">
+                          {formatCurrency(
+                            product.total,
+                            orderDetails.pricing.currency
+                          )}
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Additional Info - Full Width */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {orderDetails.tracking_number && (
-                  <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <Truck size={20} className="text-blue-600" />
-                      </div>
-                      <span className="font-semibold text-[#272627]">
-                        {t("orders.trackingNumber")}
-                      </span>
-                    </div>
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                      <span className="font-mono text-blue-700 text-lg">
-                        {orderDetails.tracking_number}
-                      </span>
-                    </div>
                   </div>
-                )}
-
-                {orderDetails.notes && (
-                  <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                    <span className="font-semibold text-[#272627] block mb-4">
-                      {t("orders.notes")}
-                    </span>
-                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                      <span className="text-amber-800">
-                        {orderDetails.notes}
-                      </span>
-                    </div>
-                  </div>
-                )}
+                ))}
               </div>
             </div>
+
+            {/* Additional Info - Simplified */}
+            {(orderDetails.tracking_number || orderDetails.notes) && (
+              <div className="bg-white border border-gray-200 rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-[#272627] mb-4 flex items-center gap-2">
+                  <div className="w-1 h-5 bg-[#b3984a] rounded-full"></div>
+                  {t("orders.additionalInfo", "Additional Information")}
+                </h3>
+
+                <div className="space-y-4">
+                  {orderDetails.tracking_number && (
+                    <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                      <Truck size={16} className="text-blue-600" />
+                      <div>
+                        <span className="text-sm text-blue-600 font-medium">
+                          {t("orders.trackingNumber")}:
+                        </span>
+                        <span className="font-mono text-blue-700 ml-2">
+                          {orderDetails.tracking_number}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {orderDetails.notes && (
+                    <div className="flex items-start gap-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
+                      <div className="w-4 h-4 bg-amber-200 rounded-full mt-1"></div>
+                      <div>
+                        <span className="text-sm text-amber-600 font-medium">
+                          {t("orders.notes")}:
+                        </span>
+                        <p className="text-amber-800 mt-1">
+                          {orderDetails.notes}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <div className="text-center py-16 text-gray-600">

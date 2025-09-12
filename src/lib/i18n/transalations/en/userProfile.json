@@ -357,6 +357,7 @@
     "item": "item",
     "viewDetails": "View Details",
     "loading": "Loading orders...",
+    "additionalInfo": "Additional Information",
     "statuses": {
       "pending": "Pending",
       "paid": "Paid",
@@ -371,6 +372,13 @@
       "paid": "Paid",
       "failed": "Failed",
       "refunded": "Refunded"
+    },
+    "paymentMethods": {
+      "cash": "Cash",
+      "credit_card": "Credit Card",
+      "paypal": "PayPal",
+      "stripe": "Stripe",
+      "bank_transfer": "Bank Transfer"
     },
     "stats": {
       "totalOrders": "Total Orders",

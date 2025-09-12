@@ -353,6 +353,7 @@
     "item": "منتج",
     "viewDetails": "عرض التفاصيل",
     "loading": "جاري تحميل الطلبات...",
+    "additionalInfo": "معلومات إضافية",
     "statuses": {
       "pending": "في الانتظار",
       "paid": "مدفوع",
@@ -367,6 +368,13 @@
       "paid": "مدفوع",
       "failed": "فشل",
       "refunded": "مسترد"
+    },
+    "paymentMethods": {
+      "cash": "نقداً",
+      "credit_card": "بطاقة ائتمان",
+      "paypal": "باي بال",
+      "stripe": "سترايب",
+      "bank_transfer": "تحويل بنكي"
     },
     "stats": {
       "totalOrders": "إجمالي الطلبات",
