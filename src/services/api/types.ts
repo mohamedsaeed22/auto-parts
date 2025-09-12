@@ -210,6 +210,7 @@ export interface Brand {
   name: string;
   image?: string;
   logo?: string; // Keep for backward compatibility
+  number_of_products?: number;
   created_at?: string;
   updated_at?: string;
 }

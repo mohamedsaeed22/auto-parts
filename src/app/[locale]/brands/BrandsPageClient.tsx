@@ -29,7 +29,7 @@ interface Brand {
   id: number;
   name: string;
   image?: string;
-  products_count?: number;
+  number_of_products?: number;
 }
 
 interface BrandsPageClientProps {
@@ -186,7 +186,7 @@ const BrandCard = ({
               dir={isRTL ? "rtl" : "ltr"}
             >
               <p className="text-sm font-semibold text-gray-900">
-                {brand.products_count || 0} {t("products") || "Products"}
+                {brand.number_of_products || 0} {t("products") || "Products"}
               </p>
               <p className="text-xs text-gray-500">
                 {t("available") || "Available"}
@@ -331,8 +331,16 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
   return (
     <div dir={direction}>
       <SEOMetadata
-        title={seoConfig.defaultMetadata.brands.title[locale as keyof typeof seoConfig.defaultMetadata.brands.title] || seoConfig.defaultMetadata.brands.title.en}
-        description={seoConfig.defaultMetadata.brands.description[locale as keyof typeof seoConfig.defaultMetadata.brands.description] || seoConfig.defaultMetadata.brands.description.en}
+        title={
+          seoConfig.defaultMetadata.brands.title[
+            locale as keyof typeof seoConfig.defaultMetadata.brands.title
+          ] || seoConfig.defaultMetadata.brands.title.en
+        }
+        description={
+          seoConfig.defaultMetadata.brands.description[
+            locale as keyof typeof seoConfig.defaultMetadata.brands.description
+          ] || seoConfig.defaultMetadata.brands.description.en
+        }
         keywords={getKeywords(locale)}
         locale={locale}
         type="website"
@@ -340,8 +348,14 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
       <StructuredData
         type="brand"
         data={{
-          name: seoConfig.defaultMetadata.brands.title[locale as keyof typeof seoConfig.defaultMetadata.brands.title] || seoConfig.defaultMetadata.brands.title.en,
-          description: seoConfig.defaultMetadata.brands.description[locale as keyof typeof seoConfig.defaultMetadata.brands.description] || seoConfig.defaultMetadata.brands.description.en,
+          name:
+            seoConfig.defaultMetadata.brands.title[
+              locale as keyof typeof seoConfig.defaultMetadata.brands.title
+            ] || seoConfig.defaultMetadata.brands.title.en,
+          description:
+            seoConfig.defaultMetadata.brands.description[
+              locale as keyof typeof seoConfig.defaultMetadata.brands.description
+            ] || seoConfig.defaultMetadata.brands.description.en,
           url: `${seoConfig.siteUrl}/${locale}/brands`,
         }}
         locale={locale}
