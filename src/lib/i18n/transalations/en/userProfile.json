@@ -72,6 +72,8 @@
       "dateTo": "Date To",
       "perPage": "Per Page",
       "clear": "Clear Filters",
+      "apply": "Apply Filters",
+      "loading": "Loading...",
       "results": "Showing {{from}}-{{to}} of {{total}} results"
     },
     "status": {

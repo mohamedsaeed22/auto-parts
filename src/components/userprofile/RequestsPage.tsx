@@ -19,13 +19,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import FormSelect from "@/components/ui/FormSelect";
 import { useGetRequestsQuery } from "@/services/api";
 import { Loader2 } from "lucide-react";
 import type {
@@ -34,7 +28,6 @@ import type {
 } from "@/services/api/requestsApi";
 import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 
 const statusColors = {
   draft: "bg-gray-100 text-gray-800 border-gray-200",
@@ -56,19 +49,22 @@ export default function RequestsPage() {
   const { t, i18n } = useTranslation("userProfile");
   const isRTL = i18n.language === "ar";
   const { user } = useAuth();
+  // Default filters for comparison
+  const defaultFilters = {
+    status: "all" as const,
+    date_from: "",
+    date_to: "",
+    per_page: 10,
+    page: 1,
+  };
+
   const [filters, setFilters] = useState<{
     status: "all" | "draft" | "pending" | "submitted" | "accepted" | "rejected";
     date_from: string;
     date_to: string;
     per_page: number;
     page: number;
-  }>({
-    status: "all",
-    date_from: "",
-    date_to: "",
-    per_page: 10,
-    page: 1,
-  });
+  }>(defaultFilters);
 
   const {
     data: requestsResponse,
@@ -112,14 +108,18 @@ export default function RequestsPage() {
     }));
   };
 
+  // Check if filters have changed from default
+  const hasFiltersChanged = () => {
+    return (
+      filters.status !== defaultFilters.status ||
+      filters.date_from !== defaultFilters.date_from ||
+      filters.date_to !== defaultFilters.date_to ||
+      filters.per_page !== defaultFilters.per_page
+    );
+  };
+
   const clearFilters = () => {
-    setFilters({
-      status: "all" as const,
-      date_from: "",
-      date_to: "",
-      per_page: 10,
-      page: 1,
-    });
+    setFilters(defaultFilters);
   };
 
   const formatDate = (dateString: string) => {
@@ -204,118 +204,112 @@ export default function RequestsPage() {
       {/* Filters */}
       <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 mb-6">
         <div
-          className={`flex items-center gap-3 mb-4 ${isRTL ? "flex-row" : ""}`}
+          className={`flex items-center justify-between mb-4 ${
+            isRTL ? "flex-row" : ""
+          }`}
         >
-          <Filter size={20} className="text-gray-600" />
-          <h3 className="font-medium text-gray-900">
-            {t("requests.filters.title", "Filters")}
-          </h3>
+          <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+            <Filter size={20} className="text-gray-600" />
+            <h3 className="font-medium text-gray-900">
+              {t("requests.filters.title", "Filters")}
+            </h3>
+          </div>
+
+          {/* Filter Actions */}
+          <div className={`flex gap-2 ${isRTL ? "flex-row" : ""}`}>
+            <Button
+              onClick={clearFilters}
+              variant="secondary"
+              disabled={!hasFiltersChanged()}
+            >
+              {t("requests.filters.clear", "Clear Filters")}
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Status Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t("requests.filters.status", "Status")}
-            </label>
-            <Select
-              value={filters.status}
-              onValueChange={(value) => handleFilterChange("status", value)}
-            >
-              <SelectTrigger>
-                <SelectValue
-                  placeholder={t(
-                    "requests.filters.allStatuses",
-                    "All Statuses"
-                  )}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">
-                  {t("requests.filters.allStatuses", "All Statuses")}
-                </SelectItem>
-                <SelectItem value="draft">
-                  {t("requests.status.draft", "Draft")}
-                </SelectItem>
-                <SelectItem value="pending">
-                  {t("requests.status.pending", "Pending")}
-                </SelectItem>
-                <SelectItem value="submitted">
-                  {t("requests.status.submitted", "Submitted")}
-                </SelectItem>
-                <SelectItem value="accepted">
-                  {t("requests.status.accepted", "Accepted")}
-                </SelectItem>
-                <SelectItem value="rejected">
-                  {t("requests.status.rejected", "Rejected")}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <FormSelect
+            label={t("requests.filters.status", "Status")}
+            value={filters.status}
+            onValueChange={(value: string) =>
+              handleFilterChange("status", value)
+            }
+            options={[
+              {
+                value: "all",
+                label: t("requests.filters.allStatuses", "All Statuses"),
+              },
+              { value: "draft", label: t("requests.status.draft", "Draft") },
+              {
+                value: "pending",
+                label: t("requests.status.pending", "Pending"),
+              },
+              {
+                value: "submitted",
+                label: t("requests.status.submitted", "Submitted"),
+              },
+              {
+                value: "accepted",
+                label: t("requests.status.accepted", "Accepted"),
+              },
+              {
+                value: "rejected",
+                label: t("requests.status.rejected", "Rejected"),
+              },
+            ]}
+          />
 
           {/* Date From Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="space-y-2">
+            <label
+              className={`block text-sm font-medium text-gray-700 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
               {t("requests.filters.dateFrom", "Date From")}
             </label>
             <Input
               type="date"
               value={filters.date_from}
               onChange={(e) => handleFilterChange("date_from", e.target.value)}
-              className="w-full"
+              className={`w-full h-12 px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors ${
+                isRTL ? "text-right" : "text-left"
+              }`}
             />
           </div>
 
           {/* Date To Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="space-y-2">
+            <label
+              className={`block text-sm font-medium text-gray-700 ${
+                isRTL ? "text-right" : "text-left"
+              }`}
+            >
               {t("requests.filters.dateTo", "Date To")}
             </label>
             <Input
               type="date"
               value={filters.date_to}
               onChange={(e) => handleFilterChange("date_to", e.target.value)}
-              className="w-full"
+              className={`w-full h-12 px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors ${
+                isRTL ? "text-right" : "text-left"
+              }`}
             />
           </div>
 
           {/* Per Page Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t("requests.filters.perPage", "Per Page")}
-            </label>
-            <Select
-              value={filters.per_page.toString()}
-              onValueChange={handlePerPageChange}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="25">25</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-                <SelectItem value="100">100</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between mt-4">
-          <Button variant="outline" onClick={clearFilters}>
-            {t("requests.filters.clear", "Clear Filters")}
-          </Button>
-          <div className="text-sm text-gray-500">
-            {t(
-              "requests.filters.results",
-              "Showing {{from}}-{{to}} of {{total}} results",
-              {
-                from: pagination?.from || 0,
-                to: pagination?.to || 0,
-                total: pagination?.total || 0,
-              }
-            )}
-          </div>
+          <FormSelect
+            label={t("requests.filters.perPage", "Per Page")}
+            value={filters.per_page.toString()}
+            onValueChange={handlePerPageChange}
+            options={[
+              { value: "10", label: "10" },
+              { value: "25", label: "25" },
+              { value: "50", label: "50" },
+              { value: "100", label: "100" },
+            ]}
+          />
         </div>
       </div>
 

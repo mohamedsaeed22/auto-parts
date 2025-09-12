@@ -30,8 +30,8 @@ export default function OrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
 
-  // Filters state
-  const [filters, setFilters] = useState<OrdersRequest>({
+  // Default filters for comparison
+  const defaultFilters: OrdersRequest = {
     status: "all",
     payment_status: "all",
     date_from: "",
@@ -40,7 +40,10 @@ export default function OrdersPage() {
     sort_by: "created_at",
     sort_direction: "desc",
     page: 1,
-  });
+  };
+
+  // Filters state
+  const [filters, setFilters] = useState<OrdersRequest>(defaultFilters);
 
   // Get orders data
   const {
@@ -62,18 +65,22 @@ export default function OrdersPage() {
     }));
   };
 
+  // Check if filters have changed from default
+  const hasFiltersChanged = () => {
+    return (
+      filters.status !== defaultFilters.status ||
+      filters.payment_status !== defaultFilters.payment_status ||
+      filters.date_from !== defaultFilters.date_from ||
+      filters.date_to !== defaultFilters.date_to ||
+      filters.per_page !== defaultFilters.per_page ||
+      filters.sort_by !== defaultFilters.sort_by ||
+      filters.sort_direction !== defaultFilters.sort_direction
+    );
+  };
+
   // Clear all filters
   const clearFilters = () => {
-    setFilters({
-      status: "all",
-      payment_status: "all",
-      date_from: "",
-      date_to: "",
-      per_page: 10,
-      sort_by: "created_at",
-      sort_direction: "desc",
-      page: 1,
-    });
+    setFilters(defaultFilters);
   };
 
   // Handle pagination
@@ -191,12 +198,27 @@ export default function OrdersPage() {
       {/* Filters */}
       <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 mb-6">
         <div
-          className={`flex items-center gap-2 mb-4 ${isRTL ? "flex-row" : ""}`}
+          className={`flex items-center justify-between mb-4 ${
+            isRTL ? "flex-row" : ""
+          }`}
         >
-          <Filter size={20} className="text-gray-600" />
-          <h3 className="font-medium text-gray-900">
-            {t("orders.filters.title")}
-          </h3>
+          <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+            <Filter size={20} className="text-gray-600" />
+            <h3 className="font-medium text-gray-900">
+              {t("orders.filters.title")}
+            </h3>
+          </div>
+
+          {/* Filter Actions */}
+          <div className={`flex gap-2 ${isRTL ? "flex-row" : ""}`}>
+            <Button
+              onClick={clearFilters}
+              variant="secondary"
+              disabled={!hasFiltersChanged()}
+            >
+              {t("orders.filters.clear")}
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -307,18 +329,6 @@ export default function OrdersPage() {
               { value: "50", label: "50" },
             ]}
           />
-        </div>
-
-        {/* Filter Actions */}
-        <div className={`flex gap-2 mt-4 ${isRTL ? "flex-row" : ""}`}>
-          <Button onClick={clearFilters} variant="secondary">
-            {t("orders.filters.clear")}
-          </Button>
-          <Button onClick={() => refetch()} disabled={isLoading}>
-            {isLoading
-              ? t("orders.filters.loading")
-              : t("orders.filters.apply")}
-          </Button>
         </div>
       </div>
 
