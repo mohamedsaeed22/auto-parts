@@ -34,6 +34,7 @@ import {
   profileUpdateDefaultValues,
   type ProfileUpdateFormData,
 } from "@/lib/validations/profileSchema";
+import { useAuthContext } from "@/contexts/auth-context";
 
 interface ProfileData {
   id: number;
@@ -87,6 +88,7 @@ export default function ProfilePage() {
   const [updateProfile] = useUpdateProfileMutation();
   const [changeLanguage] = useChangeLanguageMutation();
   const { changeLocale } = useLocale();
+  const { updateUser } = useAuthContext();
 
   type ProfileEnvelope = { user: ProfileData } | ProfileData | undefined;
   const responseData = profileResponse?.data as unknown as ProfileEnvelope;
@@ -157,7 +159,32 @@ export default function ProfilePage() {
         avatar: selectedAvatar || undefined,
       };
 
-      await updateProfile(updatePayload).unwrap();
+      const response = await updateProfile(updatePayload).unwrap();
+
+      // Update user data in localStorage and auth context
+      if (response.data && "user" in response.data) {
+        const userData = (response.data as { user: ProfileData }).user;
+        // Convert ProfileData to User type for auth context
+        const userForAuth = {
+          id: userData.id,
+          name: userData.name,
+          email: userData.email || undefined, // Convert null to undefined
+          phone: userData.phone,
+          type: userData.type,
+          manager_name: userData.manager_name,
+          address: userData.address,
+          city: userData.city,
+          zip: userData.zip,
+          state: userData.state,
+          tax_number: userData.tax_number,
+          latitude: userData.latitude,
+          longitude: userData.longitude,
+          avatar: userData.avatar || undefined, // Convert null to undefined
+          commercial_register: userData.commercial_register || undefined, // Convert null to undefined
+          is_registration_complete: userData.is_registration_complete,
+        };
+        await updateUser(userForAuth);
+      }
 
       // Refresh profile data
       refetch();
@@ -522,19 +549,20 @@ export default function ProfilePage() {
 
         {/* Type */}
         <div className="col-span-full sm:col-span-1">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              {t("profile.type")} *
-            </label>
-            <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
-              <Building size={16} className="text-gray-400 flex-shrink-0" />
-              <span className="truncate">
-                {profile.type === "shop"
-                  ? t("profile.shop")
-                  : t("profile.workshop")}
-              </span>
-            </div>
-          </div>
+          <FormInput
+            label={t("profile.type")}
+            type="text"
+            icon={Building}
+            required
+            disabled={true}
+            value={
+              profile.type === "shop"
+                ? t("profile.shop")
+                : t("profile.workshop")
+            }
+            onChange={() => {}} // No-op since it's disabled
+            placeholder={t("profile.type")}
+          />
         </div>
 
         {/* Manager Name */}
@@ -659,41 +687,42 @@ export default function ProfilePage() {
 
         {/* Tax Number */}
         <div className="col-span-full sm:col-span-1">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              {t("profile.taxNumber")} *
-            </label>
-            <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-gray-600 text-sm sm:text-base">
-              <FileText size={16} className="text-gray-400 flex-shrink-0" />
-              <span className="truncate">{profile.tax_number}</span>
-            </div>
-          </div>
+          <FormInput
+            label={t("profile.taxNumber")}
+            type="text"
+            icon={FileText}
+            required
+            disabled={true}
+            value={profile.tax_number}
+            onChange={() => {}} // No-op since it's disabled
+            placeholder={t("profile.taxNumber")}
+          />
         </div>
 
         {/* Latitude */}
         <div className="col-span-full sm:col-span-1">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              {t("profile.latitude")}
-            </label>
-            <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-gray-600 text-sm sm:text-base">
-              <Globe size={16} className="text-gray-400 flex-shrink-0" />
-              <span className="truncate">{profile.latitude}</span>
-            </div>
-          </div>
+          <FormInput
+            label={t("profile.latitude")}
+            type="text"
+            icon={Globe}
+            disabled={true}
+            value={profile.latitude}
+            onChange={() => {}} // No-op since it's disabled
+            placeholder={t("profile.latitude")}
+          />
         </div>
 
         {/* Longitude */}
         <div className="col-span-full sm:col-span-1">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              {t("profile.longitude")}
-            </label>
-            <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-gray-600 text-sm sm:text-base">
-              <Globe size={16} className="text-gray-400 flex-shrink-0" />
-              <span className="truncate">{profile.longitude}</span>
-            </div>
-          </div>
+          <FormInput
+            label={t("profile.longitude")}
+            type="text"
+            icon={Globe}
+            disabled={true}
+            value={profile.longitude}
+            onChange={() => {}} // No-op since it's disabled
+            placeholder={t("profile.longitude")}
+          />
         </div>
       </div>
     </div>
