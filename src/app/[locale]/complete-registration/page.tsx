@@ -9,18 +9,11 @@ import { useLocale } from "@/hooks/useLocale";
 import { useTranslation } from "react-i18next";
 import { useRegistrationStatus } from "@/hooks/useRegistrationStatus";
 import { showSuccess, showError } from "@/lib/toast";
-import {
-  Loader2,
-  User,
-  Mail,
-  Building,
-  MapPin,
-  Hash,
-  FileText,
-} from "lucide-react";
+import { User, Mail, Building, MapPin, Hash, FileText } from "lucide-react";
 import { storage } from "@/lib/storage";
 import { CartSyncService } from "@/services/cartSyncService";
 import FormInput from "@/components/ui/FormInput";
+import { LoadingSpinner } from "@/components/ui";
 import {
   Select,
   SelectContent,
@@ -350,9 +343,7 @@ export default function CompleteRegistrationPage() {
     return (
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="container mx-auto px-4 max-w-4xl">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-logo-gold"></div>
-          </div>
+          <LoadingSpinner message={t("loading") || "Loading..."} />
         </div>
       </div>
     );
@@ -363,9 +354,7 @@ export default function CompleteRegistrationPage() {
     return (
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="container mx-auto px-4 max-w-4xl">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-logo-gold"></div>
-          </div>
+          <LoadingSpinner message={t("loading") || "Loading..."} />
         </div>
       </div>
     );
@@ -729,7 +718,7 @@ export default function CompleteRegistrationPage() {
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    <div className="w-5 h-5 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     {t("actions.submitting")}
                   </>
                 ) : (

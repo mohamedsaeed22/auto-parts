@@ -42,8 +42,6 @@ interface OfferDetails {
 }
 import {
   ArrowLeft,
-  Loader2,
-  AlertCircle,
   ShoppingCart,
   Truck,
   Shield,
@@ -52,40 +50,8 @@ import {
   DollarSign,
   Tag,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { LoadingSpinner, ErrorMessage } from "@/components/ui";
 import ProductCard from "@/components/product/ProductCard";
-
-// Loading Component
-const LoadingSpinner = () => (
-  <div className="flex items-center justify-center min-h-[400px]">
-    <div className="flex flex-col items-center gap-4">
-      <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
-      <p className="text-gray-600">Loading offer details...</p>
-    </div>
-  </div>
-);
-
-// Error Component
-const ErrorMessage = ({
-  message,
-  onRetry,
-}: {
-  message: string;
-  onRetry?: () => void;
-}) => (
-  <div className="flex items-center justify-center min-h-[400px]">
-    <div className="text-center">
-      <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-      <div className="text-red-500 text-lg font-semibold mb-2">Error</div>
-      <p className="text-gray-600 mb-4">{message}</p>
-      {onRetry && (
-        <Button onClick={onRetry} variant="outline">
-          Try Again
-        </Button>
-      )}
-    </div>
-  </div>
-);
 
 // Offer Header Component
 const OfferHeader = ({
@@ -268,16 +234,21 @@ export default function OfferPage() {
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
         dir={direction}
       >
-        <LoadingSpinner />
+        <LoadingSpinner
+          message={t("loadingOfferDetails") || "Loading offer details..."}
+        />
       </div>
     );
   }
 
   // Handle error state
   if (error) {
-    let errorMessage = "Failed to load offer details";
+    let errorMessage =
+      t("failedToLoadOfferDetails") || "Failed to load offer details";
     if ("status" in error) {
-      errorMessage = `Error ${error.status}: Failed to load offer`;
+      errorMessage = `${t("error") || "Error"} ${error.status}: ${
+        t("failedToLoadOfferDetails") || "Failed to load offer details"
+      }`;
     } else if ("message" in error) {
       errorMessage = error.message || errorMessage;
     }
@@ -299,7 +270,7 @@ export default function OfferPage() {
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
         dir={direction}
       >
-        <ErrorMessage message="Offer not found" />
+        <ErrorMessage message={t("offerNotFound") || "Offer not found"} />
       </div>
     );
   }

@@ -11,8 +11,6 @@ import { StructuredData } from "@/components/seo/StructuredData";
 import { seoConfig, getKeywords } from "@/lib/seo/config";
 import {
   ArrowLeft,
-  Loader2,
-  AlertCircle,
   Building2,
   Star,
   Clock,
@@ -23,7 +21,7 @@ import {
   Car,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Pagination } from "@/components/ui";
+import { Pagination, LoadingSpinner, ErrorMessage } from "@/components/ui";
 
 // Types
 interface Brand {
@@ -36,38 +34,6 @@ interface Brand {
 interface BrandsPageClientProps {
   locale: string;
 }
-
-// Loading Component
-const LoadingSpinner = () => (
-  <div className="flex items-center justify-center min-h-[400px]">
-    <div className="flex flex-col items-center gap-4">
-      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      <p className="text-gray-600">Loading brands...</p>
-    </div>
-  </div>
-);
-
-// Error Component
-const ErrorMessage = ({
-  message,
-  onRetry,
-}: {
-  message: string;
-  onRetry?: () => void;
-}) => (
-  <div className="flex items-center justify-center min-h-[400px]">
-    <div className="text-center">
-      <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-      <div className="text-red-500 text-lg font-semibold mb-2">Error</div>
-      <p className="text-gray-600 mb-4">{message}</p>
-      {onRetry && (
-        <Button onClick={onRetry} variant="outline">
-          Try Again
-        </Button>
-      )}
-    </div>
-  </div>
-);
 
 // Hero Section Component
 const HeroSection = ({ t }: { t: (key: string) => string }) => (
@@ -312,7 +278,7 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
       <div dir={direction}>
         <HeroSection t={t} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <LoadingSpinner />
+          <LoadingSpinner message={t("loadingBrands", "Loading brands...")} />
         </div>
       </div>
     );
@@ -320,9 +286,12 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
 
   // Handle error state
   if (error) {
-    let errorMessage = "Failed to load brands";
+    let errorMessage = t("failedToLoadBrands", "Failed to load brands");
     if ("status" in error) {
-      errorMessage = `Error ${error.status}: Failed to load brands`;
+      errorMessage = `${t("error", "Error")} ${error.status}: ${t(
+        "failedToLoadBrands",
+        "Failed to load brands"
+      )}`;
     } else if ("message" in error) {
       errorMessage = error.message || errorMessage;
     }

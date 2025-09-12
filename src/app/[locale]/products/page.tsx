@@ -12,8 +12,6 @@ import { StructuredData } from "@/components/seo/StructuredData";
 import { seoConfig } from "@/lib/seo/config";
 import {
   ArrowLeft,
-  Loader2,
-  AlertCircle,
   Package,
   Star,
   Filter,
@@ -33,41 +31,14 @@ import {
   X as CloseIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Breadcrumb, Pagination } from "@/components/ui";
+import {
+  Breadcrumb,
+  Pagination,
+  LoadingSpinner,
+  ErrorMessage,
+} from "@/components/ui";
 import ProductCard from "@/components/product/ProductCard";
 import type { FilterState } from "@/lib/types/filters";
-
-// Loading Component
-const LoadingSpinner = () => (
-  <div className="flex items-center justify-center min-h-[400px]">
-    <div className="flex flex-col items-center gap-4">
-      <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
-      <p className="text-gray-600">Loading products...</p>
-    </div>
-  </div>
-);
-
-// Error Component
-const ErrorMessage = ({
-  message,
-  onRetry,
-}: {
-  message: string;
-  onRetry?: () => void;
-}) => (
-  <div className="flex items-center justify-center min-h-[400px]">
-    <div className="text-center">
-      <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-      <div className="text-red-500 text-lg font-semibold mb-2">Error</div>
-      <p className="text-gray-600 mb-4">{message}</p>
-      {onRetry && (
-        <Button onClick={onRetry} variant="outline">
-          Try Again
-        </Button>
-      )}
-    </div>
-  </div>
-);
 
 // Hero Section Component
 const HeroSection = ({ t }: { t: (key: string) => string }) => (
@@ -185,8 +156,10 @@ const FilterPanel = ({
         </h4>
         {isLoading ? (
           <div className="flex items-center gap-2">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span className="text-sm text-gray-500">Loading categories...</span>
+            <LoadingSpinner size="sm" className="min-h-0" />
+            <span className="text-sm text-gray-500">
+              {t("loadingCategories") || "Loading categories..."}
+            </span>
           </div>
         ) : (
           <div className="space-y-2 max-h-40 overflow-y-auto">
@@ -237,8 +210,10 @@ const FilterPanel = ({
         </h4>
         {isLoading ? (
           <div className="flex items-center gap-2">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span className="text-sm text-gray-500">Loading brands...</span>
+            <LoadingSpinner size="sm" className="min-h-0" />
+            <span className="text-sm text-gray-500">
+              {t("loadingBrands") || "Loading brands..."}
+            </span>
           </div>
         ) : (
           <div className="space-y-2 max-h-40 overflow-y-auto">
@@ -469,9 +444,11 @@ export default function ProductsPage({
 
   // Handle error state
   if (error) {
-    let errorMessage = "Failed to load products";
+    let errorMessage = t("failedToLoadProducts") || "Failed to load products";
     if ("status" in error) {
-      errorMessage = `Error ${error.status}: Failed to load products`;
+      errorMessage = `${t("error") || "Error"} ${error.status}: ${
+        t("failedToLoadProducts") || "Failed to load products"
+      }`;
     } else if ("message" in error) {
       errorMessage = error.message || errorMessage;
     }
@@ -652,7 +629,9 @@ export default function ProductsPage({
             {/* Products Grid/List */}
             {isLoading ? (
               <div className="text-center py-16">
-                <LoadingSpinner />
+                <LoadingSpinner
+                  message={t("loadingProducts") || "Loading products..."}
+                />
               </div>
             ) : products.length === 0 ? (
               <div className="text-center py-16">

@@ -8,8 +8,6 @@ import { useGetBrandsQuery } from "@/services/hooks";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import {
   ArrowLeft,
-  Loader2,
-  AlertCircle,
   Building2,
   Star,
   CheckCircle,
@@ -20,6 +18,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LoadingSpinner, ErrorMessage } from "@/components/ui";
 
 // Types
 interface Brand {
@@ -28,38 +27,6 @@ interface Brand {
   image?: string;
   products_count?: number;
 }
-
-// Loading Component
-const LoadingSpinner = () => (
-  <div className="flex items-center justify-center min-h-[400px]">
-    <div className="flex flex-col items-center gap-4">
-      <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
-      <p className="text-gray-600">Loading brand details...</p>
-    </div>
-  </div>
-);
-
-// Error Component
-const ErrorMessage = ({
-  message,
-  onRetry,
-}: {
-  message: string;
-  onRetry?: () => void;
-}) => (
-  <div className="flex items-center justify-center min-h-[400px]">
-    <div className="text-center">
-      <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-      <div className="text-red-500 text-lg font-semibold mb-2">Error</div>
-      <p className="text-gray-600 mb-4">{message}</p>
-      {onRetry && (
-        <Button onClick={onRetry} variant="outline">
-          Try Again
-        </Button>
-      )}
-    </div>
-  </div>
-);
 
 // Brand Header Component
 const BrandHeader = ({
@@ -98,11 +65,7 @@ const BrandHeader = ({
 
       {/* Brand Details */}
       <div className={`space-y-4 ${isRTL ? "text-right" : "text-left"}`}>
-        <div
-          className={`flex items-center gap-2 ${
-            isRTL ? "flex-row" : ""
-          }`}
-        >
+        <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}>
           <Building2 className="text-primary" size={24} />
           <h1
             className="text-3xl font-bold text-gray-900"
@@ -113,11 +76,7 @@ const BrandHeader = ({
         </div>
 
         <div className="space-y-3">
-          <div
-            className={`flex items-center gap-3 ${
-              isRTL ? "flex-row" : ""
-            }`}
-          >
+          <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
               <CheckCircle size={24} className="text-primary" />
             </div>
@@ -134,11 +93,7 @@ const BrandHeader = ({
             </div>
           </div>
 
-          <div
-            className={`flex items-center gap-3 ${
-              isRTL ? "flex-row" : ""
-            }`}
-          >
+          <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
               <Car size={24} className="text-green-600" />
             </div>
@@ -176,9 +131,7 @@ const BrandFeatures = ({
   t: (key: string) => string;
 }) => (
   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 bg-gray-50 rounded-lg mb-8">
-    <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}
-    >
+    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
       <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
         <Shield size={20} className="text-primary" />
       </div>
@@ -194,9 +147,7 @@ const BrandFeatures = ({
         </p>
       </div>
     </div>
-    <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}
-    >
+    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
       <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
         <Truck size={20} className="text-green-600" />
       </div>
@@ -212,9 +163,7 @@ const BrandFeatures = ({
         </p>
       </div>
     </div>
-    <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}
-    >
+    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
       <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
         <RotateCcw size={20} className="text-primary" />
       </div>
@@ -267,16 +216,21 @@ export default function BrandPage() {
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
         dir={direction}
       >
-        <LoadingSpinner />
+        <LoadingSpinner
+          message={t("loadingBrandDetails") || "Loading brand details..."}
+        />
       </div>
     );
   }
 
   // Handle error state
   if (error) {
-    let errorMessage = "Failed to load brand details";
+    let errorMessage =
+      t("failedToLoadBrandDetails") || "Failed to load brand details";
     if ("status" in error) {
-      errorMessage = `Error ${error.status}: Failed to load brand`;
+      errorMessage = `${t("error") || "Error"} ${error.status}: ${
+        t("failedToLoadBrandDetails") || "Failed to load brand details"
+      }`;
     } else if ("message" in error) {
       errorMessage = error.message || errorMessage;
     }
@@ -298,7 +252,7 @@ export default function BrandPage() {
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
         dir={direction}
       >
-        <ErrorMessage message="Brand not found" />
+        <ErrorMessage message={t("brandNotFound") || "Brand not found"} />
       </div>
     );
   }

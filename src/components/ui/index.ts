@@ -23,3 +23,5 @@ export {
   CardTitle,
 } from "./card";
 export { Badge } from "./badge";
+export { default as LoadingSpinner } from "./LoadingSpinner";
+export { default as ErrorMessage } from "./ErrorMessage";

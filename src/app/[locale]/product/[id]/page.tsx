@@ -7,7 +7,6 @@ import {
   Plus,
   Trash,
   ArrowLeft,
-  Loader2,
   Heart,
   Bookmark,
   Share2,
@@ -17,6 +16,7 @@ import {
   Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LoadingSpinner, ErrorMessage } from "@/components/ui";
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useEnhancedCart } from "@/hooks/useEnhancedCart";
@@ -27,39 +27,6 @@ import { useGetProductQuery } from "@/services/hooks";
 import { showSuccess, showError } from "@/lib/toast";
 
 // Loading Component
-const LoadingSpinner = ({ t }: { t: (key: string) => string }) => (
-  <div className="flex items-center justify-center min-h-[400px]">
-    <div className="flex flex-col items-center gap-4">
-      <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
-      <p className="text-gray-600">{t("loading")}</p>
-    </div>
-  </div>
-);
-
-// Error Component
-const ErrorMessage = ({
-  message,
-  onRetry,
-  t,
-}: {
-  message: string;
-  onRetry?: () => void;
-  t: (key: string) => string;
-}) => (
-  <div className="flex items-center justify-center min-h-[400px]">
-    <div className="text-center">
-      <div className="text-red-500 text-lg font-semibold mb-2">
-        {t("error")}
-      </div>
-      <p className="text-gray-600 mb-4">{message}</p>
-      {onRetry && (
-        <Button onClick={onRetry} variant="outline">
-          {t("tryAgain")}
-        </Button>
-      )}
-    </div>
-  </div>
-);
 
 // Enhanced Features Components
 type TranslateFn = (key: string) => string;
@@ -465,16 +432,21 @@ export default function ProductDetails() {
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
         dir={direction}
       >
-        <LoadingSpinner t={t} />
+        <LoadingSpinner
+          message={t("loadingProductDetails") || "Loading product details..."}
+        />
       </div>
     );
   }
 
   // Handle error state
   if (error) {
-    let errorMessage = "Failed to load product details";
+    let errorMessage =
+      t("failedToLoadProductDetails") || "Failed to load product details";
     if ("status" in error) {
-      errorMessage = `Error ${error.status}: Failed to load product`;
+      errorMessage = `${t("error") || "Error"} ${error.status}: ${
+        t("failedToLoadProductDetails") || "Failed to load product details"
+      }`;
     } else if ("message" in error) {
       errorMessage = error.message || errorMessage;
     }
@@ -484,7 +456,7 @@ export default function ProductDetails() {
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
         dir={direction}
       >
-        <ErrorMessage message={errorMessage} onRetry={refetch} t={t} />
+        <ErrorMessage message={errorMessage} onRetry={refetch} />
       </div>
     );
   }
@@ -496,7 +468,7 @@ export default function ProductDetails() {
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
         dir={direction}
       >
-        <ErrorMessage message={t("productNotFound")} t={t} />
+        <ErrorMessage message={t("productNotFound") || "Product not found"} />
       </div>
     );
   }
@@ -760,7 +732,7 @@ export default function ProductDetails() {
                   size="sm"
                 >
                   {loading ? (
-                    <Loader2 size={16} className="animate-spin" />
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   ) : isRTL ? (
                     <>
                       <span>{t("addToCart")}</span>

@@ -22,6 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { LoadingSpinner, ErrorMessage } from "@/components/ui";
 
 // Hero Section Component
 const HeroSection = ({ t }: { t: (key: string) => string }) => (
@@ -474,18 +475,22 @@ export default function AboutPage({ params }: { params: { locale: string } }) {
   return (
     <div dir={direction}>
       <SEOMetadata
-        title={seoConfig.defaultMetadata.about.title[locale as 'en' | 'ar']}
-        description={seoConfig.defaultMetadata.about.description[locale as 'en' | 'ar']}
-        keywords={`${seoConfig.company.keywords[locale as 'en' | 'ar'].slice(0, 10).join(', ')}, about us, company history, automotive expertise`}
+        title={seoConfig.defaultMetadata.about.title[locale as "en" | "ar"]}
+        description={
+          seoConfig.defaultMetadata.about.description[locale as "en" | "ar"]
+        }
+        keywords={`${seoConfig.company.keywords[locale as "en" | "ar"]
+          .slice(0, 10)
+          .join(", ")}, about us, company history, automotive expertise`}
         locale={locale}
         type="website"
       />
-      
+
       <StructuredData
         type="organization"
         data={{
           name: seoConfig.company.name,
-          description: seoConfig.company.description[locale as 'en' | 'ar'],
+          description: seoConfig.company.description[locale as "en" | "ar"],
           url: `${seoConfig.siteUrl}/${locale}/about`,
         }}
         locale={locale}

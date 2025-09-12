@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { LoadingSpinner, ErrorMessage } from "@/components/ui";
 import {
   Select,
   SelectContent,
@@ -109,9 +110,7 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="name">
-                {t("form.name") || "Full Name"} *
-              </Label>
+              <Label htmlFor="name">{t("form.name") || "Full Name"} *</Label>
               <Input
                 id="name"
                 name="name"
@@ -119,7 +118,9 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
                 value={formData.name}
                 onChange={handleInputChange}
                 required
-                placeholder={t("form.namePlaceholder") || "Enter your full name"}
+                placeholder={
+                  t("form.namePlaceholder") || "Enter your full name"
+                }
                 className="w-full"
               />
             </div>
@@ -157,10 +158,15 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
               <Label htmlFor="inquiryType">
                 {t("form.inquiryType") || "Inquiry Type"}
               </Label>
-              <Select onValueChange={handleSelectChange} value={formData.inquiryType}>
+              <Select
+                onValueChange={handleSelectChange}
+                value={formData.inquiryType}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue
-                    placeholder={t("form.selectInquiry") || "Select inquiry type"}
+                    placeholder={
+                      t("form.selectInquiry") || "Select inquiry type"
+                    }
                   />
                 </SelectTrigger>
                 <SelectContent>

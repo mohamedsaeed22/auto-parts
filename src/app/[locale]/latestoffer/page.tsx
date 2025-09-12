@@ -9,8 +9,6 @@ import { Offer } from "@/services/api/types";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import {
   ArrowLeft,
-  Loader2,
-  AlertCircle,
   ShoppingCart,
   Percent,
   DollarSign,
@@ -23,39 +21,8 @@ import {
   Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LoadingSpinner, ErrorMessage } from "@/components/ui";
 import { Breadcrumb } from "@/components/ui";
-
-// Loading Component
-const LoadingSpinner = () => (
-  <div className="flex items-center justify-center min-h-[400px]">
-    <div className="flex flex-col items-center gap-4">
-      <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
-      <p className="text-gray-600">Loading latest offers...</p>
-    </div>
-  </div>
-);
-
-// Error Component
-const ErrorMessage = ({
-  message,
-  onRetry,
-}: {
-  message: string;
-  onRetry?: () => void;
-}) => (
-  <div className="flex items-center justify-center min-h-[400px]">
-    <div className="text-center">
-      <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-      <div className="text-red-500 text-lg font-semibold mb-2">Error</div>
-      <p className="text-gray-600 mb-4">{message}</p>
-      {onRetry && (
-        <Button onClick={onRetry} variant="outline">
-          Try Again
-        </Button>
-      )}
-    </div>
-  </div>
-);
 
 // Hero Section Component
 const HeroSection = ({ t }: { t: (key: string) => string }) => (
@@ -229,7 +196,9 @@ export default function LatestOffersPage() {
       <div dir={direction}>
         <HeroSection t={t} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <LoadingSpinner />
+          <LoadingSpinner
+            message={t("loadingOffers") || "Loading latest offers..."}
+          />
         </div>
       </div>
     );
@@ -237,9 +206,11 @@ export default function LatestOffersPage() {
 
   // Handle error state
   if (error) {
-    let errorMessage = "Failed to load offers";
+    let errorMessage = t("failedToLoadOffers") || "Failed to load offers";
     if ("status" in error) {
-      errorMessage = `Error ${error.status}: Failed to load offers`;
+      errorMessage = `${t("error") || "Error"} ${error.status}: ${
+        t("failedToLoadOffers") || "Failed to load offers"
+      }`;
     } else if ("message" in error) {
       errorMessage = error.message || errorMessage;
     }
@@ -267,7 +238,10 @@ export default function LatestOffersPage() {
             {
               label: t("backButton") || "Back",
               icon: (
-                <ArrowLeft size={16} className={isRTL ? "transform rotate-180" : ""} />
+                <ArrowLeft
+                  size={16}
+                  className={isRTL ? "transform rotate-180" : ""}
+                />
               ),
             },
             {

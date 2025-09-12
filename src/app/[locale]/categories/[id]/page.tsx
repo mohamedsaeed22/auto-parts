@@ -14,8 +14,6 @@ import {
   Zap,
   Shield,
   Clock,
-  Loader2,
-  AlertCircle,
   Grid3X3,
   List,
   Home,
@@ -23,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import { LoadingSpinner, ErrorMessage } from "@/components/ui";
 
 // Types
 interface Subcategory {
@@ -236,36 +235,6 @@ const SearchAndViewMode = ({
   </div>
 );
 
-// Loading Spinner Component
-const LoadingSpinner = ({ t }: { t: (key: string) => string }) => (
-  <div className="flex items-center justify-center py-12">
-    <div className="flex items-center gap-2">
-      <Loader2 className="h-6 w-6 animate-spin text-primary" />
-      <span className="text-gray-600">{t("loading")}</span>
-    </div>
-  </div>
-);
-
-// Error Message Component
-const ErrorMessage = ({
-  t,
-  onRetry,
-}: {
-  t: (key: string) => string;
-  onRetry: () => void;
-}) => (
-  <div className="text-center py-12">
-    <AlertCircle className="mx-auto h-16 w-16 text-red-400 mb-4" />
-    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-      {t("error.title")}
-    </h3>
-    <p className="text-gray-600 mb-6">{t("error.message")}</p>
-    <Button onClick={onRetry} className="bg-primary hover:bg-primary/90">
-      {t("error.retry")}
-    </Button>
-  </div>
-);
-
 export default function CategoryPage() {
   const router = useRouter();
   const params = useParams();
@@ -316,11 +285,20 @@ export default function CategoryPage() {
   };
 
   if (isLoading) {
-    return <LoadingSpinner t={t} />;
+    return (
+      <LoadingSpinner
+        message={t("loadingCategories") || "Loading categories..."}
+      />
+    );
   }
 
   if (error) {
-    return <ErrorMessage t={t} onRetry={() => refetch()} />;
+    return (
+      <ErrorMessage
+        message={t("failedToLoadCategories") || "Failed to load categories"}
+        onRetry={() => refetch()}
+      />
+    );
   }
 
   if (!category) {
