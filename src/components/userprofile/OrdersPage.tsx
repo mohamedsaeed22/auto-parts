@@ -311,7 +311,7 @@ export default function OrdersPage() {
 
         {/* Filter Actions */}
         <div className={`flex gap-2 mt-4 ${isRTL ? "flex-row" : ""}`}>
-          <Button onClick={clearFilters} variant="secondary" >
+          <Button onClick={clearFilters} variant="secondary">
             {t("orders.filters.clear")}
           </Button>
           <Button onClick={() => refetch()} disabled={isLoading}>
