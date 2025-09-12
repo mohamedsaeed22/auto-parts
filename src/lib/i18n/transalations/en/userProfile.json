@@ -92,9 +92,12 @@
       "title": "Request Items",
       "quantity": "Qty",
       "created": "Created",
-      "partImage": "Part",
-      "orderImage": "Order",
-      "formImage": "Form"
+      "itemNumber": "Item",
+      "chassisNumber": "Chassis Number",
+      "attachments": "Attachments",
+      "partImage": "Part Image",
+      "orderImage": "Request Image",
+      "formImage": "Form Image"
     },
     "actions": {
       "submit": "Submit",

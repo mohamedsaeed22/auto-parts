@@ -407,103 +407,167 @@ export default function RequestsPage() {
               </div>
 
               {/* Request Items */}
-              <div className="mb-4">
-                <h4 className="font-medium text-gray-700 mb-3">
-                  {t("requests.items.title", "Request Items")} (
-                  {request.items.length})
-                </h4>
-                <div className="space-y-3">
-                  {request.items.map((item: RequestItemResponse) => (
-                    <div key={item.id} className="bg-gray-50 rounded-lg p-4">
+              <div className="mb-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-1 h-6 bg-[#b3984a] rounded-full"></div>
+                  <h4 className="text-lg font-semibold text-[#272627]">
+                    {t("requests.items.title", "Request Items")}
+                  </h4>
+                  <span className="bg-[#b3984a] text-white text-sm font-medium px-3 py-1 rounded-full">
+                    {request.items.length}
+                  </span>
+                </div>
+
+                <div className="grid gap-4">
+                  {request.items.map(
+                    (item: RequestItemResponse, index: number) => (
                       <div
-                        className={`grid gap-4 ${
-                          isWorkshop
-                            ? "grid-cols-1 md:grid-cols-4"
-                            : "grid-cols-1 md:grid-cols-3"
-                        }`}
+                        key={item.id}
+                        className="bg-gradient-to-r from-white to-gray-50 rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-all duration-200 hover:border-[#b3984a]/30"
                       >
-                        <div className="flex items-center gap-2">
-                          <Package size={16} className="text-gray-400" />
-                          <span className="text-sm font-medium">
-                            {item.part_name}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-gray-500">
-                            {t("requests.items.quantity", "Qty")}:
-                          </span>
-                          <span className="font-medium">{item.quantity}</span>
-                        </div>
-                        {isWorkshop && item.chassis_number && (
+                        {/* Item Header */}
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-[#b3984a]/10 rounded-lg flex items-center justify-center">
+                              <Package size={20} className="text-[#b3984a]" />
+                            </div>
+                            <div>
+                              <h5 className="font-semibold text-[#272627] text-base">
+                                {item.part_name}
+                              </h5>
+                              <p className="text-sm text-gray-500">
+                                {t("requests.items.itemNumber", "Item")} #
+                                {index + 1}
+                              </p>
+                            </div>
+                          </div>
+
                           <div className="flex items-center gap-2">
-                            <Car size={16} className="text-gray-400" />
-                            <span className="text-sm text-gray-600">
-                              {item.chassis_number}
+                            <span className="bg-[#b3984a] text-white text-sm font-medium px-3 py-1 rounded-full">
+                              {t("requests.items.quantity", "Qty")}:{" "}
+                              {item.quantity}
                             </span>
                           </div>
-                        )}
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-gray-500">
-                            {t("requests.items.created", "Created")}:
-                          </span>
-                          <span className="text-sm text-gray-600">
-                            {formatDate(item.created_at)}
-                          </span>
                         </div>
-                      </div>
 
-                      {/* Item Images - Only show for workshop users */}
-                      {isWorkshop &&
-                        (item.part_image_url ||
-                          item.order_image_url ||
-                          item.form_image_url) && (
-                          <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-200">
-                            {item.part_image_url && (
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs text-gray-500">
-                                  {t("requests.items.partImage", "Part")}:
+                        {/* Item Details Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                          {isWorkshop && item.chassis_number && (
+                            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                              <Car
+                                size={16}
+                                className="text-[#b3984a] flex-shrink-0"
+                              />
+                              <div>
+                                <span className="text-xs text-gray-500 block">
+                                  {t(
+                                    "requests.items.chassisNumber",
+                                    "Chassis Number"
+                                  )}
                                 </span>
-                                <Image
-                                  src={item.part_image_url}
-                                  alt="Part"
-                                  width={48}
-                                  height={48}
-                                  className="w-12 h-12 object-cover rounded border"
-                                />
-                              </div>
-                            )}
-                            {item.order_image_url && (
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs text-gray-500">
-                                  {t("requests.items.orderImage", "Order")}:
+                                <span className="text-sm font-medium text-[#272627]">
+                                  {item.chassis_number}
                                 </span>
-                                <Image
-                                  src={item.order_image_url}
-                                  alt="Order"
-                                  width={48}
-                                  height={48}
-                                  className="w-12 h-12 object-cover rounded border"
-                                />
                               </div>
-                            )}
-                            {item.form_image_url && (
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs text-gray-500">
-                                  {t("requests.items.formImage", "Form")}:
-                                </span>
-                                <Image
-                                  src={item.form_image_url}
-                                  alt="Form"
-                                  width={48}
-                                  height={48}
-                                  className="w-12 h-12 object-cover rounded border"
-                                />
-                              </div>
-                            )}
+                            </div>
+                          )}
+
+                          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                            <Calendar
+                              size={16}
+                              className="text-[#b3984a] flex-shrink-0"
+                            />
+                            <div>
+                              <span className="text-xs text-gray-500 block">
+                                {t("requests.items.created", "Created")}
+                              </span>
+                              <span className="text-sm font-medium text-[#272627]">
+                                {formatDate(item.created_at)}
+                              </span>
+                            </div>
                           </div>
-                        )}
-                    </div>
-                  ))}
+                        </div>
+
+                        {/* Item Images - Enhanced display for workshop users */}
+                        {isWorkshop &&
+                          (item.part_image_url ||
+                            item.order_image_url ||
+                            item.form_image_url) && (
+                            <div className="border-t border-gray-200 pt-4">
+                              <h6 className="text-sm font-medium text-[#272627] mb-3 flex items-center gap-2">
+                                <span className="w-2 h-2 bg-[#b3984a] rounded-full"></span>
+                                {t("requests.items.attachments", "Attachments")}
+                              </h6>
+
+                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                {item.part_image_url && (
+                                  <div className="group">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <span className="text-xs font-medium text-[#b3984a] bg-[#b3984a]/10 px-2 py-1 rounded">
+                                        {t("requests.items.partImage", "Part")}
+                                      </span>
+                                    </div>
+                                    <div className="relative overflow-hidden rounded-lg border-2 border-gray-200 group-hover:border-[#b3984a] transition-colors duration-200">
+                                      <Image
+                                        src={item.part_image_url}
+                                        alt="Part Image"
+                                        width={120}
+                                        height={120}
+                                        className="w-full h-24 object-cover group-hover:scale-105 transition-transform duration-200"
+                                      />
+                                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200"></div>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {item.order_image_url && (
+                                  <div className="group">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <span className="text-xs font-medium text-[#b3984a] bg-[#b3984a]/10 px-2 py-1 rounded">
+                                        {t(
+                                          "requests.items.orderImage",
+                                          "Order"
+                                        )}
+                                      </span>
+                                    </div>
+                                    <div className="relative overflow-hidden rounded-lg border-2 border-gray-200 group-hover:border-[#b3984a] transition-colors duration-200">
+                                      <Image
+                                        src={item.order_image_url}
+                                        alt="Order Image"
+                                        width={120}
+                                        height={120}
+                                        className="w-full h-24 object-cover group-hover:scale-105 transition-transform duration-200"
+                                      />
+                                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200"></div>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {item.form_image_url && (
+                                  <div className="group">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <span className="text-xs font-medium text-[#b3984a] bg-[#b3984a]/10 px-2 py-1 rounded">
+                                        {t("requests.items.formImage", "Form")}
+                                      </span>
+                                    </div>
+                                    <div className="relative overflow-hidden rounded-lg border-2 border-gray-200 group-hover:border-[#b3984a] transition-colors duration-200">
+                                      <Image
+                                        src={item.form_image_url}
+                                        alt="Form Image"
+                                        width={120}
+                                        height={120}
+                                        className="w-full h-24 object-cover group-hover:scale-105 transition-transform duration-200"
+                                      />
+                                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200"></div>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                      </div>
+                    )
+                  )}
                 </div>
               </div>
             </div>

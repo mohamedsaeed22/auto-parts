@@ -92,9 +92,12 @@
       "title": "عناصر الطلب",
       "quantity": "الكمية",
       "created": "تاريخ الإنشاء",
-      "partImage": "الصورة",
-      "orderImage": "الطلب",
-      "formImage": "النموذج"
+      "itemNumber": "العنصر",
+      "chassisNumber": "رقم الهيكل",
+      "attachments": "المرفقات",
+      "partImage": "صورة القطعة",
+      "orderImage": "صورة الطلب",
+      "formImage": "صورة الاستمارة"
     },
     "actions": {
       "submit": "إرسال",
