@@ -50,7 +50,7 @@ export default function AddressesPage() {
 
   const {
     handleSubmit,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors, isSubmitting },
     reset,
     setValue,
     watch,
@@ -436,6 +436,8 @@ export default function AddressesPage() {
                     variant="outline"
                     onClick={() => handleEdit(address)}
                     disabled={isDeleting}
+                    className="text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700"
+                    title={t("addresses.edit", "Edit")}
                   >
                     <Edit size={14} />
                   </Button>
@@ -444,7 +446,8 @@ export default function AddressesPage() {
                     variant="outline"
                     onClick={() => handleDelete(address.id)}
                     disabled={isDeleting}
-                    className="text-red-600 hover:text-white"
+                    className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 hover:text-red-700"
+                    title={t("addresses.delete", "Delete")}
                   >
                     {isDeleting ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
