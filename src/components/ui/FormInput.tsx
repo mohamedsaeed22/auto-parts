@@ -73,6 +73,7 @@ const FormInput = forwardRef<
       helpText,
       register,
       error,
+      errorNamespace = "profileFormErrors",
       value,
       onChange,
       className,
@@ -221,7 +222,7 @@ const FormInput = forwardRef<
               errorClassName
             )}
           >
-            {error}
+            {t(error, { ns: errorNamespace }) || error}
           </p>
         )}
       </div>

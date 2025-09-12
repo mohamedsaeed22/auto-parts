@@ -16,6 +16,8 @@ import {
   X,
   Upload,
   Globe2,
+  Copy,
+  Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import FormInput from "@/components/ui/FormInput";
@@ -64,6 +66,7 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [isCopied, setIsCopied] = useState(false);
 
   // React Hook Form setup
   const form = useForm<ProfileUpdateFormData>({
@@ -253,6 +256,23 @@ export default function ProfilePage() {
       showSuccess("Language changed successfully!");
     } catch {
       showError("Failed to change language. Please try again.");
+    }
+  };
+
+  const handleCopyCode = async () => {
+    if (!profile?.code) return;
+
+    try {
+      await navigator.clipboard.writeText(profile.code);
+      setIsCopied(true);
+      showSuccess(t("profile.codeCopied", "User code copied to clipboard!"));
+
+      // Reset the copied state after 3 seconds
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 3000);
+    } catch {
+      showError(t("profile.copyFailed", "Failed to copy code to clipboard"));
     }
   };
 
@@ -468,8 +488,29 @@ export default function ProfilePage() {
           <label className="block text-sm font-medium text-gray-700 mb-2">
             {t("profile.userCode")}
           </label>
-          <div className="px-3 py-2 bg-primary-50 text-primary-700 rounded-md font-mono text-center border border-primary-200 text-sm sm:text-base">
-            {profile.code}
+          <div className="relative">
+            <div className="px-3 py-2 bg-primary-50 text-primary-700 rounded-md font-mono text-center border border-primary-200 text-sm sm:text-base pr-12">
+              {profile.code}
+            </div>
+            <button
+              onClick={handleCopyCode}
+              className={`absolute top-1/2 -translate-y-1/2 right-2 p-1.5 rounded-md transition-all duration-200 ${
+                isCopied
+                  ? "bg-green-100 text-green-600"
+                  : "bg-primary-100 text-primary-600 hover:bg-primary-200"
+              }`}
+              title={
+                isCopied
+                  ? t("profile.copied", "Copied!")
+                  : t("profile.copyCode", "Copy code")
+              }
+            >
+              {isCopied ? (
+                <Check size={16} className="text-green-600" />
+              ) : (
+                <Copy size={16} className="text-primary-600" />
+              )}
+            </button>
           </div>
         </div>
 
@@ -488,11 +529,7 @@ export default function ProfilePage() {
                 shouldDirty: true,
               })
             }
-            error={
-              errors.name?.message
-                ? t(errors.name.message, { ns: "validation" })
-                : undefined
-            }
+            error={errors.name?.message}
             placeholder={t("profile.name")}
           />
         </div>
@@ -511,11 +548,7 @@ export default function ProfilePage() {
                 shouldDirty: true,
               })
             }
-            error={
-              errors.email?.message
-                ? t(errors.email.message, { ns: "validation" })
-                : undefined
-            }
+            error={errors.email?.message}
             placeholder={t(
               "profile.emailPlaceholder",
               "Enter email (optional)"
@@ -538,11 +571,7 @@ export default function ProfilePage() {
                 shouldDirty: true,
               })
             }
-            error={
-              errors.phone?.message
-                ? t(errors.phone.message, { ns: "validation" })
-                : undefined
-            }
+            error={errors.phone?.message}
             placeholder={t("profile.phone")}
           />
         </div>
@@ -580,11 +609,7 @@ export default function ProfilePage() {
                 shouldDirty: true,
               })
             }
-            error={
-              errors.manager_name?.message
-                ? t(errors.manager_name.message, { ns: "validation" })
-                : undefined
-            }
+            error={errors.manager_name?.message}
             placeholder={t("profile.managerName")}
           />
         </div>
@@ -604,11 +629,7 @@ export default function ProfilePage() {
                 shouldDirty: true,
               })
             }
-            error={
-              errors.address?.message
-                ? t(errors.address.message, { ns: "validation" })
-                : undefined
-            }
+            error={errors.address?.message}
             placeholder={t("profile.address")}
           />
         </div>
@@ -628,11 +649,7 @@ export default function ProfilePage() {
                 shouldDirty: true,
               })
             }
-            error={
-              errors.city?.message
-                ? t(errors.city.message, { ns: "validation" })
-                : undefined
-            }
+            error={errors.city?.message}
             placeholder={t("profile.city")}
           />
         </div>
@@ -652,11 +669,7 @@ export default function ProfilePage() {
                 shouldDirty: true,
               })
             }
-            error={
-              errors.state?.message
-                ? t(errors.state.message, { ns: "validation" })
-                : undefined
-            }
+            error={errors.state?.message}
             placeholder={t("profile.state")}
           />
         </div>
@@ -676,11 +689,7 @@ export default function ProfilePage() {
                 shouldDirty: true,
               })
             }
-            error={
-              errors.zip?.message
-                ? t(errors.zip.message, { ns: "validation" })
-                : undefined
-            }
+            error={errors.zip?.message}
             placeholder={t("profile.zip")}
           />
         </div>

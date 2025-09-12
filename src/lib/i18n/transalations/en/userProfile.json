@@ -60,7 +60,11 @@
     "regularUser": "Regular User",
     "emailPlaceholder": "Enter email (optional)",
     "updateSuccess": "Profile updated successfully!",
-    "updateError": "Failed to update profile. Please try again."
+    "updateError": "Failed to update profile. Please try again.",
+    "codeCopied": "User code copied to clipboard!",
+    "copyFailed": "Failed to copy code to clipboard",
+    "copied": "Copied!",
+    "copyCode": "Copy code"
   },
   "requests": {
     "title": "Requests",
