@@ -18,7 +18,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import FormSelect from "@/components/ui/FormSelect";
 import { useTranslation } from "react-i18next";
-import { useGetOrdersQuery } from "@/services/api/ordersApi";
+import {
+  useGetOrdersQuery,
+  useGetOrdersStatisticsQuery,
+} from "@/services/api/ordersApi";
 import type { Order, OrdersRequest } from "@/services/api/ordersApi";
 import OrderDetailsDialog from "./OrderDetailsDialog";
 
@@ -52,6 +55,13 @@ export default function OrdersPage() {
     error,
     refetch,
   } = useGetOrdersQuery(filters);
+
+  // Get orders statistics
+  const {
+    data: statisticsResponse,
+    isLoading: isStatisticsLoading,
+    error: statisticsError,
+  } = useGetOrdersStatisticsQuery();
 
   // Handle filter changes
   const handleFilterChange = (
@@ -181,6 +191,7 @@ export default function OrdersPage() {
 
   const orders = ordersResponse?.data?.items || [];
   const pagination = ordersResponse?.data?.pagination;
+  const statistics = statisticsResponse?.data?.statistics;
 
   return (
     <div className="p-4 sm:p-6 lg:p-8" dir={isRTL ? "rtl" : "ltr"}>
@@ -333,49 +344,66 @@ export default function OrdersPage() {
       </div>
 
       {/* Order Stats */}
-      {pagination && (
+      {statistics && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-blue-50 p-4 rounded-lg text-center">
-            <div className="text-2xl font-bold text-blue-600">
-              {pagination.total}
+          <div className="bg-[#b3984a]/10 p-4 rounded-lg text-center border border-[#b3984a]/20">
+            <div className="text-2xl font-bold text-[#b3984a]">
+              {statistics.total_orders}
             </div>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-[#272627] font-medium">
               {t("orders.stats.totalOrders")}
             </div>
           </div>
-          <div className="bg-green-50 p-4 rounded-lg text-center">
+          <div className="bg-green-50 p-4 rounded-lg text-center border border-green-200">
             <div className="text-2xl font-bold text-green-600">
-              {orders.filter((o) => o.status === "completed").length}
+              {statistics.completed_orders}
             </div>
             <div className="text-sm text-gray-600">
               {t("orders.stats.completedOrders")}
             </div>
           </div>
-          <div className="bg-yellow-50 p-4 rounded-lg text-center">
+          <div className="bg-yellow-50 p-4 rounded-lg text-center border border-yellow-200">
             <div className="text-2xl font-bold text-yellow-600">
-              {
-                orders.filter(
-                  (o) => o.status === "pending" || o.status === "processing"
-                ).length
-              }
+              {statistics.pending_orders}
             </div>
             <div className="text-sm text-gray-600">
               {t("orders.stats.pendingOrders")}
             </div>
           </div>
-          <div className="bg-purple-50 p-4 rounded-lg text-center">
-            <div className="text-2xl font-bold text-purple-600">
-              {formatCurrency(
-                orders.reduce(
-                  (sum, order) => sum + order.pricing.grand_total,
-                  0
-                ),
-                "USD"
-              )}
+          <div className="bg-red-50 p-4 rounded-lg text-center border border-red-200">
+            <div className="text-2xl font-bold text-red-600">
+              {statistics.cancelled_orders}
             </div>
             <div className="text-sm text-gray-600">
-              {t("orders.stats.totalSpent")}
+              {t("orders.stats.cancelledOrders")}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Statistics Loading State */}
+      {isStatisticsLoading && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          {[...Array(4)].map((_, index) => (
+            <div
+              key={index}
+              className="bg-gray-50 p-4 rounded-lg text-center animate-pulse"
+            >
+              <div className="h-8 bg-gray-200 rounded mb-2"></div>
+              <div className="h-4 bg-gray-200 rounded"></div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Statistics Error State */}
+      {statisticsError && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+          <div className="text-red-600 text-sm">
+            {t(
+              "orders.error.statisticsLoadFailed",
+              "Failed to load statistics"
+            )}
           </div>
         </div>
       )}

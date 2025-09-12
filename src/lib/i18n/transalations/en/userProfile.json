@@ -376,6 +376,7 @@
       "totalOrders": "Total Orders",
       "completedOrders": "Completed",
       "pendingOrders": "Pending",
+      "cancelledOrders": "Cancelled",
       "totalSpent": "Total Spent"
     }
   },

@@ -245,6 +245,19 @@ export interface OrdersRequest {
   page?: number;
 }
 
+// Orders statistics interface
+export interface OrdersStatistics {
+  total_orders: number;
+  pending_orders: number;
+  completed_orders: number;
+  cancelled_orders: number;
+}
+
+// Orders statistics response interface
+export interface OrdersStatisticsResponse {
+  statistics: OrdersStatistics;
+}
+
 // Create orders API using injectEndpoints
 export const ordersApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -321,6 +334,13 @@ export const ordersApi = api.injectEndpoints({
         { type: "Orders", id: orderNumber },
       ],
     }),
+    getOrdersStatistics: builder.query<
+      ApiResponse<OrdersStatisticsResponse>,
+      void
+    >({
+      query: () => "/orders/statistics",
+      providesTags: ["Orders"],
+    }),
   }),
 });
 
@@ -328,4 +348,5 @@ export const {
   useGetOrdersQuery,
   useGetOrderDetailsQuery,
   useCreateOrderMutation,
+  useGetOrdersStatisticsQuery,
 } = ordersApi;

@@ -372,6 +372,7 @@
       "totalOrders": "إجمالي الطلبات",
       "completedOrders": "مكتملة",
       "pendingOrders": "قيد الانتظار",
+      "cancelledOrders": "ملغية",
       "totalSpent": "إجمالي الإنفاق"
     }
   },
