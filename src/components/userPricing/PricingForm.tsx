@@ -26,6 +26,7 @@ interface PricingFormProps {
   onSubmit: (data: UserPricingFormData) => void;
   isAuthenticated: boolean;
   isRegistrationComplete: boolean;
+  userType?: "shop" | "workshop" | null;
 }
 
 export function PricingForm({
@@ -39,6 +40,7 @@ export function PricingForm({
   onSubmit,
   isAuthenticated,
   isRegistrationComplete,
+  userType: userProfileType,
 }: PricingFormProps) {
   const { t } = useTranslation("userPricing");
   const router = useRouter();
@@ -56,7 +58,11 @@ export function PricingForm({
   } = form;
 
   // Watch userType to conditionally render fields
-  const userType = watch("userType");
+  const formUserType = watch("userType");
+
+  // Use form userType for unauthenticated users, or userProfileType for authenticated users
+  const currentUserType =
+    isAuthenticated && isRegistrationComplete ? userProfileType : formUserType;
 
   const resetImageInputs = () => {
     if (partImageInputRef.current) partImageInputRef.current.value = "";
@@ -108,8 +114,8 @@ export function PricingForm({
           </div>
         ) : null}
       </>
-      {/* User Type Selection - Only show when user is not authenticated */}
-      {!isAuthenticated || !isRegistrationComplete && (
+      {/* User Type Selection - Show for unauthenticated users or users with incomplete registration */}
+      {(!isAuthenticated || !isRegistrationComplete) && (
         <div className="mb-6">
           <UserTypeSelector control={control} />
         </div>
@@ -123,10 +129,10 @@ export function PricingForm({
           </div>
           <h2 className="text-2xl font-semibold text-logo-black mb-2">
             {t("form.title")}
-            {userType && (
+            {currentUserType && (
               <span className="text-lg font-normal text-gray-600 ml-2">
                 -{" "}
-                {userType === "workshop"
+                {currentUserType === "workshop"
                   ? t("form.userType.workshop")
                   : t("form.userType.shop")}
               </span>
@@ -146,7 +152,7 @@ export function PricingForm({
           />
 
           {/* User Code Input - Only for Workshop */}
-          {userType === "workshop" && (
+          {currentUserType === "workshop" && (
             <FormInput
               label={t("form.fields.userCode.label")}
               icon={User}
@@ -169,7 +175,7 @@ export function PricingForm({
           />
 
           {/* Chassis Number Input - Only for Workshop */}
-          {userType === "workshop" && (
+          {currentUserType === "workshop" && (
             <FormInput
               label={t("form.fields.chassisNumber.label")}
               icon={Car}
@@ -181,7 +187,7 @@ export function PricingForm({
           )}
 
           {/* Image Uploads - Only for Workshop */}
-          {userType === "workshop" && (
+          {currentUserType === "workshop" && (
             <div className="space-y-4">
               <h3 className="text-lg font-medium text-gray-900">
                 {t("form.images.title")} ({t("form.images.required")})
@@ -227,7 +233,7 @@ export function PricingForm({
         </form>
 
         {/* Additional Information */}
-        <InformationPanel userType={userType} />
+        <InformationPanel userType={currentUserType || "workshop"} />
       </div>
     </div>
   );

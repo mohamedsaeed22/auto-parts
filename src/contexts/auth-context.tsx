@@ -35,11 +35,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Check for stored auth data on mount
-    const storedUser = storage.getUser();
-    if (storedUser) {
-      setUser(storedUser as User);
-    }
+    const checkAuth = () => {
+      const storedUser = storage.getUser();
+      if (storedUser) {
+        setUser(storedUser as User);
+      } else {
+        setUser(null);
+      }
+    };
+
+    checkAuth();
     setIsLoading(false);
+
+    // Listen for auth changes to update state reactively
+    const handleAuthChange = () => {
+      checkAuth();
+    };
+
+    window.addEventListener("authChange", handleAuthChange);
+
+    return () => {
+      window.removeEventListener("authChange", handleAuthChange);
+    };
   }, []);
 
   const login = async (token: string, user: User) => {

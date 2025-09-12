@@ -23,7 +23,7 @@ export type SavedUnifiedFormData = UserPricingFormData & {
   submittedAt: Date;
 };
 
-export function useUnifiedPricingForm() {
+export function useUnifiedPricingForm(userType?: "shop" | "workshop" | null) {
   const [savedForms, setSavedForms] = useState<SavedUnifiedFormData[]>([]);
   const [partImagePreview, setPartImagePreview] = useState<string | null>(null);
   const [requestImagePreview, setRequestImagePreview] = useState<string | null>(
@@ -59,13 +59,15 @@ export function useUnifiedPricingForm() {
     resolver: zodResolver(userPricingSchema),
     defaultValues: {
       ...defaultValues,
-      // Only set userType from storage if user is authenticated
-      // Otherwise, let the UserTypeSelector handle it
-      userType: isAuthenticated
-        ? getUserTypeFromStorage() === "shop"
-          ? "store"
-          : "workshop"
-        : "workshop",
+      // Set userType based on authentication status
+      // For authenticated users with complete registration, use their profile type
+      // For unauthenticated users, default to "workshop" to show the selector
+      userType:
+        isAuthenticated && userType
+          ? userType === "shop"
+            ? "store"
+            : "workshop"
+          : "workshop",
       // Set user code from storage if available
       userCode: getUserCodeFromStorage(),
     },

@@ -5,15 +5,14 @@ import { HeroSection } from "@/components/userPricing/HeroSection";
 import { PricingForm } from "@/components/userPricing/PricingForm";
 import { SavedFormsList } from "@/components/userPricing/SavedFormsList";
 import { useTranslation } from "react-i18next";
-import { storage } from "@/lib/storage";
+import { useAuthContext } from "@/contexts/auth-context";
 
 export default function UserPricingPage() {
   const { i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
 
-  // Check authentication status
-  const isAuthenticated = storage.isAuthenticated();
-  const isRegistrationComplete = storage.isRegistrationComplete();
+  // Use reactive authentication context instead of static storage checks
+  const { isAuthenticated, isRegistrationComplete, user } = useAuthContext();
 
   const {
     form,
@@ -28,7 +27,7 @@ export default function UserPricingPage() {
     onSubmit,
     deleteSavedForm,
     sendAllToBackend,
-  } = useUnifiedPricingForm();
+  } = useUnifiedPricingForm(user?.type as "shop" | "workshop" | undefined);
 
   // Form is now handled by the unified PricingForm component
 
@@ -44,7 +43,6 @@ export default function UserPricingPage() {
           <div className={`order-1 ${isRTL ? "lg:order-1" : "lg:order-1"}`}>
             <PricingForm
               form={form}
-              // Remove userType prop since it's now handled internally
               partImagePreview={partImagePreview}
               requestImagePreview={requestImagePreview}
               formImagePreview={formImagePreview}
@@ -54,6 +52,7 @@ export default function UserPricingPage() {
               onSubmit={onSubmit}
               isAuthenticated={isAuthenticated}
               isRegistrationComplete={isRegistrationComplete}
+              userType={user?.type as "shop" | "workshop" | undefined}
             />
           </div>
 

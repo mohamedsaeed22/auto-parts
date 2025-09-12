@@ -13,16 +13,31 @@ export function useRegistrationStatus() {
 
   useEffect(() => {
     // Check if user has incomplete registration
-    const authData = storage.getAuth();
-    const storedCode = storage.getRegistrationCode();
+    const checkRegistrationStatus = () => {
+      const authData = storage.getAuth();
+      const storedCode = storage.getRegistrationCode();
 
-    if (authData && !authData.user.is_registration_complete) {
-      setIsRegistrationIncomplete(true);
-      setRegistrationCode(storedCode);
-    } else {
-      setIsRegistrationIncomplete(false);
-      setRegistrationCode(null);
-    }
+      if (authData && !authData.user.is_registration_complete) {
+        setIsRegistrationIncomplete(true);
+        setRegistrationCode(storedCode);
+      } else {
+        setIsRegistrationIncomplete(false);
+        setRegistrationCode(null);
+      }
+    };
+
+    checkRegistrationStatus();
+
+    // Listen for auth changes to update registration status reactively
+    const handleAuthChange = () => {
+      checkRegistrationStatus();
+    };
+
+    window.addEventListener("authChange", handleAuthChange);
+
+    return () => {
+      window.removeEventListener("authChange", handleAuthChange);
+    };
   }, []);
 
   const handleRegistrationIncomplete = (
