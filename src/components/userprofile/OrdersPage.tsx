@@ -16,13 +16,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import FormSelect from "@/components/ui/FormSelect";
 import { useTranslation } from "react-i18next";
 import { useGetOrdersQuery } from "@/services/api/ordersApi";
 import type { Order, OrdersRequest } from "@/services/api/ordersApi";
@@ -207,79 +201,42 @@ export default function OrdersPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Status Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t("orders.filters.status")}
-            </label>
-            <Select
-              value={filters.status}
-              onValueChange={(value) => handleFilterChange("status", value)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">
-                  {t("orders.filters.allStatuses")}
-                </SelectItem>
-                <SelectItem value="pending">
-                  {t("orders.statuses.pending")}
-                </SelectItem>
-                <SelectItem value="paid">
-                  {t("orders.statuses.paid")}
-                </SelectItem>
-                <SelectItem value="processing">
-                  {t("orders.statuses.processing")}
-                </SelectItem>
-                <SelectItem value="shipped">
-                  {t("orders.statuses.shipped")}
-                </SelectItem>
-                <SelectItem value="completed">
-                  {t("orders.statuses.completed")}
-                </SelectItem>
-                <SelectItem value="cancelled">
-                  {t("orders.statuses.cancelled")}
-                </SelectItem>
-                <SelectItem value="refunded">
-                  {t("orders.statuses.refunded")}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <FormSelect
+            label={t("orders.filters.status")}
+            value={filters.status}
+            onValueChange={(value: string) =>
+              handleFilterChange("status", value)
+            }
+            options={[
+              { value: "all", label: t("orders.filters.allStatuses") },
+              { value: "pending", label: t("orders.statuses.pending") },
+              { value: "paid", label: t("orders.statuses.paid") },
+              { value: "processing", label: t("orders.statuses.processing") },
+              { value: "shipped", label: t("orders.statuses.shipped") },
+              { value: "completed", label: t("orders.statuses.completed") },
+              { value: "cancelled", label: t("orders.statuses.cancelled") },
+              { value: "refunded", label: t("orders.statuses.refunded") },
+            ]}
+          />
 
           {/* Payment Status Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t("orders.filters.paymentStatus")}
-            </label>
-            <Select
-              value={filters.payment_status}
-              onValueChange={(value) =>
-                handleFilterChange("payment_status", value)
-              }
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">
-                  {t("orders.filters.allPaymentStatuses")}
-                </SelectItem>
-                <SelectItem value="pending">
-                  {t("orders.paymentStatuses.pending")}
-                </SelectItem>
-                <SelectItem value="paid">
-                  {t("orders.paymentStatuses.paid")}
-                </SelectItem>
-                <SelectItem value="failed">
-                  {t("orders.paymentStatuses.failed")}
-                </SelectItem>
-                <SelectItem value="refunded">
-                  {t("orders.paymentStatuses.refunded")}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <FormSelect
+            label={t("orders.filters.paymentStatus")}
+            value={filters.payment_status}
+            onValueChange={(value: string) =>
+              handleFilterChange("payment_status", value)
+            }
+            options={[
+              { value: "all", label: t("orders.filters.allPaymentStatuses") },
+              { value: "pending", label: t("orders.paymentStatuses.pending") },
+              { value: "paid", label: t("orders.paymentStatuses.paid") },
+              { value: "failed", label: t("orders.paymentStatuses.failed") },
+              {
+                value: "refunded",
+                label: t("orders.paymentStatuses.refunded"),
+              },
+            ]}
+          />
 
           {/* Date From Filter */}
           <div>
@@ -311,84 +268,50 @@ export default function OrdersPage() {
         {/* Sort and Per Page */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
           {/* Sort By */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t("orders.filters.sortBy")}
-            </label>
-            <Select
-              value={filters.sort_by}
-              onValueChange={(value) => handleFilterChange("sort_by", value)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="created_at">
-                  {t("orders.filters.createdAt")}
-                </SelectItem>
-                <SelectItem value="order_number">
-                  {t("orders.filters.orderNumber")}
-                </SelectItem>
-                <SelectItem value="total">
-                  {t("orders.filters.total")}
-                </SelectItem>
-                <SelectItem value="status">
-                  {t("orders.filters.status")}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <FormSelect
+            label={t("orders.filters.sortBy")}
+            value={filters.sort_by}
+            onValueChange={(value: string) =>
+              handleFilterChange("sort_by", value)
+            }
+            options={[
+              { value: "created_at", label: t("orders.filters.createdAt") },
+              { value: "order_number", label: t("orders.filters.orderNumber") },
+              { value: "total", label: t("orders.filters.total") },
+              { value: "status", label: t("orders.filters.status") },
+            ]}
+          />
 
           {/* Sort Direction */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t("orders.filters.sortDirection")}
-            </label>
-            <Select
-              value={filters.sort_direction}
-              onValueChange={(value) =>
-                handleFilterChange("sort_direction", value)
-              }
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="desc">
-                  {t("orders.filters.descending")}
-                </SelectItem>
-                <SelectItem value="asc">
-                  {t("orders.filters.ascending")}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <FormSelect
+            label={t("orders.filters.sortDirection")}
+            value={filters.sort_direction}
+            onValueChange={(value: string) =>
+              handleFilterChange("sort_direction", value)
+            }
+            options={[
+              { value: "desc", label: t("orders.filters.descending") },
+              { value: "asc", label: t("orders.filters.ascending") },
+            ]}
+          />
 
           {/* Per Page */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t("orders.filters.perPage")}
-            </label>
-            <Select
-              value={filters.per_page?.toString()}
-              onValueChange={handlePerPageChange}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="5">5</SelectItem>
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="20">20</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <FormSelect
+            label={t("orders.filters.perPage")}
+            value={filters.per_page?.toString()}
+            onValueChange={handlePerPageChange}
+            options={[
+              { value: "5", label: "5" },
+              { value: "10", label: "10" },
+              { value: "20", label: "20" },
+              { value: "50", label: "50" },
+            ]}
+          />
         </div>
 
         {/* Filter Actions */}
         <div className={`flex gap-2 mt-4 ${isRTL ? "flex-row" : ""}`}>
-          <Button onClick={clearFilters} variant="outline">
+          <Button onClick={clearFilters} variant="secondary" >
             {t("orders.filters.clear")}
           </Button>
           <Button onClick={() => refetch()} disabled={isLoading}>
