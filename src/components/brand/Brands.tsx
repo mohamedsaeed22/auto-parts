@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useGetBrandsQuery } from "@/services/hooks";
 import { Brand } from "@/services/api/types";
@@ -9,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import ViewAllButton from "@/components/ui/view-all-button";
 
 const Brands = () => {
+  const router = useRouter();
   const { t, i18n } = useTranslation("brands");
   const isRTL = i18n.language === "ar";
 
@@ -120,6 +122,10 @@ const Brands = () => {
     );
   }
 
+  const handleViewBrand = (brandId: number) => {
+    router.push(`/brands/${brandId}`);
+  };
+
   return (
     <section className="py-16 bg-neutral-50" dir={isRTL ? "rtl" : "ltr"}>
       <div className="container mx-auto px-4">
@@ -136,7 +142,8 @@ const Brands = () => {
           {brands.slice(0, 8).map((brand: Brand) => (
             <div
               key={brand.id}
-              className="group relative flex flex-col items-center"
+              className="group relative flex flex-col items-center cursor-pointer"
+              onClick={() => handleViewBrand(brand.id)}
             >
               {/* Brand logo container */}
               <div className="relative w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-full overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105 bg-neutral-100">
