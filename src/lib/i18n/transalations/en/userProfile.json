@@ -216,6 +216,7 @@
     "city": "City",
     "postalCode": "Postal Code",
     "type": "Address Type",
+    "selectType": "Select address type",
     "save": "Save",
     "cancel": "Cancel",
     "edit": "Edit",
@@ -248,6 +249,34 @@
       "city": "Riyadh",
       "detailedAddress": "Street, District, Building, Floor",
       "postalCode": "12345"
+    },
+    "validation": {
+      "addressType": {
+        "required": "Address type is required"
+      },
+      "name": {
+        "required": "Name is required",
+        "minLength": "Name must be at least 2 characters",
+        "maxLength": "Name must be less than 100 characters"
+      },
+      "phone": {
+        "required": "Phone number is required",
+        "invalid": "Please enter a valid Saudi phone number"
+      },
+      "city": {
+        "required": "City is required",
+        "minLength": "City must be at least 2 characters",
+        "maxLength": "City must be less than 50 characters"
+      },
+      "detailedAddress": {
+        "required": "Detailed address is required",
+        "minLength": "Address must be at least 10 characters",
+        "maxLength": "Address must be less than 500 characters"
+      },
+      "postalCode": {
+        "required": "Postal code is required",
+        "invalid": "Postal code must be 5 digits"
+      }
     }
   },
   "orders": {

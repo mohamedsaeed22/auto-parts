@@ -31,6 +31,12 @@ export interface FormInputProps {
   register?: UseFormRegisterReturn;
   error?: string;
 
+  // Controlled input props
+  value?: string;
+  onChange?: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
+
   // Styling and layout
   className?: string;
   containerClassName?: string;
@@ -67,6 +73,8 @@ const FormInput = forwardRef<
       helpText,
       register,
       error,
+      value,
+      onChange,
       className,
       containerClassName,
       labelClassName,
@@ -105,19 +113,36 @@ const FormInput = forwardRef<
 
     // Render different input types
     const renderInput = () => {
+      const inputProps = {
+        id,
+        name,
+        placeholder,
+        dir: isRTL ? "rtl" : ("ltr" as const),
+        disabled,
+        ...props,
+      };
+
+      // Use controlled props if provided, otherwise use register
+      const controlledProps =
+        value !== undefined && onChange
+          ? {
+              value,
+              onChange,
+            }
+          : register
+          ? {
+              ...register,
+            }
+          : {};
+
       if (type === "textarea") {
         return (
           <textarea
-            {...register}
-            {...props}
-            id={id}
-            name={name}
-            placeholder={placeholder}
+            {...inputProps}
+            {...controlledProps}
             rows={rows}
             maxLength={maxLength}
-            dir={isRTL ? "rtl" : "ltr"}
             className={cn(baseInputClasses, "resize-none")}
-            disabled={disabled}
             ref={ref as React.Ref<HTMLTextAreaElement>}
           />
         );
@@ -136,15 +161,10 @@ const FormInput = forwardRef<
           )}
 
           <input
-            {...register}
-            {...props}
+            {...inputProps}
+            {...controlledProps}
             type={type}
-            id={id}
-            name={name}
-            placeholder={placeholder}
-            dir={isRTL ? "rtl" : "ltr"}
             className={baseInputClasses}
-            disabled={disabled}
             ref={ref as React.Ref<HTMLInputElement>}
           />
 
