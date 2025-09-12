@@ -57,7 +57,10 @@
     "registrationComplete": "Registration Complete",
     "registrationIncomplete": "Registration Incomplete",
     "googleUser": "Google User",
-    "regularUser": "Regular User"
+    "regularUser": "Regular User",
+    "emailPlaceholder": "Enter email (optional)",
+    "updateSuccess": "Profile updated successfully!",
+    "updateError": "Failed to update profile. Please try again."
   },
   "requests": {
     "title": "Requests",

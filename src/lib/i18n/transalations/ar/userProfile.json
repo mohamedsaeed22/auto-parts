@@ -57,7 +57,10 @@
     "registrationComplete": "اكتمل التسجيل",
     "registrationIncomplete": "التسجيل غير مكتمل",
     "googleUser": "مستخدم جوجل",
-    "regularUser": "مستخدم عادي"
+    "regularUser": "مستخدم عادي",
+    "emailPlaceholder": "أدخل البريد الإلكتروني (اختياري)",
+    "updateSuccess": "تم تحديث الملف الشخصي بنجاح!",
+    "updateError": "فشل في تحديث الملف الشخصي. يرجى المحاولة مرة أخرى."
   },
   "requests": {
     "title": "طلبات التسعير",

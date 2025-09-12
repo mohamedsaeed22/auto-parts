@@ -1,5 +1,15 @@
 {
   "required": "This field is required",
+  "name": {
+    "required": "Name is required",
+    "minLength": "Name must be at least 2 characters",
+    "maxLength": "Name must not exceed 100 characters"
+  },
+  "managerName": {
+    "required": "Manager name is required",
+    "minLength": "Manager name must be at least 2 characters",
+    "maxLength": "Manager name must not exceed 100 characters"
+  },
   "phone": {
     "required": "Phone number is required",
     "length": "Phone number must be 11 digits",
@@ -7,5 +17,36 @@
   },
   "email": {
     "invalid": "Please enter a valid email address"
+  },
+  "address": {
+    "required": "Address is required",
+    "minLength": "Address must be at least 5 characters",
+    "maxLength": "Address must not exceed 200 characters"
+  },
+  "city": {
+    "required": "City is required",
+    "minLength": "City must be at least 2 characters",
+    "maxLength": "City must not exceed 50 characters"
+  },
+  "state": {
+    "required": "State is required",
+    "minLength": "State must be at least 2 characters",
+    "maxLength": "State must not exceed 50 characters"
+  },
+  "zip": {
+    "required": "ZIP code is required",
+    "minLength": "ZIP code must be at least 3 characters",
+    "maxLength": "ZIP code must not exceed 10 characters"
+  },
+  "taxNumber": {
+    "required": "Tax number is required",
+    "invalid": "Tax number must contain only numbers",
+    "minLength": "Tax number must be at least 6 digits",
+    "maxLength": "Tax number must not exceed 20 digits"
+  },
+  "avatar": {
+    "required": "Avatar is required",
+    "fileSize": "Avatar file size must not exceed 5MB",
+    "fileType": "Avatar must be a valid image file (JPEG, PNG, GIF, WebP)"
   }
 }

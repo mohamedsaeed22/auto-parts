@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   User,
   Mail,
@@ -16,6 +18,7 @@ import {
   Globe2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import FormInput from "@/components/ui/FormInput";
 import { useTranslation } from "react-i18next";
 import {
   useGetProfileQuery,
@@ -26,6 +29,11 @@ import { useLocale } from "@/hooks/useLocale";
 import { showSuccess, showError } from "@/lib/toast";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
+import {
+  profileUpdateSchema,
+  profileUpdateDefaultValues,
+  type ProfileUpdateFormData,
+} from "@/lib/validations/profileSchema";
 
 interface ProfileData {
   id: number;
@@ -53,10 +61,23 @@ export default function ProfilePage() {
   const isRTL = i18n.language === "ar";
 
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState<Partial<ProfileData>>({});
   const [selectedAvatar, setSelectedAvatar] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
+  // React Hook Form setup
+  const form = useForm<ProfileUpdateFormData>({
+    resolver: zodResolver(profileUpdateSchema),
+    defaultValues: profileUpdateDefaultValues,
+    mode: "onSubmit",
+  });
+
+  const {
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    setValue,
+    watch,
+  } = form;
 
   const {
     data: profileResponse,
@@ -83,19 +104,22 @@ export default function ProfilePage() {
   // Update form data when profile is loaded
   useEffect(() => {
     if (profile) {
-      setFormData(profile);
+      reset({
+        name: profile.name || "",
+        email: profile.email || "",
+        phone: profile.phone || "",
+        manager_name: profile.manager_name || "",
+        address: profile.address || "",
+        city: profile.city || "",
+        state: profile.state || "",
+        zip: profile.zip || "",
+        tax_number: profile.tax_number || "",
+        latitude: profile.latitude || "",
+        longitude: profile.longitude || "",
+        avatar: undefined,
+      });
     }
-  }, [profile]);
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  }, [profile, reset]);
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -116,22 +140,21 @@ export default function ProfilePage() {
     }
   };
 
-  const handleSave = async () => {
+  const onSubmit = async (data: ProfileUpdateFormData) => {
     if (!profile) return;
 
-    setIsLoading(true);
     try {
       const updatePayload = {
-        name: formData.name || undefined,
-        email: formData.email || undefined,
-        phone: formData.phone || undefined,
-        manager_name: formData.manager_name || undefined,
-        address: formData.address || undefined,
-        city: formData.city || undefined,
-        zip: formData.zip || undefined,
-        state: formData.state || undefined,
-        latitude: formData.latitude || undefined,
-        longitude: formData.longitude || undefined,
+        name: data.name || undefined,
+        email: data.email || undefined,
+        phone: data.phone || undefined,
+        manager_name: data.manager_name || undefined,
+        address: data.address || undefined,
+        city: data.city || undefined,
+        zip: data.zip || undefined,
+        state: data.state || undefined,
+        latitude: data.latitude || undefined,
+        longitude: data.longitude || undefined,
         avatar: selectedAvatar || undefined,
       };
 
@@ -145,17 +168,50 @@ export default function ProfilePage() {
       setAvatarPreview(null);
       setIsEditing(false);
 
-      showSuccess("Profile updated successfully!");
+      showSuccess(t("profile.updateSuccess", "Profile updated successfully!"));
     } catch {
-      showError("Failed to update profile. Please try again.");
-    } finally {
-      setIsLoading(false);
+      showError(
+        t("profile.updateError", "Failed to update profile. Please try again.")
+      );
     }
+  };
+
+  const handleEdit = () => {
+    if (profile) {
+      reset({
+        name: profile.name || "",
+        email: profile.email || "",
+        phone: profile.phone || "",
+        manager_name: profile.manager_name || "",
+        address: profile.address || "",
+        city: profile.city || "",
+        state: profile.state || "",
+        zip: profile.zip || "",
+        tax_number: profile.tax_number || "",
+        latitude: profile.latitude || "",
+        longitude: profile.longitude || "",
+        avatar: undefined,
+      });
+    }
+    setIsEditing(true);
   };
 
   const handleCancel = () => {
     if (profile) {
-      setFormData(profile);
+      reset({
+        name: profile.name || "",
+        email: profile.email || "",
+        phone: profile.phone || "",
+        manager_name: profile.manager_name || "",
+        address: profile.address || "",
+        city: profile.city || "",
+        state: profile.state || "",
+        zip: profile.zip || "",
+        tax_number: profile.tax_number || "",
+        latitude: profile.latitude || "",
+        longitude: profile.longitude || "",
+        avatar: undefined,
+      });
       setSelectedAvatar(null);
       setAvatarPreview(null);
     }
@@ -211,7 +267,7 @@ export default function ProfilePage() {
         </h2>
         {!isEditing ? (
           <Button
-            onClick={() => setIsEditing(true)}
+            onClick={handleEdit}
             className="flex items-center gap-2 w-full sm:w-auto"
           >
             <Edit size={16} />
@@ -224,11 +280,11 @@ export default function ProfilePage() {
             }`}
           >
             <Button
-              onClick={handleSave}
+              onClick={handleSubmit(onSubmit)}
               className="flex items-center gap-2"
-              disabled={isLoading}
+              disabled={isSubmitting}
             >
-              {isLoading ? (
+              {isSubmitting ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <Save size={16} />
@@ -395,100 +451,115 @@ export default function ProfilePage() {
 
         {/* Name */}
         <div className="col-span-full sm:col-span-1">
-          <label
-            className={`block text-sm font-medium text-gray-700 mb-2 ${
-              isRTL ? "text-right" : "text-left"
-            }`}
-          >
-            {t("profile.name")} *
-          </label>
           {isEditing ? (
-            <input
+            <FormInput
+              label={t("profile.name")}
               type="text"
-              name="name"
-              value={formData.name || ""}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-colors text-sm sm:text-base"
-              dir={isRTL ? "rtl" : "ltr"}
+              icon={User}
+              required
+              value={watch("name")}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setValue("name", e.target.value, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+              error={errors.name?.message}
+              placeholder={t("profile.name")}
             />
           ) : (
-            <div
-              className={`w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base ${
-                isRTL ? "flex-row" : ""
-              }`}
-            >
-              <User size={16} className="text-gray-400 flex-shrink-0" />
-              <span
-                className={`${isRTL ? "text-right" : "text-left"} truncate`}
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                {t("profile.name")} *
+              </label>
+              <div
+                className={`w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base ${
+                  isRTL ? "flex-row" : ""
+                }`}
               >
-                {profile.name}
-              </span>
+                <User size={16} className="text-gray-400 flex-shrink-0" />
+                <span
+                  className={`${isRTL ? "text-right" : "text-left"} truncate`}
+                >
+                  {profile.name}
+                </span>
+              </div>
             </div>
           )}
         </div>
 
         {/* Email */}
         <div className="col-span-full sm:col-span-1">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {t("profile.email")}
-          </label>
           {isEditing ? (
-            <input
+            <FormInput
+              label={t("profile.email")}
               type="email"
-              name="email"
-              value={formData.email || ""}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base"
-              placeholder="Enter email (optional)"
+              icon={Mail}
+              value={watch("email")}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setValue("email", e.target.value, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+              error={errors.email?.message}
+              placeholder={t(
+                "profile.emailPlaceholder",
+                "Enter email (optional)"
+              )}
             />
           ) : (
-            <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
-              <Mail size={16} className="text-gray-400 flex-shrink-0" />
-              <span className="truncate">
-                {profile.email || t("profile.noEmail")}
-              </span>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                {t("profile.email")}
+              </label>
+              <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
+                <Mail size={16} className="text-gray-400 flex-shrink-0" />
+                <span className="truncate">
+                  {profile.email || t("profile.noEmail")}
+                </span>
+              </div>
             </div>
           )}
         </div>
 
         {/* Phone */}
         <div className="col-span-full sm:col-span-1">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {t("profile.phone")} *
-          </label>
           {isEditing ? (
-            <input
+            <FormInput
+              label={t("profile.phone")}
               type="tel"
-              name="phone"
-              value={formData.phone || ""}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base"
+              icon={Phone}
+              required
+              value={watch("phone")}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setValue("phone", e.target.value, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+              error={errors.phone?.message}
+              placeholder={t("profile.phone")}
             />
           ) : (
-            <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
-              <Phone size={16} className="text-gray-400 flex-shrink-0" />
-              <span className="truncate">{profile.phone}</span>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                {t("profile.phone")} *
+              </label>
+              <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
+                <Phone size={16} className="text-gray-400 flex-shrink-0" />
+                <span className="truncate">{profile.phone}</span>
+              </div>
             </div>
           )}
         </div>
 
         {/* Type */}
         <div className="col-span-full sm:col-span-1">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {t("profile.type")} *
-          </label>
-          {isEditing ? (
-            <select
-              name="type"
-              value={formData.type || ""}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed text-sm sm:text-base"
-              disabled
-            >
-              <option value="shop">{t("profile.shop")}</option>
-              <option value="workshop">{t("profile.workshop")}</option>
-            </select>
-          ) : (
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              {t("profile.type")} *
+            </label>
             <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
               <Building size={16} className="text-gray-400 flex-shrink-0" />
               <span className="truncate">
@@ -497,154 +568,218 @@ export default function ProfilePage() {
                   : t("profile.workshop")}
               </span>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Manager Name */}
         <div className="col-span-full sm:col-span-1">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {t("profile.managerName")} *
-          </label>
           {isEditing ? (
-            <input
+            <FormInput
+              label={t("profile.managerName")}
               type="text"
-              name="manager_name"
-              value={formData.manager_name || ""}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base"
+              icon={User}
+              required
+              value={watch("manager_name")}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setValue("manager_name", e.target.value, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+              error={errors.manager_name?.message}
+              placeholder={t("profile.managerName")}
             />
           ) : (
-            <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
-              <User size={16} className="text-gray-400 flex-shrink-0" />
-              <span className="truncate">{profile.manager_name}</span>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                {t("profile.managerName")} *
+              </label>
+              <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
+                <User size={16} className="text-gray-400 flex-shrink-0" />
+                <span className="truncate">{profile.manager_name}</span>
+              </div>
             </div>
           )}
         </div>
 
         {/* Address */}
         <div className="col-span-full sm:col-span-1">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {t("profile.address")} *
-          </label>
           {isEditing ? (
-            <input
+            <FormInput
+              label={t("profile.address")}
               type="text"
-              name="address"
-              value={formData.address || ""}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base"
+              icon={MapPin}
+              required
+              value={watch("address")}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setValue("address", e.target.value, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+              error={errors.address?.message}
+              placeholder={t("profile.address")}
             />
           ) : (
-            <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
-              <MapPin size={16} className="text-gray-400 flex-shrink-0" />
-              <span className="truncate">{profile.address}</span>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                {t("profile.address")} *
+              </label>
+              <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
+                <MapPin size={16} className="text-gray-400 flex-shrink-0" />
+                <span className="truncate">{profile.address}</span>
+              </div>
             </div>
           )}
         </div>
 
         {/* City */}
         <div className="col-span-full sm:col-span-1">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {t("profile.city")} *
-          </label>
           {isEditing ? (
-            <input
+            <FormInput
+              label={t("profile.city")}
               type="text"
-              name="city"
-              value={formData.city || ""}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base"
+              icon={MapPin}
+              required
+              value={watch("city")}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setValue("city", e.target.value, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+              error={errors.city?.message}
+              placeholder={t("profile.city")}
             />
           ) : (
-            <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
-              <MapPin size={16} className="text-gray-400 flex-shrink-0" />
-              <span className="truncate">{profile.city}</span>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                {t("profile.city")} *
+              </label>
+              <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
+                <MapPin size={16} className="text-gray-400 flex-shrink-0" />
+                <span className="truncate">{profile.city}</span>
+              </div>
             </div>
           )}
         </div>
 
         {/* State */}
         <div className="col-span-full sm:col-span-1">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {t("profile.state")} *
-          </label>
           {isEditing ? (
-            <input
+            <FormInput
+              label={t("profile.state")}
               type="text"
-              name="state"
-              value={formData.state || ""}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base"
+              icon={MapPin}
+              required
+              value={watch("state")}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setValue("state", e.target.value, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+              error={errors.state?.message}
+              placeholder={t("profile.state")}
             />
           ) : (
-            <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
-              <MapPin size={16} className="text-gray-400 flex-shrink-0" />
-              <span className="truncate">{profile.state}</span>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                {t("profile.state")} *
+              </label>
+              <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
+                <MapPin size={16} className="text-gray-400 flex-shrink-0" />
+                <span className="truncate">{profile.state}</span>
+              </div>
             </div>
           )}
         </div>
 
         {/* ZIP */}
         <div className="col-span-full sm:col-span-1">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {t("profile.zip")} *
-          </label>
           {isEditing ? (
-            <input
+            <FormInput
+              label={t("profile.zip")}
               type="text"
-              name="zip"
-              value={formData.zip || ""}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base"
+              icon={MapPin}
+              required
+              value={watch("zip")}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setValue("zip", e.target.value, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+              error={errors.zip?.message}
+              placeholder={t("profile.zip")}
             />
           ) : (
-            <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
-              <MapPin size={16} className="text-gray-400 flex-shrink-0" />
-              <span className="truncate">{profile.zip}</span>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                {t("profile.zip")} *
+              </label>
+              <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
+                <MapPin size={16} className="text-gray-400 flex-shrink-0" />
+                <span className="truncate">{profile.zip}</span>
+              </div>
             </div>
           )}
         </div>
 
         {/* Tax Number */}
         <div className="col-span-full sm:col-span-1">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {t("profile.taxNumber")} *
-          </label>
           {isEditing ? (
-            <input
+            <FormInput
+              label={t("profile.taxNumber")}
               type="text"
-              name="tax_number"
-              value={formData.tax_number || ""}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base"
+              icon={FileText}
+              required
+              value={watch("tax_number")}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setValue("tax_number", e.target.value, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+              error={errors.tax_number?.message}
+              placeholder={t("profile.taxNumber")}
             />
           ) : (
-            <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
-              <FileText size={16} className="text-gray-400 flex-shrink-0" />
-              <span className="truncate">{profile.tax_number}</span>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                {t("profile.taxNumber")} *
+              </label>
+              <div className="px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-sm sm:text-base">
+                <FileText size={16} className="text-gray-400 flex-shrink-0" />
+                <span className="truncate">{profile.tax_number}</span>
+              </div>
             </div>
           )}
         </div>
 
         {/* Latitude */}
         <div className="col-span-full sm:col-span-1">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {t("profile.latitude")}
-          </label>
-          <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-gray-600 text-sm sm:text-base">
-            <Globe size={16} className="text-gray-400 flex-shrink-0" />
-            <span className="truncate">{profile.latitude}</span>
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              {t("profile.latitude")}
+            </label>
+            <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-gray-600 text-sm sm:text-base">
+              <Globe size={16} className="text-gray-400 flex-shrink-0" />
+              <span className="truncate">{profile.latitude}</span>
+            </div>
           </div>
         </div>
 
         {/* Longitude */}
         <div className="col-span-full sm:col-span-1">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {t("profile.longitude")}
-          </label>
-          <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-gray-600 text-sm sm:text-base">
-            <Globe size={16} className="text-gray-400 flex-shrink-0" />
-            <span className="truncate">{profile.longitude}</span>
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              {t("profile.longitude")}
+            </label>
+            <div className="w-full px-3 py-2 bg-gray-50 rounded-md flex items-center gap-2 text-gray-600 text-sm sm:text-base">
+              <Globe size={16} className="text-gray-400 flex-shrink-0" />
+              <span className="truncate">{profile.longitude}</span>
+            </div>
           </div>
         </div>
       </div>
