@@ -23,6 +23,7 @@ import {
   Car,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Pagination } from "@/components/ui";
 
 // Types
 interface Brand {
@@ -115,7 +116,7 @@ const BrandCard = ({
   t: (key: string) => string;
   onViewBrand: (id: number) => void;
 }) => (
-  <div className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100">
+  <div className="cursor-pointer group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100">
     {/* Brand Image */}
     <div className="relative aspect-square overflow-hidden bg-gray-50">
       <Image
@@ -139,7 +140,7 @@ const BrandCard = ({
       <div className="absolute inset-0  bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
         <Button
           onClick={() => onViewBrand(brand.id)}
-          className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white text-gray-900 hover:bg-gray-100"
+          className="cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white text-gray-900 hover:bg-gray-100"
         >
           {t("viewBrand") || "View Brand"}
         </Button>
@@ -272,6 +273,7 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
   const router = useRouter();
   const { t, i18n } = useTranslation("brands");
   const [viewMode] = useState<"grid" | "list">("grid");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const isRTL = i18n.language === "ar";
   const direction = isRTL ? "rtl" : "ltr";
@@ -285,9 +287,10 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
     isLoading,
     error,
     refetch,
-  } = useGetBrandsQuery();
+  } = useGetBrandsQuery({ page: currentPage });
 
   const brands = brandsResponse?.data?.items || [];
+  const pagination = brandsResponse?.data?.pagination;
 
   const handleGoBack = () => {
     router.back();
@@ -295,6 +298,12 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
 
   const handleViewBrand = (brandId: number) => {
     router.push(`/brands/${brandId}`);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to top when page changes
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // Handle loading state
@@ -398,7 +407,9 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
             {t("foundBrands") || "Found Brands"}
           </h2>
           <p className="text-gray-600">
-            {t("brandsCount") || `${brands.length} premium brands available`}
+            {pagination
+              ? `${pagination.total} premium brands available`
+              : `${brands.length} premium brands available`}
           </p>
         </div>
 
@@ -433,6 +444,24 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
                 onViewBrand={handleViewBrand}
               />
             ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {brands.length > 0 && pagination && pagination.last_page > 1 && (
+          <div className="mt-12">
+            <Pagination
+              currentPage={pagination.current_page || 1}
+              totalPages={pagination.last_page || 1}
+              totalItems={pagination.total || brands.length}
+              itemsPerPage={pagination.per_page || 12}
+              onPageChange={handlePageChange}
+              showInfo={true}
+              showFirstLast={true}
+              maxVisiblePages={5}
+              size="lg"
+              variant="outline"
+            />
           </div>
         )}
 
