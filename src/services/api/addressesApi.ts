@@ -25,19 +25,22 @@ export const addressesApi = api.injectEndpoints({
     createAddress: builder.mutation<ApiResponse<Address>, CreateAddressRequest>(
       {
         query: (data) => {
-          const formData = new FormData();
-          formData.append("address_type", data.address_type);
-          formData.append("name", data.name);
-          formData.append("phone", data.phone);
-          formData.append("city", data.city);
-          formData.append("detailed_address", data.detailed_address);
-          formData.append("postal_code", data.postal_code);
-          formData.append("is_default", data.is_default ? "1" : "0");
+          const urlEncodedData = new URLSearchParams();
+          urlEncodedData.append("address_type", data.address_type);
+          urlEncodedData.append("name", data.name);
+          urlEncodedData.append("phone", data.phone);
+          urlEncodedData.append("city", data.city);
+          urlEncodedData.append("detailed_address", data.detailed_address);
+          urlEncodedData.append("postal_code", data.postal_code);
+          urlEncodedData.append("is_default", data.is_default ? "1" : "0");
 
           return {
             url: "/addresses",
             method: "POST",
-            body: formData,
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: urlEncodedData.toString(),
           };
         },
         invalidatesTags: ["Addresses"],
@@ -50,19 +53,22 @@ export const addressesApi = api.injectEndpoints({
       { id: number } & UpdateAddressRequest
     >({
       query: ({ id, ...data }) => {
-        const formData = new FormData();
-        formData.append("address_type", data.address_type);
-        formData.append("name", data.name);
-        formData.append("phone", data.phone);
-        formData.append("city", data.city);
-        formData.append("detailed_address", data.detailed_address);
-        formData.append("postal_code", data.postal_code);
-        formData.append("is_default", data.is_default ? "1" : "0");
+        const urlEncodedData = new URLSearchParams();
+        urlEncodedData.append("address_type", data.address_type);
+        urlEncodedData.append("name", data.name);
+        urlEncodedData.append("phone", data.phone);
+        urlEncodedData.append("city", data.city);
+        urlEncodedData.append("detailed_address", data.detailed_address);
+        urlEncodedData.append("postal_code", data.postal_code);
+        urlEncodedData.append("is_default", data.is_default ? "1" : "0");
 
         return {
           url: `/addresses/${id}`,
           method: "PUT",
-          body: formData,
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: urlEncodedData.toString(),
         };
       },
       invalidatesTags: ["Addresses"],
