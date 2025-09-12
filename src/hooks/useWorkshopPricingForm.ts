@@ -193,7 +193,7 @@ export function useWorkshopPricingForm() {
 
       // Clear saved forms after successful submission
       setSavedForms([]);
-      showSuccess(t("success.requestSent") || "تم إرسال الطلب بنجاح!");
+      showSuccess(t("success.requestSent") || "Request sent successfully!");
 
       console.log("Request created successfully:", result);
     } catch (error: unknown) {

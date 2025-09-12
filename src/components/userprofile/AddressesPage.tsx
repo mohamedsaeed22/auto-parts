@@ -82,17 +82,17 @@ export default function AddressesPage() {
       !formData.detailed_address ||
       !formData.postal_code
     ) {
-      showError("Please fill in all required fields.");
+      showError(t("addresses.errors.fillRequiredFields"));
       return;
     }
 
     try {
       await createAddress(formData).unwrap();
-      showSuccess("Address added successfully!");
+      showSuccess(t("addresses.success.addSuccess"));
       resetForm();
       refetch();
     } catch {
-      showError("Failed to add address. Please try again.");
+      showError(t("addresses.errors.addFailed"));
     }
   };
 
@@ -120,7 +120,7 @@ export default function AddressesPage() {
       !formData.detailed_address ||
       !formData.postal_code
     ) {
-      showError("Please fill in all required fields.");
+      showError(t("addresses.errors.fillRequiredFields"));
       return;
     }
 
@@ -129,11 +129,11 @@ export default function AddressesPage() {
         id: editingId,
         ...formData,
       }).unwrap();
-      showSuccess("Address updated successfully!");
+      showSuccess(t("addresses.success.updateSuccess"));
       resetForm();
       refetch();
     } catch {
-      showError("Failed to update address. Please try again.");
+      showError(t("addresses.errors.updateFailed"));
     }
   };
 
@@ -146,19 +146,12 @@ export default function AddressesPage() {
     if (!pendingDeleteId) return;
     try {
       await deleteAddress(pendingDeleteId).unwrap();
-      showSuccess(
-        t("addresses.deleteSuccess", "Address deleted successfully!")
-      );
+      showSuccess(t("addresses.success.deleteSuccess"));
       setShowDeleteDialog(false);
       setPendingDeleteId(null);
       refetch();
     } catch {
-      showError(
-        t(
-          "addresses.deleteFailed",
-          "Failed to delete address. Please try again."
-        )
-      );
+      showError(t("addresses.errors.deleteFailed"));
     }
   };
 
@@ -191,13 +184,17 @@ export default function AddressesPage() {
   if (error) {
     return (
       <div className="p-8 text-center">
-        <div className="text-red-600 mb-2">Failed to load addresses</div>
+        <div className="text-red-600 mb-2">
+          {t("addresses.errors.loadFailed")}
+        </div>
         <p className="text-gray-600 mb-4">
-          Please try refreshing the page or contact support if the problem
-          persists.
+          {t(
+            "addresses.errors.retryMessage",
+            "Please try refreshing the page or contact support if the problem persists."
+          )}
         </p>
         <Button onClick={() => refetch()} variant="outline">
-          Retry
+          {t("addresses.errors.retry", "Retry")}
         </Button>
       </div>
     );
@@ -272,7 +269,7 @@ export default function AddressesPage() {
                 className={`w-full px-3 py-2 border border-gray-300 rounded-md ${
                   isRTL ? "text-right" : "text-left"
                 }`}
-                placeholder={isRTL ? "الاسم الكامل" : "Full Name"}
+                placeholder={t("addresses.placeholders.fullName", "Full Name")}
                 dir={isRTL ? "rtl" : "ltr"}
               />
             </div>
@@ -292,7 +289,10 @@ export default function AddressesPage() {
                 className={`w-full px-3 py-2 border border-gray-300 rounded-md ${
                   isRTL ? "text-right" : "text-left"
                 }`}
-                placeholder="+966 50 123 4567"
+                placeholder={t(
+                  "addresses.placeholders.phone",
+                  "+966 50 123 4567"
+                )}
                 dir="ltr"
               />
             </div>
@@ -312,7 +312,7 @@ export default function AddressesPage() {
                 className={`w-full px-3 py-2 border border-gray-300 rounded-md ${
                   isRTL ? "text-right" : "text-left"
                 }`}
-                placeholder={isRTL ? "الرياض" : "Riyadh"}
+                placeholder={t("addresses.placeholders.city", "Riyadh")}
                 dir={isRTL ? "rtl" : "ltr"}
               />
             </div>
@@ -332,11 +332,10 @@ export default function AddressesPage() {
                   isRTL ? "text-right" : "text-left"
                 }`}
                 rows={3}
-                placeholder={
-                  isRTL
-                    ? "الشارع، الحي، المبنى، الطابق"
-                    : "Street, District, Building, Floor"
-                }
+                placeholder={t(
+                  "addresses.placeholders.detailedAddress",
+                  "Street, District, Building, Floor"
+                )}
                 dir={isRTL ? "rtl" : "ltr"}
               />
             </div>
@@ -356,7 +355,7 @@ export default function AddressesPage() {
                 className={`w-full px-3 py-2 border border-gray-300 rounded-md ${
                   isRTL ? "text-right" : "text-left"
                 }`}
-                placeholder="12345"
+                placeholder={t("addresses.placeholders.postalCode", "12345")}
                 dir="ltr"
               />
             </div>
@@ -403,14 +402,9 @@ export default function AddressesPage() {
         <div className="text-center py-12">
           <MapPin size={64} className="text-gray-300 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-600 mb-2">
-            {t("addresses.noAddresses", "No addresses yet")}
+            {t("addresses.noAddresses")}
           </h3>
-          <p className="text-gray-500">
-            {t(
-              "addresses.addFirstAddress",
-              "Add your first address to get started."
-            )}
-          </p>
+          <p className="text-gray-500">{t("addresses.addFirstAddress")}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -438,7 +432,7 @@ export default function AddressesPage() {
                     variant="outline"
                     onClick={() => handleDelete(address.id)}
                     disabled={isDeleting}
-                    className="text-red-600 hover:text-red-700"
+                    className="text-red-600 hover:text-white"
                   >
                     {isDeleting ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -493,13 +487,10 @@ export default function AddressesPage() {
       <ConfirmDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
-        title={t("addresses.deleteTitle", "Delete address")}
-        description={t(
-          "addresses.deleteDescription",
-          "Are you sure you want to delete this address?"
-        )}
-        cancelLabel={t("addresses.cancel", "Cancel")}
-        confirmLabel={t("addresses.confirm", "Confirm")}
+        title={t("addresses.deleteTitle")}
+        description={t("addresses.deleteDescription")}
+        cancelLabel={t("addresses.cancel")}
+        confirmLabel={t("addresses.confirm")}
         onConfirm={confirmDelete}
         confirmDisabled={isDeleting}
         confirmVariant="destructive"

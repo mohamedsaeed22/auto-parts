@@ -227,7 +227,28 @@
     "add": "Add",
     "update": "Update",
     "noAddresses": "No addresses yet",
-    "addFirstAddress": "Add your first address to get started."
+    "addFirstAddress": "Add your first address to get started.",
+    "success": {
+      "addSuccess": "Address added successfully!",
+      "updateSuccess": "Address updated successfully!",
+      "deleteSuccess": "Address deleted successfully!"
+    },
+    "errors": {
+      "addFailed": "Failed to add address. Please try again.",
+      "updateFailed": "Failed to update address. Please try again.",
+      "deleteFailed": "Failed to delete address. Please try again.",
+      "loadFailed": "Failed to load addresses",
+      "fillRequiredFields": "Please fill in all required fields.",
+      "retryMessage": "Please try refreshing the page or contact support if the problem persists.",
+      "retry": "Retry"
+    },
+    "placeholders": {
+      "fullName": "Full Name",
+      "phone": "+966 50 123 4567",
+      "city": "Riyadh",
+      "detailedAddress": "Street, District, Building, Floor",
+      "postalCode": "12345"
+    }
   },
   "orders": {
     "title": "Orders",

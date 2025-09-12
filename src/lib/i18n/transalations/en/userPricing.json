@@ -98,6 +98,15 @@
       "backendReady": "Ready to send data to backend"
     }
   },
+  "success": {
+    "requestSent": "Request sent successfully!",
+    "formSaved": "Form saved successfully!"
+  },
+  "errors": {
+    "noDataToSend": "No data to send!",
+    "sendFailed": "Failed to send request. Please try again.",
+    "saveFailed": "Failed to save form. Please try again."
+  },
   "validation": {
     "partName": {
       "required": "Part name is required",
