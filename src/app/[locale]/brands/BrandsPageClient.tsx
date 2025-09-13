@@ -40,18 +40,18 @@ const HeroSection = ({ t }: { t: (key: string) => string }) => (
   <div className="bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-white py-16">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <Building2 className="h-8 w-8 text-white/70" />
-          <h1 className="text-4xl md:text-5xl font-bold">
+        <div className="flex items-center justify-center gap-2 md:gap-3 mb-4 flex-wrap">
+          <Building2 className="h-6 w-6 md:h-8 md:w-8 text-white/70" />
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">
             {t("hero.title") || "Premium Brands"}
           </h1>
-          <Award className="h-8 w-8 text-white/70" />
+          <Award className="h-6 w-6 md:h-8 md:w-8 text-white/70" />
         </div>
-        <p className="text-xl md:text-2xl text-white/80 max-w-3xl mx-auto mb-6">
+        <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/80 max-w-3xl mx-auto mb-6">
           {t("hero.subtitle") ||
             "Discover world-class automotive brands and premium quality parts"}
         </p>
-        <div className="flex items-center justify-center gap-6 text-white/70">
+        <div className="flex items-center justify-center gap-3 md:gap-6 text-white/70 flex-wrap">
           <div className="flex items-center gap-2">
             <Shield className="h-5 w-5" />
             <span>{t("hero.feature1") || "Trusted Quality"}</span>
@@ -82,7 +82,10 @@ const BrandCard = ({
   t: (key: string) => string;
   onViewBrand: (id: number) => void;
 }) => (
-  <div className="cursor-pointer group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100">
+  <div
+    className="cursor-pointer group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100"
+    onClick={() => onViewBrand(brand.id)}
+  >
     {/* Brand Image */}
     <div className="relative aspect-square overflow-hidden bg-gray-50">
       <Image
@@ -105,7 +108,10 @@ const BrandCard = ({
       {/* Hover Overlay */}
       <div className="absolute inset-0  bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
         <Button
-          onClick={() => onViewBrand(brand.id)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onViewBrand(brand.id);
+          }}
           className="cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white text-gray-900 hover:bg-gray-100"
         >
           {t("viewBrand") || "View Brand"}
@@ -164,7 +170,10 @@ const BrandCard = ({
 
         <div className="pt-3 border-t border-gray-100">
           <Button
-            onClick={() => onViewBrand(brand.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onViewBrand(brand.id);
+            }}
             className="w-full bg-primary hover:bg-primary/90 text-white"
           >
             {t("exploreBrand") || "Explore Brand"}

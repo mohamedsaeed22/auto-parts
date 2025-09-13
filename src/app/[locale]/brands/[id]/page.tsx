@@ -305,17 +305,11 @@ export default function BrandPage() {
             isRTL ? "flex-row" : ""
           }`}
         >
-          {isRTL ? (
-            <>
-              <span>{t("backButton") || "Back"}</span>
-              <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
-            </>
-          ) : (
-            <>
-              <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
-              <span>{t("backButton") || "Back"}</span>
-            </>
-          )}
+          <ArrowLeft
+            size={16}
+            className={isRTL ? "transform rotate-180" : ""}
+          />
+          <span>{t("backButton") || "Back"}</span>
         </button>
         <span>/</span>
         <span className="text-gray-900">{t("brands") || "Brands"}</span>
