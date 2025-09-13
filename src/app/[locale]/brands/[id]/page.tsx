@@ -1,11 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { useGetBrandsQuery } from "@/services/hooks";
+import { useGetBrandsQuery, useGetProductsMutation } from "@/services/hooks";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import { Product } from "@/services/api/types";
+import ProductCard from "@/components/product/ProductCard";
 import {
   ArrowLeft,
   Building2,
@@ -205,6 +207,35 @@ export default function BrandPage() {
   const brands = brandsResponse?.data?.items || [];
   const brand = brands.find((b: Brand) => b.id === brandId);
 
+  // Products state and API
+  const [products, setProducts] = useState<Product[]>([]);
+  const [productsLoading, setProductsLoading] = useState(false);
+  const [productsError, setProductsError] = useState<string | null>(null);
+  const [getProducts] = useGetProductsMutation();
+
+  // Fetch products for this brand
+  useEffect(() => {
+    if (brandId) {
+      setProductsLoading(true);
+      setProductsError(null);
+
+      getProducts({ brand_id: brandId })
+        .unwrap()
+        .then((response) => {
+          if (response.data?.items) {
+            setProducts(response.data.items);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching products:", error);
+          setProductsError(error.message || "Failed to load products");
+        })
+        .finally(() => {
+          setProductsLoading(false);
+        });
+    }
+  }, [brandId, getProducts]);
+
   const handleGoBack = () => {
     router.back();
   };
@@ -311,19 +342,64 @@ export default function BrandPage() {
           </p>
         </div>
 
-        <div className="text-center py-12">
-          <Package className="mx-auto h-16 w-16 text-gray-300 mb-4" />
-          <h3 className="text-lg font-semibold text-gray-600 mb-2">
-            {t("noProductsYet") || "No products available yet"}
-          </h3>
-          <p className="text-gray-500 mb-6">
-            {t("noProductsYetDesc") ||
-              "Products from this brand will be available soon."}
-          </p>
-          <Button onClick={handleGoBack} variant="outline">
-            {t("goBack") || "Go Back"}
-          </Button>
-        </div>
+        {/* Products Loading State */}
+        {productsLoading && (
+          <div className="text-center py-12">
+            <LoadingSpinner
+              message={t("loadingProducts") || "Loading products..."}
+            />
+          </div>
+        )}
+
+        {/* Products Error State */}
+        {productsError && (
+          <div className="text-center py-12">
+            <ErrorMessage
+              message={productsError}
+              onRetry={() => {
+                setProductsError(null);
+                getProducts({ brand_id: brandId })
+                  .unwrap()
+                  .then((response) => {
+                    if (response.data?.items) {
+                      setProducts(response.data.items);
+                    }
+                  })
+                  .catch((error) => {
+                    setProductsError(
+                      error.message || "Failed to load products"
+                    );
+                  });
+              }}
+            />
+          </div>
+        )}
+
+        {/* Products Grid */}
+        {!productsLoading && !productsError && products.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {products.map((product: Product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
+
+        {/* No Products State */}
+        {!productsLoading && !productsError && products.length === 0 && (
+          <div className="text-center py-12">
+            <Package className="mx-auto h-16 w-16 text-gray-300 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-600 mb-2">
+              {t("noProductsYet") || "No products available yet"}
+            </h3>
+            <p className="text-gray-500 mb-6">
+              {t("noProductsYetDesc") ||
+                "Products from this brand will be available soon."}
+            </p>
+            <Button onClick={handleGoBack} variant="outline">
+              {t("goBack") || "Go Back"}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
