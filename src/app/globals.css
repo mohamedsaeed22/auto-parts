@@ -23,6 +23,26 @@
   -webkit-line-clamp: 3;
 }
 
+/* Prevent flash of unstyled content for 404 pages */
+.rtl-layout {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+.ltr-layout {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+/* Additional stability for RTL/LTR switching */
+.rtl-layout * {
+  direction: rtl;
+}
+
+.ltr-layout * {
+  direction: ltr;
+}
+
 @custom-variant dark (&:is(.dark *));
 *,
 body {

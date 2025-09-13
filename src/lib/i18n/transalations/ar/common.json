@@ -60,5 +60,16 @@
   "failedToLoadOffers": "فشل في تحميل العروض",
   "brandNotFound": "العلامة التجارية غير موجودة",
   "offerNotFound": "العرض غير موجود",
-  "productNotFound": "المنتج غير موجود"
+  "productNotFound": "المنتج غير موجود",
+  "pageNotFound": "الصفحة غير موجودة",
+  "pageNotFoundDesc": "عذراً، لم نتمكن من العثور على الصفحة التي تبحث عنها. قد تكون تم نقلها أو حذفها أو لا وجود لها.",
+  "goHome": "العودة للرئيسية",
+  "goBack": "رجوع",
+  "needHelp": "تحتاج مساعدة؟",
+  "searchProducts": "البحث عن المنتجات",
+  "browseCategories": "تصفح الفئات",
+  "viewBrands": "عرض العلامات التجارية",
+  "errorCode": "رمز الخطأ: 404",
+  "falAlGharbia": "فال الغربية لقطع غيار السيارات",
+  "home": "الرئيسية"
 }
