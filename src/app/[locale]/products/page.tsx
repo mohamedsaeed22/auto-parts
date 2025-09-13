@@ -26,7 +26,6 @@ import {
   DollarSign,
   Building2,
   FolderOpen,
-  Eye,
   Search as SearchIcon,
   X as CloseIcon,
 } from "lucide-react";
@@ -559,19 +558,6 @@ export default function ProductsPage({
 
           {/* Products Section */}
           <div className="lg:col-span-3">
-            {/* View Controls */}
-            <div
-              className={`flex items-center justify-end mb-6 ${
-                isRTL ? "flex-row" : ""
-              }`}
-            >
-              <ViewModeToggle
-                t={t}
-                viewMode={filters.view_mode}
-                onViewModeChange={updateViewMode}
-              />
-            </div>
-
             {/* Search Results Header */}
             {filters.search && (
               <div className={`mb-6 ${isRTL ? "text-right" : "text-left"}`}>
@@ -609,18 +595,28 @@ export default function ProductsPage({
               </div>
             )}
 
-            {/* Products Count */}
+            {/* Products Count and View Controls */}
             <div className={`mb-6 ${isRTL ? "text-right" : "text-left"}`}>
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  {t("foundProducts") || "Found Products"}
-                </h2>
-
-                {hasActiveFilters && (
-                  <p className="text-sm text-green-600 mt-1">
-                    {t("filtersApplied") || "Filters applied"}
-                  </p>
-                )}
+              <div
+                className={`flex items-center justify-between ${
+                  isRTL ? "flex-row" : ""
+                }`}
+              >
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    {t("foundProducts") || "Found Products"}
+                  </h2>
+                  {hasActiveFilters && (
+                    <p className="text-sm text-green-600 mt-1">
+                      {t("filtersApplied") || "Filters applied"}
+                    </p>
+                  )}
+                </div>
+                <ViewModeToggle
+                  t={t}
+                  viewMode={filters.view_mode}
+                  onViewModeChange={updateViewMode}
+                />
               </div>
             </div>
 
@@ -701,6 +697,9 @@ export default function ProductsPage({
                     }) => (
                       <ProductCard
                         key={product.id}
+                        variant={
+                          filters.view_mode === "list" ? "list" : "default"
+                        }
                         product={{
                           id: product.id,
                           name: product.name,
@@ -729,8 +728,9 @@ export default function ProductsPage({
                 </div>
 
                 {/* Pagination */}
+                {/* center the pagination */}
                 {products.length > 0 && (
-                  <div className="mt-12">
+                  <div className="mt-12 flex justify-center">
                     <Pagination
                       currentPage={pagination?.current_page || 1}
                       totalPages={pagination?.last_page || 1}

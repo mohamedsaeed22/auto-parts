@@ -19,7 +19,7 @@ import { storage } from "@/lib/storage";
 interface ProductCardProps {
   product: Product;
   index?: number;
-  variant?: "default" | "favourites" | "wishlist";
+  variant?: "default" | "favourites" | "wishlist" | "list";
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -271,6 +271,219 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
+  // List view layout
+  if (variant === "list") {
+    return (
+      <div className="group relative" dir={isRTL ? "rtl" : "ltr"}>
+        <Link href={`/product/${product.id}`}>
+          <div className="bg-card rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-border overflow-hidden">
+            <div className="flex flex-col sm:flex-row">
+              {/* Image Container */}
+              <div className="relative w-full sm:w-48 h-48 sm:h-40 overflow-hidden bg-neutral-100 flex-shrink-0 flex items-center justify-center">
+                <Image
+                  src={productImage}
+                  alt={productName}
+                  width={300}
+                  height={300}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+
+                {/* Action Buttons */}
+                <div
+                  className={`absolute top-2 ${
+                    isRTL ? "left-2" : "right-2"
+                  } flex flex-col gap-1`}
+                >
+                  <Button
+                    size="sm"
+                    variant={isInFavourites ? "default" : "outline"}
+                    className={`w-10 h-10 rounded-full shadow-lg transition-colors duration-300 ${
+                      isInFavourites
+                        ? "bg-red-500 border-red-500 hover:bg-red-600 text-white"
+                        : "bg-white border-neutral-200 hover:bg-gray-50"
+                    }`}
+                    onClick={(e) => {
+                      handleToggleFavouriteWithFeedback(e);
+                    }}
+                    disabled={isLoading(`favourite-${product.id}`)}
+                  >
+                    {isLoading(`favourite-${product.id}`) ? (
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-neutral-600"></div>
+                    ) : (
+                      <Heart
+                        size={20}
+                        className={`${
+                          isInFavourites
+                            ? "text-white fill-white"
+                            : "text-neutral-700"
+                        }`}
+                      />
+                    )}
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className={`w-10 h-10 rounded-full shadow-lg transition-colors duration-300 !border-2 ${
+                      isInWishlist
+                        ? "!bg-blue-500 !border-blue-500 hover:!bg-blue-600 !text-white"
+                        : "!bg-white !border-neutral-200 hover:!bg-gray-50 !text-neutral-700"
+                    }`}
+                    onClick={handleToggleWishlistWithFeedback}
+                    disabled={isLoading(`wishlist-${product.id}`)}
+                  >
+                    {isLoading(`wishlist-${product.id}`) ? (
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-neutral-600"></div>
+                    ) : (
+                      <Bookmark
+                        size={20}
+                        className={isInWishlist ? "fill-current" : ""}
+                      />
+                    )}
+                  </Button>
+                </div>
+
+                {/* Discount Badge */}
+                {hasDiscount && (
+                  <div
+                    className={`absolute top-2 ${isRTL ? "right-2" : "left-2"}`}
+                  >
+                    <div className="bg-accent text-white text-xs font-bold px-2 py-1 rounded shadow-sm">
+                      {discountInfo || "SALE"}
+                    </div>
+                  </div>
+                )}
+
+                {/* Offer Badge */}
+                {product.offer && (
+                  <div
+                    className={`absolute bottom-2 ${
+                      isRTL ? "right-2" : "left-2"
+                    }`}
+                  >
+                    <div className="bg-primary text-white text-xs font-bold px-2 py-1 rounded shadow-sm">
+                      OFFER
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Product Info */}
+              <div className="flex-1 p-4 flex flex-col justify-center">
+                <div>
+                  {/* Product Name */}
+                  <h3 className="text-lg font-semibold text-neutral-900 mb-2 group-hover:text-primary transition-colors">
+                    {productName}
+                  </h3>
+
+                  {/* Product Description */}
+                  {product.description && (
+                    <p className="text-sm text-neutral-600 mb-3 line-clamp-2">
+                      {product.description}
+                    </p>
+                  )}
+
+                  {/* Category and Brand */}
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {categoryName && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                        {categoryName}
+                      </span>
+                    )}
+                    {product.brand?.name && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        {product.brand.name}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Price and Add to Cart Section */}
+                <div className="flex items-center justify-between">
+                  {/* Price Section */}
+                  <div
+                    className={`flex items-center gap-2 ${
+                      isRTL ? "flex-row" : ""
+                    }`}
+                  >
+                    <span className="text-xl font-bold text-neutral-900">
+                      {isRTL
+                        ? `${t("currency")} ${productFinalPrice}`
+                        : `${productFinalPrice} ${t("currency")}`}
+                    </span>
+                    {hasDiscount && (
+                      <span className="text-sm text-neutral-500 line-through">
+                        {isRTL
+                          ? `${t("currency")} ${productPrice}`
+                          : `${productPrice} ${t("currency")}`}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Add to Cart Section */}
+                  {!isInCart ? (
+                    <Button
+                      size="sm"
+                      className="bg-primary hover:bg-primary/90 text-white rounded px-4 py-2 flex items-center gap-2 transition-colors duration-200"
+                      onClick={handleAddToCart}
+                      disabled={isItemLoading(product.id)}
+                    >
+                      {isItemLoading(product.id) ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      ) : (
+                        <ShoppingCart size={16} />
+                      )}
+                      <span>{t("addToCart")}</span>
+                    </Button>
+                  ) : (
+                    <div className="flex items-center bg-white border border-primary/20 rounded overflow-hidden shadow-sm">
+                      <Button
+                        onClick={handleDecreaseQuantity}
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 w-8 p-0 hover:bg-red-50 text-red-600 hover:text-red-700 rounded-none border-r border-primary/10 transition-colors duration-200"
+                        disabled={isItemLoading(product.id)}
+                      >
+                        {isItemLoading(product.id) ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600"></div>
+                        ) : cartItem?.quantity === 1 ? (
+                          <Trash size={14} />
+                        ) : (
+                          <Minus size={14} />
+                        )}
+                      </Button>
+
+                      <div className="h-8 px-3 flex items-center justify-center bg-primary/5 min-w-[32px]">
+                        <span className="text-sm font-semibold text-primary">
+                          {cartItem?.quantity}
+                        </span>
+                      </div>
+
+                      <Button
+                        onClick={handleIncreaseQuantity}
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 w-8 p-0 hover:bg-green-50 text-green-600 hover:text-green-700 rounded-none border-l border-primary/10 transition-colors duration-200"
+                        disabled={isItemLoading(product.id)}
+                      >
+                        {isItemLoading(product.id) ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+                        ) : (
+                          <Plus size={14} />
+                        )}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </Link>
+      </div>
+    );
+  }
+
+  // Default grid view layout
   return (
     <div className="group relative" dir={isRTL ? "rtl" : "ltr"}>
       <Link href={`/product/${product.id}`}>
@@ -296,7 +509,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 <Button
                   size="sm"
                   variant={isInFavourites ? "default" : "outline"}
-                  className={`w-10 h-10 rounded-full shadow-lg transition-colors duration-300 ${
+                  className={`w-12 h-12 rounded-full shadow-lg transition-colors duration-300 ${
                     isInFavourites
                       ? "bg-red-500 border-red-500 hover:bg-red-600 text-white"
                       : "bg-white border-neutral-200 hover:bg-gray-50"
@@ -311,10 +524,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   disabled={isLoading(`favourite-${product.id}`)}
                 >
                   {isLoading(`favourite-${product.id}`) ? (
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-neutral-600"></div>
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-neutral-600"></div>
                   ) : (
                     <Heart
-                      size={22}
+                      size={24}
                       className={`${
                         isInFavourites
                           ? "text-white fill-white"
@@ -367,7 +580,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 <Button
                   size="sm"
                   variant="outline"
-                  className={`w-10 h-10 rounded-full shadow-lg transition-colors duration-300 !border-2 ${
+                  className={`w-12 h-12 rounded-full shadow-lg transition-colors duration-300 !border-2 ${
                     isInWishlist
                       ? "!bg-blue-500 !border-blue-500 hover:!bg-blue-600 !text-white"
                       : "!bg-white !border-neutral-200 hover:!bg-gray-50 !text-neutral-700"
@@ -381,10 +594,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   disabled={isLoading(`wishlist-${product.id}`)}
                 >
                   {isLoading(`wishlist-${product.id}`) ? (
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-neutral-600"></div>
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-neutral-600"></div>
                   ) : (
                     <Bookmark
-                      size={22}
+                      size={24}
                       className={isInWishlist ? "fill-current" : ""}
                       style={{
                         color: isInWishlist ? "#ffffff" : "#374151",

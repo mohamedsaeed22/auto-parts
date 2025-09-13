@@ -14,7 +14,7 @@ export interface PaginationProps {
   showInfo?: boolean;
   showFirstLast?: boolean;
   maxVisiblePages?: number;
-  size?: "sm" | "default" | "lg";
+  size?: "sm" | "md" | "default" | "lg";
   variant?: "default" | "outline" | "ghost";
 }
 
@@ -28,7 +28,7 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
       // showInfo = true,
       showFirstLast = true,
       maxVisiblePages = 5,
-      size = "default",
+      size = "md",
       variant = "outline",
     },
     ref
@@ -87,6 +87,8 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
       switch (size) {
         case "sm":
           return "h-8 px-2 text-xs";
+        case "md":
+          return "h-10 px-3 text-sm";
         case "lg":
           return "h-12 px-4 text-base";
         default:
