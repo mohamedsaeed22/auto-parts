@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchProductsMutation } from "@/services/api/productsApi";
-import { useDebounce } from "@/hooks/useDebounce";
 import { useLocale } from "@/hooks/useLocale";
 import { useTranslation } from "react-i18next";
 import { Search, X } from "lucide-react";
@@ -38,9 +37,10 @@ export default function SearchAutocomplete({
   const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
-  const lastSelectedProduct = useRef<string>("");
+  const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(
+    null
+  );
 
-  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const { currentLocale } = useLocale();
   const router = useRouter();
   const searchRef = useRef<HTMLDivElement>(null);
@@ -48,67 +48,61 @@ export default function SearchAutocomplete({
 
   const [searchProducts] = useSearchProductsMutation();
 
-  // Initialize lastSelectedProduct with current search query on mount (for page reloads)
-  useEffect(() => {
-    // Only set lastSelectedProduct if searchQuery exists and we haven't set it yet
-    if (searchQuery.trim() && !lastSelectedProduct.current) {
-      lastSelectedProduct.current = searchQuery.trim();
-    }
-  }, [searchQuery]); // Run when searchQuery changes
-
-  // Fetch search suggestions
-  useEffect(() => {
-    const fetchSuggestions = async () => {
-      if (debouncedSearchQuery.trim().length < 1) {
-        setSuggestions([]);
-        setShowSuggestions(false);
-        return;
-      }
-
-      // Don't show suggestions if the current query exactly matches the last selected product
-      if (debouncedSearchQuery.trim() === lastSelectedProduct.current) {
-        setSuggestions([]);
-        setShowSuggestions(false);
-        return;
-      }
-
-      setIsLoading(true);
-      try {
-        const result = await searchProducts({
-          name: debouncedSearchQuery.trim(),
-        });
-        if (result.data?.data?.items) {
-          setSuggestions(result.data.data.items.slice(0, 5)); // Limit to 5 suggestions
-          setShowSuggestions(true);
-        }
-      } catch (error) {
-        console.error("Error fetching search suggestions:", error);
-        setSuggestions([]);
-        setShowSuggestions(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchSuggestions();
-  }, [debouncedSearchQuery, searchProducts]);
-
-  // Handle input change
+  // Handle input change with debounce
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+
+    // Update the search query immediately for UI
     setSearchQuery(value);
     setSelectedIndex(-1);
 
-    // Clear the last selected product if user is typing something different
-    if (value !== lastSelectedProduct.current) {
-      lastSelectedProduct.current = "";
+    // Clear existing timer
+    if (debounceTimer) {
+      clearTimeout(debounceTimer);
     }
 
-    if (value.trim().length >= 1) {
-      setShowSuggestions(true);
-    } else {
-      setShowSuggestions(false);
+    // Clear suggestions if empty
+    if (value.trim().length === 0) {
       setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    // Set new timer for API call
+    const newTimer = setTimeout(async () => {
+      await fetchSuggestions(value.trim());
+    }, 500);
+
+    setDebounceTimer(newTimer);
+  };
+
+  // Fetch suggestions function
+  const fetchSuggestions = async (query: string) => {
+    if (query.length < 1) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const result = await searchProducts({ name: query });
+
+      if (result.data?.data?.items) {
+        const items = result.data.data.items.slice(0, 5); // Limit to 5 suggestions
+        setSuggestions(items);
+        setShowSuggestions(true);
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    } catch (error) {
+      console.error("Error fetching search suggestions:", error);
+      setSuggestions([]);
+      setShowSuggestions(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -116,9 +110,6 @@ export default function SearchAutocomplete({
   const handleSuggestionClick = (product: Product) => {
     setShowSuggestions(false);
     setSuggestions([]);
-
-    // Store the selected product name to prevent showing suggestions again
-    lastSelectedProduct.current = product.name;
 
     // Call the suggestion select callback if provided
     if (onSuggestionSelect) {
@@ -129,8 +120,6 @@ export default function SearchAutocomplete({
     router.push(
       `/${currentLocale}/products?search=${encodeURIComponent(product.name)}`
     );
-
-    // Don't clear the search input - let the URL sync handle it
   };
 
   // Handle keyboard navigation
@@ -187,12 +176,24 @@ export default function SearchAutocomplete({
     };
   }, []);
 
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
+    };
+  }, [debounceTimer]);
+
   // Clear search and suggestions
   const handleClear = () => {
     setSearchQuery("");
     setShowSuggestions(false);
     setSuggestions([]);
     setSelectedIndex(-1);
+    if (debounceTimer) {
+      clearTimeout(debounceTimer);
+    }
     onClear();
   };
 
@@ -285,16 +286,22 @@ export default function SearchAutocomplete({
                   } ${isRTL ? "text-right" : "text-left"}`}
                 >
                   <div className="flex items-center gap-3">
-                    {product.primary_image && (
-                      <div className="relative w-8 h-8">
+                    <div className="relative w-8 h-8">
+                      {product.primary_image ? (
                         <Image
                           src={product.primary_image}
                           alt={product.name}
                           fill
                           className="object-cover rounded"
                         />
-                      </div>
-                    )}
+                      ) : (
+                        <div className="w-full h-full bg-neutral-200 rounded flex items-center justify-center">
+                          <span className="text-xs text-neutral-500">
+                            No Image
+                          </span>
+                        </div>
+                      )}
+                    </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-neutral-900 truncate">
                         {product.name}
@@ -311,10 +318,10 @@ export default function SearchAutocomplete({
                 </button>
               ))}
             </div>
-          ) : debouncedSearchQuery.trim().length >= 2 ? (
+          ) : searchQuery.trim().length >= 1 ? (
             <div className="p-4 text-center text-neutral-500">
               <p className="text-sm">
-                {t("search.noResultsFor", { query: debouncedSearchQuery })}
+                {t("search.noResultsFor", { query: searchQuery })}
               </p>
             </div>
           ) : null}

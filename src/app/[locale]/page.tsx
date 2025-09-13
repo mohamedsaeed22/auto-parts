@@ -52,6 +52,7 @@ export default function Home({
               ? "فال بارتس - قطع غيار السيارات والإكسسوارات المميزة أونلاين"
               : "FalParts - Premium Auto Parts & Car Accessories Online"}
           </h1>
+
           <HeroSwiper />
           <Brands />
           <OffersSwiper />

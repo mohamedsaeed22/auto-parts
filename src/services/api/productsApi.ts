@@ -58,7 +58,7 @@ export const productsApi = api.injectEndpoints({
     >({
       query: (params) => {
         const formData = new FormData();
-        formData.append("name", params.name);
+        formData.append("search", params.name);
 
         return {
           url: "/products",

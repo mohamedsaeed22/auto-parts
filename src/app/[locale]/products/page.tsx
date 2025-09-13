@@ -141,7 +141,7 @@ const FilterPanel = ({
         onClick={onClearFilters}
         variant="outline"
         size="sm"
-        className="text-gray-600 hover:text-gray-900"
+        className="text-gray-600 hover:text-white"
       >
         {t("clearAll") || "Clear All"}
       </Button>
@@ -263,7 +263,7 @@ const FilterPanel = ({
           {t("priceRange") || "Price Range"}
         </h4>
         <div className="space-y-3">
-          <div className="grid grid-cols-3 gap-2 items-center">
+          <div className="flex items-center gap-1 w-full">
             <input
               type="number"
               min="0"
@@ -276,9 +276,11 @@ const FilterPanel = ({
                   onFilterChange("min_price", value);
                 }
               }}
-              className="w-full px-2 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="flex-1 min-w-0 px-2 py-2 border border-gray-300 rounded-md text-sm text-gray-900 placeholder-gray-500 bg-white focus:ring-2 focus:ring-green-500 focus:border-transparent focus:outline-none"
             />
-            <span className="text-gray-500 text-center text-sm">-</span>
+            <span className="text-gray-600 text-sm font-medium flex-shrink-0 mx-1">
+              -
+            </span>
             <input
               type="number"
               min="0"
@@ -291,14 +293,14 @@ const FilterPanel = ({
                   onFilterChange("max_price", value);
                 }
               }}
-              className="w-full px-2 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="flex-1 min-w-0 px-2 py-2 border border-gray-300 rounded-md text-sm text-gray-900 placeholder-gray-500 bg-white focus:ring-2 focus:ring-green-500 focus:border-transparent focus:outline-none"
             />
           </div>
         </div>
       </div>
 
       {/* Description Filter */}
-      <div>
+      {/* <div>
         <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
           <Eye className="h-4 w-4" />
           {t("description") || "Description"}
@@ -310,7 +312,7 @@ const FilterPanel = ({
           onChange={(e) => onFilterChange("description", e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
         />
-      </div>
+      </div> */}
     </div>
   </div>
 );
@@ -742,7 +744,7 @@ export default function ProductsPage({
                       showInfo={true}
                       showFirstLast={true}
                       maxVisiblePages={5}
-                      size="lg"
+                      size="md"
                       variant="outline"
                     />
                   </div>
