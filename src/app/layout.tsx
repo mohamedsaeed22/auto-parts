@@ -12,11 +12,11 @@ const cairo = Cairo({
 
 export const metadata: Metadata = {
   title: {
-    default: seoConfig.defaultMetadata.home.title.en,
-    template: `%s | ${seoConfig.company.name}`
+    default: seoConfig.defaultMetadata.home.title.ar,
+    template: `%s | ${seoConfig.company.name}`,
   },
-  description: seoConfig.defaultMetadata.home.description.en,
-  keywords: seoConfig.company.keywords.en.join(', '),
+  description: seoConfig.defaultMetadata.home.description.ar,
+  keywords: seoConfig.company.keywords.ar.join(", "),
   authors: [{ name: seoConfig.company.name }],
   creator: seoConfig.company.name,
   publisher: seoConfig.company.name,
@@ -26,9 +26,9 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   icons: {
@@ -38,31 +38,31 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest",
   openGraph: {
-    type: 'website',
-    locale: 'en_US',
+    type: "website",
+    locale: "ar_SA",
     url: seoConfig.siteUrl,
     siteName: seoConfig.company.name,
-    title: seoConfig.defaultMetadata.home.title.en,
-    description: seoConfig.defaultMetadata.home.description.en,
+    title: seoConfig.defaultMetadata.home.title.ar,
+    description: seoConfig.defaultMetadata.home.description.ar,
     images: [
       {
         url: `${seoConfig.siteUrl}/og-image.jpg`,
         width: 1200,
         height: 630,
-        alt: `${seoConfig.company.name} - Auto Parts & Car Accessories`,
+        alt: `${seoConfig.company.name} - قطع غيار السيارات والإكسسوارات`,
       },
     ],
   },
   twitter: {
-    card: 'summary_large_image',
+    card: "summary_large_image",
     site: seoConfig.twitter.site,
     creator: seoConfig.twitter.creator,
   },
   alternates: {
     canonical: seoConfig.siteUrl,
     languages: {
-      'en': seoConfig.siteUrl,
-      'ar': `${seoConfig.siteUrl}/ar`,
+      ar: seoConfig.siteUrl,
+      en: `${seoConfig.siteUrl}/en`,
     },
   },
   verification: {
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     yandex: process.env.YANDEX_VERIFICATION,
     yahoo: process.env.YAHOO_VERIFICATION,
   },
-  category: 'automotive',
+  category: "automotive",
 };
 
 export default function RootLayout({
@@ -79,7 +79,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html suppressHydrationWarning>
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body
         className={`${cairo.variable} antialiased`}
         suppressHydrationWarning

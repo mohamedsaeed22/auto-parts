@@ -21,23 +21,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = seoConfig.siteUrl;
   const currentDate = new Date();
 
-  // Static pages for both locales
+  // Static pages for both locales - Arabic prioritized
   const staticPages: SitemapEntry[] = [
-    // Home pages
+    // Home pages - Arabic is the default
     {
-      url: baseUrl,
+      url: baseUrl, // Root URL serves Arabic content
       lastModified: currentDate,
       changeFrequency: "daily",
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/ar`,
+      url: `${baseUrl}/ar`, // Explicit Arabic URL
       lastModified: currentDate,
       changeFrequency: "daily",
       priority: 1.0,
     },
 
-    // English pages
+    // Arabic pages (default language)
     {
       url: `${baseUrl}/about`,
       lastModified: currentDate,
@@ -99,66 +99,72 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     },
 
-    // Arabic pages
+    // English pages (secondary language)
     {
-      url: `${baseUrl}/ar/about`,
-      lastModified: currentDate,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/ar/contact`,
-      lastModified: currentDate,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/ar/products`,
+      url: `${baseUrl}/en`,
       lastModified: currentDate,
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/ar/categories`,
-      lastModified: currentDate,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/ar/brands`,
-      lastModified: currentDate,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/ar/latestoffer`,
-      lastModified: currentDate,
-      changeFrequency: "daily",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/ar/userPricing`,
+      url: `${baseUrl}/en/about`,
       lastModified: currentDate,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/ar/favourites`,
+      url: `${baseUrl}/en/contact`,
       lastModified: currentDate,
-      changeFrequency: "weekly",
-      priority: 0.6,
+      changeFrequency: "monthly",
+      priority: 0.7,
     },
     {
-      url: `${baseUrl}/ar/wishlist`,
-      lastModified: currentDate,
-      changeFrequency: "weekly",
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/ar/cart`,
+      url: `${baseUrl}/en/products`,
       lastModified: currentDate,
       changeFrequency: "daily",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/en/categories`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/en/brands`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/en/latestoffer`,
+      lastModified: currentDate,
+      changeFrequency: "daily",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/en/userPricing`,
+      lastModified: currentDate,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/en/favourites`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
       priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/en/wishlist`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/en/cart`,
+      lastModified: currentDate,
+      changeFrequency: "daily",
+      priority: 0.4,
     },
   ];
 
@@ -170,16 +176,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const products = await fetchProducts();
     const productPages = products.flatMap((product: any) => [
       {
-        url: `${baseUrl}/product/${product.id}`,
+        url: `${baseUrl}/product/${product.id}`, // Arabic (default)
         lastModified: product.updatedAt || currentDate,
         changeFrequency: "weekly" as const,
         priority: 0.7,
       },
       {
-        url: `${baseUrl}/ar/product/${product.id}`,
+        url: `${baseUrl}/en/product/${product.id}`, // English (secondary)
         lastModified: product.updatedAt || currentDate,
         changeFrequency: "weekly" as const,
-        priority: 0.7,
+        priority: 0.6,
       },
     ]);
     dynamicPages.push(...productPages);
@@ -188,16 +194,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const categories = await fetchCategories();
     const categoryPages = categories.flatMap((category: any) => [
       {
-        url: `${baseUrl}/categories/${category.id}`,
+        url: `${baseUrl}/categories/${category.id}`, // Arabic (default)
         lastModified: category.updatedAt || currentDate,
         changeFrequency: "weekly" as const,
         priority: 0.8,
       },
       {
-        url: `${baseUrl}/ar/categories/${category.id}`,
+        url: `${baseUrl}/en/categories/${category.id}`, // English (secondary)
         lastModified: category.updatedAt || currentDate,
         changeFrequency: "weekly" as const,
-        priority: 0.8,
+        priority: 0.7,
       },
     ]);
     dynamicPages.push(...categoryPages);
@@ -206,16 +212,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const brands = await fetchBrands();
     const brandPages = brands.flatMap((brand: any) => [
       {
-        url: `${baseUrl}/brands/${brand.id}`,
+        url: `${baseUrl}/brands/${brand.id}`, // Arabic (default)
         lastModified: brand.updatedAt || currentDate,
         changeFrequency: "monthly" as const,
         priority: 0.6,
       },
       {
-        url: `${baseUrl}/ar/brands/${brand.id}`,
+        url: `${baseUrl}/en/brands/${brand.id}`, // English (secondary)
         lastModified: brand.updatedAt || currentDate,
         changeFrequency: "monthly" as const,
-        priority: 0.6,
+        priority: 0.5,
       },
     ]);
     dynamicPages.push(...brandPages);
@@ -224,16 +230,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const offers = await fetchOffers();
     const offerPages = offers.flatMap((offer: any) => [
       {
-        url: `${baseUrl}/offers/${offer.id}`,
+        url: `${baseUrl}/offers/${offer.id}`, // Arabic (default)
         lastModified: offer.updatedAt || currentDate,
         changeFrequency: "daily" as const,
         priority: 0.7,
       },
       {
-        url: `${baseUrl}/ar/offers/${offer.id}`,
+        url: `${baseUrl}/en/offers/${offer.id}`, // English (secondary)
         lastModified: offer.updatedAt || currentDate,
         changeFrequency: "daily" as const,
-        priority: 0.7,
+        priority: 0.6,
       },
     ]);
     dynamicPages.push(...offerPages);

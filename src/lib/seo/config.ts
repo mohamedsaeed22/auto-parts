@@ -435,10 +435,12 @@ export function getCanonicalUrl(path: string, locale?: string): string {
   const baseUrl = seoConfig.siteUrl;
   const cleanPath = path.startsWith("/") ? path.slice(1) : path;
 
-  if (locale && locale !== seoConfig.defaultLocale) {
-    return `${baseUrl}/${locale}/${cleanPath}`;
+  // Arabic is default, so no prefix needed
+  if (locale && locale === "en") {
+    return `${baseUrl}/en/${cleanPath}`;
   }
 
+  // Arabic (default) - no locale prefix
   return `${baseUrl}/${cleanPath}`;
 }
 
@@ -451,7 +453,7 @@ export function getAlternateUrls(
   return seoConfig.supportedLocales.map((locale) => ({
     hreflang: locale,
     href:
-      locale === seoConfig.defaultLocale
+      locale === "ar" // Arabic is default
         ? `${seoConfig.siteUrl}/${cleanPath}`
         : `${seoConfig.siteUrl}/${locale}/${cleanPath}`,
   }));
@@ -533,7 +535,7 @@ export function generateOfferMetadata(
 }
 
 // Helper function to generate search metadata
-export function generateSearchMetadata(query: string, locale: string = "en") {
+export function generateSearchMetadata(query: string, locale: string = "ar") {
   const template = seoConfig.defaultMetadata.search;
   const title = template.title[locale as keyof typeof template.title].replace(
     "{query}",

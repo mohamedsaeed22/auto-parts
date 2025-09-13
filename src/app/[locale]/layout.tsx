@@ -51,10 +51,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     alternates: {
       canonical:
-        locale === "en" ? seoConfig.siteUrl : `${seoConfig.siteUrl}/${locale}`,
+        locale === "ar" ? seoConfig.siteUrl : `${seoConfig.siteUrl}/${locale}`,
       languages: {
-        en: seoConfig.siteUrl,
-        ar: `${seoConfig.siteUrl}/ar`,
+        ar: seoConfig.siteUrl,
+        en: `${seoConfig.siteUrl}/en`,
       },
     },
   };
