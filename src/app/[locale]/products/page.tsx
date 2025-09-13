@@ -615,11 +615,7 @@ export default function ProductsPage({
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
                   {t("foundProducts") || "Found Products"}
                 </h2>
-                <p className="text-gray-600">
-                  {pagination
-                    ? `${pagination.total} products available`
-                    : `${products.length} products available`}
-                </p>
+
                 {hasActiveFilters && (
                   <p className="text-sm text-green-600 mt-1">
                     {t("filtersApplied") || "Filters applied"}
