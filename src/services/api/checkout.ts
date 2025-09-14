@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 
 export interface Address {
   id: number;
+  address_type: "home" | "office" | "other";
   name: string;
   phone: string;
-  address: string;
+  detailed_address: string;
   city: string;
-  state: string;
+  postal_code: string;
   is_default: boolean;
   created_at: string;
   updated_at: string;
@@ -20,11 +21,12 @@ export interface AddressResponse {
 }
 
 export interface CreateAddressData {
+  address_type: "home" | "office" | "other";
   name: string;
   phone: string;
-  address: string;
+  detailed_address: string;
   city: string;
-  state: string;
+  postal_code: string;
   is_default?: boolean;
 }
 

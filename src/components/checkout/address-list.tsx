@@ -3,11 +3,8 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Loader2, MapPin, Plus } from "lucide-react";
-import {
-  Address,
-  useAddresses,
-  useDeleteAddress,
-} from "@/services/api/checkout";
+import { useAddresses, useDeleteAddress } from "@/services/api/checkout";
+import type { Address } from "@/services/api/types";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { AddressForm } from "./address-form";
+// import UnifiedAddressForm from "@/components/shared/UnifiedAddressForm";
 import { cn } from "@/lib/utils";
 
 interface AddressListProps {
@@ -25,7 +22,8 @@ interface AddressListProps {
 }
 
 export function AddressList({ selectedAddressId, onSelect }: AddressListProps) {
-  const { t } = useTranslation("checkout");
+  const { t, i18n } = useTranslation("addresses");
+  const isRTL = i18n.language === "ar";
   const [isAddressFormOpen, setIsAddressFormOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address>();
   const { data: addressesResponse, isLoading, isError } = useAddresses();
@@ -43,10 +41,10 @@ export function AddressList({ selectedAddressId, onSelect }: AddressListProps) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-8">
         <p className="text-center text-muted-foreground">
-          {t("errors.loadingAddressesFailed")}
+          {t("errors.loadFailed")}
         </p>
         <Button variant="outline" onClick={() => window.location.reload()}>
-          {t("retry")}
+          {t("retry", "Retry")}
         </Button>
       </div>
     );
@@ -64,45 +62,42 @@ export function AddressList({ selectedAddressId, onSelect }: AddressListProps) {
   };
 
   const handleDeleteAddress = async (address: Address) => {
-    if (window.confirm(t("address.confirmDelete"))) {
+    if (window.confirm(t("deleteDescription"))) {
       await deleteAddressMutation.mutateAsync(address.id);
     }
   };
 
-  const handleAddressFormSuccess = () => {
-    setIsAddressFormOpen(false);
-    setEditingAddress(undefined);
-  };
-
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" dir={isRTL ? "rtl" : "ltr"}>
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">{t("address.title")}</h2>
+        <h2 className="text-lg font-semibold">{t("title")}</h2>
         <Dialog open={isAddressFormOpen} onOpenChange={setIsAddressFormOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" size="sm" className="gap-2">
               <Plus className="h-4 w-4" />
-              {t("address.add")}
+              {t("addAddress")}
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent dir={isRTL ? "rtl" : "ltr"}>
             <DialogHeader>
               <DialogTitle>
-                {editingAddress
-                  ? t("address.editTitle")
-                  : t("address.addTitle")}
+                {editingAddress ? t("editAddress") : t("addAddress")}
               </DialogTitle>
             </DialogHeader>
-            <AddressForm
-              address={editingAddress}
-              onSuccess={handleAddressFormSuccess}
-            />
+            <div className="p-4">
+              <p className="text-center text-muted-foreground">
+                {t(
+                  "addressFormPlaceholder",
+                  "Address form will be implemented here"
+                )}
+              </p>
+            </div>
           </DialogContent>
         </Dialog>
       </div>
       {addresses.length === 0 ? (
         <p className="text-center text-muted-foreground py-8">
-          {t("address.noAddresses")}
+          {t("noAddresses")}
         </p>
       ) : (
         <div className="space-y-4">
@@ -122,13 +117,13 @@ export function AddressList({ selectedAddressId, onSelect }: AddressListProps) {
                   <span className="font-medium">{address.name}</span>
                   {address.is_default && (
                     <span className="text-xs text-muted-foreground">
-                      ({t("address.default")})
+                      ({t("default")})
                     </span>
                   )}
                 </div>
                 <p className="text-sm text-muted-foreground">{address.phone}</p>
                 <p className="text-sm text-muted-foreground">
-                  {address.address}, {address.city}, {address.state}
+                  {address.detailed_address}, {address.city}
                 </p>
                 {!onSelect && (
                   <div className="flex items-center gap-2 pt-2">
@@ -140,7 +135,7 @@ export function AddressList({ selectedAddressId, onSelect }: AddressListProps) {
                         handleEditAddress(address);
                       }}
                     >
-                      {t("address.edit")}
+                      {t("edit")}
                     </Button>
                     <Button
                       variant="outline"
@@ -152,7 +147,7 @@ export function AddressList({ selectedAddressId, onSelect }: AddressListProps) {
                       }}
                       disabled={deleteAddressMutation.isPending}
                     >
-                      {t("address.delete")}
+                      {t("delete")}
                     </Button>
                   </div>
                 )}
