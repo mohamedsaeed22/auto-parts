@@ -15,9 +15,11 @@ import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import type { RegistrationIncompleteErrorResponse } from "@/services/api/baseApi";
 import React from "react";
 import ProductCard from "@/components/product/ProductCard";
+import { useRouter } from "next/navigation";
 
 export default function WishlistPage() {
   const { t } = useTranslation("wishlist");
+  const router = useRouter();
   const { data: wishlistData, isLoading, error } = useGetWishlistQuery();
   const [toggleWishlist] = useToggleWishlistMutation();
   const { handleToggleFavourite, isLoading: isFavouriteLoading } =
@@ -147,7 +149,7 @@ export default function WishlistPage() {
                   "Start adding products to your wishlist to see them here."}
               </p>
               <Button
-                onClick={() => window.history.back()}
+                onClick={() => router.push("/products")}
                 className="bg-logo-gold hover:bg-logo-gold/90"
               >
                 {t("empty.browseButton") || "Browse Products"}
