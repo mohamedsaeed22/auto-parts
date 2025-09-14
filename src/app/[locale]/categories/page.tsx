@@ -20,6 +20,7 @@ import {
   Zap,
   Shield,
   Clock,
+  Home,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -422,12 +423,19 @@ export default function CategoriesPage({
               isRTL ? "flex-row" : ""
             }`}
           >
-            <ArrowLeft
-              size={16}
-              className={isRTL ? "transform rotate-180" : ""}
-            />
-            <span>{t("backButton") || "Back"}</span>
+            {isRTL ? (
+              <>
+                <Home size={16} />
+                <span>{t("home")}</span>
+              </>
+            ) : (
+              <>
+                <Home size={16} />
+                <span>{t("home")}</span>
+              </>
+            )}
           </button>
+
           <span>/</span>
           <span className="text-gray-900">{t("categories")}</span>
         </nav>
