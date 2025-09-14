@@ -28,6 +28,7 @@ import {
   FolderOpen,
   Search as SearchIcon,
   X as CloseIcon,
+  Home,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -406,7 +407,7 @@ export default function ProductsPage({
   }, [getProducts, apiFilters]);
 
   const handleGoBack = () => {
-    router.back();
+    router.push("/");
   };
 
   const handleFilterChange = (
@@ -498,23 +499,33 @@ export default function ProductsPage({
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
-        <Breadcrumb
-          items={[
-            {
-              label: t("backButton") || "Back",
-              icon: (
-                <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
-              ),
-            },
-            {
-              label: t("products") || "Products",
-            },
-          ]}
-          className="mb-8"
-          onItemClick={(item, index) => {
-            if (index === 0) handleGoBack();
-          }}
-        />
+        <nav
+          className={`flex items-center gap-2 text-sm text-gray-500 mb-8 ${
+            isRTL ? "flex-row" : ""
+          }`}
+        >
+          <button
+            onClick={handleGoBack}
+            className={`flex items-center gap-1 hover:text-gray-700 transition-colors ${
+              isRTL ? "flex-row" : ""
+            }`}
+          >
+            {isRTL ? (
+              <>
+                <Home size={16} />
+                <span>{t("home")}</span>
+              </>
+            ) : (
+              <>
+                <Home size={16} />
+                <span>{t("home")}</span>
+              </>
+            )}
+          </button>
+
+          <span>/</span>
+          <span className="text-gray-900">{t("products") || "Products"}</span>
+        </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Filters Sidebar */}

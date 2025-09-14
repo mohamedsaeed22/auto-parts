@@ -19,6 +19,7 @@ import {
   Flame,
   Gift,
   Zap,
+  Home,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner, ErrorMessage, Pagination } from "@/components/ui";
@@ -194,7 +195,7 @@ export default function LatestOffersPage() {
   const pagination = offersResponse?.data?.pagination;
 
   const handleGoBack = () => {
-    router.back();
+    router.push("/");
   };
 
   const handleViewOffer = (offerId: number) => {
@@ -251,26 +252,34 @@ export default function LatestOffersPage() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
-        <Breadcrumb
-          items={[
-            {
-              label: t("backButton") || "Back",
-              icon: (
-                <ArrowLeft
-                  size={16}
-                  className={isRTL ? "transform rotate-180" : ""}
-                />
-              ),
-            },
-            {
-              label: t("latestOffers") || "Latest Offers",
-            },
-          ]}
-          className="mb-8"
-          onItemClick={(item, index) => {
-            if (index === 0) handleGoBack();
-          }}
-        />
+        <nav
+          className={`flex items-center gap-2 text-sm text-gray-500 mb-8 ${
+            isRTL ? "flex-row" : ""
+          }`}
+        >
+          <button
+            onClick={handleGoBack}
+            className={`flex items-center gap-1 hover:text-gray-700 transition-colors ${
+              isRTL ? "flex-row" : ""
+            }`}
+          >
+            {isRTL ? (
+              <>
+                <Home size={16} />
+                <span>{t("home")}</span>
+              </>
+            ) : (
+              <>
+                <Home size={16} />
+                <span>{t("home")}</span>
+              </>
+            )}
+          </button>
+          <span>/</span>
+          <span className="text-gray-900">
+            {t("latestOffers") || "Latest Offers"}
+          </span>
+        </nav>
 
         {/* Offers Count */}
         <div className={`mb-8 ${isRTL ? "text-right" : "text-left"}`}>
@@ -318,20 +327,20 @@ export default function LatestOffersPage() {
 
         {/* Pagination */}
         {/* {offers.length > 0 && pagination && pagination.last_page > 1 && ( */}
-          <div className="mt-12 flex justify-center">
-            <Pagination
-              currentPage={pagination.current_page || 1}
-              totalPages={pagination.last_page || 1}
-              totalItems={pagination.total || offers.length}
-              itemsPerPage={pagination.per_page || 10}
-              onPageChange={handlePageChange}
-              showInfo={true}
-              showFirstLast={true}
-              maxVisiblePages={5}
-              size="md"
-              variant="outline"
-            />
-          </div>
+        <div className="mt-12 flex justify-center">
+          <Pagination
+            currentPage={pagination.current_page || 1}
+            totalPages={pagination.last_page || 1}
+            totalItems={pagination.total || offers.length}
+            itemsPerPage={pagination.per_page || 10}
+            onPageChange={handlePageChange}
+            showInfo={true}
+            showFirstLast={true}
+            maxVisiblePages={5}
+            size="md"
+            variant="outline"
+          />
+        </div>
         {/* )} */}
 
         {/* Bottom CTA */}

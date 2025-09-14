@@ -49,6 +49,7 @@ import {
   Percent,
   DollarSign,
   Tag,
+  Home,
 } from "lucide-react";
 import { LoadingSpinner, ErrorMessage } from "@/components/ui";
 import ProductCard from "@/components/product/ProductCard";
@@ -224,9 +225,9 @@ export default function OfferPage() {
   const products = offer?.products || [];
 
   const handleGoBack = () => {
-    router.back();
+    router.push("/");
   };
-
+  
   // Handle loading state
   if (isLoading) {
     return (
@@ -292,18 +293,27 @@ export default function OfferPage() {
             isRTL ? "flex-row" : ""
           }`}
         >
-          <ArrowLeft
-            size={16}
-            className={isRTL ? "transform rotate-180" : ""}
-          />
-          <span>{t("backButton") || "Back"}</span>
+          {isRTL ? (
+            <>
+              <Home size={16} />
+              <span>{t("home")}</span>
+            </>
+          ) : (
+            <>
+              <Home size={16} />
+              <span>{t("home")}</span>
+            </>
+          )}
         </button>
         <span>/</span>
-        <span className="text-gray-900">{t("offers") || "Offers"}</span>
+        <button
+          onClick={() => router.push("/latestoffer")}
+          className="hover:text-gray-700 transition-colors"
+        >
+          {t("latestOffers")}
+        </button>
         <span>/</span>
-        <span className="text-gray-900 truncate">
-          {t("offer") || "Offer"} #{offer.id}
-        </span>
+        <span className="text-gray-900">{t("latestOffers") || "Latest Offers"}</span>
       </nav>
 
       {/* Offer Header */}

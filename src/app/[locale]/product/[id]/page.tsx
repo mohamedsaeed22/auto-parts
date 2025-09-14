@@ -14,6 +14,7 @@ import {
   Shield,
   RotateCcw,
   Info,
+  Home,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner, ErrorMessage } from "@/components/ui";
@@ -506,30 +507,30 @@ export default function ProductDetails() {
       {/* Enhanced Breadcrumb */}
       <nav
         className={`flex items-center gap-2 text-sm text-gray-500 mb-8 ${
-          isRTL ? "flex-row" : "flex-row"
+          isRTL ? "flex-row" : ""
         }`}
       >
         <button
           onClick={handleGoBack}
           className={`flex items-center gap-1 hover:text-gray-700 transition-colors ${
-            isRTL ? "flex-row" : "flex-row"
+            isRTL ? "flex-row" : ""
           }`}
         >
           {isRTL ? (
             <>
-              <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
-              <span>{t("backButton")}</span>
+              <Home size={16} />
+              <span>{t("home")}</span>
             </>
           ) : (
             <>
-              <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
-              <span>{t("backButton")}</span>
+              <Home size={16} />
+              <span>{t("home")}</span>
             </>
           )}
         </button>
 
         <span>/</span>
-        <span className="text-gray-900 truncate">{productName}</span>
+        <span className="text-gray-900">{productName}</span>
       </nav>
 
       {/* Main Product Layout */}

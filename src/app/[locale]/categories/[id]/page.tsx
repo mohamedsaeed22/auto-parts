@@ -273,7 +273,7 @@ export default function CategoryPage() {
   };
 
   const handleSubcategoryClick = (subcategoryId: number) => {
-    router.push(`/products?category=${subcategoryId}`);
+    router.push(`/products?category_id=${subcategoryId}`);
   };
 
   const handleSearchChange = (value: string) => {
@@ -367,8 +367,8 @@ export default function CategoryPage() {
           >
             {isRTL ? (
               <>
-                <span>{t("home")}</span>
                 <Home size={16} />
+                <span>{t("home")}</span>
               </>
             ) : (
               <>
