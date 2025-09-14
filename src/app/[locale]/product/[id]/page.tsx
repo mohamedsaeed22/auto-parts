@@ -6,7 +6,6 @@ import {
   Minus,
   Plus,
   Trash,
-  ArrowLeft,
   Heart,
   Bookmark,
   Share2,
@@ -26,6 +25,7 @@ import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useTranslation } from "react-i18next";
 import { useGetProductQuery } from "@/services/hooks";
 import { showSuccess, showError } from "@/lib/toast";
+import { storage } from "@/lib/storage";
 
 // Loading Component
 
@@ -96,6 +96,7 @@ const ProductActions = ({
   onToggleWishlist,
   onShare,
   isLoading,
+  canShowOptimisticUpdates,
 }: {
   isRTL: boolean;
   product: ProductForActions;
@@ -105,6 +106,7 @@ const ProductActions = ({
   onToggleWishlist: () => void;
   onShare: () => void;
   isLoading: (key: string) => boolean;
+  canShowOptimisticUpdates: boolean;
 }) => (
   <div
     className={`absolute top-4 ${
@@ -115,7 +117,7 @@ const ProductActions = ({
       variant="outline"
       size="sm"
       className={`w-10 h-10 rounded-full border-neutral-200 hover:bg-white shadow-lg transition-colors duration-300 ${
-        isInFavourites
+        canShowOptimisticUpdates && isInFavourites
           ? "bg-red-500 border-red-500 hover:bg-red-600"
           : "bg-white hover:bg-gray-50"
       }`}
@@ -128,7 +130,9 @@ const ProductActions = ({
         <Heart
           size={18}
           className={`${
-            isInFavourites ? "text-white fill-white" : "text-neutral-700"
+            canShowOptimisticUpdates && isInFavourites
+              ? "text-white fill-white"
+              : "text-neutral-700"
           }`}
         />
       )}
@@ -137,7 +141,7 @@ const ProductActions = ({
       variant="outline"
       size="sm"
       className={`w-10 h-10 rounded-full border-neutral-200 hover:bg-white shadow-lg transition-colors duration-300 ${
-        isInWishlist
+        canShowOptimisticUpdates && isInWishlist
           ? "bg-blue-500 border-blue-500 hover:bg-blue-600"
           : "bg-white hover:bg-gray-50"
       }`}
@@ -150,7 +154,9 @@ const ProductActions = ({
         <Bookmark
           size={18}
           className={`${
-            isInWishlist ? "text-white fill-white" : "text-neutral-700"
+            canShowOptimisticUpdates && isInWishlist
+              ? "text-white fill-white"
+              : "text-neutral-700"
           }`}
         />
       )}
@@ -229,16 +235,7 @@ const PriceSection = ({
 
   return (
     <div className="space-y-2">
-      <div
-        className={`flex items-center gap-3 ${
-          isRTL ? "flex-row justify-end" : "flex-row justify-end"
-        }`}
-      >
-        <span className="text-3xl font-bold text-gray-900">
-          {isRTL
-            ? `${t("currency")} ${finalPrice}`
-            : `${finalPrice} ${t("currency")}`}
-        </span>
+      <div className={`flex items-center gap-3 flex-row justify-start`}>
         {hasDiscount && (
           <span className="text-xl text-gray-500 line-through">
             {isRTL
@@ -246,6 +243,11 @@ const PriceSection = ({
               : `${Number(originalPrice)} ${t("currency")}`}
           </span>
         )}
+        <span className="text-3xl font-bold text-gray-900">
+          {isRTL
+            ? `${t("currency")} ${finalPrice}`
+            : `${finalPrice} ${t("currency")}`}
+        </span>
       </div>
 
       {product.discount_info && (
@@ -317,6 +319,11 @@ export default function ProductDetails() {
     isLoading: isFavouritesLoading,
   } = useFavouritesWishlist();
 
+  // Check authentication and registration status for visual feedback
+  const isAuthenticated = storage.isAuthenticated();
+  const isRegistrationComplete = storage.isRegistrationComplete();
+  const canShowOptimisticUpdates = isAuthenticated && isRegistrationComplete;
+
   const product = productResponse?.data?.product;
   const cartItem = items.find((item) => item.id === productId);
   const currentQuantity = cartItem?.quantity || 0;
@@ -367,36 +374,50 @@ export default function ProductDetails() {
     router.back();
   };
 
-  // Enhanced toggle functions with immediate visual feedback
+  // Enhanced toggle functions with conditional visual feedback
   const handleToggleFavouriteWithFeedback = async () => {
     if (!product) return;
 
-    // Immediately update local state for visual feedback
-    const newFavouriteState = !isInFavourites;
-    setLocalFavouriteState(newFavouriteState);
+    // Only show optimistic updates if user is authenticated and registration is complete
+    if (canShowOptimisticUpdates) {
+      // Immediately update local state for visual feedback
+      const newFavouriteState = !isInFavourites;
+      setLocalFavouriteState(newFavouriteState);
 
-    try {
+      try {
+        await handleToggleFavourite(product.id);
+      } catch (error) {
+        // Revert local state if API call fails
+        console.error("Failed to toggle favourite:", error);
+        setLocalFavouriteState(!newFavouriteState);
+      }
+    } else {
+      // Just call the handler without optimistic updates
+      // The useFavouritesWishlist hook will handle showing appropriate messages
       await handleToggleFavourite(product.id);
-    } catch (error) {
-      // Revert local state if API call fails
-      console.error("Failed to toggle favourite:", error);
-      setLocalFavouriteState(!newFavouriteState);
     }
   };
 
   const handleToggleWishlistWithFeedback = async () => {
     if (!product) return;
 
-    // Immediately update local state for visual feedback
-    const newWishlistState = !isInWishlist;
-    setLocalWishlistState(newWishlistState);
+    // Only show optimistic updates if user is authenticated and registration is complete
+    if (canShowOptimisticUpdates) {
+      // Immediately update local state for visual feedback
+      const newWishlistState = !isInWishlist;
+      setLocalWishlistState(newWishlistState);
 
-    try {
+      try {
+        await handleToggleWishlist(product.id);
+      } catch (error) {
+        // Revert local state if API call fails
+        console.error("Failed to toggle wishlist:", error);
+        setLocalWishlistState(!newWishlistState);
+      }
+    } else {
+      // Just call the handler without optimistic updates
+      // The useFavouritesWishlist hook will handle showing appropriate messages
       await handleToggleWishlist(product.id);
-    } catch (error) {
-      // Revert local state if API call fails
-      console.error("Failed to toggle wishlist:", error);
-      setLocalWishlistState(!newWishlistState);
     }
   };
 
@@ -552,6 +573,7 @@ export default function ProductDetails() {
               onToggleWishlist={handleToggleWishlistWithFeedback}
               onShare={handleShare}
               isLoading={isFavouritesLoading}
+              canShowOptimisticUpdates={canShowOptimisticUpdates}
             />
 
             {productImages.length > 0 ? (
@@ -610,9 +632,6 @@ export default function ProductDetails() {
               {productName}
             </h1>
 
-            {/* Rating */}
-            {/* <ProductRating isRTL={isRTL} /> */}
-
             {/* Stock Status */}
             <div className="mt-3">
               <StockIndicator isRTL={isRTL} t={t} />
@@ -641,7 +660,7 @@ export default function ProductDetails() {
 
           {/* Enhanced Category and Brand */}
           <div className={isRTL ? "text-right" : "text-left"}>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 flex-row">
               <span className="inline-block bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm capitalize font-medium">
                 {categoryName}
               </span>
@@ -665,11 +684,7 @@ export default function ProductDetails() {
                 isRTL ? "text-right" : "text-left"
               }`}
             >
-              <div
-                className={`flex items-center gap-3 ${
-                  isRTL ? "flex-row" : "flex-row"
-                }`}
-              >
+              <div className={`flex items-center gap-3 flex-row`}>
                 {offerInfo.image && (
                   <Image
                     src={offerInfo.image}
@@ -701,11 +716,7 @@ export default function ProductDetails() {
                 isRTL ? "text-right border-r-4 border-l-0" : "text-left"
               }`}
             >
-              <div
-                className={`flex items-center gap-2 ${
-                  isRTL ? "flex-row" : "flex-row"
-                }`}
-              >
+              <div className={`flex items-center gap-2 flex-row`}>
                 <Info size={16} className="text-blue-600" />
                 <p className="text-blue-800 text-sm font-medium">{hoverText}</p>
               </div>
@@ -736,8 +747,8 @@ export default function ProductDetails() {
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   ) : isRTL ? (
                     <>
-                      <span>{t("addToCart")}</span>
                       <ShoppingCart size={16} />
+                      <span>{t("addToCart")}</span>
                     </>
                   ) : (
                     <>
@@ -753,15 +764,7 @@ export default function ProductDetails() {
                       isRTL ? "flex-row" : "flex-row"
                     }`}
                   >
-                    <button
-                      onClick={() => handleQuantityChange(currentQuantity + 1)}
-                      className="w-8 h-8 bg-white/20 rounded-md text-white flex items-center justify-center"
-                    >
-                      <Plus size={14} />
-                    </button>
-                    <span className="text-lg font-semibold w-8 text-center text-white">
-                      {currentQuantity}
-                    </span>
+                    {" "}
                     <button
                       onClick={() => handleQuantityChange(currentQuantity - 1)}
                       className="w-8 h-8 bg-white/20 rounded-md text-white flex items-center justify-center"
@@ -771,6 +774,15 @@ export default function ProductDetails() {
                       ) : (
                         <Minus size={14} />
                       )}
+                    </button>
+                    <span className="text-lg font-semibold w-8 text-center text-white">
+                      {currentQuantity}
+                    </span>
+                    <button
+                      onClick={() => handleQuantityChange(currentQuantity + 1)}
+                      className="w-8 h-8 bg-white/20 rounded-md text-white flex items-center justify-center"
+                    >
+                      <Plus size={14} />
                     </button>
                   </div>
                 </div>
@@ -793,9 +805,7 @@ export default function ProductDetails() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div
-                className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg ${
-                  isRTL ? "flex-row" : "flex-row"
-                }`}
+                className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg flex-row`}
               >
                 <span className="text-sm text-gray-600 font-medium">
                   {t("productCode")}:
@@ -803,9 +813,7 @@ export default function ProductDetails() {
                 <span className="text-sm font-semibold">{productCode}</span>
               </div>
               <div
-                className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg ${
-                  isRTL ? "flex-row" : "flex-row"
-                }`}
+                className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg flex-row`}
               >
                 <span className="text-sm text-gray-600 font-medium">
                   {t("availability")}:
@@ -815,9 +823,7 @@ export default function ProductDetails() {
                 </span>
               </div>
               <div
-                className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg ${
-                  isRTL ? "flex-row" : "flex-row"
-                }`}
+                className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg flex-row`}
               >
                 <span className="text-sm text-gray-600 font-medium">
                   {t("category")}:
@@ -828,9 +834,7 @@ export default function ProductDetails() {
               </div>
               {brandName && (
                 <div
-                  className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg ${
-                    isRTL ? "flex-row" : ""
-                  }`}
+                  className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg flex-row`}
                 >
                   <span className="text-sm text-gray-600 font-medium">
                     {t("brand")}:
