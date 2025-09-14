@@ -363,7 +363,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Buttons */}
-          <div className={`flex gap-2 ${isRTL ? "flex-row" : ""}`}>
+          <div className={`flex gap-2 flex-row`}>
             <Button
               variant={i18n.language === "ar" ? "default" : "outline"}
               size="sm"

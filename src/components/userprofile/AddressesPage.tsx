@@ -363,9 +363,7 @@ export default function AddressesPage() {
               />
 
               {/* Default Checkbox */}
-              <div
-                className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}
-              >
+              <div className={`flex items-center gap-2 flex-row`}>
                 <input
                   type="checkbox"
                   id="is_default"
@@ -385,7 +383,7 @@ export default function AddressesPage() {
             </div>
 
             {/* Form Actions */}
-            <div className={`flex gap-2 mt-6 ${isRTL ? "flex-row" : ""}`}>
+            <div className={`flex gap-2 mt-6 flex-row`}>
               <Button
                 type="submit"
                 disabled={isSubmitting || isCreating || isUpdating}
@@ -430,7 +428,7 @@ export default function AddressesPage() {
                   isRTL ? "flex-row" : ""
                 }`}
               >
-                <div className={`flex gap-2 ${isRTL ? "flex-row" : ""}`}>
+                <div className={`flex gap-2 flex-row`}>
                   <Button
                     size="sm"
                     variant="outline"

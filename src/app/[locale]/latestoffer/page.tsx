@@ -120,7 +120,7 @@ const OfferCard = ({
         </div>
 
         <div className="space-y-2">
-          <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}>
+          <div className={`flex items-center gap-2 flex-row`}>
             <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
               {offer.discount_type === "percentage" ? (
                 <Percent size={16} className="text-orange-600" />
@@ -140,7 +140,7 @@ const OfferCard = ({
             </div>
           </div>
 
-          <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}>
+          <div className={`flex items-center gap-2 flex-row`}>
             <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
               <ShoppingCart size={16} className="text-green-600" />
             </div>

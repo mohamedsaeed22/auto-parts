@@ -6,7 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
 import ProductCard from "../product/ProductCard";
 import { useTranslation } from "react-i18next";
-import { useGetProductsMutation } from "@/services/hooks";
+import { useGetProductsListQuery } from "@/services/hooks";
 import { Product } from "@/services/api/types";
 import { Loader2, AlertCircle } from "lucide-react";
 
@@ -26,19 +26,18 @@ const CategorySwiper: React.FC<CategoryProps> = ({
   const swiperRef = useRef<SwiperType | null>(null);
 
   // API hook to fetch products
-  const [getProducts, { data: productsResponse, isLoading, error }] =
-    useGetProductsMutation();
+  const filters = categoryId
+    ? { category_id: categoryId, per_page: 10 }
+    : { per_page: 10 };
+
+  const {
+    data: productsResponse,
+    isLoading,
+    error,
+  } = useGetProductsListQuery(filters);
 
   // Extract products from response
   const products = productsResponse?.data?.items || [];
-
-  // Fetch products on component mount
-  React.useEffect(() => {
-    const filters = categoryId
-      ? { category_id: categoryId, per_page: 10 }
-      : { per_page: 10 };
-    getProducts(filters);
-  }, [categoryId, getProducts]);
 
   // Loading component
   if (isLoading) {

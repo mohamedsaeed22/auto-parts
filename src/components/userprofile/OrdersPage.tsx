@@ -213,7 +213,7 @@ export default function OrdersPage() {
             isRTL ? "flex-row" : ""
           }`}
         >
-          <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+          <div className={`flex items-center gap-3 flex-row`}>
             <Filter size={20} className="text-gray-600" />
             <h3 className="font-medium text-gray-900">
               {t("orders.filters.title")}
@@ -221,7 +221,7 @@ export default function OrdersPage() {
           </div>
 
           {/* Filter Actions */}
-          <div className={`flex gap-2 ${isRTL ? "flex-row" : ""}`}>
+          <div className={`flex gap-2 flex-row`}>
             <Button
               onClick={clearFilters}
               variant="secondary"
@@ -526,7 +526,7 @@ export default function OrdersPage() {
       {/* Pagination */}
       {pagination && pagination.last_page > 1 && (
         <div className="mt-8 flex justify-center">
-          <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}>
+          <div className={`flex items-center gap-2 flex-row`}>
             <Button
               variant="outline"
               size="sm"

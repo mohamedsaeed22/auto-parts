@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { useGetProductsMutation } from "@/services/hooks";
+import { useGetProductsListQuery } from "@/services/hooks";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useProductFilters } from "@/hooks/useProductFilters";
 import { useFilterData } from "@/hooks/useFilterData";
@@ -395,16 +395,15 @@ export default function ProductsPage({
   } = useFilterData();
 
   // API Hooks
-  const [getProducts, { data: productsResponse, isLoading, error }] =
-    useGetProductsMutation();
+  const {
+    data: productsResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useGetProductsListQuery(apiFilters);
 
   const products = productsResponse?.data?.items || [];
   const pagination = productsResponse?.data?.pagination;
-
-  // Load products when filters change
-  useEffect(() => {
-    getProducts(apiFilters);
-  }, [getProducts, apiFilters]);
 
   const handleGoBack = () => {
     router.push("/");
@@ -459,10 +458,7 @@ export default function ProductsPage({
       <div dir={direction}>
         <HeroSection t={t} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <ErrorMessage
-            message={errorMessage}
-            onRetry={() => getProducts(apiFilters)}
-          />
+          <ErrorMessage message={errorMessage} onRetry={() => refetch()} />
         </div>
       </div>
     );
@@ -573,11 +569,7 @@ export default function ProductsPage({
             {filters.search && (
               <div className={`mb-6 ${isRTL ? "text-right" : "text-left"}`}>
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <div
-                    className={`flex items-center justify-between ${
-                      isRTL ? "flex-row" : ""
-                    }`}
-                  >
+                  <div className={`flex items-center justify-between flex-row`}>
                     <div className="flex items-center gap-3">
                       <SearchIcon className="h-5 w-5 text-green-600" />
                       <div>

@@ -37,7 +37,7 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
   } = useEnhancedCart();
   console.log(items);
   const handleContinueToShipping = async () => {
-   onNext();
+    onNext();
   };
 
   return (
@@ -104,9 +104,7 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
                   }`}
                 >
                   <div
-                    className={`flex items-center bg-white border-2 border-logo-gold/50 rounded-lg overflow-hidden ${
-                      isRTL ? "flex-row" : ""
-                    }`}
+                    className={`flex items-center bg-white border-2 border-logo-gold/50 rounded-lg overflow-hidden flex-row`}
                   >
                     <button
                       onClick={() => {

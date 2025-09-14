@@ -103,7 +103,7 @@ const OfferHeader = ({
         </div>
 
         <div className="space-y-3">
-          <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+          <div className={`flex items-center gap-3 flex-row`}>
             <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
               {offer.discount_type === "percentage" ? (
                 <Percent size={24} className="text-orange-600" />
@@ -123,7 +123,7 @@ const OfferHeader = ({
             </div>
           </div>
 
-          <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+          <div className={`flex items-center gap-3 flex-row`}>
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
               <ShoppingCart size={24} className="text-green-600" />
             </div>
@@ -158,7 +158,7 @@ const ProductFeatures = ({
   t: (key: string) => string;
 }) => (
   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 bg-gray-50 rounded-lg mb-8">
-    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+    <div className={`flex items-center gap-3 flex-row`}>
       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
         <Truck size={20} className="text-green-600" />
       </div>
@@ -171,7 +171,7 @@ const ProductFeatures = ({
         </p>
       </div>
     </div>
-    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+    <div className={`flex items-center gap-3 flex-row`}>
       <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
         <Shield size={20} className="text-green-600" />
       </div>
@@ -184,7 +184,7 @@ const ProductFeatures = ({
         </p>
       </div>
     </div>
-    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+    <div className={`flex items-center gap-3 flex-row`}>
       <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
         <RotateCcw size={20} className="text-green-600" />
       </div>
@@ -227,7 +227,7 @@ export default function OfferPage() {
   const handleGoBack = () => {
     router.push("/");
   };
-  
+
   // Handle loading state
   if (isLoading) {
     return (
@@ -313,7 +313,9 @@ export default function OfferPage() {
           {t("latestOffers")}
         </button>
         <span>/</span>
-        <span className="text-gray-900">{t("latestOffers") || "Latest Offers"}</span>
+        <span className="text-gray-900">
+          {t("latestOffers") || "Latest Offers"}
+        </span>
       </nav>
 
       {/* Offer Header */}

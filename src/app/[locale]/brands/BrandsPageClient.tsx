@@ -122,7 +122,7 @@ const BrandCard = ({
     {/* Brand Details */}
     <div className="p-6">
       <div className="space-y-3">
-        <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}>
+        <div className={`flex items-center gap-2 flex-row`}>
           <Building2 className="text-primary" size={18} />
           <h3
             className="text-xl font-bold text-gray-900 truncate"
@@ -133,7 +133,7 @@ const BrandCard = ({
         </div>
 
         <div className="space-y-2">
-          <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}>
+          <div className={`flex items-center gap-2 flex-row`}>
             <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
               <CheckCircle size={16} className="text-primary" />
             </div>
@@ -150,7 +150,7 @@ const BrandCard = ({
             </div>
           </div>
 
-          <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}>
+          <div className={`flex items-center gap-2 flex-row`}>
             <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
               <Car size={16} className="text-green-600" />
             </div>
@@ -193,7 +193,7 @@ const BrandFeatures = ({
   t: (key: string) => string;
 }) => (
   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 bg-gray-50 rounded-lg mb-8">
-    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+    <div className={`flex items-center gap-3 flex-row`}>
       <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
         <Shield size={20} className="text-primary" />
       </div>
@@ -209,7 +209,7 @@ const BrandFeatures = ({
         </p>
       </div>
     </div>
-    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+    <div className={`flex items-center gap-3 flex-row`}>
       <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
         <CheckCircle size={20} className="text-green-600" />
       </div>
@@ -225,7 +225,7 @@ const BrandFeatures = ({
         </p>
       </div>
     </div>
-    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+    <div className={`flex items-center gap-3 flex-row`}>
       <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
         <Globe size={20} className="text-primary" />
       </div>

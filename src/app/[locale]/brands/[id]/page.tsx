@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { useGetBrandsQuery, useGetProductsMutation } from "@/services/hooks";
+import { useGetBrandsQuery, useGetProductsListQuery } from "@/services/hooks";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { Product } from "@/services/api/types";
 import ProductCard from "@/components/product/ProductCard";
@@ -68,7 +68,7 @@ const BrandHeader = ({
 
       {/* Brand Details */}
       <div className={`space-y-4 ${isRTL ? "text-right" : "text-left"}`}>
-        <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}>
+        <div className={`flex items-center gap-2 flex-row`}>
           <Building2 className="text-primary" size={24} />
           <h1
             className="text-3xl font-bold text-gray-900"
@@ -79,7 +79,7 @@ const BrandHeader = ({
         </div>
 
         <div className="space-y-3">
-          <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+          <div className={`flex items-center gap-3 flex-row`}>
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
               <CheckCircle size={24} className="text-primary" />
             </div>
@@ -96,7 +96,7 @@ const BrandHeader = ({
             </div>
           </div>
 
-          <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+          <div className={`flex items-center gap-3 flex-row`}>
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
               <Car size={24} className="text-green-600" />
             </div>
@@ -134,7 +134,7 @@ const BrandFeatures = ({
   t: (key: string) => string;
 }) => (
   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 bg-gray-50 rounded-lg mb-8">
-    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+    <div className={`flex items-center gap-3 flex-row`}>
       <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
         <Shield size={20} className="text-primary" />
       </div>
@@ -150,7 +150,7 @@ const BrandFeatures = ({
         </p>
       </div>
     </div>
-    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+    <div className={`flex items-center gap-3 flex-row`}>
       <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
         <Truck size={20} className="text-green-600" />
       </div>
@@ -166,7 +166,7 @@ const BrandFeatures = ({
         </p>
       </div>
     </div>
-    <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+    <div className={`flex items-center gap-3 flex-row`}>
       <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
         <RotateCcw size={20} className="text-primary" />
       </div>
@@ -208,34 +208,15 @@ export default function BrandPage() {
   const brands = brandsResponse?.data?.items || [];
   const brand = brands.find((b: Brand) => b.id === brandId);
 
-  // Products state and API
-  const [products, setProducts] = useState<Product[]>([]);
-  const [productsLoading, setProductsLoading] = useState(false);
-  const [productsError, setProductsError] = useState<string | null>(null);
-  const [getProducts] = useGetProductsMutation();
+  // Products API
+  const {
+    data: productsResponse,
+    isLoading: productsLoading,
+    error: productsError,
+    refetch: refetchProducts,
+  } = useGetProductsListQuery(brandId ? { brand_id: brandId } : undefined);
 
-  // Fetch products for this brand
-  useEffect(() => {
-    if (brandId) {
-      setProductsLoading(true);
-      setProductsError(null);
-
-      getProducts({ brand_id: brandId })
-        .unwrap()
-        .then((response) => {
-          if (response.data?.items) {
-            setProducts(response.data.items);
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching products:", error);
-          setProductsError(error.message || "Failed to load products");
-        })
-        .finally(() => {
-          setProductsLoading(false);
-        });
-    }
-  }, [brandId, getProducts]);
+  const products = productsResponse?.data?.items || [];
 
   const handleGoBack = () => {
     router.back();
@@ -358,22 +339,8 @@ export default function BrandPage() {
         {productsError && (
           <div className="text-center py-12">
             <ErrorMessage
-              message={productsError}
-              onRetry={() => {
-                setProductsError(null);
-                getProducts({ brand_id: brandId })
-                  .unwrap()
-                  .then((response) => {
-                    if (response.data?.items) {
-                      setProducts(response.data.items);
-                    }
-                  })
-                  .catch((error) => {
-                    setProductsError(
-                      error.message || "Failed to load products"
-                    );
-                  });
-              }}
+              message="Failed to load products"
+              onRetry={() => refetchProducts()}
             />
           </div>
         )}

@@ -31,6 +31,7 @@ export {
 // Products & Catalog Hooks
 export {
   useGetProductsMutation,
+  useGetProductsListQuery,
   useGetProductQuery,
   useGetBrandsQuery,
   useGetBannersQuery,

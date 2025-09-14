@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import ProductCard from "./ProductCard";
 import { useTranslation } from "react-i18next";
-import { useGetProductsMutation } from "@/services/hooks";
+import { useGetProductsListQuery } from "@/services/hooks";
 import { Product, ProductsRequest } from "@/services/api/types";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,21 +21,20 @@ const ProductsList = () => {
   });
 
   // API hook
-  const [getProducts, { data: productsResponse, isLoading, error }] =
-    useGetProductsMutation();
+  const {
+    data: productsResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useGetProductsListQuery(filters);
 
   // Extract products and pagination from response
   const products = productsResponse?.data?.items || [];
   const pagination = productsResponse?.data?.pagination;
 
-  // Load products on component mount
-  useEffect(() => {
-    getProducts(filters);
-  }, [filters, getProducts]);
-
   // Handle retry
   const handleRetry = () => {
-    getProducts(filters);
+    refetch();
   };
 
   // Handle pagination

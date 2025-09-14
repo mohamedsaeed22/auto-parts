@@ -194,7 +194,7 @@ export default function RequestsPage() {
       <div
         className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6  `}
       >
-        <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+        <div className={`flex items-center gap-3 flex-row`}>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
             {t("requests.title", "Requests")}
           </h2>
@@ -208,7 +208,7 @@ export default function RequestsPage() {
             isRTL ? "flex-row" : ""
           }`}
         >
-          <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
+          <div className={`flex items-center gap-3 flex-row`}>
             <Filter size={20} className="text-gray-600" />
             <h3 className="font-medium text-gray-900">
               {t("requests.filters.title", "Filters")}
@@ -216,7 +216,7 @@ export default function RequestsPage() {
           </div>
 
           {/* Filter Actions */}
-          <div className={`flex gap-2 ${isRTL ? "flex-row" : ""}`}>
+          <div className={`flex gap-2 flex-row`}>
             <Button
               onClick={clearFilters}
               variant="secondary"

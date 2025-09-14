@@ -46,7 +46,12 @@ export const favouritesApi = api.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Favourites"],
+      invalidatesTags: (result, error, arg) => [
+        "Favourites",
+        "Sections",
+        "Products",
+        { type: "Products", id: arg.product_id },
+      ],
     }),
 
     removeFavourite: builder.mutation<
@@ -58,7 +63,12 @@ export const favouritesApi = api.injectEndpoints({
         method: "DELETE",
         body,
       }),
-      invalidatesTags: ["Favourites"],
+      invalidatesTags: (result, error, arg) => [
+        "Favourites",
+        "Sections",
+        "Products",
+        { type: "Products", id: arg.product_id },
+      ],
     }),
 
     toggleFavourite: builder.mutation<FavouritesResponse, AddFavouriteRequest>({
@@ -67,7 +77,12 @@ export const favouritesApi = api.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Favourites"],
+      invalidatesTags: (result, error, arg) => [
+        "Favourites",
+        "Sections",
+        "Products",
+        { type: "Products", id: arg.product_id },
+      ],
     }),
   }),
 });

@@ -345,9 +345,7 @@ export default function SettingsPage() {
                 )
               }
             >
-              <div
-                className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}
-              >
+              <div className={`flex items-center gap-3 flex-row`}>
                 <item.icon size={20} className="text-gray-500" />
                 <div className="flex-1">
                   <h4 className="font-medium">{item.label}</h4>
@@ -464,16 +462,16 @@ export default function SettingsPage() {
         {activeTab === "account" && !isEditing ? (
           <Button
             onClick={() => setIsEditing(true)}
-            className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}
+            className={`flex items-center gap-2 flex-row`}
           >
             <Save size={16} />
             {t("settings.edit")}
           </Button>
         ) : activeTab === "account" && isEditing ? (
-          <div className={`flex gap-2 ${isRTL ? "flex-row" : ""}`}>
+          <div className={`flex gap-2 flex-row`}>
             <Button
               onClick={handleSave}
-              className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}
+              className={`flex items-center gap-2 flex-row`}
             >
               <Save size={16} />
               {t("settings.save")}
@@ -481,7 +479,7 @@ export default function SettingsPage() {
             <Button
               variant="outline"
               onClick={handleCancel}
-              className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}
+              className={`flex items-center gap-2 flex-row`}
             >
               <X size={16} />
               {t("settings.cancel")}
@@ -503,7 +501,7 @@ export default function SettingsPage() {
                   activeTab === tab.id
                     ? "border-blue-500 text-blue-600"
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                } ${isRTL ? "flex-row" : ""}`}
+                } flex-row`}
               >
                 <Icon size={16} />
                 {t(tab.labelKey)}

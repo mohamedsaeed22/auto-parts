@@ -45,6 +45,44 @@ export const productsApi = api.injectEndpoints({
       invalidatesTags: ["Products"],
     }),
 
+    // Get Products List (Query version for caching)
+    getProductsList: builder.query<
+      ApiResponse<PaginatedResponse<Product>>,
+      ProductsRequest | void
+    >({
+      query: (params) => {
+        const formData = new FormData();
+
+        if (params?.category_id)
+          formData.append("category_id", params.category_id.toString());
+        if (params?.brand_id)
+          formData.append("brand_id", params.brand_id.toString());
+        if (params?.name) formData.append("name", params.name);
+        if (params?.min_price)
+          formData.append("min_price", params.min_price.toString());
+        if (params?.max_price)
+          formData.append("max_price", params.max_price.toString());
+        if (params?.product_identifier)
+          formData.append("product_identifier", params.product_identifier);
+        if (params?.description)
+          formData.append("description", params.description);
+        if (params?.search) formData.append("search", params.search);
+
+        return {
+          url: "/products",
+          method: "POST",
+          body: formData,
+        };
+      },
+      providesTags: (result) => [
+        "Products",
+        ...(result?.data?.items?.map((product) => ({
+          type: "Products" as const,
+          id: product.id,
+        })) || []),
+      ],
+    }),
+
     // Get Single Product
     getProduct: builder.query<ApiResponse<ProductDetailsResponse>, number>({
       query: (id) => `/products/${id}`,
@@ -110,6 +148,7 @@ export const productsApi = api.injectEndpoints({
 
 export const {
   useGetProductsMutation,
+  useGetProductsListQuery,
   useGetProductQuery,
   useSearchProductsMutation,
   useGetBrandsQuery,

@@ -401,11 +401,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 {/* Price and Add to Cart Section */}
                 <div className="flex items-center justify-between">
                   {/* Price Section */}
-                  <div
-                    className={`flex items-center gap-2 ${
-                      isRTL ? "flex-row" : ""
-                    }`}
-                  >
+                  <div className={`flex items-center gap-2 flex-row`}>
                     <span className="text-xl font-bold text-neutral-900">
                       {isRTL
                         ? `${t("currency")} ${productFinalPrice}`
@@ -641,36 +637,24 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
             {/* Price and Add to Cart Section */}
             <div className="mt-auto">
-              <div
-                className={`flex items-center justify-between ${
-                  isRTL ? "flex-row" : ""
-                }`}
-              >
+              <div className={`flex items-center justify-between flex-row`}>
                 {/* Price Section */}
-                <div
-                  className={`flex items-center gap-2 ${
-                    isRTL ? "flex-row" : ""
-                  }`}
-                >
+                <div className={`flex items-center gap-2 flex-row`}>
+                    {hasDiscount && (
+                      <span className="text-sm text-neutral-500 line-through">
+                        {isRTL
+                          ? `${t("currency")} ${productPrice}`
+                          : `${productPrice} ${t("currency")}`}
+                      </span>
+                    )}
                   <span className="text-base font-bold text-neutral-900">
                     {isRTL
                       ? `${t("currency")} ${productFinalPrice}`
                       : `${productFinalPrice} ${t("currency")}`}
                   </span>
-                  {hasDiscount && (
-                    <span className="text-sm text-neutral-500 line-through">
-                      {isRTL
-                        ? `${t("currency")} ${productPrice}`
-                        : `${productPrice} ${t("currency")}`}
-                    </span>
-                  )}
                 </div>
 
                 {/* Add to Cart Section */}
-                {console.log(
-                  "🎯 Rendering Add to Cart section - isInCart:",
-                  isInCart
-                )}
                 {!isInCart ? (
                   <Button
                     size="sm"

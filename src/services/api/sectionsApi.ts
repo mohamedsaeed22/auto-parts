@@ -10,6 +10,8 @@ export interface SectionProduct extends Product {
   hover_text: string;
   product_identifier: string;
   is_active: boolean;
+  in_favorites: boolean | null;
+  in_wishlist: boolean | null;
 }
 
 export interface SectionData {
@@ -49,7 +51,16 @@ export const sectionsApi = api.injectEndpoints({
         url: "/sections",
         params,
       }),
-      providesTags: ["Sections"],
+      providesTags: (result) => [
+        "Sections",
+        ...(result?.data?.items?.flatMap(
+          (section) =>
+            section.products?.map((product) => ({
+              type: "Products" as const,
+              id: product.id,
+            })) || []
+        ) || []),
+      ],
     }),
   }),
 });
