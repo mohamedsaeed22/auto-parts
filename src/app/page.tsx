@@ -1,6 +1,5 @@
-import { redirect } from "next/navigation";
-import { i18nConfig } from "@/lib/i18n";
-
 export default function RootPage() {
-  redirect(`/${i18nConfig.defaultLocale}`);
+  // Locale routing handled by middleware (i18nRouter) via rewrite.
+  // This file intentionally returns null to avoid redirects that can confuse social scrapers.
+  return null;
 }
