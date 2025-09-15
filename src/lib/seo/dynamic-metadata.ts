@@ -1,6 +1,12 @@
 // Dynamic metadata generation for different page types
 import { Metadata } from "next";
-import { seoConfig, generateProductMetadata, generateCategoryMetadata, generateBrandMetadata, generateOfferMetadata } from "./config";
+import {
+  seoConfig,
+  generateProductMetadata,
+  generateCategoryMetadata,
+  generateBrandMetadata,
+  generateOfferMetadata,
+} from "./config";
 import { getAbsoluteImageUrl, generateDynamicOGImage } from "@/lib/api/server";
 
 interface ProductData {
@@ -53,26 +59,36 @@ export function generateProductPageMetadata(
     return generateFallbackMetadata("product", locale);
   }
 
-  const meta = generateProductMetadata({
-    name: product.name,
-    compatibility: product.brand?.name || "various vehicles"
-  }, locale);
+  const meta = generateProductMetadata(
+    {
+      name: product.name,
+      compatibility: product.brand?.name || "various vehicles",
+    },
+    locale
+  );
 
-  const productImage = product.primary_image || product.images?.[0] 
-    ? getAbsoluteImageUrl(product.primary_image || product.images?.[0])
-    : generateDynamicOGImage(
-        product.name,
-        product.description,
-        'product',
-        product.final_price || product.price,
-        locale
-      );
-  const productUrl = `${seoConfig.siteUrl}${locale === "en" ? "/en" : ""}/product/${product.id}`;
+  const productImage =
+    product.primary_image || product.images?.[0]
+      ? getAbsoluteImageUrl(product.primary_image || product.images?.[0])
+      : generateDynamicOGImage(
+          product.name,
+          product.description,
+          "product",
+          product.final_price || product.price,
+          locale
+        );
+  const productUrl = `${seoConfig.siteUrl}${
+    locale === "en" ? "/en" : ""
+  }/product/${product.id}`;
 
   return {
     title: meta.title,
     description: meta.description,
-    keywords: `${product.name}, ${product.brand?.name || ""}, ${product.category?.name || ""}, ${seoConfig.company.keywords[locale as "en" | "ar"].slice(0, 5).join(", ")}`,
+    keywords: `${product.name}, ${product.brand?.name || ""}, ${
+      product.category?.name || ""
+    }, ${seoConfig.company.keywords[locale as "en" | "ar"]
+      .slice(0, 5)
+      .join(", ")}`,
     openGraph: {
       type: "website",
       title: meta.title,
@@ -105,9 +121,11 @@ export function generateProductPageMetadata(
       },
     },
     other: {
-      "product:price:amount": product.final_price?.toString() || product.price?.toString() || "",
+      "product:price:amount":
+        product.final_price?.toString() || product.price?.toString() || "",
       "product:price:currency": "SAR",
-      "product:availability": (product.stock ?? 0) > 0 ? "in stock" : "out of stock",
+      "product:availability":
+        (product.stock ?? 0) > 0 ? "in stock" : "out of stock",
       "product:brand": product.brand?.name || "FalParts",
       "product:category": product.category?.name || "",
     },
@@ -124,21 +142,27 @@ export function generateCategoryPageMetadata(
   }
 
   const meta = generateCategoryMetadata({ name: category.name }, locale);
-  const categoryImage = category.image 
+  const categoryImage = category.image
     ? getAbsoluteImageUrl(category.image)
     : generateDynamicOGImage(
         category.name,
         category.description || meta.description,
-        'category',
+        "category",
         undefined,
         locale
       );
-  const categoryUrl = `${seoConfig.siteUrl}${locale === "en" ? "/en" : ""}/categories/${category.id}`;
+  const categoryUrl = `${seoConfig.siteUrl}${
+    locale === "en" ? "/en" : ""
+  }/categories/${category.id}`;
 
   return {
     title: meta.title,
     description: meta.description,
-    keywords: `${category.name}, ${seoConfig.company.keywords[locale as "en" | "ar"].slice(0, 8).join(", ")}`,
+    keywords: `${category.name}, ${seoConfig.company.keywords[
+      locale as "en" | "ar"
+    ]
+      .slice(0, 8)
+      .join(", ")}`,
     openGraph: {
       type: "website",
       title: meta.title,
@@ -183,21 +207,28 @@ export function generateBrandPageMetadata(
   }
 
   const meta = generateBrandMetadata({ name: brand.name }, locale);
-  const brandImage = brand.logo || brand.image 
-    ? getAbsoluteImageUrl(brand.logo || brand.image)
-    : generateDynamicOGImage(
-        brand.name,
-        brand.description || meta.description,
-        'brand',
-        undefined,
-        locale
-      );
-  const brandUrl = `${seoConfig.siteUrl}${locale === "en" ? "/en" : ""}/brands/${brand.id}`;
+  const brandImage =
+    brand.logo || brand.image
+      ? getAbsoluteImageUrl(brand.logo || brand.image)
+      : generateDynamicOGImage(
+          brand.name,
+          brand.description || meta.description,
+          "brand",
+          undefined,
+          locale
+        );
+  const brandUrl = `${seoConfig.siteUrl}${
+    locale === "en" ? "/en" : ""
+  }/brands/${brand.id}`;
 
   return {
     title: meta.title,
     description: meta.description,
-    keywords: `${brand.name}, ${seoConfig.company.keywords[locale as "en" | "ar"].slice(0, 8).join(", ")}`,
+    keywords: `${brand.name}, ${seoConfig.company.keywords[
+      locale as "en" | "ar"
+    ]
+      .slice(0, 8)
+      .join(", ")}`,
     openGraph: {
       type: "website",
       title: meta.title,
@@ -241,26 +272,35 @@ export function generateOfferPageMetadata(
     return generateFallbackMetadata("offer", locale);
   }
 
-  const meta = generateOfferMetadata({
-    title: offer.title,
-    expiryDate: offer.valid_until
-  }, locale);
+  const meta = generateOfferMetadata(
+    {
+      title: offer.title,
+      expiryDate: offer.valid_until,
+    },
+    locale
+  );
 
-  const offerImage = offer.image 
+  const offerImage = offer.image
     ? getAbsoluteImageUrl(offer.image)
     : generateDynamicOGImage(
         offer.title,
         offer.description || meta.description,
-        'offer',
+        "offer",
         undefined,
         locale
       );
-  const offerUrl = `${seoConfig.siteUrl}${locale === "en" ? "/en" : ""}/offers/${offer.id}`;
+  const offerUrl = `${seoConfig.siteUrl}${
+    locale === "en" ? "/en" : ""
+  }/offers/${offer.id}`;
 
   return {
     title: meta.title,
     description: meta.description,
-    keywords: `${offer.title}, offers, deals, ${seoConfig.company.keywords[locale as "en" | "ar"].slice(0, 6).join(", ")}`,
+    keywords: `${offer.title}, offers, deals, ${seoConfig.company.keywords[
+      locale as "en" | "ar"
+    ]
+      .slice(0, 6)
+      .join(", ")}`,
     openGraph: {
       type: "article",
       title: meta.title,
@@ -296,14 +336,19 @@ export function generateOfferPageMetadata(
 }
 
 // Fallback metadata when data is not available
-function generateFallbackMetadata(type: string, locale: string = "ar"): Metadata {
-  const fallbackTitle = locale === "ar" 
-    ? `${seoConfig.company.name} - قطع غيار السيارات`
-    : `${seoConfig.company.name} - Auto Parts`;
-    
-  const fallbackDescription = locale === "ar"
-    ? "قطع غيار السيارات عالية الجودة وإكسسوارات السيارات"
-    : "High-quality auto parts and car accessories";
+function generateFallbackMetadata(
+  type: string,
+  locale: string = "ar"
+): Metadata {
+  const fallbackTitle =
+    locale === "ar"
+      ? `${seoConfig.company.name} - قطع غيار السيارات`
+      : `${seoConfig.company.name} - Auto Parts`;
+
+  const fallbackDescription =
+    locale === "ar"
+      ? "قطع غيار السيارات عالية الجودة وإكسسوارات السيارات"
+      : "High-quality auto parts and car accessories";
 
   return {
     title: fallbackTitle,
