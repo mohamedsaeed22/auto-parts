@@ -9,7 +9,7 @@ import { storage } from "@/lib/storage";
 import type { RegistrationIncompleteError } from "./types";
 
 // Base URL from your Postman collection
-const BASE_URL = "https://brave.iseek.name/api";
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL as string;
 
 // Custom error type for registration incomplete
 export interface RegistrationIncompleteErrorResponse {

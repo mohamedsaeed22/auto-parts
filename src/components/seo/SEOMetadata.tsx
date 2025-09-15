@@ -234,7 +234,7 @@ export function SEOMetadata({
 
       {/* Additional Twitter Tags */}
       <meta name="twitter:image:alt" content={finalTitle} />
-      <meta name="twitter:domain" content="falparts.com" />
+      <meta name="twitter:domain" content="falparts.sa" />
 
       {/* Business/Commerce Tags */}
       <meta

@@ -288,8 +288,8 @@ const ContactInfo = ({ t }: { t: (key: string) => string }) => (
               <h3 className="font-semibold text-gray-900 mb-1">
                 {t("contactInfo.email") || "Email"}
               </h3>
-              <p className="text-gray-600 mb-2">info@falparts.com</p>
-              <p className="text-gray-600 mb-2">support@falparts.com</p>
+              <p className="text-gray-600 mb-2">info@falparts.sa</p>
+              <p className="text-gray-600 mb-2">support@falparts.sa</p>
               <p className="text-sm text-gray-500">
                 {t("contactInfo.emailResponse") ||
                   "We'll respond within 24 hours"}

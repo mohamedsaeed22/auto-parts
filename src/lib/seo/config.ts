@@ -3,7 +3,7 @@
 export const seoConfig = {
   // Basic site information
   siteName: "FalParts",
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.com",
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa",
   defaultLocale: "ar",
   supportedLocales: ["ar", "en"],
 
@@ -60,7 +60,7 @@ export const seoConfig = {
     },
     contact: {
       phone: "+966-XXX-XXXX",
-      email: "info@falparts.com",
+      email: "info@falparts.sa",
       address: {
         en: "Saudi Arabia",
         ar: "المملكة العربية السعودية",
@@ -256,9 +256,9 @@ export const seoConfig = {
       "@context": "https://schema.org",
       "@type": "Organization",
       name: "FalParts",
-      url: process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.com",
+      url: process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa",
       logo: `${
-        process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.com"
+        process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa"
       }/logo.png`,
       description:
         "Leading auto parts supplier offering high-quality automotive parts and accessories",
@@ -298,13 +298,13 @@ export const seoConfig = {
       "@context": "https://schema.org",
       "@type": "LocalBusiness",
       "@id": `${
-        process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.com"
+        process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa"
       }/#organization`,
       name: "FalParts",
       description: "Auto parts and automotive accessories supplier",
-      url: process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.com",
+      url: process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa",
       telephone: "+966-XXX-XXXX",
-      email: "info@falparts.com",
+      email: "info@falparts.sa",
       address: {
         "@type": "PostalAddress",
         addressCountry: "SA",
@@ -321,14 +321,14 @@ export const seoConfig = {
       "@context": "https://schema.org",
       "@type": "WebSite",
       name: "FalParts",
-      url: process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.com",
+      url: process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa",
       description: "Online auto parts store for all vehicle makes and models",
       potentialAction: {
         "@type": "SearchAction",
         target: {
           "@type": "EntryPoint",
           urlTemplate: `${
-            process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.com"
+            process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa"
           }/search?q={search_term_string}`,
         },
         "query-input": "required name=search_term_string",
@@ -339,7 +339,7 @@ export const seoConfig = {
         logo: {
           "@type": "ImageObject",
           url: `${
-            process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.com"
+            process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa"
           }/logo.png`,
         },
       },
@@ -399,9 +399,9 @@ export const seoConfig = {
       },
     ],
     sitemap: `${
-      process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.com"
+      process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa"
     }/sitemap.xml`,
-    host: process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.com",
+    host: process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa",
   },
 };
 
@@ -598,7 +598,7 @@ export function generateProductStructuredData(product: {
       price: product.final_price || product.price,
       priceCurrency: "SAR",
       availability:
-        product.stock > 0
+        (product.stock ?? 0) > 0
           ? "https://schema.org/InStock"
           : "https://schema.org/OutOfStock",
       seller: {
