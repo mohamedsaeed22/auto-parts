@@ -17,7 +17,7 @@ export const useFilterData = () => {
   const categories = useMemo(() => {
     if (!categoriesResponse?.data?.categories) return [];
 
-    return categoriesResponse.data.categories.map(
+    const mapped = categoriesResponse.data.categories.map(
       (category: {
         id: number;
         name: string;
@@ -30,6 +30,9 @@ export const useFilterData = () => {
         parent: category.parent,
       })
     ) as Category[];
+
+    // Keep only subcategories: those with a parent or level > 1
+    return mapped.filter((c) => !!c.parent || (c.level ?? 0) > 1);
   }, [categoriesResponse]);
 
   // Process brands data

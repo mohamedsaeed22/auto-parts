@@ -182,22 +182,7 @@ const FilterPanel = ({
                 <span className="text-sm text-gray-700">{category.name}</span>
               </label>
             ))}
-            {/* Clear category selection */}
-            {filters.category_id && (
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="category"
-                  value=""
-                  checked={false}
-                  onChange={() => onFilterChange("category_id", null)}
-                  className="border-gray-300 text-green-600 focus:ring-green-500"
-                />
-                <span className="text-sm text-gray-500">
-                  {t("clearCategory") || "Clear selection"}
-                </span>
-              </label>
-            )}
+         
           </div>
         )}
       </div>
