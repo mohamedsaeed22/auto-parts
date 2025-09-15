@@ -18,6 +18,8 @@
   "foundProducts": "Found Products",
   "productsCount": "products available",
   "noProducts": "No products found",
+  "noProductsFound": "No products found",
+  "noProductsFoundDesc": "No products are available at the moment.",
   "noProductsDesc": "Try adjusting your search or filter criteria.",
   "searchResults": "Search Results",
   "searchingFor": "Searching for",
@@ -39,5 +41,8 @@
   "discount": "Discount",
   "availability": "Availability",
   "inStock": "In Stock",
-  "onSale": "On Sale"
+  "onSale": "On Sale",
+  "ourProducts": "Our Premium Auto Parts Collection",
+  "productsDescription": "Explore our extensive catalog of genuine auto parts, accessories, and components. Quality guaranteed for all vehicle makes and models with competitive pricing and fast delivery.",
+  "noProductsAvailable": "No products are currently available. Please check back later or contact us for assistance."
 }

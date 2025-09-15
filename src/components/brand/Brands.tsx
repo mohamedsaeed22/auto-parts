@@ -12,6 +12,7 @@ import ViewAllButton from "@/components/ui/view-all-button";
 const Brands = () => {
   const router = useRouter();
   const { t, i18n } = useTranslation("brands");
+  const { t: tCommon } = useTranslation("common");
   const isRTL = i18n.language === "ar";
 
   // API hook to fetch brands
@@ -68,19 +69,19 @@ const Brands = () => {
 
           <div className="flex items-center justify-center min-h-[300px]">
             <div className="text-center">
-              <AlertCircle className="h-12 w-12 text-accent mx-auto mb-4" />
+              <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-neutral-900 mb-2">
-                {t("errorLoadingBrands") || "Error loading brands"}
+                {tCommon("errorLoadingData") || "Error loading data"}
               </h3>
               <p className="text-neutral-600 mb-4">
-                {t("errorLoadingBrandsDesc") ||
-                  "There was an error loading the brands. Please try again."}
+                {tCommon("errorLoadingDataDesc") ||
+                  "There was an error loading the data. Please try again."}
               </p>
               <button
                 onClick={() => refetch()}
                 className="px-4 py-2 bg-secondary text-white rounded-lg hover:bg-secondary-dark transition-colors"
               >
-                {t("tryAgain") || "Try Again"}
+                {tCommon("tryAgain") || "Try Again"}
               </button>
             </div>
           </div>

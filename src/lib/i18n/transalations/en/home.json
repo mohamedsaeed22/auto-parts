@@ -182,6 +182,8 @@
     "previousSlide": "Previous slide",
     "nextSlide": "Next slide",
     "viewOffer": "View Offer",
+    "noOffers": "No offers found",
+    "noOffersDesc": "No offers are available at the moment.",
     "offer1": { "alt": "Special offer 1" },
     "offer2": { "alt": "Special offer 2" },
     "offer3": { "alt": "Special offer 3" },
@@ -196,7 +198,7 @@
     "scrollHint": "Scroll to see more partners",
     "loadingPartners": "Loading partners...",
     "errorLoadingPartners": "Error loading partners",
-    "noPartners": "No partners available"
+    "noPartners": "No partners found"
   },
   "footer": {
     "sections": {

@@ -17,6 +17,8 @@
   "foundBrands": "Found Brands",
   "brandsCount": "premium brands available",
   "noBrands": "No brands available",
+  "noBrandsFound": "No brands found",
+  "noBrandsFoundDesc": "No brands are available at the moment.",
   "noBrandsDesc": "Check back later for new brands!",
   "goBack": "Go Back",
   "stayUpdated": "Stay Updated",

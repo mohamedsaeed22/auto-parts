@@ -182,6 +182,8 @@
     "previousSlide": "الشريحة السابقة",
     "nextSlide": "الشريحة التالية",
     "viewOffer": "عرض العرض",
+    "noOffers": "لم يتم العثور على عروض",
+    "noOffersDesc": "لا توجد عروض متاحة في الوقت الحالي.",
     "offer1": { "alt": "عرض خاص 1" },
     "offer2": { "alt": "عرض خاص 2" },
     "offer3": { "alt": "عرض خاص 3" },
@@ -196,7 +198,7 @@
     "scrollHint": "مرر لرؤية المزيد من الشركاء",
     "loadingPartners": "جاري تحميل الشركاء...",
     "errorLoadingPartners": "خطأ في تحميل الشركاء",
-    "noPartners": "لا توجد شركاء متاحون"
+    "noPartners": "لم يتم العثور على شركاء"
   },
   "footer": {
     "sections": {

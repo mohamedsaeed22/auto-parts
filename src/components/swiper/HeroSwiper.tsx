@@ -8,12 +8,14 @@ import { useGetBannersQuery } from "@/services/hooks";
 import { Banner } from "@/services/api/types";
 import { AlertCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslation } from "react-i18next";
 
 // Fallback image as a simple SVG data URL
 const FALLBACK_IMAGE =
   "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yMDAgMTUwQzE3OS4wODkgMTUwIDE2MiAxMzIuOTExIDE2MiAxMTJDMTYyIDkxLjA4OSAxNzkuMDg5IDc0IDIwMCA3NEMyMjAuOTExIDc0IDIzOCA5MS4wODkgMjM4IDExMkMyMzggMTMyLjkxMSAyMjAuOTExIDE1MCAyMDAgMTUwWiIgZmlsbD0iIzlDQTNBRiIvPgo8cGF0aCBkPSJNMzAwIDIyNkgyMDBWMTc0SDEwMFYyMjZIMFYyNzRIMTAwVjMyNkgyMDBWMjc0SDMwMFYyMjZaIiBmaWxsPSIjOUNBM0FGIi8+Cjwvc3ZnPgo=";
 
 const HeroSwiper = () => {
+  const { t } = useTranslation("common");
   const swiperRef = useRef<SwiperType | null>(null);
   const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
   const [imageLoadAttempts, setImageLoadAttempts] = useState<
@@ -71,18 +73,19 @@ const HeroSwiper = () => {
     return (
       <div className="relative bg-background rounded-3xl overflow-hidden shadow-1xl w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[500px] flex items-center justify-center">
         <div className="text-center">
-          <AlertCircle className="h-12 w-12 text-accent mx-auto mb-4" />
+          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-neutral-900 mb-2">
-            Error loading banners
+            {t("errorLoadingData") || "Error loading data"}
           </h3>
           <p className="text-neutral-600 mb-4">
-            There was an error loading the banners. Please try again.
+            {t("errorLoadingDataDesc") ||
+              "There was an error loading the data. Please try again."}
           </p>
           <button
             onClick={() => refetch()}
             className="px-4 py-2 bg-secondary text-white rounded-lg hover:bg-secondary-dark transition-colors"
           >
-            Try Again
+            {t("tryAgain") || "Try Again"}
           </button>
         </div>
       </div>
@@ -98,10 +101,11 @@ const HeroSwiper = () => {
             <AlertCircle className="text-neutral-400" size={24} />
           </div>
           <h3 className="text-lg font-semibold text-neutral-900 mb-2">
-            No banners found
+            {t("noBannersFound") || "No banners found"}
           </h3>
           <p className="text-neutral-600">
-            No banners are available at the moment.
+            {t("noBannersFoundDesc") ||
+              "No banners are available at the moment."}
           </p>
         </div>
       </div>

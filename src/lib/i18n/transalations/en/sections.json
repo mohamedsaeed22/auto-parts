@@ -1,5 +1,6 @@
 {
-  "loadingSections": "Loading sections...",
+  "noSections": "No sections found",
+  "noSectionsDesc": "No sections are available at the moment.",
   "error": {
     "title": "Error loading sections",
     "message": "Something went wrong. Please try again."

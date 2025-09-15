@@ -182,7 +182,6 @@ const FilterPanel = ({
                 <span className="text-sm text-gray-700">{category.name}</span>
               </label>
             ))}
-         
           </div>
         )}
       </div>
@@ -627,14 +626,14 @@ export default function ProductsPage({
               <div className="text-center py-16">
                 <Package className="mx-auto h-16 w-16 text-gray-300 mb-4" />
                 <h3 className="text-xl font-semibold text-gray-600 mb-2">
-                  {t("noProducts") || "No products found"}
+                  {t("noProductsFound") || "No products found"}
                 </h3>
                 <p className="text-gray-500 mb-6">
                   {hasActiveFilters
                     ? t("noProductsWithFilters") ||
                       "Try adjusting your filter criteria."
-                    : t("noProductsDesc") ||
-                      "No products available at the moment."}
+                    : t("noProductsFoundDesc") ||
+                      "No products are available at the moment."}
                 </p>
                 {hasActiveFilters && (
                   <Button onClick={handleClearFilters} variant="outline">

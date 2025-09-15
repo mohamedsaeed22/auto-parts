@@ -9,11 +9,12 @@ import { useTranslation } from "react-i18next";
 
 const SectionsContainer: React.FC = () => {
   const { t } = useTranslation("sections");
+  const { t: tCommon } = useTranslation("common");
   const { data: sectionsResponse, isLoading, error } = useGetSectionsQuery({});
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <section className="py-16">
         <div className="space-y-8">
           {[...Array(3)].map((_, index) => (
             <div key={index} className="space-y-4">
@@ -26,25 +27,26 @@ const SectionsContainer: React.FC = () => {
             </div>
           ))}
         </div>
-      </div>
+      </section>
     );
   }
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <section className="py-16">
         <div className="text-center min-h-[400px] flex items-center justify-center">
           <div>
-            <AlertCircle className="mx-auto h-16 w-16 text-gray-300 mb-4" />
-            <h2 className="text-xl font-semibold text-gray-600 mb-2">
-              {t("error.title") || "Error loading sections"}
-            </h2>
-            <p className="text-gray-500">
-              {t("error.message") || "Something went wrong. Please try again."}
+            <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-4" />
+            <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+              {tCommon("errorLoadingData") || "Error loading data"}
+            </h3>
+            <p className="text-neutral-600">
+              {tCommon("errorLoadingDataDesc") ||
+                "There was an error loading the data. Please try again."}
             </p>
           </div>
         </div>
-      </div>
+      </section>
     );
   }
 
@@ -52,28 +54,34 @@ const SectionsContainer: React.FC = () => {
 
   if (sections.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <section className="py-16">
         <div className="text-center min-h-[400px] flex items-center justify-center">
           <div>
-            <AlertCircle className="mx-auto h-16 w-16 text-gray-300 mb-4" />
-            <h2 className="text-xl font-semibold text-gray-600 mb-2">
-              {t("empty.title") || "No sections found"}
-            </h2>
-            <p className="text-gray-500">
-              {t("empty.message") || "No sections are available at the moment."}
+            <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="text-neutral-400" size={24} />
+            </div>
+            <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+              {t("noSections") || tCommon("noContent") || "No sections found"}
+            </h3>
+            <p className="text-neutral-600">
+              {t("noSectionsDesc") ||
+                tCommon("noData") ||
+                "No sections are available at the moment."}
             </p>
           </div>
         </div>
-      </div>
+      </section>
     );
   }
 
   return (
-    <div className="space-y-8">
-      {sections.map((section: SectionData) => (
-        <SectionSwiper key={section.id} section={section} />
-      ))}
-    </div>
+    <section className="py-16">
+      <div className="space-y-8">
+        {sections.map((section: SectionData) => (
+          <SectionSwiper key={section.id} section={section} />
+        ))}
+      </div>
+    </section>
   );
 };
 

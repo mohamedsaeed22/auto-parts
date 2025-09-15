@@ -59,10 +59,8 @@ export default function Home({
           <CategoriesSection />
           <SectionsContainer />
           <ProductsList />
+          <Partners />
         </div>
-
-        {/* Partners Section - Above Footer */}
-        <Partners />
       </main>
     </div>
   );

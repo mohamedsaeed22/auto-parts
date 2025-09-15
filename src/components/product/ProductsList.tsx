@@ -11,7 +11,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Pagination } from "@/components/ui/pagination";
 
 const ProductsList = () => {
-  const { t, i18n } = useTranslation("product");
+  const { t, i18n } = useTranslation("products");
+  const { t: tCommon } = useTranslation("common");
   const isRTL = i18n.language === "ar";
 
   // State for basic filters
@@ -92,12 +93,12 @@ const ProductsList = () => {
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
               <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                {t("errorLoadingProducts") || "Unable to Load Products"}
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+                {tCommon("errorLoadingData") || "Error loading data"}
               </h3>
-              <p className="text-gray-600 mb-4">
-                {t("errorLoadingProductsDesc") ||
-                  "We encountered an issue while loading our product catalog. Please check your internet connection and try again."}
+              <p className="text-neutral-600 mb-4">
+                {tCommon("errorLoadingDataDesc") ||
+                  "There was an error loading the data. Please try again."}
               </p>
               <Button
                 onClick={handleRetry}
@@ -105,7 +106,7 @@ const ProductsList = () => {
                 className="flex items-center gap-2"
               >
                 <RefreshCw className="h-4 w-4" />
-                {t("tryAgain") || "Retry"}
+                {tCommon("tryAgain") || "Try Again"}
               </Button>
             </div>
           </div>
@@ -161,7 +162,13 @@ const ProductsList = () => {
         {/* Empty state */}
         {products.length === 0 && !isLoading && !error && (
           <div className="text-center py-16">
-            <p className="text-gray-600 text-lg">
+            <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="text-neutral-400" size={24} />
+            </div>
+            <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+              {t("noProductsFound") || "No products found"}
+            </h3>
+            <p className="text-neutral-600">
               {t("noProductsAvailable") ||
                 "No products are currently available. Please check back later or contact us for assistance."}
             </p>
