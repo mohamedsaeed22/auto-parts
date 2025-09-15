@@ -28,7 +28,7 @@ const cairo = Cairo({
 });
 
 type Props = {
-  params: { locale: Locale };
+  params: Promise<{ locale: Locale }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
