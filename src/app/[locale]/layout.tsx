@@ -35,8 +35,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const localizedMeta = getLocalizedMetadata("home", locale);
   const keywords = getKeywords(locale);
+  const baseUrl = seoConfig.siteUrl;
+  const pageUrl = locale === "ar" ? baseUrl : `${baseUrl}/${locale}`;
 
   return {
+    metadataBase: new URL(baseUrl),
     title: {
       default: localizedMeta.title,
       template: `%s | ${seoConfig.company.name}`,
@@ -44,10 +47,29 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: localizedMeta.description,
     keywords: keywords,
     openGraph: {
+      type: "website",
+      url: pageUrl,
+      siteName: seoConfig.company.name,
       title: localizedMeta.title,
       description: localizedMeta.description,
       locale: locale === "ar" ? "ar_SA" : "en_US",
       alternateLocale: locale === "ar" ? "en_US" : "ar_SA",
+      images: [
+        {
+          url: `${baseUrl}/og-image.jpg`,
+          width: 1200,
+          height: 630,
+          alt: seoConfig.company.name,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      site: seoConfig.twitter.site,
+      creator: seoConfig.twitter.creator,
+      title: localizedMeta.title,
+      description: localizedMeta.description,
+      images: [`${baseUrl}/og-image.jpg`],
     },
     alternates: {
       canonical:
