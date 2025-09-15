@@ -307,7 +307,7 @@ export default function SearchAutocomplete({
                         {product.name}
                       </p>
                       <p className="text-xs text-neutral-500 truncate">
-                        {product.category.name}
+                        {product.category?.name || "Uncategorized"}
                         {product.brand && ` • ${product.brand.name}`}
                       </p>
                     </div>
