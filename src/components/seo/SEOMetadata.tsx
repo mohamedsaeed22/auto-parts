@@ -29,7 +29,7 @@ export function SEOMetadata({
   description,
   keywords,
   image,
-  locale = "en",
+  locale,
   type = "website",
   publishedTime,
   modifiedTime,
@@ -44,9 +44,11 @@ export function SEOMetadata({
   structuredData,
 }: SEOMetadataProps) {
   const pathname = usePathname();
+  const activeLocale = (locale ||
+    (pathname?.startsWith("/en") ? "en" : "ar")) as "en" | "ar";
 
   // Generate canonical URL
-  const canonicalUrl = getCanonicalUrl(pathname, locale);
+  const canonicalUrl = getCanonicalUrl(pathname, activeLocale);
 
   // Generate alternate URLs for hreflang
   const alternateUrls = getAlternateUrls(pathname);
@@ -55,12 +57,12 @@ export function SEOMetadata({
   const finalTitle =
     title ||
     seoConfig.defaultMetadata.home.title[
-      locale as keyof typeof seoConfig.defaultMetadata.home.title
+      activeLocale as keyof typeof seoConfig.defaultMetadata.home.title
     ];
   const finalDescription =
     description ||
     seoConfig.defaultMetadata.home.description[
-      locale as keyof typeof seoConfig.defaultMetadata.home.description
+      activeLocale as keyof typeof seoConfig.defaultMetadata.home.description
     ];
   const finalImage = image || `${seoConfig.siteUrl}/og-image.jpg`;
 
@@ -111,7 +113,7 @@ export function SEOMetadata({
       <meta name="description" content={finalDescription} />
       {keywords && <meta name="keywords" content={keywords} />}
       <meta name="robots" content={robotsContent} />
-      <meta name="language" content={locale} />
+      <meta name="language" content={activeLocale} />
       <meta name="author" content={author || seoConfig.company.name} />
 
       {/* Canonical URL */}
@@ -131,12 +133,12 @@ export function SEOMetadata({
       <meta property="og:site_name" content={seoConfig.openGraph.siteName} />
       <meta
         property="og:locale"
-        content={locale === "ar" ? "ar_SA" : "en_US"}
+        content={activeLocale === "ar" ? "ar_SA" : "en_US"}
       />
 
       {/* Open Graph Alternate Locales */}
       {seoConfig.supportedLocales
-        .filter((loc) => loc !== locale)
+        .filter((loc) => loc !== activeLocale)
         .map((loc) => (
           <meta
             key={loc}
@@ -206,7 +208,7 @@ export function SEOMetadata({
       <meta name="ICBM" content="24.7136, 46.6753" />
       <meta name="DC.title" content={finalTitle} />
       <meta name="DC.description" content={finalDescription} />
-      <meta name="DC.language" content={locale} />
+      <meta name="DC.language" content={activeLocale} />
       <meta name="DC.creator" content={seoConfig.company.name} />
       <meta name="DC.publisher" content={seoConfig.company.name} />
       <meta name="DC.rights" content="© 2024 FalParts. All rights reserved." />
