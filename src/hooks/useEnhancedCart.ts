@@ -63,14 +63,6 @@ export const useEnhancedCart = () => {
       : fallbackRegComplete;
 
   // Debug authentication context vs storage
-  console.log("🔐 useEnhancedCart - Auth Context vs Storage:", {
-    contextAuth: isAuthenticated,
-    contextRegComplete: isRegistrationComplete,
-    storageAuth: storage.isAuthenticated(),
-    storageRegComplete: storage.isRegistrationComplete(),
-    hasToken: Boolean(storage.getAuth()?.token),
-    user: storage.getUser(),
-  });
 
   // Redux state selectors
   const items = useAppSelector(selectCartItems);
@@ -88,15 +80,6 @@ export const useEnhancedCart = () => {
     finalIsAuthenticated && finalIsRegistrationComplete && hasToken;
 
   // Debug shouldUseAPI calculation
-  console.log("🔐 shouldUseAPI calculation:", {
-    contextAuth: isAuthenticated,
-    contextRegComplete: isRegistrationComplete,
-    finalAuth: finalIsAuthenticated,
-    finalRegComplete: finalIsRegistrationComplete,
-    hasToken,
-    shouldUseAPI,
-    finalDecision: shouldUseAPI ? "USE API" : "USE LOCAL STORAGE",
-  });
 
   const { data: apiCart, refetch: refetchCart } = useGetCartQuery(undefined, {
     skip: !shouldUseAPI,
@@ -165,31 +148,21 @@ export const useEnhancedCart = () => {
    */
   const addToCart = useCallback(
     async (item: Omit<CartItem, "quantity">) => {
-      console.log("addToCart called with:", item);
-      console.log("shouldUseAPI:", shouldUseAPI);
-      console.log("finalIsAuthenticated:", finalIsAuthenticated);
-      console.log("finalIsRegistrationComplete:", finalIsRegistrationComplete);
-      console.log("hasToken:", Boolean(storage.getAuth()?.token));
-
       try {
         dispatch(setLoading(true));
 
         if (shouldUseAPI) {
-          console.log("Using API to add to cart");
           // Use API
           const result = await addToCartAPI({
             product_id: item.id,
             quantity: 1,
           }).unwrap();
-          console.log("API add to cart result:", result);
 
           // Also update local Redux state to keep UI in sync
           dispatch(addToCartAction(item));
-          console.log("Updated local Redux state after successful API call");
 
           // showSuccess("Product added to cart");
         } else {
-          console.log("Using localStorage to add to cart");
           // Use local storage only - always succeeds
           dispatch(addToCartAction(item));
           // showSuccess("Product added to cart");
@@ -237,7 +210,6 @@ export const useEnhancedCart = () => {
 
           // Also update local Redux state to keep UI in sync
           dispatch(updateQuantity({ id, quantity }));
-          console.log("Updated local quantity after successful API call");
         } else {
           // Use local storage only - always succeeds
           dispatch(updateQuantity({ id, quantity }));

@@ -67,13 +67,6 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
         return;
       }
 
-      console.log("Creating order with data:", {
-        payment_method: paymentMethod,
-        address_id: selectedAddress.id,
-        coupon_code: couponCode || "",
-        notes: notes || "",
-      });
-
       // Create order using the API
       const result = await createOrder({
         payment_method: paymentMethod,
@@ -81,7 +74,6 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
         coupon_code: couponCode || "",
         notes: notes || "",
       }).unwrap();
-      console.log("Order created successfully:", result);
 
       showSuccess(
         t("orderReview.orderCreated", {

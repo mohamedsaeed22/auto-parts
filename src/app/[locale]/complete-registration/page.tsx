@@ -74,7 +74,6 @@ export default function CompleteRegistrationPage() {
   useEffect(() => {
     // Check if user is not authenticated at all
     if (!storage.isAuthenticated() && !hasRedirectedRef.current) {
-      console.log("User not authenticated, redirecting to home...");
       hasRedirectedRef.current = true;
       router.push(`/${currentLocale}`);
       return;
@@ -86,7 +85,6 @@ export default function CompleteRegistrationPage() {
       authData.user?.is_registration_complete &&
       !hasRedirectedRef.current
     ) {
-      console.log("User has already completed registration, redirecting...");
       hasRedirectedRef.current = true;
 
       // Only show success message if we're actually on the complete-registration page
@@ -259,23 +257,9 @@ export default function CompleteRegistrationPage() {
       };
 
       // Log the data to console
-      console.log("Form Data Object:", formData);
-      console.log("Commercial Register File:", commercialRegister);
-      console.log("Avatar File:", avatar);
-      console.log("Request Data:", requestData);
 
       // Send the request to the API
       const result = await completeRegistration(requestData).unwrap();
-
-      console.log("API Response:", result);
-      console.log("API Response structure:", {
-        code: result.code,
-        message: result.message,
-        data: result.data,
-        dataType: typeof result.data,
-        hasUser: !!result.data?.user,
-        hasToken: !!result.data?.token,
-      });
 
       if (result.data) {
         // Update only the user data while preserving the existing token
@@ -283,9 +267,6 @@ export default function CompleteRegistrationPage() {
           ...result.data.user,
           is_registration_complete: true,
         };
-
-        console.log("About to update user data:", updatedUser);
-        console.log("Preserving existing token");
 
         // Update only the user data, don't replace the entire auth structure
         storage.updateUser(updatedUser);
@@ -306,16 +287,6 @@ export default function CompleteRegistrationPage() {
 
         // Verify the update worked
         const storedAuth = storage.getAuth();
-        console.log("Stored auth data after update:", storedAuth);
-        console.log(
-          "Is authenticated after update:",
-          storage.isAuthenticated()
-        );
-        console.log("Token in storage:", storage.getToken());
-        console.log(
-          "User registration complete:",
-          storedAuth?.user?.is_registration_complete
-        );
 
         clearRegistrationIncomplete();
         showSuccess(t("toasts.registrationCompleted"));
@@ -323,11 +294,10 @@ export default function CompleteRegistrationPage() {
         // Get the previous page URL and redirect back
         const previousPage = storage.getPreviousPage();
         if (previousPage) {
-          console.log("Redirecting back to:", previousPage);
           router.push(previousPage);
         } else {
           // Fallback to home page if no previous page stored
-          console.log("No previous page found, redirecting to home");
+
           router.push(`/${currentLocale}`);
         }
       }
@@ -362,7 +332,6 @@ export default function CompleteRegistrationPage() {
 
   // Redirect unauthenticated users
   if (!authData.token) {
-    console.log("User not authenticated, redirecting to home...");
     router.push(`/${currentLocale}`);
     return null;
   }

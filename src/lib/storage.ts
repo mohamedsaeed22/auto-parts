@@ -37,17 +37,12 @@ export const storage = {
   // Store auth data
   setAuth: (authData: AuthData): void => {
     try {
-      console.log("storage.setAuth called with:", authData);
-      console.log("Token to store:", authData.token);
-
       localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authData));
 
       // Verify it was stored correctly
       const stored = localStorage.getItem(AUTH_STORAGE_KEY);
-      console.log("Raw stored data:", stored);
+
       const parsed = stored ? JSON.parse(stored) : null;
-      console.log("Parsed stored data:", parsed);
-      console.log("Stored token:", parsed?.token);
 
       // Dispatch custom event to notify components of auth data change
       window.dispatchEvent(new Event("authChange"));
@@ -78,9 +73,6 @@ export const storage = {
       // Remove the duplicate field from root level
       delete (updatedAuth as unknown as Record<string, unknown>)
         .is_registration_complete;
-
-      console.log("Updating user data:", userData);
-      console.log("Updated auth data:", updatedAuth);
 
       localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(updatedAuth));
 

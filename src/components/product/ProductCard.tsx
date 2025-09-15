@@ -66,13 +66,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
     if (!hasOptimisticFavUpdate) {
       const serverFavState = product.in_favorites === true;
       setLocalFavouriteState(serverFavState);
-
-      console.log("🔄 Syncing favorites from server:", {
-        productId: product.id,
-        serverState: product.in_favorites,
-        newLocalState: serverFavState,
-        hasOptimisticUpdate: hasOptimisticFavUpdate,
-      });
     }
   }, [product.in_favorites, hasOptimisticFavUpdate, product.id]);
 
@@ -676,14 +669,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     size="sm"
                     className="bg-primary hover:bg-primary/90 text-white rounded px-2 py-1 flex items-center gap-1 transition-colors duration-200 text-xs relative z-10"
                     onClick={(e) => {
-                      console.log("🔥 Button click detected!");
-                      console.log("🔥 Event:", e);
-                      console.log("🔥 Event target:", e.target);
-                      console.log("🔥 Button element:", e.currentTarget);
-                      console.log(
-                        "🔥 Button disabled:",
-                        e.currentTarget.disabled
-                      );
                       handleAddToCart(e);
                     }}
                     disabled={isItemLoading(product.id)}

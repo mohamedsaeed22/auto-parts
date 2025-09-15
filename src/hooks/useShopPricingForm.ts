@@ -185,16 +185,12 @@ export function useShopPricingForm() {
         });
       });
 
-      console.log("Sending shop items to backend:", items);
-
       // Send to API
       const result = await createRequest({ items }).unwrap();
 
       // Clear saved forms after successful submission
       setSavedForms([]);
       showSuccess(t("success.requestSent") || "Request sent successfully!");
-
-      console.log("Request created successfully:", result);
     } catch (error: unknown) {
       console.error("Error sending data:", error);
       const errorMessage =

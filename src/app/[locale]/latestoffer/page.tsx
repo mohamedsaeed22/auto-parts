@@ -206,7 +206,6 @@ export default function LatestOffersPage() {
     setCurrentPage(page);
     // You can add API call here to fetch offers for the new page
     // For now, we'll just update the state
-    console.log(`Navigating to page ${page}`);
   };
 
   // Handle loading state

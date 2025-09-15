@@ -73,16 +73,9 @@ const baseQueryWithAuth: BaseQueryFn<
 
   // Handle registration incomplete responses (403)
   if (result.error && result.error.status === 403) {
-    console.log("BaseApi - 403 error detected:", result.error);
     const errorData = result.error.data as RegistrationIncompleteError;
-    console.log("BaseApi - Error data:", errorData);
 
     if (errorData?.data?.is_registration_complete === false) {
-      console.log(
-        "BaseApi - Registration incomplete detected, storing code:",
-        errorData.data.user?.code
-      );
-
       // Store the user code for registration completion
       if (errorData.data.user?.code) {
         storage.setRegistrationCode(errorData.data.user.code);
@@ -111,7 +104,7 @@ const baseQueryWithAuth: BaseQueryFn<
           data: errorData,
         } as RegistrationIncompleteErrorResponse,
       };
-      console.log("BaseApi - Returning custom error:", customError);
+
       return customError;
     }
   }

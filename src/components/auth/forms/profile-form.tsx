@@ -50,7 +50,6 @@ export function ProfileForm() {
     try {
       const response = await updateProfileMutation.mutateAsync();
       // Placeholder response handling - to be implemented
-      console.log("Profile update response:", response);
     } catch {
       // Error handling is done in the mutation
     }

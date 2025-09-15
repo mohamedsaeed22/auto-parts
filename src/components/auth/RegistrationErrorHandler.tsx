@@ -18,7 +18,6 @@ export default function RegistrationErrorHandler({
   useEffect(() => {
     // Check if the error is a registration incomplete error
     if (error && isErrorRegistrationIncomplete(error)) {
-      console.log("Registration incomplete error detected, redirecting...");
       handleRegistrationIncomplete(error);
     }
   }, [error, handleRegistrationIncomplete, isErrorRegistrationIncomplete]);

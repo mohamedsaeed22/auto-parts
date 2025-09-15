@@ -43,8 +43,6 @@ export function useRegistrationStatus() {
   const handleRegistrationIncomplete = (
     error: RegistrationIncompleteErrorResponse
   ) => {
-    console.log("Registration incomplete detected, redirecting...");
-
     setIsRegistrationIncomplete(true);
     if (error.data.data.user?.code) {
       setRegistrationCode(error.data.data.user.code);
@@ -54,7 +52,6 @@ export function useRegistrationStatus() {
     // Store current page URL before redirecting
     const currentPath = window.location.pathname;
     storage.setPreviousPage(currentPath);
-    console.log("Stored previous page:", currentPath);
 
     // Redirect to complete registration page
     router.push(`/${currentLocale}/complete-registration`);

@@ -69,24 +69,14 @@ export function useAuth() {
   };
 
   const login = (authData: AuthData) => {
-    console.log("useAuth.login called with:", authData);
-    console.log("Token being stored:", authData.token);
-
     storage.setAuth(authData);
 
     // Verify storage worked
     const storedAuth = storage.getAuth();
-    console.log("Auth data after storage.setAuth:", storedAuth);
-    console.log(
-      "Is authenticated after storage.setAuth:",
-      storage.isAuthenticated()
-    );
 
     setIsAuthenticated(true);
     setUser(authData.user);
     setAuthData(authData);
-
-    console.log("useAuth.login completed");
   };
 
   return {

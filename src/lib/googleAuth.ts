@@ -34,7 +34,6 @@ export const handleCredentialResponse = async (response: {
     );
 
     const user = JSON.parse(jsonPayload);
-    console.log("Google User:", user);
 
     // Send google_id to your backend
     const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "";

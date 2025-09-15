@@ -353,9 +353,7 @@ Enable debug logging:
 ```typescript
 // In your component
 useEffect(() => {
-  window.addEventListener("authChange", () => {
-    console.log("Auth changed:", storage.getAuth());
-  });
+  window.addEventListener("authChange", () => {});
 }, []);
 ```
 

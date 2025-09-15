@@ -46,7 +46,6 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
 
       // Simple: send phone number to API
       const phoneNumber = data.phoneNumber || "";
-      console.log("Sending OTP to:", phoneNumber);
 
       await sendOtp({ phone: phoneNumber }).unwrap();
 

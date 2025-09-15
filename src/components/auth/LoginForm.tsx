@@ -46,9 +46,7 @@ export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
   const handleGoogleCredentialResponse = useCallback(
     async (response: { credential: string }) => {
       try {
-        console.log("Google OAuth response received");
         const result = await handleCredentialResponse(response);
-        console.log("Google login successful:", result);
 
         // Check if the response has the expected structure
         if (result.backendData.code === 200 && result.backendData.data) {
@@ -101,8 +99,6 @@ export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
   const handleSendOtp = async (data: LoginFormData) => {
     // Enforce phone number format: 11 digits starting with 010/011/012/015
     const phoneNumber = data.phoneNumber || "";
-    console.log("Form submitted with phone:", phoneNumber);
-    console.log("Full form data:", data);
 
     try {
       await onSubmit(data);

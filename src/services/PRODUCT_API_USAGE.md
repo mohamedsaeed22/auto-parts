@@ -166,8 +166,6 @@ function AddToCartButton({ productId }: { productId: number }) {
         product_id: productId,
         quantity: 1,
       }).unwrap();
-
-      console.log("Added to cart successfully!");
     } catch (error) {
       console.error("Failed to add to cart:", error);
     }

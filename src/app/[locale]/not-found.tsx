@@ -31,12 +31,6 @@ export default function NotFound() {
 
   // Debug logging
   if (typeof window !== "undefined") {
-    console.log("404 Page - Current Language:", currentLang);
-    console.log("404 Page - Is RTL:", isRTL);
-    console.log("404 Page - URL:", window.location.pathname);
-    console.log("404 Page - Default Language: Arabic (ar)");
-    console.log("404 Page - Synchronous Detection: Enabled");
-    console.log("404 Page - Layout Effect: Active");
   }
 
   // Fallback translations for when i18n is not available

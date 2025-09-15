@@ -35,9 +35,9 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
     removeFromCart,
     isItemLoading,
   } = useEnhancedCart();
-  console.log(items);
+
   const handleContinueToShipping = async () => {
-   onNext();
+    onNext();
   };
 
   return (

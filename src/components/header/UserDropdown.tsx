@@ -22,7 +22,7 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
   const pathname = usePathname();
   const [logoutApi, { isLoading: isLoggingOut }] = useLogoutMutation();
   const { user, logout } = useAuth();
-  console.log("user", user);
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -66,9 +66,7 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
 
       if (is404Error) {
         // If logout endpoint doesn't exist (404), still clear local auth data
-        console.log(
-          "Logout endpoint not found (404), clearing local auth data anyway"
-        );
+
         logout();
 
         // Show success message since we successfully cleared local data

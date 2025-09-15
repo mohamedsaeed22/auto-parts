@@ -184,9 +184,6 @@ export function useShopPricingForm() {
         submittedAt: form.submittedAt.toISOString(),
       }));
 
-      console.log("Sending shop data to backend:", dataToSend);
-      console.log("Full saved shop forms with images:", savedForms);
-
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 2000));
 

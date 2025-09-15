@@ -12,8 +12,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log("Received Google login request with ID:", google_id);
-
     // Since you're calling the backend directly from the frontend,
     // this API route is not needed. You can remove this file or
     // use it for additional processing if needed.
