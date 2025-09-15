@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { Autoplay, Pagination, Navigation, EffectFade } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -21,6 +21,8 @@ const HeroSwiper = () => {
   const [imageLoadAttempts, setImageLoadAttempts] = useState<
     Map<string, number>
   >(new Map());
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false);
+  const [containerHeight, setContainerHeight] = useState<string>("220px");
 
   // API hook to fetch banners with error handling
   const {
@@ -37,6 +39,174 @@ const HeroSwiper = () => {
 
   // Extract banners from response
   const banners = bannersResponse?.data?.items || [];
+
+  // Set initial height based on screen size (more flexible for full image display)
+  useEffect(() => {
+    const setInitialHeight = () => {
+      if (typeof window !== "undefined") {
+        const screenWidth = window.innerWidth;
+        let initialHeight;
+
+        if (screenWidth < 640) {
+          initialHeight = "250px"; // Mobile: allow more height for various aspect ratios
+        } else if (screenWidth < 768) {
+          initialHeight = "300px"; // Small tablets
+        } else if (screenWidth < 1024) {
+          initialHeight = "350px"; // Medium screens
+        } else {
+          initialHeight = "400px"; // Large screens
+        }
+
+        setContainerHeight(initialHeight);
+      }
+    };
+
+    setInitialHeight();
+  }, []);
+
+  // Handle window resize to recalculate container height
+  useEffect(() => {
+    const handleResize = () => {
+      if (imageLoaded) {
+        // Find the first loaded image to recalculate height
+        const images = document.querySelectorAll("img[data-banner-image]");
+        if (images.length > 0) {
+          const firstImage = images[0] as HTMLImageElement;
+          if (firstImage.complete && firstImage.naturalWidth) {
+            const aspectRatio =
+              firstImage.naturalWidth / firstImage.naturalHeight;
+            const screenWidth = window.innerWidth;
+            let containerWidth = screenWidth;
+
+            // Apply responsive max-widths
+            if (screenWidth >= 1536)
+              containerWidth = Math.min(screenWidth * 0.9, 1400);
+            else if (screenWidth >= 1280)
+              containerWidth = Math.min(screenWidth * 0.9, 1200);
+            else if (screenWidth >= 1024)
+              containerWidth = Math.min(screenWidth * 0.9, 1000);
+            else if (screenWidth >= 768)
+              containerWidth = Math.min(screenWidth * 0.95, 800);
+            else if (screenWidth >= 640)
+              containerWidth = Math.min(screenWidth * 0.95, 600);
+            else containerWidth = screenWidth * 0.95;
+
+            // Calculate height that shows the full image (object-contain)
+            const idealHeight = containerWidth / aspectRatio;
+
+            // Set reasonable limits but prioritize showing full image
+            let minHeight, maxHeight;
+
+            if (screenWidth < 640) {
+              // Mobile: allow more flexible heights
+              minHeight = 150;
+              maxHeight = Math.min(
+                0.8 * window.innerHeight,
+                Math.min(400, screenWidth * 0.8)
+              );
+            } else if (screenWidth < 768) {
+              // Small tablets
+              minHeight = 180;
+              maxHeight = Math.min(
+                0.8 * window.innerHeight,
+                Math.min(450, screenWidth * 0.7)
+              );
+            } else if (screenWidth < 1024) {
+              // Medium screens
+              minHeight = 200;
+              maxHeight = Math.min(
+                0.8 * window.innerHeight,
+                Math.min(500, screenWidth * 0.6)
+              );
+            } else {
+              // Large screens
+              minHeight = 250;
+              maxHeight = Math.min(0.8 * window.innerHeight, 600);
+            }
+
+            // Prefer ideal height but respect limits
+            const optimalHeight = Math.max(
+              minHeight,
+              Math.min(maxHeight, idealHeight)
+            );
+
+            setContainerHeight(`${optimalHeight}px`);
+          }
+        }
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [imageLoaded]);
+
+  // Handle image load success
+  const handleImageLoad = useCallback(
+    (event: React.SyntheticEvent<HTMLImageElement>) => {
+      const img = event.currentTarget;
+      const aspectRatio = img.naturalWidth / img.naturalHeight;
+
+      // Calculate optimal height to show full image without cropping
+      const getOptimalHeight = () => {
+        const screenWidth = window.innerWidth;
+        let containerWidth = screenWidth;
+
+        // Apply responsive max-widths based on container constraints
+        if (screenWidth >= 1536)
+          containerWidth = Math.min(screenWidth * 0.9, 1400); // 2xl
+        else if (screenWidth >= 1280)
+          containerWidth = Math.min(screenWidth * 0.9, 1200); // xl
+        else if (screenWidth >= 1024)
+          containerWidth = Math.min(screenWidth * 0.9, 1000); // lg
+        else if (screenWidth >= 768)
+          containerWidth = Math.min(screenWidth * 0.95, 800); // md
+        else if (screenWidth >= 640)
+          containerWidth = Math.min(screenWidth * 0.95, 600); // sm
+        else containerWidth = screenWidth * 0.95; // mobile
+
+        // Calculate height that shows the full image (object-contain)
+        const idealHeight = containerWidth / aspectRatio;
+
+        // Set reasonable limits but prioritize showing full image
+        let minHeight, maxHeight;
+
+        if (screenWidth < 640) {
+          // Mobile: allow more flexible heights
+          minHeight = 150;
+          maxHeight = Math.min(
+            0.8 * window.innerHeight,
+            Math.min(400, screenWidth * 0.8)
+          );
+        } else if (screenWidth < 768) {
+          // Small tablets
+          minHeight = 180;
+          maxHeight = Math.min(
+            0.8 * window.innerHeight,
+            Math.min(450, screenWidth * 0.7)
+          );
+        } else if (screenWidth < 1024) {
+          // Medium screens
+          minHeight = 200;
+          maxHeight = Math.min(
+            0.8 * window.innerHeight,
+            Math.min(500, screenWidth * 0.6)
+          );
+        } else {
+          // Large screens
+          minHeight = 250;
+          maxHeight = Math.min(0.8 * window.innerHeight, 600);
+        }
+
+        // Prefer ideal height but respect limits
+        return Math.max(minHeight, Math.min(maxHeight, idealHeight));
+      };
+
+      const optimalHeight = getOptimalHeight();
+      setContainerHeight(`${optimalHeight}px`);
+      setImageLoaded(true);
+    },
+    []
+  );
 
   // Handle image load error
   const handleImageError = (imageUrl: string) => {
@@ -63,7 +233,7 @@ const HeroSwiper = () => {
   if (isLoading) {
     return (
       <div className="relative bg-background rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl w-full">
-        <div className="aspect-[4/3] sm:aspect-[16/9] md:aspect-[16/7] lg:aspect-[16/6] xl:aspect-[16/5] 2xl:aspect-[16/4]">
+        <div className="w-full h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px] xl:h-[450px]">
           <Skeleton className="w-full h-full" />
         </div>
       </div>
@@ -74,7 +244,7 @@ const HeroSwiper = () => {
   if (error) {
     return (
       <div className="relative bg-background rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl w-full">
-        <div className="aspect-[4/3] sm:aspect-[16/9] md:aspect-[16/7] lg:aspect-[16/6] xl:aspect-[16/5] 2xl:aspect-[16/4] flex items-center justify-center">
+        <div className="w-full h-[220px] sm:h-[260px] md:h-[320px] lg:h-[380px] xl:h-[450px] flex items-center justify-center">
           <div className="text-center p-4">
             <AlertCircle className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 text-red-500 mx-auto mb-2 sm:mb-4" />
             <h3 className="text-sm sm:text-base md:text-lg font-semibold text-neutral-900 mb-1 sm:mb-2">
@@ -100,7 +270,7 @@ const HeroSwiper = () => {
   if (banners.length === 0) {
     return (
       <div className="relative bg-background rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl w-full">
-        <div className="aspect-[4/3] sm:aspect-[16/9] md:aspect-[16/7] lg:aspect-[16/6] xl:aspect-[16/5] 2xl:aspect-[16/4] flex items-center justify-center">
+        <div className="w-full h-[220px] sm:h-[260px] md:h-[320px] lg:h-[380px] xl:h-[450px] flex items-center justify-center">
           <div className="text-center p-4">
             <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-4">
               <AlertCircle className="text-neutral-400" size={16} />
@@ -120,7 +290,14 @@ const HeroSwiper = () => {
 
   return (
     <div className="relative bg-background rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl w-full">
-      <div className="aspect-[4/3] sm:aspect-[16/9] md:aspect-[16/7] lg:aspect-[16/6] xl:aspect-[16/5] 2xl:aspect-[16/4]">
+      <div
+        className="relative w-full transition-all duration-300 ease-in-out overflow-hidden"
+        style={{
+          height: containerHeight,
+          minHeight: "150px",
+          maxHeight: "80vh",
+        }}
+      >
         {/* Custom previous button */}
         <button
           className="cursor-pointer absolute left-1 sm:left-2 md:left-3 lg:left-4 top-1/2 z-20 -translate-y-1/2 bg-background/90 backdrop-blur-sm p-1.5 sm:p-2 md:p-2.5 lg:p-3 rounded-full shadow-lg hover:bg-background transition-all duration-200 border border-neutral-200/50"
@@ -159,14 +336,14 @@ const HeroSwiper = () => {
             dynamicBullets: true,
           }}
           modules={[Autoplay, EffectFade, Pagination, Navigation]}
-          className="w-full h-full"
+          className="hero-swiper w-full h-full"
         >
           {banners.map((banner: Banner) => {
             const imageSrc = getImageSrc(banner);
 
             return (
               <SwiperSlide key={banner.id} className="w-full h-full">
-                <div className="relative w-full h-full bg-neutral-50">
+                <div className="relative w-full h-full bg-neutral-50 overflow-hidden">
                   {banner.link ? (
                     <a
                       href={banner.link}
@@ -180,9 +357,11 @@ const HeroSwiper = () => {
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, (max-width: 1280px) 100vw, (max-width: 1536px) 100vw, 100vw"
                         priority
-                        className="object-contain transition-opacity duration-300"
+                        className="object-contain object-center transition-opacity duration-300 w-full h-full"
+                        onLoad={handleImageLoad}
                         onError={() => handleImageError(banner.image)}
                         unoptimized={imageSrc === FALLBACK_IMAGE}
+                        data-banner-image="true"
                       />
                     </a>
                   ) : (
@@ -190,11 +369,13 @@ const HeroSwiper = () => {
                       src={imageSrc}
                       alt={`Banner ${banner.id}`}
                       fill
-                      sizes="(max-width: 475px) 100vw, (max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, (max-width: 1280px) 100vw, 100vw"
+                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, (max-width: 1280px) 100vw, (max-width: 1536px) 100vw, 100vw"
                       priority
                       className="object-contain transition-opacity duration-300"
+                      onLoad={handleImageLoad}
                       onError={() => handleImageError(banner.image)}
                       unoptimized={imageSrc === FALLBACK_IMAGE}
+                      data-banner-image="true"
                     />
                   )}
                 </div>
