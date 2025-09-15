@@ -1,3 +1,4 @@
+import { NextResponse } from "next/server";
 import { i18nRouter } from "next-i18n-router";
 import { i18nConfig } from "./lib/i18n/index";
 
@@ -11,16 +12,14 @@ export function middleware(request: any) {
     pathname.startsWith("/ar") || pathname.startsWith("/en");
 
   // If no locale prefix and path is root or generic path, set cookie to 'ar'
-  const response = i18nRouter(request, i18nConfig);
-
   if (!isLocalePrefixed) {
-    const currentLocaleCookie = request.cookies.get("NEXT_LOCALE")?.value;
-    if (currentLocaleCookie !== "ar") {
-      response.cookies.set("NEXT_LOCALE", "ar", { path: "/" });
-    }
+    const urlAr = new URL("/ar", url);
+    const rewrite = NextResponse.rewrite(urlAr);
+    rewrite.cookies.set("NEXT_LOCALE", "ar", { path: "/" });
+    return rewrite;
   }
 
-  return response;
+  return i18nRouter(request, i18nConfig);
 }
 
 // Apply middleware only to relevant routes (excluding API, static files, and internal Next.js paths)

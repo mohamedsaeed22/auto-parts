@@ -3,7 +3,7 @@
 export const seoConfig = {
   // Basic site information
   siteName: "FalParts",
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa",
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://www.falparts.sa",
   defaultLocale: "ar",
   supportedLocales: ["ar", "en"],
 
