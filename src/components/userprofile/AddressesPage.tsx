@@ -58,7 +58,10 @@ export default function AddressesPage() {
 
   // Handler for address type change
   const handleAddressTypeChange = (value: string) => {
-    
+    setValue("address_type", value as "home" | "office" | "other", {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
   };
 
   // API hooks
@@ -82,7 +85,16 @@ export default function AddressesPage() {
     if (editingId && addresses.length > 0) {
       const addressToEdit = addresses.find((addr) => addr.id === editingId);
       if (addressToEdit) {
-        
+        // Use reset with the address data
+        reset({
+          address_type: addressToEdit.address_type,
+          name: addressToEdit.name,
+          phone: addressToEdit.phone,
+          city: addressToEdit.city,
+          detailed_address: addressToEdit.detailed_address,
+          postal_code: addressToEdit.postal_code,
+          is_default: addressToEdit.is_default,
+        });
       }
     }
   }, [editingId, addresses, reset]);
@@ -90,23 +102,32 @@ export default function AddressesPage() {
   // Effect to track form value changes
   useEffect(() => {
     const subscription = watch((value) => {
-      
     });
     return () => subscription.unsubscribe();
   }, [watch]);
 
   const onSubmit = async (data: AddressFormData) => {
     try {
-      
+      const addressData = {
+        ...data,
+        is_default: data.is_default || false,
+        address_type: data.address_type as "home" | "office" | "other",
+      };
+
+
+      if (editingId) {
+        await updateAddress({
+          id: editingId,
+          ...addressData,
+        }).unwrap();
         showSuccess(t("addresses.success.updateSuccess"));
       } else {
-        
+        await createAddress(addressData).unwrap();
         showSuccess(t("addresses.success.addSuccess"));
       }
       resetForm();
       refetch();
     } catch (error) {
-      console.error("Form submission error:", error); // Debug log
       showError(
         editingId
           ? t("addresses.errors.updateFailed")
@@ -116,7 +137,9 @@ export default function AddressesPage() {
   };
 
   const handleEdit = (address: Address) => {
-    
+
+    // Set editing state - useEffect will handle form population
+    setEditingId(address.id);
     setShowAddForm(true);
     setFormKey((prev) => prev + 1); // Force form re-render
   };
@@ -143,8 +166,8 @@ export default function AddressesPage() {
     reset(addressDefaultValues);
     setShowAddForm(false);
     setEditingId(null);
-    setFormKey((prev) => prev + 1); // Force form re-render
-  };
+    setFormKey((prev) => prev + 1);
+    };
 
   const handleCancel = () => {
     resetForm();
