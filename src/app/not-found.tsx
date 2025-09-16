@@ -184,7 +184,7 @@ export default function NotFound() {
               variant="outline"
               className="w-full sm:w-auto px-8 py-3"
             >
-              <ArrowLeft className={`h-5 w-5 ${isRTL ? "ml-2" : "mr-2"}`} />
+              <ArrowLeft className={`h-5 w-5 ${isRTL ? "ml-2 transform rotate-180" : "mr-2"}`} />
               {t_("goBack")}
             </Button>
 
