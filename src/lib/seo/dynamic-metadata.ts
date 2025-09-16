@@ -280,10 +280,11 @@ export function generateOfferPageMetadata(
     locale
   );
 
+  const offerTitle = offer.title || seoConfig.company.name;
   const offerImage = offer.image
     ? getAbsoluteImageUrl(offer.image)
     : generateDynamicOGImage(
-        offer.title,
+        offerTitle,
         offer.description || meta.description,
         "offer",
         undefined,
@@ -313,7 +314,7 @@ export function generateOfferPageMetadata(
           url: offerImage,
           width: 1200,
           height: 630,
-          alt: offer.title,
+          alt: offerTitle,
         },
       ],
     },

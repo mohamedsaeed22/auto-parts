@@ -11,16 +11,16 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, id } = await params;
-  
+
   // Fetch product data for metadata
-  const product = await fetchProductById(id);
-  
+  const product = await fetchProductById(id, locale);
+
   return generateProductPageMetadata(product, locale);
 }
 
 export default async function ProductLayout({ params, children }: Props) {
   const { locale, id } = await params;
-  const product = await fetchProductById(id);
+  const product = await fetchProductById(id, locale);
 
   return (
     <>

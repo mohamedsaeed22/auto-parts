@@ -29,8 +29,27 @@ export const useLocale = () => {
     // Update Redux state
     dispatch(setLocale(newLocale));
 
-    // Reset entire API state to force fresh data fetch with new locale
-    dispatch(api.util.resetApiState());
+    // Invalidate cached queries so components refetch with the new locale
+    dispatch(
+      api.util.invalidateTags([
+        "Auth",
+        "Profile",
+        "Products",
+        "Categories",
+        "Brands",
+        "Cart",
+        "Wishlist",
+        "Favourites",
+        "Orders",
+        "Addresses",
+        "Requests",
+        "Banners",
+        "Offers",
+        "Sections",
+        "Partners",
+        "Settings",
+      ])
+    );
 
     // Set a cookie for next-i18n-router to read the new locale
     const days = 30;

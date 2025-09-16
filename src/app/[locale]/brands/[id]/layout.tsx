@@ -9,10 +9,10 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, id } = await params;
-  
+
   // Fetch brand data for metadata
-  const brand = await fetchBrandById(id);
-  
+  const brand = await fetchBrandById(id, locale);
+
   return generateBrandPageMetadata(brand, locale);
 }
 

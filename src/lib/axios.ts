@@ -10,13 +10,35 @@ export const axiosInstance = axios.create({
   },
   // Bypass SSL certificate verification for development
   httpsAgent: new https.Agent({
-    rejectUnauthorized: false
-  })
+    rejectUnauthorized: false,
+  }),
 });
 
 // Request interceptor to add auth token
 axiosInstance.interceptors.request.use(
   (config) => {
+    // Attach locale in headers and as query param for GET requests
+    try {
+      const locale =
+        (typeof window !== "undefined" &&
+          document.cookie
+            .split(";")
+            .map((c) => c.trim())
+            .find((c) => c.startsWith("NEXT_LOCALE="))
+            ?.split("=")[1]) ||
+        "en";
+      // Header for all requests
+      (config.headers as any).locale = locale;
+      // Query param for GET
+      if (!config.method || config.method.toUpperCase() === "GET") {
+        const params = new URLSearchParams(
+          (config.params as Record<string, string>) || {}
+        );
+        if (!params.get("locale")) params.set("locale", locale);
+        config.params = Object.fromEntries(params.entries());
+      }
+    } catch {}
+
     // Get token from localStorage
     const authData = localStorage.getItem("fal_parts_auth");
     if (authData) {
