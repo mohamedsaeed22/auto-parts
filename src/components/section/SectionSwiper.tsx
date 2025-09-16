@@ -41,7 +41,7 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
             src={section.image}
             alt={section.title}
             fill
-            className="object-cover"
+            className="object-fill"
             priority
           />
         </div>
@@ -79,7 +79,7 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
           src={section.image}
           alt={section.title}
           fill
-          className="object-cover"
+          className="object-fill"
           priority
         />
       </div>
@@ -122,9 +122,8 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
             spaceBetween={20}
             slidesPerView={1}
             breakpoints={{
-              640: {
+              430: {
                 slidesPerView: 2,
-                spaceBetween: 20,
               },
               768: {
                 slidesPerView: 3,
@@ -157,9 +156,7 @@ const SectionSwiper: React.FC<SectionSwiperProps> = ({ section }) => {
             {products.map((product: SectionProduct) => (
               <SwiperSlide key={product.id}>
                 <div>
-                  <ProductCard
-                    product={product as Product}
-                  />
+                  <ProductCard product={product as Product} />
                 </div>
               </SwiperSlide>
             ))}
