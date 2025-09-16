@@ -26,6 +26,6 @@
   "section": {
     "previousSlide": "Previous slide",
     "nextSlide": "Next slide",
-    "viewAllProducts": "View All {{section}} Products"
+    "viewAllProducts": "View All {{section}} "
   }
 }
