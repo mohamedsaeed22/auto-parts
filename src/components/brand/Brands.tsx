@@ -147,12 +147,12 @@ const Brands = () => {
               onClick={() => handleViewBrand(brand.id)}
             >
               {/* Brand logo container */}
-              <div className="relative w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-full overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105 bg-neutral-100">
-                {/* Background with brand color */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-50 to-neutral-50" />
+              <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-full overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105 bg-white ring-1 ring-neutral-200 group-hover:ring-2 group-hover:ring-primary/60">
+                {/* Subtle gradient to match theme */}
+                <div className="absolute inset-0 bg-gradient-to-br from-neutral-50 to-white" />
 
                 {/* Brand logo overlay */}
-                <div className="absolute inset-0 flex items-center justify-center p-4">
+                <div className="absolute inset-0 flex items-center justify-center p-2">
                   <div className="w-full h-full relative">
                     <Image
                       src={
@@ -160,7 +160,7 @@ const Brands = () => {
                       }
                       alt={brand.name}
                       fill
-                      className="object-contain p-4"
+                      className="object-contain"
                       onError={(e) => {
                         // Fallback to placeholder if image fails to load
                         const target = e.target as HTMLImageElement;
@@ -172,7 +172,10 @@ const Brands = () => {
               </div>
 
               {/* Brand name */}
-              <p className="mt-4 text-base md:text-lg font-medium text-neutral-700 text-center group-hover:text-neutral-900 transition-colors duration-300">
+              <p
+                className="mt-3 text-sm sm:text-base md:text-lg font-medium text-neutral-800 text-center group-hover:text-neutral-900 transition-colors duration-300"
+                title={brand.name}
+              >
                 {brand.name}
               </p>
             </div>
