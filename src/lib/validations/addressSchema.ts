@@ -13,11 +13,16 @@ export const addressSchema = z.object({
   phone: z
     .string()
     .min(1, "addresses.validation.phone.required")
-    .regex(/^(\+966|0)?[0-9]{9,10}$/, "addresses.validation.phone.invalid")
+    .min(10, "addresses.validation.phone.length")
+    .max(14, "addresses.validation.phone.length")
+    .regex(
+      /^(\+966|00966|966|0)?[5][0-9]{8}$/,
+      "addresses.validation.phone.invalid"
+    )
     .refine((val) => {
       // More specific Saudi phone validation
-      const cleanPhone = val.replace(/^\+966/, "0");
-      return /^(010|011|012|015)[0-9]{8}$/.test(cleanPhone);
+      const cleanPhone = val.replace(/^(\+966|00966|966)/, "0");
+      return /^0[5][0-9]{8}$/.test(cleanPhone);
     }, "addresses.validation.phone.invalid"),
   city: z
     .string()

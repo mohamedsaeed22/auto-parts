@@ -36,13 +36,18 @@ const locationSchema = z.object({
   formattedAddress: z.string().min(1, "validation.location.formattedAddress"),
 });
 
-// Login schema (phone number: must start with 010/011/012/015 and total length 11)
+// Login schema (phone number: Saudi format - 00966501234568, 966501234568, or 0501234568)
 export const loginSchema = z.object({
   phoneNumber: z
-    .string({ required_error: "validation.phone.required" })
-    .min(11, "validation.phone.length")
-    .max(11, "validation.phone.length")
-    .regex(/^(010|011|012|015)[0-9]{8}$/, "validation.phone.invalid"),
+    .string({ message: "validation.phone.required" })
+    .min(10, "validation.phone.length")
+    .max(14, "validation.phone.length")
+    .regex(/^(\+966|00966|966|0)?[5][0-9]{8}$/, "validation.phone.invalid")
+    .refine((val) => {
+      // More specific Saudi phone validation
+      const cleanPhone = val.replace(/^(\+966|00966|966)/, "0");
+      return /^0[5][0-9]{8}$/.test(cleanPhone);
+    }, "validation.phone.invalid"),
 });
 
 // Registration schema

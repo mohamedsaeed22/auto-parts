@@ -40,9 +40,14 @@ export const profileUpdateSchema = z.object({
   phone: z
     .string()
     .min(1, "validation.phone.required")
-    .min(11, "validation.phone.length")
-    .max(11, "validation.phone.length")
-    .regex(/^(010|011|012|015)[0-9]{8}$/, "validation.phone.invalid"),
+    .min(10, "validation.phone.length")
+    .max(14, "validation.phone.length")
+    .regex(/^(\+966|00966|966|0)?[5][0-9]{8}$/, "validation.phone.invalid")
+    .refine((val) => {
+      // More specific Saudi phone validation
+      const cleanPhone = val.replace(/^(\+966|00966|966)/, "0");
+      return /^0[5][0-9]{8}$/.test(cleanPhone);
+    }, "validation.phone.invalid"),
 
   manager_name: z
     .string()

@@ -102,8 +102,24 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 text-neutral-700 hover:text-primary transition-colors"
       >
-        <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-          <User size={16} className="text-white" />
+        <div className="relative">
+          <div className="w-8 h-8 border ring-1 ring-primary rounded-full flex items-center justify-center overflow-hidden">
+            {user.avatar ? (
+              <img
+                src={user.avatar}
+                alt="User Avatar"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <User size={16} className="text-white" />
+            )}
+          </div>
+          {/* Points Badge */}
+          {user.points > 0 && (
+            <div className="absolute -top-1 -right-1 bg-gradient-to-r from-[#b3984a] to-[#d4af37] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
+              {user.points}
+            </div>
+          )}
         </div>
         <span className="text-sm font-medium hidden sm:inline">
           {user.name || user.phone}
@@ -134,6 +150,14 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
                 {user.name || "User"}
               </p>
               <p className="text-xs text-neutral-500">{user.phone}</p>
+              {user.points > 0 && (
+                <div className="flex items-center gap-1 mt-1">
+                  <div className="w-3 h-3 bg-gradient-to-r from-[#b3984a] to-[#d4af37] rounded-full"></div>
+                  <span className="text-xs text-neutral-600 font-medium">
+                    {user.points} Points
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Menu Items */}

@@ -23,6 +23,7 @@ export interface User {
   email?: string;
   phone: string;
   type: "shop" | "workshop";
+  points: number;
   manager_name: string;
   address: string;
   city: string;

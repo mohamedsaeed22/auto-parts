@@ -55,32 +55,32 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
               title: t("payment.cashOnDelivery"),
               desc: t("payment.cashOnDeliveryDesc"),
             },
-            {
-              key: "credit_card",
-              icon: CreditCard,
-              title: t("payment.creditCard"),
-              desc: t("payment.creditCardDesc"),
-            },
-            {
-              key: "paypal",
-              icon: Wallet,
-              title: "PayPal",
-              desc: t("paymentMethod"),
-            },
-            {
-              key: "stripe",
-              icon: Banknote,
-              title: "Stripe",
-              desc: t("paymentMethod"),
-            },
-            {
-              key: "bank_transfer",
-              icon: Landmark,
-              title: t("payment.bankTransfer", {
-                defaultValue: "Bank Transfer",
-              }),
-              desc: t("paymentMethod"),
-            },
+            // {
+            //   key: "credit_card",
+            //   icon: CreditCard,
+            //   title: t("payment.creditCard"),
+            //   desc: t("payment.creditCardDesc"),
+            // },
+            // {
+            //   key: "paypal",
+            //   icon: Wallet,
+            //   title: "PayPal",
+            //   desc: t("paymentMethod"),
+            // },
+            // {
+            //   key: "stripe",
+            //   icon: Banknote,
+            //   title: "Stripe",
+            //   desc: t("paymentMethod"),
+            // },
+            // {
+            //   key: "bank_transfer",
+            //   icon: Landmark,
+            //   title: t("payment.bankTransfer", {
+            //     defaultValue: "Bank Transfer",
+            //   }),
+            //   desc: t("paymentMethod"),
+            // },
           ].map(({ key, icon: Icon, title, desc }) => (
             <div
               key={key}

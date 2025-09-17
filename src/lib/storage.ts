@@ -3,6 +3,7 @@
 // ... existing code ...
 
 export interface AuthData {
+  token: string;
   user: {
     id: number;
     code: string;
@@ -10,6 +11,7 @@ export interface AuthData {
     email: string | null;
     phone: string;
     type: string | null;
+    points: number;
     manager_name: string | null;
     address: string | null;
     city: string | null;
@@ -23,8 +25,6 @@ export interface AuthData {
     is_registration_complete: boolean;
     is_google_user: boolean;
   };
-  token: string;
-  // Remove the duplicate is_registration_complete field from root level
 }
 
 // ... existing code ...
@@ -38,11 +38,6 @@ export const storage = {
   setAuth: (authData: AuthData): void => {
     try {
       localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authData));
-
-      // Verify it was stored correctly
-      const stored = localStorage.getItem(AUTH_STORAGE_KEY);
-
-      const parsed = stored ? JSON.parse(stored) : null;
 
       // Dispatch custom event to notify components of auth data change
       window.dispatchEvent(new Event("authChange"));
