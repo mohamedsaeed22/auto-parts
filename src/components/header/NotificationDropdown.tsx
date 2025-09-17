@@ -112,8 +112,8 @@ export default function NotificationDropdown({
       {/* Notification Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative flex items-center gap-2 text-neutral-700 hover:text-primary transition-colors"
-        title="Notifications"
+        className="relative p-2 text-neutral-700 hover:text-primary transition-colors"
+        title={t("title") || "Notifications"}
       >
         <div className="relative">
           <Bell size={20} />
@@ -129,9 +129,6 @@ export default function NotificationDropdown({
             </motion.span>
           )}
         </div>
-        <span className="text-sm font-medium hidden sm:inline">
-          {t("title") || "Notifications"}
-        </span>
       </button>
 
       {/* Dropdown Menu */}

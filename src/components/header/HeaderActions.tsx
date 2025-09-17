@@ -30,11 +30,11 @@ export default function HeaderActions({
       ) : (
         <LoginDialog
           trigger={
-            <button className="flex items-center gap-2 text-neutral-700 hover:text-primary transition-colors">
+            <button
+              className="p-2 text-neutral-700 hover:text-primary transition-colors"
+              title={t("actions.account") || "Account"}
+            >
               <User size={20} />
-              <span className="text-sm font-medium">
-                {t("actions.account") || "Account"}
-              </span>
             </button>
           }
         />
@@ -47,13 +47,10 @@ export default function HeaderActions({
       {isAuthenticated && (
         <button
           onClick={() => router.push("/favourites")}
-          className="flex items-center gap-2 text-neutral-700 hover:text-primary transition-colors"
+          className="p-2 text-neutral-700 hover:text-primary transition-colors"
           title={t("actions.favourites") || "Favourites"}
         >
           <Heart size={20} />
-          <span className="text-sm font-medium hidden sm:inline">
-            {t("actions.favourites") || "Favourites"}
-          </span>
         </button>
       )}
 
@@ -61,23 +58,21 @@ export default function HeaderActions({
       {isAuthenticated && (
         <button
           onClick={() => router.push("/wishlist")}
-          className="flex items-center gap-2 text-neutral-700 hover:text-primary transition-colors"
+          className="p-2 text-neutral-700 hover:text-primary transition-colors"
           title={t("actions.wishlist") || "Wishlist"}
         >
           <Bookmark size={20} />
-          <span className="text-sm font-medium hidden sm:inline">
-            {t("actions.wishlist") || "Wishlist"}
-          </span>
         </button>
       )}
 
       {/* Cart */}
       <button
         onClick={onCartClick}
-        className="relative flex items-center gap-2 text-neutral-700 hover:text-primary transition-colors"
+        className="relative p-2 text-neutral-700 hover:text-primary transition-colors"
+        title={t("cart.cart") || "Cart"}
       >
         <div className="relative">
-          <ShoppingCart size={24} />
+          <ShoppingCart size={20} />
           {totalItems > 0 && (
             <motion.span
               initial={{ scale: 0 }}

@@ -80,14 +80,10 @@ export default function HeaderLanguageDropdown({
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-neutral-700 hover:text-neutral-900 hover:bg-neutral-100 rounded-md transition-colors"
+        className="p-2 text-neutral-700 hover:text-primary transition-colors"
+        title={currentLanguage?.name}
       >
         <span className="text-lg">{currentLanguage?.flag}</span>
-        <span>{currentLanguage?.name}</span>
-        <ChevronDown
-          size={12}
-          className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
-        />
       </button>
 
       <AnimatePresence>

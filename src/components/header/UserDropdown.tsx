@@ -4,7 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, LogOut, Settings, ChevronDown } from "lucide-react";
+import { User, LogOut, Settings } from "lucide-react";
+import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 import { useLogoutMutation } from "@/services/hooks";
 import { showSuccess, showError } from "@/lib/toast";
@@ -58,11 +59,13 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
         router.push("/");
       }
       // If not protected, stay on current page
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error logging out:", error);
 
       // Check if it's a 404 error (route not found)
-      const is404Error = error?.status === 404 || error?.data?.code === 404;
+      const errorObj = error as { status?: number; data?: { code?: number } };
+      const is404Error =
+        errorObj?.status === 404 || errorObj?.data?.code === 404;
 
       if (is404Error) {
         // If logout endpoint doesn't exist (404), still clear local auth data
@@ -100,14 +103,17 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
       {/* User Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 text-neutral-700 hover:text-primary transition-colors"
+        className="p-2 text-neutral-700 hover:text-primary transition-colors"
+        title={user.name || user.phone}
       >
         <div className="relative">
           <div className="w-8 h-8 border ring-1 ring-primary rounded-full flex items-center justify-center overflow-hidden">
             {user.avatar ? (
-              <img
+              <Image
                 src={user.avatar}
                 alt="User Avatar"
+                width={32}
+                height={32}
                 className="w-full h-full object-cover"
               />
             ) : (
@@ -121,15 +127,6 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
             </div>
           )}
         </div>
-        <span className="text-sm font-medium hidden sm:inline">
-          {user.name || user.phone}
-        </span>
-        <ChevronDown
-          size={16}
-          className={`transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
-        />
       </button>
 
       {/* Dropdown Menu */}

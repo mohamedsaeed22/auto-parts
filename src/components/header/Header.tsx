@@ -121,7 +121,7 @@ export default function Header() {
             </div>
 
             {/* Desktop Right Actions */}
-            <div className="hidden lg:flex items-center gap-6">
+            <div className="hidden lg:flex items-center gap-2">
               <HeaderLanguageDropdown
                 isOpen={isLanguageOpen}
                 setIsOpen={setIsLanguageOpen}
@@ -137,7 +137,7 @@ export default function Header() {
             </div>
 
             {/* Mobile Right Actions */}
-            <div className="lg:hidden flex items-center gap-3">
+            <div className="lg:hidden flex items-center gap-1">
               {/* Search Toggle */}
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
