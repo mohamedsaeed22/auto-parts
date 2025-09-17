@@ -33,10 +33,18 @@ const baseQueryWithAuth: BaseQueryFn<
         headers.set("authorization", `Bearer ${token}`);
       }
 
-      // Get current locale from Redux state
+      // Get current locale from Redux state for non-GET requests
       const state = getState() as RootState;
       const currentLocale = state.locale?.currentLocale || "en";
-      headers.set("locale", currentLocale);
+
+      // Only set locale header for non-GET requests (GET requests use query params)
+      if (
+        typeof args === "object" &&
+        args.method &&
+        args.method.toUpperCase() !== "GET"
+      ) {
+        headers.set("locale", currentLocale);
+      }
 
       // Set default content type for form data requests
       if (typeof args === "object" && args.body instanceof FormData) {
@@ -124,17 +132,21 @@ const enhancedBaseQuery: BaseQueryFn<
   // Only attach locale as a query param for GET requests to avoid breaking POST bodies
   let enhancedArgs: string | FetchArgs;
   if (typeof args === "string") {
-    // string implies GET
+    // string implies GET - add locale as query parameter
+    const separator = args.includes("?") ? "&" : "?";
     enhancedArgs = {
-      url: args,
-      params: { locale: currentLocale },
+      url: `${args}${separator}locale=${currentLocale}`,
+      params: {},
     } as FetchArgs;
   } else {
     const method = (args.method || "GET").toUpperCase();
     if (method === "GET") {
+      // For GET requests, ensure locale is in query params
+      const separator = args.url.includes("?") ? "&" : "?";
       enhancedArgs = {
         ...args,
-        params: { ...args.params, locale: currentLocale },
+        url: `${args.url}${separator}locale=${currentLocale}`,
+        params: { ...args.params },
       } as FetchArgs;
     } else {
       // For non-GET, keep args unchanged; locale is already added as a header in prepareHeaders
