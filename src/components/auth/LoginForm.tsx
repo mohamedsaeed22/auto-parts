@@ -18,7 +18,6 @@ import {
 } from "@/lib/googleAuth";
 import { showSuccess, showError } from "@/lib/toast";
 import { useAuth } from "@/hooks/useAuth";
-import { useRouter } from "next/navigation";
 
 interface LoginFormProps {
   onSubmit: (data: LoginFormData) => Promise<void>;
@@ -31,7 +30,6 @@ export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
   const { t } = useTranslation("auth");
   const { translateError, getValidationMessage } = useFormErrorTranslation();
   const { login } = useAuth();
-  const router = useRouter();
   const googleButtonRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -66,7 +64,7 @@ export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
         showError(t("errors.googleLoginError"));
       }
     },
-    [login, router, t]
+    [login, t]
   );
 
   // Initialize Google OAuth
@@ -78,8 +76,7 @@ export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
       if (window.google?.accounts?.id) {
         // Initialize Google Identity Services
         window.google.accounts.id.initialize({
-          client_id:
-            "933306839237-e22lqcs5d3tdhnue1uasvqhrf50r267e.apps.googleusercontent.com",
+          client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
           callback: handleGoogleCredentialResponse,
         });
 
@@ -97,9 +94,6 @@ export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
   }, [handleGoogleCredentialResponse]);
 
   const handleSendOtp = async (data: LoginFormData) => {
-    // Enforce phone number format: 11 digits starting with 010/011/012/015
-    const phoneNumber = data.phoneNumber || "";
-
     try {
       await onSubmit(data);
     } catch (error) {
