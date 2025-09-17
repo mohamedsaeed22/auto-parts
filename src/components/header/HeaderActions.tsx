@@ -23,7 +23,7 @@ export default function HeaderActions({
   const { isAuthenticated } = useAuth();
 
   return (
-    <>
+    <div className="flex items-center gap-1">
       {/* Account - Show UserDropdown if logged in, LoginDialog if not */}
       {isAuthenticated ? (
         <UserDropdown isRTL={isRTL} />
@@ -86,6 +86,6 @@ export default function HeaderActions({
           )}
         </div>
       </button>
-    </>
+    </div>
   );
 }

@@ -215,6 +215,7 @@ export default function Header() {
           navLinks={navLinks}
           isActiveLink={isActiveLink}
           isRTL={isRTL}
+          onCartClick={handleCartClick}
         />
       </header>
 

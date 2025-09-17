@@ -42,11 +42,33 @@
     "categories": "الفئات",
     "favourites": "المفضلة",
     "wishlist": "قائمة الأمنيات",
-    "cart": "السلة"
+    "cart": "السلة",
+    "profile": "الملف الشخصي",
+    "offers": "العروض",
+    "products": "المنتجات"
   },
   "menu": {
     "title": "القائمة",
     "help": "المساعدة والدعم",
     "trackOrder": "تتبع طلبك"
+  },
+  "mobileMenu": {
+    "welcome": "مرحباً",
+    "profile": "ملفي الشخصي",
+    "points": "النقاط",
+    "notifications": "الإشعارات",
+    "shopping": "التسوق",
+    "explore": "استكشاف",
+    "support": "الدعم",
+    "home": "الرئيسية",
+    "categories": "الفئات",
+    "offers": "العروض",
+    "products": "المنتجات",
+    "favourites": "المفضلة",
+    "wishlist": "قائمة الأمنيات",
+    "cart": "السلة",
+    "trackOrder": "تتبع الطلب",
+    "help": "المساعدة والدعم",
+    "version": "الإصدار 1.0.0"
   }
 }
