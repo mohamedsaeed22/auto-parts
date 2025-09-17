@@ -22,6 +22,7 @@ export interface RequestItemResponse {
   request_id: number;
   part_name: string;
   quantity: number;
+  price: string | null;
   chassis_number: string | null;
   part_image_url: string | null;
   order_image_url: string | null;
@@ -36,10 +37,17 @@ export interface RequestResponse {
   user_id: number;
   user_type: "shop" | "workshop";
   user_type_label: string;
-  status: "draft" | "pending" | "submitted" | "accepted" | "rejected";
+  status:
+    | "draft"
+    | "pending"
+    | "submitted"
+    | "accepted"
+    | "rejected"
+    | "completed";
+  payment_method: string;
   submitted_at: string | null;
   workshop_code: string | null;
-  price: number | null;
+  price: string | null;
   created_at: string;
   updated_at: string;
   items: RequestItemResponse[];
@@ -69,6 +77,18 @@ export interface PaginationResponse {
 export interface RequestsResponse {
   requests: RequestResponse[];
   pagination: PaginationResponse;
+}
+
+// Approve/Reject request interface
+export interface ApproveRequestRequest {
+  status: "accepted" | "rejected";
+}
+
+// Approve/Reject request response interface
+export interface ApproveRequestResponse {
+  id: number;
+  status: string;
+  message: string;
 }
 
 export const requestsApi = api.injectEndpoints({
@@ -144,7 +164,24 @@ export const requestsApi = api.injectEndpoints({
       },
       invalidatesTags: ["Requests"],
     }),
+
+    // Approve/Reject request
+    approveRequest: builder.mutation<
+      ApiResponse<ApproveRequestResponse>,
+      { requestId: number; data: ApproveRequestRequest }
+    >({
+      query: ({ requestId, data }) => ({
+        url: `/requests/${requestId}/approve`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Requests"],
+    }),
   }),
 });
 
-export const { useGetRequestsQuery, useCreateRequestMutation } = requestsApi;
+export const {
+  useGetRequestsQuery,
+  useCreateRequestMutation,
+  useApproveRequestMutation,
+} = requestsApi;

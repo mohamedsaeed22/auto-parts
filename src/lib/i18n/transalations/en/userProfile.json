@@ -88,13 +88,16 @@
       "pending": "Pending",
       "submitted": "Submitted",
       "accepted": "Accepted",
-      "rejected": "Rejected"
+      "rejected": "Rejected",
+      "completed": "Completed"
     },
     "id": "ID",
     "userType": "Type",
     "createdAt": "Created",
     "submittedAt": "Submitted",
     "price": "Price",
+    "totalPrice": "Total Price",
+    "workshopCode": "Workshop Code",
     "items": {
       "title": "Request Items",
       "quantity": "Qty",
@@ -104,14 +107,26 @@
       "attachments": "Attachments",
       "partImage": "Part Image",
       "orderImage": "Request Image",
-      "formImage": "Form Image"
+      "formImage": "Form Image",
+      "unitPrice": "Unit Price"
     },
     "actions": {
       "submit": "Submit",
       "download": "Download",
       "view": "View",
       "edit": "Edit",
-      "delete": "Delete"
+      "delete": "Delete",
+      "accept": "Accept",
+      "reject": "Reject"
+    },
+    "adminPricing": {
+      "title": "Admin has priced your request",
+      "description": "Please review and accept or reject the pricing"
+    },
+    "priceSummary": {
+      "title": "Price Summary",
+      "description": "Total calculated by admin",
+      "total": "Total Amount"
     },
     "pagination": {
       "previous": "Previous",

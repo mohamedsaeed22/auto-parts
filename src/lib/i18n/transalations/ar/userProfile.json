@@ -88,13 +88,16 @@
       "pending": "قيد الانتظار",
       "submitted": "تم الإرسال",
       "accepted": "مقبول",
-      "rejected": "مرفوض"
+      "rejected": "مرفوض",
+      "completed": "مكتمل"
     },
     "id": "الرقم",
     "userType": "النوع",
     "createdAt": "تاريخ الإنشاء",
     "submittedAt": "تاريخ الإرسال",
     "price": "السعر",
+    "totalPrice": "السعر الإجمالي",
+    "workshopCode": "رمز الورشة",
     "items": {
       "title": "عناصر الطلب",
       "quantity": "الكمية",
@@ -104,14 +107,26 @@
       "attachments": "المرفقات",
       "partImage": "صورة القطعة",
       "orderImage": "صورة الطلب",
-      "formImage": "صورة الاستمارة"
+      "formImage": "صورة الاستمارة",
+      "unitPrice": "سعر الوحدة"
     },
     "actions": {
       "submit": "إرسال",
       "download": "تحميل",
       "view": "عرض",
       "edit": "تعديل",
-      "delete": "حذف"
+      "delete": "حذف",
+      "accept": "قبول",
+      "reject": "رفض"
+    },
+    "adminPricing": {
+      "title": "قام المدير بتسعير طلبك",
+      "description": "يرجى مراجعة التسعير وقبوله أو رفضه"
+    },
+    "priceSummary": {
+      "title": "ملخص السعر",
+      "description": "المجموع المحسوب من قبل المدير",
+      "total": "المبلغ الإجمالي"
     },
     "pagination": {
       "previous": "السابق",
