@@ -16,7 +16,6 @@ import {
   useNotifications,
   useDeleteNotification,
   useDeleteAllNotifications,
-  Notification,
 } from "@/services/api/notifications";
 import { showError } from "@/lib/toast";
 
@@ -71,7 +70,7 @@ export default function NotificationDropdown({
   const handleRefresh = async () => {
     try {
       await refetch();
-    } catch (error) {
+    } catch {
       showError("Failed to refresh notifications");
     }
   };
@@ -79,7 +78,7 @@ export default function NotificationDropdown({
   const handleDeleteNotification = async (notificationId: string) => {
     try {
       await deleteNotificationMutation.mutateAsync(notificationId);
-    } catch (error) {
+    } catch {
       // Error is handled by the mutation
     }
   };
@@ -89,7 +88,7 @@ export default function NotificationDropdown({
 
     try {
       await deleteAllNotificationsMutation.mutateAsync();
-    } catch (error) {
+    } catch {
       // Error is handled by the mutation
     }
   };
@@ -113,7 +112,7 @@ export default function NotificationDropdown({
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 text-neutral-700 hover:text-primary transition-colors"
-        title={t("title") || "Notifications"}
+        title={t("title", "Notifications")}
       >
         <div className="relative">
           <Bell size={20} />
@@ -146,7 +145,7 @@ export default function NotificationDropdown({
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-neutral-100">
               <h3 className="text-sm font-semibold text-neutral-900">
-                {t("title") || "Notifications"}
+                {t("title", "Notifications")}
               </h3>
               <div className="flex items-center gap-2">
                 {/* Refresh Button */}
@@ -154,7 +153,7 @@ export default function NotificationDropdown({
                   onClick={handleRefresh}
                   disabled={isLoading}
                   className="p-1 text-neutral-500 hover:text-primary transition-colors disabled:opacity-50"
-                  title={t("refresh") || "Refresh"}
+                  title={t("refresh", "Refresh")}
                 >
                   <RefreshCw
                     size={16}
@@ -168,7 +167,7 @@ export default function NotificationDropdown({
                     onClick={handleDeleteAll}
                     disabled={deleteAllNotificationsMutation.isPending}
                     className="p-1 text-red-500 hover:text-red-600 transition-colors disabled:opacity-50"
-                    title={t("deleteAll") || "Delete All"}
+                    title={t("deleteAll", "Delete All")}
                   >
                     <Trash2 size={16} />
                   </button>
@@ -193,27 +192,27 @@ export default function NotificationDropdown({
                     className="animate-spin text-neutral-400"
                   />
                   <span className="ml-2 text-sm text-neutral-500">
-                    {t("loading") || "Loading..."}
+                    {t("loading", "Loading...")}
                   </span>
                 </div>
               ) : error ? (
                 <div className="flex flex-col items-center justify-center p-8 text-center">
                   <AlertCircle size={24} className="text-red-500 mb-2" />
                   <p className="text-sm text-red-600 mb-2">
-                    {t("error") || "Failed to load notifications"}
+                    {t("error", "Failed to load notifications")}
                   </p>
                   <button
                     onClick={handleRefresh}
                     className="text-sm text-primary hover:underline"
                   >
-                    {t("retry") || "Try again"}
+                    {t("retry", "Try again")}
                   </button>
                 </div>
               ) : notifications.length === 0 ? (
                 <div className="flex flex-col items-center justify-center p-8 text-center">
                   <Bell size={24} className="text-neutral-400 mb-2" />
                   <p className="text-sm text-neutral-500">
-                    {t("empty") || "No notifications yet"}
+                    {t("empty", "No notifications yet")}
                   </p>
                 </div>
               ) : (
@@ -243,7 +242,7 @@ export default function NotificationDropdown({
                           }
                           disabled={deleteNotificationMutation.isPending}
                           className="opacity-0 group-hover:opacity-100 p-1 text-neutral-400 hover:text-red-500 transition-all disabled:opacity-50"
-                          title={t("delete") || "Delete"}
+                          title={t("delete", "Delete")}
                         >
                           <X size={14} />
                         </button>
@@ -264,14 +263,14 @@ export default function NotificationDropdown({
                     className="w-full flex items-center justify-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors disabled:opacity-50"
                   >
                     <MoreHorizontal size={16} />
-                    {t("showMore") || "Show More"}
+                    {t("showMore", "Show More")}
                     <ChevronDown size={14} />
                   </button>
                 ) : (
                   <div className="text-center">
                     <p className="text-xs text-neutral-500">
-                      {t("showing") || "Showing"} {notifications.length}{" "}
-                      {t("of") || "of"} {totalNotifications}
+                      {t("showing", "Showing")} {notifications.length}{" "}
+                      {t("of", "of")} {totalNotifications}
                     </p>
                   </div>
                 )}

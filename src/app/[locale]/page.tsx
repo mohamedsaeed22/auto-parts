@@ -65,7 +65,7 @@ export default function Home({
       </main>
 
       {/* Temporary test component - remove in production */}
-      <NotificationTest />
+      {/* <NotificationTest /> */}
     </div>
   );
 }
