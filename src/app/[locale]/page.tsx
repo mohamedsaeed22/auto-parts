@@ -12,6 +12,7 @@ import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { SEOMetadata } from "@/components/seo/SEOMetadata";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { seoConfig } from "@/lib/seo/config";
+import NotificationTest from "@/components/debug/NotificationTest";
 
 export default function Home({
   params,
@@ -62,6 +63,9 @@ export default function Home({
           <Partners />
         </div>
       </main>
+
+      {/* Temporary test component - remove in production */}
+      <NotificationTest />
     </div>
   );
 }

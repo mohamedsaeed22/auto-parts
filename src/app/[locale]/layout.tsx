@@ -19,6 +19,7 @@ import I18NProvider from "@/components/i18n/i18n-provider";
 import { serverSideTranslation } from "@/lib/i18n";
 import { NuqsAdapter } from "nuqs/adapters/react";
 import { AuthProvider } from "@/contexts/auth-context";
+import { NotificationProvider } from "@/contexts/notification-context";
 import { seoConfig, getLocalizedMetadata, getKeywords } from "@/lib/seo/config";
 
 const cairo = Cairo({
@@ -104,6 +105,7 @@ export default async function LocaleLayout({
     "auth",
     "registration",
     "profileFormErrors",
+    "notifications",
   ];
   const { resources } = await serverSideTranslation(locale, ns);
   const direction = getDirection(locale);
@@ -121,15 +123,17 @@ export default async function LocaleLayout({
       <I18NProvider locale={locale} namespaces={ns} resources={resources}>
         <Providers>
           <AuthProvider>
-            <NuqsAdapter>
-              <LocaleProvider initialLocale={locale}>
-                <Header />
-                <main className="flex-1">{children}</main>
-                <Footer />
-                <Cart />
-                <WhatsAppButton />
-              </LocaleProvider>
-            </NuqsAdapter>
+            <NotificationProvider>
+              <NuqsAdapter>
+                <LocaleProvider initialLocale={locale}>
+                  <Header />
+                  <main className="flex-1">{children}</main>
+                  <Footer />
+                  <Cart />
+                  <WhatsAppButton />
+                </LocaleProvider>
+              </NuqsAdapter>
+            </NotificationProvider>
           </AuthProvider>
         </Providers>
       </I18NProvider>

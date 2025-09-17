@@ -1,147 +1,144 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { axiosInstance as axios } from "@/lib/axios";
+import { storage } from "@/lib/storage";
 import { showError, showSuccess } from "@/lib/toast";
 
-export interface Notification {
-  id: number;
-  type: "order_status" | "order_delivery" | "promotion" | "system";
-  title: string;
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+// Types
+export interface ApiResponse<T = unknown> {
+  code: number;
   message: string;
-  read_at: string | null;
+  errors: string[];
+  data: T;
+}
+
+export interface Notification {
+  id: string;
+  title: string;
+  body: string;
   created_at: string;
-  updated_at: string;
 }
 
 export interface NotificationsResponse {
-  data: Notification[];
-  meta: {
+  items: Notification[];
+  pagination: {
+    total: number;
+    per_page: number;
     current_page: number;
     last_page: number;
-    per_page: number;
-    total: number;
-    unread_count: number;
+    from: number;
+    to: number;
   };
 }
 
-const notificationsKeys = {
-  all: ["notifications"] as const,
-  lists: () => [...notificationsKeys.all, "list"] as const,
-  list: (page: number) => [...notificationsKeys.lists(), { page }] as const,
+export interface NotificationsApiResponse
+  extends ApiResponse<NotificationsResponse> {}
+
+// API Helper Functions
+const getHeaders = () => {
+  const headers: Record<string, string> = {
+    Accept: "application/json",
+  };
+
+  const token = storage.getToken();
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  return headers;
 };
 
-const getNotifications = async ({ page = 1 }: { page?: number }) => {
-  const { data } = await axios.get<NotificationsResponse>(
-    "/api/notifications",
+const handleResponse = async <T>(
+  response: Response
+): Promise<ApiResponse<T>> => {
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "An error occurred");
+  }
+  return response.json();
+};
+
+// Notification API Functions
+export const getNotifications = async (
+  page: number = 1,
+  perPage: number = 5
+): Promise<NotificationsApiResponse> => {
+  const response = await fetch(
+    `${BASE_URL}/notifications?page=${page}&per_page=${perPage}`,
     {
-      params: { page },
+      method: "GET",
+      headers: getHeaders(),
     }
   );
-  return data;
+  return handleResponse(response);
 };
 
-const markAsRead = async (id: number) => {
-  const { data } = await axios.post<NotificationsResponse>(
-    `/api/notifications/${id}/read`
+export const deleteNotification = async (
+  notificationId: string
+): Promise<ApiResponse> => {
+  const response = await fetch(
+    `${BASE_URL}/notifications/delete/${notificationId}`,
+    {
+      method: "DELETE",
+      headers: getHeaders(),
+    }
   );
-  return data;
+  return handleResponse(response);
 };
 
-const markAllAsRead = async () => {
-  const { data } = await axios.post<NotificationsResponse>(
-    "/api/notifications/read-all"
-  );
-  return data;
-};
-
-const deleteNotification = async (id: number) => {
-  const { data } = await axios.delete<NotificationsResponse>(
-    `/api/notifications/${id}`
-  );
-  return data;
-};
-
-const deleteAllNotifications = async () => {
-  const { data } = await axios.delete<NotificationsResponse>(
-    "/api/notifications"
-  );
-  return data;
-};
-
-export function useNotifications(page = 1) {
-  return useQuery({
-    queryKey: notificationsKeys.list(page),
-    queryFn: () => getNotifications({ page }),
+export const deleteAllNotifications = async (): Promise<ApiResponse> => {
+  const response = await fetch(`${BASE_URL}/notifications/delete-all`, {
+    method: "DELETE",
+    headers: getHeaders(),
   });
-}
+  return handleResponse(response);
+};
 
-export function useMarkAsRead() {
+// Custom Hooks
+export const useNotifications = (page: number = 1, perPage: number = 5) => {
+  return useQuery<NotificationsApiResponse, Error>({
+    queryKey: ["notifications", page, perPage],
+    queryFn: () => getNotifications(page, perPage),
+    enabled: !!storage.getToken(),
+    staleTime: 30000, // 30 seconds
+    refetchOnWindowFocus: true,
+  });
+};
+
+export const useDeleteNotification = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: markAsRead,
-    onSuccess: (data) => {
-      queryClient.setQueryData(notificationsKeys.list(1), data);
-      showSuccess("Notification marked as read");
-    },
-    onError: (error: unknown) => {
-      showError(
-        (error as { response?: { data?: { message?: string } } })?.response
-          ?.data?.message || "Failed to mark notification as read"
-      );
-    },
-  });
-}
-
-export function useMarkAllAsRead() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: markAllAsRead,
-    onSuccess: (data) => {
-      queryClient.setQueryData(notificationsKeys.list(1), data);
-      showSuccess("All notifications marked as read");
-    },
-    onError: (error: unknown) => {
-      showError(
-        (error as { response?: { data?: { message?: string } } })?.response
-          ?.data?.message || "Failed to mark all notifications as read"
-      );
-    },
-  });
-}
-
-export function useDeleteNotification() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useMutation<ApiResponse, Error, string>({
     mutationFn: deleteNotification,
-    onSuccess: (data) => {
-      queryClient.setQueryData(notificationsKeys.list(1), data);
+    onSuccess: () => {
+      // Invalidate and refetch notifications
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
       showSuccess("Notification deleted successfully");
     },
-    onError: (error: unknown) => {
-      showError(
-        (error as { response?: { data?: { message?: string } } })?.response
-          ?.data?.message || "Failed to delete notification"
-      );
+    onError: (error) => {
+      showError(error.message);
     },
   });
-}
+};
 
-export function useDeleteAllNotifications() {
+export const useDeleteAllNotifications = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<ApiResponse, Error, void>({
     mutationFn: deleteAllNotifications,
-    onSuccess: (data) => {
-      queryClient.setQueryData(notificationsKeys.list(1), data);
+    onSuccess: () => {
+      // Invalidate and refetch notifications
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
       showSuccess("All notifications deleted successfully");
     },
-    onError: (error: unknown) => {
-      showError(
-        (error as { response?: { data?: { message?: string } } })?.response
-          ?.data?.message || "Failed to delete all notifications"
-      );
+    onError: (error) => {
+      showError(error.message);
     },
   });
-}
+};
+
+// Hook to get notification count
+export const useNotificationCount = () => {
+  const { data } = useNotifications(1, 1); // Only get first page to get total count
+  return data?.data?.pagination?.total || 0;
+};

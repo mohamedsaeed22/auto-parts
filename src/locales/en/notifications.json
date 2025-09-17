@@ -1,6 +1,12 @@
 {
   "title": "Notifications",
   "empty": "No notifications",
+  "loading": "Loading...",
+  "error": "Failed to load notifications",
+  "refresh": "Refresh",
+  "showMore": "Show More",
+  "showing": "Showing",
+  "of": "of",
   "markAsRead": "Mark as Read",
   "markAllAsRead": "Mark All as Read",
   "delete": "Delete",

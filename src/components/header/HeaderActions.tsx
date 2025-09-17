@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import LoginDialog from "../LoginDialog";
 import UserDropdown from "./UserDropdown";
+import NotificationDropdown from "./NotificationDropdown";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -38,6 +39,9 @@ export default function HeaderActions({
           }
         />
       )}
+
+      {/* Notifications - Only show if authenticated */}
+      {isAuthenticated && <NotificationDropdown isRTL={isRTL} />}
 
       {/* Favourites - Only show if authenticated */}
       {isAuthenticated && (
