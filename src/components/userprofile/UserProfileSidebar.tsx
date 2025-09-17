@@ -1,4 +1,11 @@
-import { User, FileText, MapPin, ShoppingBag, Settings } from "lucide-react";
+import {
+  User,
+  FileText,
+  MapPin,
+  ShoppingBag,
+  Settings,
+  Star,
+} from "lucide-react";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { ProfilePageType } from "@/app/[locale]/userprofile/page";
@@ -47,6 +54,11 @@ export default function UserProfileSidebar({
       key: "requests",
       labelKey: "sidebar.requests",
       icon: <FileText size={20} />,
+    },
+    {
+      key: "points",
+      labelKey: "sidebar.points",
+      icon: <Star size={20} />,
     },
     {
       key: "settings",

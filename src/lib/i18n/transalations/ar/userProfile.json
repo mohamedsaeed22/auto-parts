@@ -395,6 +395,23 @@
     "title": "نقاطي",
     "description": "تابع نقاطك واستبدلها بمكافآت رائعة",
     "totalPoints": "إجمالي النقاط",
+    "totalTransactions": "إجمالي المعاملات",
+    "thisMonth": "هذا الشهر",
+    "loading": "جاري تحميل النقاط...",
+    "error": "فشل في تحميل النقاط",
+    "retry": "إعادة المحاولة",
+    "noTransactions": "لا توجد معاملات نقاط بعد",
+    "noTransactionsDesc": "ستظهر معاملات النقاط هنا عند كسب أو استخدام النقاط.",
+    "transactions": {
+      "title": "معاملات النقاط",
+      "date": "التاريخ",
+      "reason": "السبب",
+      "points": "النقاط"
+    },
+    "pagination": {
+      "showing": "عرض {{from}} إلى {{to}} من {{total}} معاملة",
+      "page": "صفحة {{current}} من {{total}}"
+    },
     "availableForRedemption": "للاستبدال",
     "availableRewards": "المكافآت المتاحة",
     "pointsHistory": "تاريخ النقاط",

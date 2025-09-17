@@ -398,6 +398,26 @@ export interface Partner {
   updated_at: string;
 }
 
+// Points Types
+export interface PointTransaction {
+  id: number;
+  points: number;
+  reason: string;
+  formatted_date: string;
+}
+
+export interface PointsResponse {
+  items: PointTransaction[];
+  pagination: {
+    total: number;
+    per_page: number;
+    current_page: number;
+    last_page: number;
+    from: number;
+    to: number;
+  };
+}
+
 // Registration Incomplete Error Response
 export interface RegistrationIncompleteError {
   code: 403;

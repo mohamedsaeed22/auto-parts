@@ -178,6 +178,7 @@ export const api = createApi({
     "Sections",
     "Partners",
     "Settings",
+    "Points",
   ],
   endpoints: () => ({}),
 });

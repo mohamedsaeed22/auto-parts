@@ -7,6 +7,7 @@ import AddressesPage from "@/components/userprofile/AddressesPage";
 import OrdersPage from "@/components/userprofile/OrdersPage";
 import SettingsPage from "@/components/userprofile/SettingsPage";
 import RequestsPage from "@/components/userprofile/RequestsPage";
+import PointsPage from "@/components/userprofile/PointsPage";
 import { ProtectedPageGuard } from "@/components/auth/AuthGuard";
 
 export type ProfilePageType =
@@ -14,7 +15,8 @@ export type ProfilePageType =
   | "addresses"
   | "orders"
   | "settings"
-  | "requests";
+  | "requests"
+  | "points";
 
 export default function UserProfilePage() {
   const [activePage, setActivePage] = useState<ProfilePageType>("profile");
@@ -31,6 +33,7 @@ export default function UserProfilePage() {
         "orders",
         "settings",
         "requests",
+        "points",
       ];
 
       if (savedPage && validPages.includes(savedPage)) {
@@ -78,6 +81,8 @@ export default function UserProfilePage() {
         return <SettingsPage />;
       case "requests":
         return <RequestsPage />;
+      case "points":
+        return <PointsPage />;
       default:
         return <ProfilePageComponent />;
     }
