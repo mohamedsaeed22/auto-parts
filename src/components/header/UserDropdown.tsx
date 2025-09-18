@@ -107,7 +107,7 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
         title={user.name || user.phone}
       >
         <div className="relative">
-          <div className="w-8 h-8 border ring-1 ring-primary rounded-full flex items-center justify-center overflow-hidden">
+          <div className="w-8 h-8 border ring-1 ring-primary rounded-full flex items-center justify-center overflow-hidden bg-primary">
             {user.avatar ? (
               <Image
                 src={user.avatar}
