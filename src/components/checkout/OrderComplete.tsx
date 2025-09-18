@@ -73,7 +73,9 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
             {t("orderComplete.title")}
           </h1>
           <p className="text-lg text-neutral-600 mb-2">
-            {t("orderComplete.thankYou", { defaultValue: "Thank you for your order!" })}
+            {t("orderComplete.thankYou", {
+              defaultValue: "Thank you for your order!",
+            })}
           </p>
           {order && (
             <>
