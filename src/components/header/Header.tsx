@@ -16,6 +16,7 @@ import HeaderBottomNavigation from "./HeaderBottomNavigation";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/hooks/useLocale";
 import { useHeaderSearch } from "@/hooks/useHeaderSearch";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Header() {
   const { totalItems, setCartOpen } = useEnhancedCart();
@@ -25,6 +26,7 @@ export default function Header() {
   const pathname = usePathname();
   const { t } = useTranslation("header");
   const { currentLocale, changeLocale, isRTL } = useLocale();
+  const { isAuthenticated, user } = useAuth();
   const router = useRouter();
   const {
     searchQuery,
@@ -40,7 +42,10 @@ export default function Header() {
     { href: "/brands", label: t("navigation.brands") },
     { href: "/latestoffer", label: t("navigation.offers") },
     { href: "/products", label: t("navigation.products") },
-    { href: "/userPricing", label: t("navigation.userPricing") },
+    // Only show User Pricing when authenticated and registration complete
+    ...(isAuthenticated && user?.is_registration_complete
+      ? [{ href: "/userPricing", label: t("navigation.userPricing") }]
+      : []),
   ];
 
   const onLanguageChange = (newLocale: string) => {
