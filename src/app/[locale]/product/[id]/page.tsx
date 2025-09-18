@@ -321,8 +321,7 @@ export default function ProductDetails() {
 
   // Check authentication and registration status for visual feedback
   const isAuthenticated = storage.isAuthenticated();
-  const isRegistrationComplete = storage.isRegistrationComplete();
-  const canShowOptimisticUpdates = isAuthenticated && isRegistrationComplete;
+  const canShowOptimisticUpdates = isAuthenticated;
 
   const product = productResponse?.data?.product;
   const cartItem = items.find((item) => item.id === productId);
@@ -336,6 +335,31 @@ export default function ProductDetails() {
   const [localWishlistState, setLocalWishlistState] = useState<boolean | null>(
     null
   );
+
+  // Listen for global product state updates (fav/wishlist)
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as {
+        productId?: number;
+        in_favorites?: boolean;
+        in_wishlist?: boolean;
+      };
+      if (!detail || detail.productId !== productId) return;
+      if (typeof detail.in_favorites === "boolean") {
+        setLocalFavouriteState(detail.in_favorites);
+      }
+      if (typeof detail.in_wishlist === "boolean") {
+        setLocalWishlistState(detail.in_wishlist);
+      }
+    };
+    window.addEventListener("productStateUpdated", handler as EventListener);
+    return () => {
+      window.removeEventListener(
+        "productStateUpdated",
+        handler as EventListener
+      );
+    };
+  }, [productId]);
 
   // Check if product is in favourites or wishlist (use local state if available, otherwise use API data)
   const isInFavourites =
@@ -385,7 +409,10 @@ export default function ProductDetails() {
       setLocalFavouriteState(newFavouriteState);
 
       try {
-        await handleToggleFavourite(product.id);
+        const next = await handleToggleFavourite(product.id);
+        if (typeof next === "boolean") {
+          setLocalFavouriteState(next);
+        }
       } catch (error) {
         // Revert local state if API call fails
         console.error("Failed to toggle favourite:", error);
@@ -394,7 +421,10 @@ export default function ProductDetails() {
     } else {
       // Just call the handler without optimistic updates
       // The useFavouritesWishlist hook will handle showing appropriate messages
-      await handleToggleFavourite(product.id);
+      const next = await handleToggleFavourite(product.id);
+      if (typeof next === "boolean") {
+        setLocalFavouriteState(next);
+      }
     }
   };
 
@@ -408,7 +438,10 @@ export default function ProductDetails() {
       setLocalWishlistState(newWishlistState);
 
       try {
-        await handleToggleWishlist(product.id);
+        const next = await handleToggleWishlist(product.id);
+        if (typeof next === "boolean") {
+          setLocalWishlistState(next);
+        }
       } catch (error) {
         // Revert local state if API call fails
         console.error("Failed to toggle wishlist:", error);
@@ -417,7 +450,10 @@ export default function ProductDetails() {
     } else {
       // Just call the handler without optimistic updates
       // The useFavouritesWishlist hook will handle showing appropriate messages
-      await handleToggleWishlist(product.id);
+      const next = await handleToggleWishlist(product.id);
+      if (typeof next === "boolean") {
+        setLocalWishlistState(next);
+      }
     }
   };
 

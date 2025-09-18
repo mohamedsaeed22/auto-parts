@@ -46,7 +46,7 @@ export const wishlistApi = api.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Wishlist"],
+      invalidatesTags: ["Wishlist", "Products", "Sections"],
     }),
 
     removeFromWishlist: builder.mutation<
@@ -58,7 +58,7 @@ export const wishlistApi = api.injectEndpoints({
         method: "DELETE",
         body,
       }),
-      invalidatesTags: ["Wishlist"],
+      invalidatesTags: ["Wishlist", "Products", "Sections"],
     }),
 
     toggleWishlist: builder.mutation<WishlistResponse, AddWishlistRequest>({
@@ -67,7 +67,7 @@ export const wishlistApi = api.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Wishlist"],
+      invalidatesTags: ["Wishlist", "Products", "Sections"],
     }),
   }),
 });

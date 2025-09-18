@@ -36,36 +36,27 @@ export const useFavouritesWishlist = () => {
     setLoadingStates((prev) => ({ ...prev, [key]: loading }));
   };
 
-  // Check authentication and registration status
+  // Check authentication status only (registration not required)
   const checkAuthStatus = () => {
     const isAuthenticated = storage.isAuthenticated();
-    const isRegistrationComplete = storage.isRegistrationComplete();
-
-    return { isAuthenticated, isRegistrationComplete };
+    return { isAuthenticated };
   };
 
   // Handle authentication check for favourites/wishlist actions
   const handleAuthCheck = () => {
-    const { isAuthenticated, isRegistrationComplete } = checkAuthStatus();
+    const { isAuthenticated } = checkAuthStatus();
 
     if (!isAuthenticated) {
       showError(t("auth.loginRequired"));
       return false;
     }
 
-    if (!isRegistrationComplete) {
-      showWarning(t("auth.completeRegistrationRequired"));
-      // Store current page for redirect after registration
-      storage.setPreviousPage(window.location.pathname);
-      // Navigate to complete registration page
-      router.push(`/${currentLocale}/complete-registration`);
-      return false;
-    }
-
     return true;
   };
 
-  const handleToggleFavourite = async (productId: number) => {
+  const handleToggleFavourite = async (
+    productId: number
+  ): Promise<boolean | void> => {
     // Check authentication first
     if (!handleAuthCheck()) {
       return;
@@ -74,7 +65,17 @@ export const useFavouritesWishlist = () => {
     const key = `favourite-${productId}`;
     setLoading(key, true);
     try {
-      await toggleFavourite({ product_id: productId }).unwrap();
+      const res = await toggleFavourite({ product_id: productId }).unwrap();
+      const next = Boolean(res?.data?.is_favourited);
+      // Broadcast update so other components can sync UI
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("productStateUpdated", {
+            detail: { productId, in_favorites: next },
+          })
+        );
+      }
+      return next;
     } catch (error) {
       console.error("Failed to toggle favourite:", error);
       showError("Failed to update favourites. Please try again.");
@@ -83,7 +84,9 @@ export const useFavouritesWishlist = () => {
     }
   };
 
-  const handleToggleWishlist = async (productId: number) => {
+  const handleToggleWishlist = async (
+    productId: number
+  ): Promise<boolean | void> => {
     // Check authentication first
     if (!handleAuthCheck()) {
       return;
@@ -92,7 +95,17 @@ export const useFavouritesWishlist = () => {
     const key = `wishlist-${productId}`;
     setLoading(key, true);
     try {
-      await toggleWishlist({ product_id: productId }).unwrap();
+      const res = await toggleWishlist({ product_id: productId }).unwrap();
+      const next = Boolean(res?.data?.is_in_wishlist);
+      // Broadcast update so other components can sync UI
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("productStateUpdated", {
+            detail: { productId, in_wishlist: next },
+          })
+        );
+      }
+      return next;
     } catch (error) {
       console.error("Failed to toggle wishlist:", error);
       showError("Failed to update wishlist. Please try again.");

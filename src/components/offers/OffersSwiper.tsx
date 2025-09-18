@@ -89,15 +89,14 @@ const OffersSwiper = () => {
                 breakpoints={{
                   640: {
                     slidesPerView: 2,
-                    spaceBetween: 15,
+                    // spaceBetween: 15,
                   },
                   768: {
                     slidesPerView: 3,
-                    spaceBetween: 20,
-                  },
+                   },
                   1024: {
                     slidesPerView: 5,
-                    spaceBetween: 24,
+                     
                   },
                 }}
                 grabCursor={true}

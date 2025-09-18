@@ -34,6 +34,30 @@ const ProductCard: React.FC<ProductCardProps> = ({
     useFavouritesWishlist();
   const cartItem = items.find((item) => item.id === product.id);
   const isInCart = !!cartItem;
+  // Listen for global product state updates (fav/wishlist) to sync across views
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as {
+        productId?: number;
+        in_favorites?: boolean;
+        in_wishlist?: boolean;
+      };
+      if (!detail || detail.productId !== product.id) return;
+      if (typeof detail.in_favorites === "boolean") {
+        setLocalFavouriteState(detail.in_favorites);
+      }
+      if (typeof detail.in_wishlist === "boolean") {
+        setLocalWishlistState(detail.in_wishlist);
+      }
+    };
+    window.addEventListener("productStateUpdated", handler as EventListener);
+    return () => {
+      window.removeEventListener(
+        "productStateUpdated",
+        handler as EventListener
+      );
+    };
+  }, [product.id]);
 
   // Debug cart item state
   console.log("🛒 Cart Debug:", {
@@ -171,7 +195,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
       }, 5000); // 5 second timeout
 
       try {
-        await handleToggleFavourite(product.id);
+        const next = await handleToggleFavourite(product.id);
+        if (typeof next === "boolean") {
+          setLocalFavouriteState(next);
+        }
         clearTimeout(timeoutId);
         // The useEffect will handle resetting the optimistic flag when server confirms
       } catch (error) {
@@ -184,7 +211,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
     } else {
       // Just call the handler without optimistic updates
       // The useFavouritesWishlist hook will handle showing appropriate messages
-      await handleToggleFavourite(product.id);
+      const next = await handleToggleFavourite(product.id);
+      if (typeof next === "boolean") {
+        setLocalFavouriteState(next);
+      }
     }
   };
 
@@ -206,7 +236,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
       });
 
       try {
-        await handleToggleWishlist(product.id);
+        const next = await handleToggleWishlist(product.id);
+        if (typeof next === "boolean") {
+          setLocalWishlistState(next);
+        }
         // The useEffect will handle resetting the optimistic flag when server confirms
       } catch (error) {
         // Revert local state if API call fails
@@ -217,7 +250,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
     } else {
       // Just call the handler without optimistic updates
       // The useFavouritesWishlist hook will handle showing appropriate messages
-      await handleToggleWishlist(product.id);
+      const next = await handleToggleWishlist(product.id);
+      if (typeof next === "boolean") {
+        setLocalWishlistState(next);
+      }
     }
   };
 

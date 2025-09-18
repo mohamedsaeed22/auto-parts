@@ -46,7 +46,7 @@ export const favouritesApi = api.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Favourites"],
+      invalidatesTags: ["Favourites", "Products", "Sections"],
     }),
 
     removeFavourite: builder.mutation<
@@ -58,7 +58,7 @@ export const favouritesApi = api.injectEndpoints({
         method: "DELETE",
         body,
       }),
-      invalidatesTags: ["Favourites"],
+      invalidatesTags: ["Favourites", "Products", "Sections"],
     }),
 
     toggleFavourite: builder.mutation<FavouritesResponse, AddFavouriteRequest>({
@@ -67,7 +67,7 @@ export const favouritesApi = api.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Favourites"],
+      invalidatesTags: ["Favourites", "Products", "Sections"],
     }),
   }),
 });
