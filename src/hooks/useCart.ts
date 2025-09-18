@@ -31,8 +31,8 @@ import type { CartItem } from "@/store/slices/cartSlice";
 
 export const useCart = () => {
   const dispatch = useAppDispatch();
-  const { isAuthenticated, isRegistrationComplete } = useAuthContext();
-  const shouldUseAPI = isAuthenticated && isRegistrationComplete;
+  const { isAuthenticated } = useAuthContext();
+  const shouldUseAPI = isAuthenticated;
 
   // Selectors
   const items = useAppSelector(selectCartItems);

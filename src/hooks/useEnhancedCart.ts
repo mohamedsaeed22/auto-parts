@@ -42,9 +42,8 @@ import { storage } from "@/lib/storage";
  *
  * Logic:
  * - If user is not logged in: All cart operations are stored in local storage only
- * - If user is logged in but registration incomplete: Cart operations stay in local storage
- * - If user is logged in and registration complete: Cart operations sync with API
- * - On login with complete registration: Sync local storage cart to API
+ * - If user is logged in (regardless of registration status): Cart operations sync with API
+ * - On login: Sync API cart to local for display and keep in sync
  */
 export const useEnhancedCart = () => {
   const dispatch = useAppDispatch();
@@ -73,11 +72,10 @@ export const useEnhancedCart = () => {
   const error = useAppSelector(selectCartError);
   const isEmpty = useAppSelector(selectCartIsEmpty);
 
-  // API hooks - only used when user is authenticated and registration complete
+  // API hooks - used when user is authenticated (registration status ignored)
   // Also require a valid token in storage to avoid race conditions immediately after logout
   const hasToken = Boolean(storage.getAuth()?.token);
-  const shouldUseAPI =
-    finalIsAuthenticated && finalIsRegistrationComplete && hasToken;
+  const shouldUseAPI = finalIsAuthenticated && hasToken;
 
   // Debug shouldUseAPI calculation
 
@@ -183,13 +181,7 @@ export const useEnhancedCart = () => {
         dispatch(setLoading(false));
       }
     },
-    [
-      shouldUseAPI,
-      addToCartAPI,
-      dispatch,
-      finalIsAuthenticated,
-      finalIsRegistrationComplete,
-    ]
+    [shouldUseAPI, addToCartAPI, dispatch, finalIsAuthenticated]
   );
 
   /**
