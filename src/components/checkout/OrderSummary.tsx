@@ -93,7 +93,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         // Update local display state based on API response
         setApiCartTotal(data.cart_total);
         setApiDiscountAmount(data.discount_amount);
-        setApiFinalTotal(data.final_total);
+        setApiFinalTotal(data.cart_total);
       }
       // Refresh cart data from backend
       dispatch(cartApi.util.invalidateTags(["Cart"]));
@@ -131,7 +131,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         0,
         displayedSubtotal + displayedSubtotal * 0.15 - (displayedDiscount || 0)
       );
-  const finalTotal = apiFinalTotal !== null ? apiFinalTotal : computedFinal;
+  // const displayedSubtotal = apidisplayedSubtotal !== null ? apidisplayedSubtotal : computedFinal;
 
   return (
     <div
@@ -159,7 +159,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         </div> */}
 
         {/* Coupon Section - Only show in first 3 steps */}
-        {/* {currentStep < 4 && (
+        {currentStep < 4 && (
           <div className="mb-6">
             <div className="flex gap-2 items-center">
               <input
@@ -171,16 +171,18 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                 disabled={couponDiscount > 0}
                 dir={isRTL ? "rtl" : "ltr"}
               />
-              <Button
-                onClick={handleApplyCoupon}
-                disabled={!couponCode.trim() || isApplyingCoupon || isApplying}
-                size="sm"
-                className="px-3 py-2 text-xs bg-logo-gold hover:bg-logo-gold/90 text-white"
-              >
-                {isApplyingCoupon || isApplying
-                  ? t("orderSummary.applying")
-                  : t("orderSummary.apply")}
-              </Button>
+                <Button
+                  onClick={handleApplyCoupon}
+                  disabled={
+                    !couponCode.trim() || isApplyingCoupon || isApplying
+                  }
+                  size="sm"
+                  className="px-3 py-2 text-xs bg-logo-gold hover:bg-logo-gold/90 text-white"
+                >
+                  {isApplyingCoupon || isApplying
+                    ? t("orderSummary.applying")
+                    : t("orderSummary.apply")}
+                </Button>
             </div>
             {couponError && (
               <p className="text-xs text-logo-red mt-2">{couponError}</p>
@@ -188,18 +190,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             {localError && !couponError && (
               <p className="text-xs text-logo-red mt-2">{localError}</p>
             )}
-            {displayedDiscount > 0 && (
-              <div className="mt-2 p-3 bg-logo-gold/10 rounded-lg">
-                <div className="flex items-center justify-between text-sm text-logo-black">
-                  <span>{t("orderSummary.discountApplied")}</span>
-                  <span className="font-medium">
-                    -{displayedDiscount.toFixed(2)} {t("currency")}
-                  </span>
-                </div>
-              </div>
-            )}
+           
           </div>
-        )} */}
+        )}
 
         {/* Price Breakdown */}
         <div className="space-y-3 text-sm">
@@ -228,45 +221,26 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               </span>
             </div>
           )}
-          {displayedDiscount > 0 && (
+          {/* {displayedDiscount > 0 && (
             <div className="flex justify-between text-logo-gold">
               <span>{t("orderSummary.discount")}</span>
               <span className="font-medium">
                 -{displayedDiscount.toFixed(2)} {t("currency")}
               </span>
             </div>
-          )}
+          )} */}
         </div>
 
         <div className="border-t border-logo-gold/30 mt-4 pt-4">
           <div className="flex justify-between text-xl font-bold">
             <span className="text-logo-black">{t("orderSummary.total")}</span>
             <span className="text-logo-gold">
-              {finalTotal.toFixed(2)} {t("currency")}
+              {displayedSubtotal.toFixed(2)} {t("currency")}
             </span>
           </div>
         </div>
 
-        {/* {currentStep === 4 && (
-          <Button
-            onClick={onPlaceOrder}
-            disabled={isProcessing}
-            className="w-full mt-6 bg-logo-gold hover:bg-logo-gold/90 text-white py-4 rounded-xl font-medium text-lg shadow-lg"
-          >
-            {isProcessing ? (
-              <div className="flex items-center justify-center">
-                <Loader2 className="w-5 h-5 animate-spin mx-2" />
-                {t("orderSummary.processing")}
-              </div>
-            ) : (
-              <>
-                {t("orderSummary.confirmOrder")}
-                <CheckCircle className="w-5 h-5 mx-2" />
-              </>
-            )}
-          </Button>
-        )} */}
-
+ 
         {/* Security Features */}
         <div className="mt-6 space-y-3">
           <div className="flex items-center text-sm text-neutral-600">
