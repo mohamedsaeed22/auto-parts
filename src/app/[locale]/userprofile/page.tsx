@@ -8,7 +8,7 @@ import OrdersPage from "@/components/userprofile/OrdersPage";
 import SettingsPage from "@/components/userprofile/SettingsPage";
 import RequestsPage from "@/components/userprofile/RequestsPage";
 import PointsPage from "@/components/userprofile/PointsPage";
-import { ProtectedPageGuard } from "@/components/auth/AuthGuard";
+import { AuthOnlyGuard } from "@/components/auth/AuthGuard";
 
 export type ProfilePageType =
   | "profile"
@@ -89,7 +89,7 @@ export default function UserProfilePage() {
   };
 
   return (
-    <ProtectedPageGuard>
+    <AuthOnlyGuard>
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row gap-8">
@@ -110,6 +110,6 @@ export default function UserProfilePage() {
           </div>
         </div>
       </div>
-    </ProtectedPageGuard>
+    </AuthOnlyGuard>
   );
 }

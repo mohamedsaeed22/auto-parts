@@ -124,17 +124,19 @@ const FormInput = forwardRef<
       };
 
       // Use controlled props if provided, otherwise use register
-      const controlledProps =
-        value !== undefined && onChange
-          ? {
-              value,
-              onChange,
-            }
-          : register
-          ? {
-              ...register,
-            }
-          : {};
+      // Normalize null to empty string to avoid React warnings
+      const isControlled = typeof onChange !== "undefined";
+      const normalizedValue = value ?? "";
+      const controlledProps = isControlled
+        ? {
+            value: normalizedValue,
+            onChange,
+          }
+        : register
+        ? {
+            ...register,
+          }
+        : {};
 
       if (type === "textarea") {
         return (
