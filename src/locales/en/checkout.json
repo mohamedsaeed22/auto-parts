@@ -155,6 +155,8 @@
     "couponPlaceholder": "Enter coupon code",
     "applying": "Applying...",
     "apply": "Apply",
+    "applyError": "Failed to apply coupon",
+    "invalidCoupon": "This coupon is not valid",
     "discountApplied": "Discount Applied",
     "subtotal": "Subtotal",
     "shipping": "Shipping",

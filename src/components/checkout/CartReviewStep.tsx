@@ -61,7 +61,8 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
   type ViewItem = {
     id: number;
     title: string;
-    price: number;
+    finalPrice: number;
+    originalPrice: number;
     image: string;
     quantity: number;
     brand?: string;
@@ -74,20 +75,51 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
       | ServerCart
       | undefined;
     if (shouldUseAPI && server?.cart_items) {
-      return server.cart_items.map((ci: ServerCart["cart_items"][number]) => ({
-        id: ci.product.id,
-        title: ci.product.name,
-        price:
-          Number(ci.product?.final_price) || Number(ci.product?.price) || 0,
-        image: ci.product?.primary_image || "",
-        quantity: ci.quantity,
-        brand: (ci.product as { brand?: { name?: string } } | undefined)?.brand
-          ?.name,
-        category: (ci.product as { category?: { name?: string } } | undefined)
-          ?.category?.name,
-      }));
+      return server.cart_items.map((ci: ServerCart["cart_items"][number]) => {
+        const finalPrice =
+          Number(
+            (ci.product as { final_price?: string | number }).final_price
+          ) ||
+          Number(ci.product?.price) ||
+          0;
+        const originalPrice = Number(ci.product?.price) || finalPrice;
+        return {
+          id: ci.product.id,
+          title: ci.product.name,
+          finalPrice,
+          originalPrice,
+          image: ci.product?.primary_image || "",
+          quantity: ci.quantity,
+          brand: (ci.product as { brand?: { name?: string } } | undefined)
+            ?.brand?.name,
+          category: (ci.product as { category?: { name?: string } } | undefined)
+            ?.category?.name,
+        };
+      });
     }
-    return items;
+    // Fallback to local items shape; map to our ViewItem with same values
+    return items.map(
+      (it: {
+        id: number;
+        title: string;
+        price: number | string;
+        originalPrice?: number | string;
+        image: string;
+        quantity: number;
+        brand?: string;
+        category?: string;
+      }) => ({
+        id: it.id,
+        title: it.title,
+        finalPrice: Number(it.price) || 0,
+        originalPrice:
+          Number(it.originalPrice ?? it.price) || Number(it.price) || 0,
+        image: it.image,
+        quantity: it.quantity,
+        brand: it.brand,
+        category: it.category,
+      })
+    );
   }, [shouldUseAPI, apiCart, items]);
 
   const viewTotalItems = useMemo(() => {
@@ -144,43 +176,45 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
               </div>
 
               <div className="flex-1 min-w-0">
-                <h3
-                  className={`font-semibold text-logo-black mb-1 text-lg ${
-                    isRTL ? "text-right" : "text-left"
-                  }`}
-                >
-                  {item.title}
-                </h3>
-                {(item.brand || item.category) && (
-                  <div
-                    className={`text-xs text-neutral-600 mb-2 ${
+                <div className="flex items-start justify-between mb-1">
+                  <h3
+                    className={`font-semibold text-logo-black text-lg ${
                       isRTL ? "text-right" : "text-left"
                     }`}
                   >
+                    {item.title}
+                  </h3>
+                  
+                    {item.originalPrice > item.finalPrice && (
+                      <span className="line-through">
+                        {item.originalPrice.toFixed(2)} {t("currency")}
+                      </span>
+                    )}
+
+                  
+                </div>
+                {(item.brand || item.category) && (
+                  <div
+                    className={`flex flex-wrap items-center gap-2 mb-2 `}
+                  >
                     {item.brand && (
-                      <span className={isRTL ? "ml-2" : "mr-2"}>
+                      <span className="inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full bg-logo-gold/15 text-logo-black border border-logo-gold/30">
                         {t("cartReview.brand", {
                           defaultValue:
                             i18n.language === "ar"
                               ? "العلامة التجارية"
                               : "Brand",
-                        })}
-                        :
-                        <span className="ml-1 font-medium text-logo-black">
-                          {item.brand}
-                        </span>
+                        })}: 
+                        <span className="font-semibold">{item.brand}</span>
                       </span>
                     )}
                     {item.category && (
-                      <span>
+                      <span className="inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full bg-logo-gold/15 text-logo-black border border-logo-gold/30">
                         {t("cartReview.category", {
                           defaultValue:
                             i18n.language === "ar" ? "الفئة" : "Category",
-                        })}
-                        :
-                        <span className="ml-1 font-medium text-logo-black">
-                          {item.category}
-                        </span>
+                        })}: 
+                        <span className="font-semibold">{item.category}</span>
                       </span>
                     )}
                   </div>
@@ -263,11 +297,11 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
                 }`}
               >
                 <p className="text-2xl font-bold text-logo-black mb-1">
-                  {(item.price * item.quantity).toFixed(2)} {t("currency")}
+                  {(item.finalPrice * item.quantity).toFixed(2)} {t("currency")}
                 </p>
                 {item.quantity > 1 && (
                   <p className="text-sm text-neutral-600">
-                    {item.price.toFixed(2)} {t("currency")} /{" "}
+                    {item.finalPrice.toFixed(2)} {t("currency")} /{" "}
                     {t("cartReview.piece")}
                   </p>
                 )}

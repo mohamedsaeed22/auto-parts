@@ -155,6 +155,8 @@
     "couponPlaceholder": "أدخل كود الخصم",
     "applying": "جاري التطبيق...",
     "apply": "تطبيق",
+    "applyError": "فشل في تطبيق القسيمة",
+    "invalidCoupon": "هذه القسيمة غير صالحة",
     "discountApplied": "تم تطبيق الخصم",
     "subtotal": "المجموع الفرعي",
     "shipping": "الشحن",
