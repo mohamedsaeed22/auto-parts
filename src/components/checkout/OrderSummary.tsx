@@ -171,18 +171,16 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                 disabled={couponDiscount > 0}
                 dir={isRTL ? "rtl" : "ltr"}
               />
-                <Button
-                  onClick={handleApplyCoupon}
-                  disabled={
-                    !couponCode.trim() || isApplyingCoupon || isApplying
-                  }
-                  size="sm"
-                  className="px-3 py-2 text-xs bg-logo-gold hover:bg-logo-gold/90 text-white"
-                >
-                  {isApplyingCoupon || isApplying
-                    ? t("orderSummary.applying")
-                    : t("orderSummary.apply")}
-                </Button>
+              <Button
+                onClick={handleApplyCoupon}
+                disabled={!couponCode.trim() || isApplyingCoupon || isApplying}
+                size="sm"
+                className="px-3 py-2 text-xs bg-logo-gold hover:bg-logo-gold/90 text-white"
+              >
+                {isApplyingCoupon || isApplying
+                  ? t("orderSummary.applying")
+                  : t("orderSummary.apply")}
+              </Button>
             </div>
             {couponError && (
               <p className="text-xs text-logo-red mt-2">{couponError}</p>
@@ -190,7 +188,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             {localError && !couponError && (
               <p className="text-xs text-logo-red mt-2">{localError}</p>
             )}
-           
           </div>
         )}
 
@@ -240,7 +237,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           </div>
         </div>
 
- 
         {/* Security Features */}
         <div className="mt-6 space-y-3">
           <div className="flex items-center text-sm text-neutral-600">
