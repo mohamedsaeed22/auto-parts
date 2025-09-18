@@ -97,9 +97,40 @@
   "orderComplete": {
     "title": "تم تأكيد الطلب!",
     "orderNumber": "رقم الطلب",
+    "thankYou": "شكراً لطلبك!",
     "deliveryTime": "التوصيل المتوقع خلال 3-5 أيام عمل",
+    "deliveryEstimate": "3-5 أيام عمل",
     "backToShopping": "العودة للتسوق",
-    "trackOrder": "تتبع الطلب"
+    "trackOrder": "تتبع الطلب",
+    "orderStatus": "حالة الطلب",
+    "paymentDelivery": "الدفع والتسليم",
+    "deliveryMethod": "التسليم",
+    "standardDelivery": "تسليم عادي",
+    "coupon": "قسيمة",
+    "items": "منتجات",
+    "sku": "رمز المنتج",
+    "quantity": "الكمية",
+    "saved": "تم التوفير"
+  },
+  "orders": {
+    "status": "حالة الطلب"
+  },
+  "orderStatus": {
+    "pending": "قيد الانتظار",
+    "processing": "قيد المعالجة",
+    "confirmed": "تم التأكيد",
+    "shipped": "تم الشحن",
+    "delivered": "تم التوصيل",
+    "cancelled": "ملغي"
+  },
+  "paymentStatus": {
+    "paid": "تم الدفع",
+    "pending": "قيد الانتظار",
+    "failed": "فشل"
+  },
+  "paymentMethod": {
+    "cash": "الدفع عند الاستلام",
+    "card": "بطاقة ائتمان/خصم"
   },
   "emptyCart": {
     "title": "سلة التسوق فارغة",
