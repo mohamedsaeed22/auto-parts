@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEnhancedCart } from "@/hooks/useEnhancedCart";
-import { ProtectedPageGuard } from "@/components/auth/AuthGuard";
+import { AuthOnlyGuard } from "@/components/auth/AuthGuard";
 import { useGetAddressesQuery } from "@/services/api/addressesApi";
 import {
   CheckoutProgress,
@@ -212,7 +212,7 @@ const CheckoutPage = () => {
     );
   };
 
-  return <ProtectedPageGuard>{renderContent()}</ProtectedPageGuard>;
+  return <AuthOnlyGuard>{renderContent()}</AuthOnlyGuard>;
 };
 
 export default CheckoutPage;

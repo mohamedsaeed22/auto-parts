@@ -111,7 +111,11 @@
     "items": "items",
     "inStock": "In Stock",
     "piece": "piece",
-    "continueToShipping": "Continue to Shipping"
+    "continueToShipping": "Continue to Shipping",
+    "brand": "Brand",
+    "category": "Category",
+    "cartTotal": "Cart Total",
+    "totalDiscount": "Discount"
   },
   "orderSummary": {
     "title": "Order Summary",

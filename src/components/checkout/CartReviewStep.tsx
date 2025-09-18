@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo } from "react";
 import { motion } from "framer-motion";
 import {
   ShoppingBag,
@@ -15,7 +15,8 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useTranslation } from "react-i18next";
 import { useEnhancedCart } from "@/hooks/useEnhancedCart";
-import { showError, showSuccess } from "@/lib/toast";
+import { useGetCartQuery } from "@/services/api/cartApi";
+import type { ApiResponse } from "@/services/api/types";
 
 interface CartReviewStepProps {
   onNext: () => void;
@@ -24,17 +25,78 @@ interface CartReviewStepProps {
 const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
   const { t, i18n } = useTranslation("checkout");
   const isRTL = i18n.language === "ar";
-  const [isSyncing, setIsSyncing] = useState(false);
+  const isSyncing = false;
 
   const {
     items,
     totalItems,
     shouldUseAPI,
-    syncLocalCartToAPI,
     updateQuantity,
     removeFromCart,
     isItemLoading,
   } = useEnhancedCart();
+
+  // Fetch server cart when authenticated; skip on guest
+  type ServerCart = {
+    cart_items: Array<{
+      id: number;
+      quantity: number;
+      product: {
+        id: number;
+        name: string;
+        price?: string | number;
+        final_price?: string | number;
+        primary_image?: string;
+      };
+    }>;
+    cart_total: number;
+    item_count: number;
+    total_discount?: number;
+  };
+
+  const { data: apiCart } = useGetCartQuery(undefined, {
+    skip: !shouldUseAPI,
+  });
+
+  type ViewItem = {
+    id: number;
+    title: string;
+    price: number;
+    image: string;
+    quantity: number;
+    brand?: string;
+    category?: string;
+  };
+
+  // Prefer server cart items when available to avoid stale local storage
+  const viewItems = useMemo<ViewItem[]>(() => {
+    const server = (apiCart as ApiResponse<unknown> | undefined)?.data as
+      | ServerCart
+      | undefined;
+    if (shouldUseAPI && server?.cart_items) {
+      return server.cart_items.map((ci: ServerCart["cart_items"][number]) => ({
+        id: ci.product.id,
+        title: ci.product.name,
+        price:
+          Number(ci.product?.final_price) || Number(ci.product?.price) || 0,
+        image: ci.product?.primary_image || "",
+        quantity: ci.quantity,
+        brand: (ci.product as { brand?: { name?: string } } | undefined)?.brand
+          ?.name,
+        category: (ci.product as { category?: { name?: string } } | undefined)
+          ?.category?.name,
+      }));
+    }
+    return items;
+  }, [shouldUseAPI, apiCart, items]);
+
+  const viewTotalItems = useMemo(() => {
+    const server = (apiCart as ApiResponse<unknown> | undefined)?.data as
+      | ServerCart
+      | undefined;
+    if (shouldUseAPI) return server?.item_count || 0;
+    return totalItems;
+  }, [shouldUseAPI, apiCart, totalItems]);
 
   const handleContinueToShipping = async () => {
     onNext();
@@ -52,13 +114,14 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
             <ShoppingBag
               className={`w-6 h-6 text-logo-gold ${isRTL ? "ml-3" : "mr-3"}`}
             />
-            {t("cartReview.title")} ({totalItems} {t("cartReview.items")})
+            {t("cartReview.title")} ({viewTotalItems} {t("cartReview.items")})
           </h2>
+          {/* Totals moved to OrderSummary */}
         </div>
       </div>
 
       <div className="divide-y divide-logo-gold/20">
-        {items.map((item, index) => (
+        {viewItems.map((item: ViewItem, index: number) => (
           <motion.div
             key={item.id}
             initial={{ opacity: 0, y: 20 }}
@@ -88,6 +151,40 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
                 >
                   {item.title}
                 </h3>
+                {(item.brand || item.category) && (
+                  <div
+                    className={`text-xs text-neutral-600 mb-2 ${
+                      isRTL ? "text-right" : "text-left"
+                    }`}
+                  >
+                    {item.brand && (
+                      <span className={isRTL ? "ml-2" : "mr-2"}>
+                        {t("cartReview.brand", {
+                          defaultValue:
+                            i18n.language === "ar"
+                              ? "العلامة التجارية"
+                              : "Brand",
+                        })}
+                        :
+                        <span className="ml-1 font-medium text-logo-black">
+                          {item.brand}
+                        </span>
+                      </span>
+                    )}
+                    {item.category && (
+                      <span>
+                        {t("cartReview.category", {
+                          defaultValue:
+                            i18n.language === "ar" ? "الفئة" : "Category",
+                        })}
+                        :
+                        <span className="ml-1 font-medium text-logo-black">
+                          {item.category}
+                        </span>
+                      </span>
+                    )}
+                  </div>
+                )}
                 <div
                   className={`flex items-center mb-3 ${
                     isRTL ? "space-x space-x-4" : "space-x-4"
