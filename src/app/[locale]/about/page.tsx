@@ -458,12 +458,16 @@ const ContactCTA = ({ t }: { t: (key: string) => string }) => (
   </div>
 );
 
-export default function AboutPage({ params }: { params: { locale: string } }) {
+export default function AboutPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const router = useRouter();
   const { t, i18n } = useTranslation("about");
   const isRTL = i18n.language === "ar";
   const direction = isRTL ? "rtl" : "ltr";
-  const { locale } = params;
+  const { locale } = React.use(params);
 
   // Scroll to top when component mounts
   useScrollToTop();

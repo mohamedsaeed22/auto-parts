@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { ProtectedPageGuard } from "@/components/auth/AuthGuard";
+import { AuthOnlyGuard } from "@/components/auth/AuthGuard";
 import { useApiErrorHandler } from "@/hooks/useApiErrorHandler";
 import { useFavouritesWishlist } from "@/hooks/useFavouritesWishlist";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
@@ -182,5 +182,5 @@ export default function WishlistPage() {
     );
   };
 
-  return <ProtectedPageGuard>{renderContent()}</ProtectedPageGuard>;
+  return <AuthOnlyGuard>{renderContent()}</AuthOnlyGuard>;
 }

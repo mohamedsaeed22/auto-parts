@@ -8,7 +8,7 @@ import type { RegistrationIncompleteErrorResponse } from "@/services/api/baseApi
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
-import { ProtectedPageGuard } from "@/components/auth/AuthGuard";
+import { AuthOnlyGuard } from "@/components/auth/AuthGuard";
 import { useApiErrorHandler } from "@/hooks/useApiErrorHandler";
 import React from "react";
 import ProductCard from "@/components/product/ProductCard";
@@ -111,5 +111,5 @@ export default function FavouritesPage() {
     );
   };
 
-  return <ProtectedPageGuard>{renderContent()}</ProtectedPageGuard>;
+  return <AuthOnlyGuard>{renderContent()}</AuthOnlyGuard>;
 }
