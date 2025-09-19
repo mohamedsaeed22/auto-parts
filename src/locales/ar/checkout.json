@@ -146,6 +146,7 @@
     "brand": "العلامة التجارية",
     "category": "الفئة",
     "cartTotal": "إجمالي السلة",
+    "cartTotalBeforeDiscount": "إجمالي السلة قبل الخصم",
     "totalDiscount": "إجمالي الخصم"
   },
   "orderSummary": {

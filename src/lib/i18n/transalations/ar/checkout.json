@@ -99,6 +99,7 @@
     "syncSuccess": "تمت مزامنة السلة بنجاح",
     "syncError": "فشل في مزامنة السلة. يرجى المحاولة مرة أخرى.",
     "cartTotal": "إجمالي السلة",
+    "cartTotalBeforeDiscount": "إجمالي السلة قبل الخصم",
     "totalDiscount": "إجمالي الخصم"
   },
   "emptyCart": {

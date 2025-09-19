@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Clock, Shield, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,14 +41,43 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   const [apiFinalTotal, setApiFinalTotal] = useState<number | null>(null);
   const [couponFinalTotal, setCouponFinalTotal] = useState<number | null>(null);
 
+  // New state for calculated cart values
+  const [calculatedSubtotal, setCalculatedSubtotal] = useState<number>(0);
+  const [calculatedDiscount, setCalculatedDiscount] = useState<number>(0);
+  const [calculatedTotal, setCalculatedTotal] = useState<number>(0);
+
   // Fetch server cart to reflect authoritative totals
+  type CartItem = {
+    id: number;
+    user_id: number;
+    product_id: number;
+    quantity: number;
+    product: {
+      id: number;
+      name: string;
+      price: string;
+      final_price: number;
+      primary_image: string;
+      brand: {
+        id: number;
+        name: string;
+      };
+      category: {
+        id: number;
+        name: string;
+      };
+    };
+    delivery_amount: string;
+  };
+
   type ServerCart = {
-    cart_items: Array<unknown>;
+    cart_items: Array<CartItem>;
     cart_total: number;
     item_count: number;
     total_discount: number;
     delivery_amount: string | number;
   };
+
   const { data: apiCart } = useGetCartQuery(undefined, {
     // If unauthenticated, this will be skipped by the API layer or error; we handle undefined below
   });
@@ -104,7 +133,12 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
         // Update local display state based on API response
         setApiCartTotal(data.cart_total);
-        setApiDiscountAmount(data.discount_amount);
+
+        // Set discount amount if it's greater than 0
+        if (data.discount_amount > 0) {
+          setApiDiscountAmount(data.discount_amount);
+        }
+
         setApiFinalTotal(data.final_total);
         setCouponFinalTotal(data.final_total);
       }
@@ -124,23 +158,68 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
   // Remove coupon functionality is not needed
 
+  // Use effect to calculate cart totals from cart items when API data changes
+  useEffect(() => {
+    // Function to calculate cart total from cart items
+    const calculateCartTotal = (
+      cartItems: CartItem[]
+    ): {
+      subtotal: number;
+      discount: number;
+      total: number;
+    } => {
+      let subtotal = 0;
+      let discount = 0;
+
+      cartItems.forEach((item) => {
+        // Original price * quantity
+        const originalPrice = parseFloat(item.product.price) * item.quantity;
+        // Final price * quantity
+        const finalPrice = item.product.final_price * item.quantity;
+
+        subtotal += finalPrice;
+        discount += originalPrice - finalPrice;
+      });
+
+      return {
+        subtotal,
+        discount,
+        total: subtotal,
+      };
+    };
+
+    const server = (apiCart as ApiResponse<unknown> | undefined)?.data as
+      | ServerCart
+      | undefined;
+
+    if (server?.cart_items && server.cart_items.length > 0) {
+      const { subtotal, discount, total } = calculateCartTotal(
+        server.cart_items
+      );
+      setCalculatedSubtotal(subtotal);
+      setCalculatedDiscount(discount);
+      setCalculatedTotal(total);
+    }
+  }, [apiCart]);
+
   // Determine values to display, prioritizing API response when available
   const server = (apiCart as ApiResponse<unknown> | undefined)?.data as
     | ServerCart
     | undefined;
 
-  // Get values from server response
-  const displayedSubtotal = apiCartTotal ?? server?.cart_total ?? 0;
-  const displayedDiscount = apiDiscountAmount ?? server?.total_discount ?? 0;
+  // Get values from server response, prioritizing calculated values
+  const displayedSubtotal =
+    calculatedSubtotal || apiCartTotal || server?.cart_total || 0;
+  const displayedDiscount =
+    calculatedDiscount || apiDiscountAmount || server?.total_discount || 0;
   const displayedShippingCost = Number(server?.delivery_amount) || 0;
 
-  // Calculate original total (before discount) - used in commented out section
-  // In the API, cart_total is already after discount, so we need to add the discount back
-  // const originalTotal = displayedSubtotal + displayedDiscount;
+  // Original total is used in the UI for displaying the price before discount
 
   // Calculate final total (cart_total + delivery_amount)
   const finalTotal = server
-    ? server.cart_total + Number(server.delivery_amount || 0)
+    ? (calculatedTotal || server.cart_total) +
+      Number(server.delivery_amount || 0)
     : apiFinalTotal !== null
     ? apiFinalTotal
     : displayedSubtotal + displayedShippingCost;
@@ -189,39 +268,38 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             {successMessage && !localError && !couponError && (
               <p className="text-xs text-logo-gold mt-2">{successMessage}</p>
             )}
-            {displayedDiscount > 0 && (
-              <div className="mt-2 p-3 bg-logo-gold/10 rounded-lg">
-                <div className="flex items-center justify-between text-sm text-logo-black">
-                  <span>{t("orderSummary.discountApplied")}</span>
-                  <div className="flex items-center">
-                    <span className="font-medium">
-                      -{displayedDiscount.toFixed(2)} {t("currency")}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         )}
+        {/* {couponApplied && displayedDiscount > 0 && (
+          <div className="flex items-center justify-between text-sm text-logo-black">
+            <span>{t("orderSummary.discountApplied")}</span>
+            <div className="flex items-center">
+              <span className="font-medium text-logo-gold">
+                -{displayedDiscount.toFixed(2)} {t("currency")}
+              </span>
+            </div>
+          </div>
+        )} */}
 
         {/* Price Breakdown */}
         <div className="space-y-3 text-sm">
-          {/* Original total (before discount) */}
-          {/* <div className="flex justify-between">
-            <span className="text-neutral-600">
-              {t("cartReview.cartTotal")}
-            </span>
-            <span
-              className={`font-medium ${
-                displayedDiscount > 0 ? "line-through text-neutral-500" : ""
-              }`}
-            >
-              {originalTotal.toFixed(2)} {t("currency")}
-            </span>
-          </div> */}
+          {/* Original price before discount */}
+          {/* {displayedDiscount > 0 && (
+            <div className="flex justify-between">
+              <span>
+                {t(
+                  "cartReview.cartTotalBeforeDiscount",
+                  "إجمالي السلة قبل الخصم"
+                )}
+              </span>
+              <span className="font-medium line-through text-neutral-500">
+                {(displayedSubtotal + displayedDiscount).toFixed(2)}{" "}
+                {t("currency")}
+              </span>
+            </div>
+          )} */}
 
           {/* Subtotal after discount */}
-
           <div className="flex justify-between">
             <span className="text-neutral-600">
               {t("orderSummary.subtotal")}
@@ -231,15 +309,20 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             </span>
           </div>
 
-          {/* Discount row - only shown if there is a discount */}
-          {displayedDiscount > 0 && (
+          {/* Discount row */}
+          {apiDiscountAmount !== null && apiDiscountAmount > 0 && displayedDiscount > 0 && (
             <div className="flex justify-between text-logo-gold">
               <span>{t("cartReview.totalDiscount")}</span>
               <span className="font-medium">
-                -{displayedDiscount.toFixed(2)} {t("currency")}
+                -
+                {apiDiscountAmount !== null && apiDiscountAmount > 0
+                  ? apiDiscountAmount.toFixed(2)
+                  : displayedDiscount.toFixed(2)}{" "}
+                {t("currency")}
               </span>
             </div>
           )}
+
           {/* Shipping cost */}
           <div className="flex justify-between">
             <span className="text-neutral-600">

@@ -146,6 +146,7 @@
     "brand": "Brand",
     "category": "Category",
     "cartTotal": "Cart Total",
+    "cartTotalBeforeDiscount": "Cart Total Before Discount",
     "totalDiscount": "Discount"
   },
   "orderSummary": {
