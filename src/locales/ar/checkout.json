@@ -146,7 +146,7 @@
     "brand": "العلامة التجارية",
     "category": "الفئة",
     "cartTotal": "إجمالي السلة",
-    "totalDiscount": "الخصم"
+    "totalDiscount": "إجمالي الخصم"
   },
   "orderSummary": {
     "title": "ملخص الطلب",
@@ -158,8 +158,8 @@
     "applyError": "فشل في تطبيق القسيمة",
     "invalidCoupon": "هذه القسيمة غير صالحة",
     "discountApplied": "تم تطبيق الخصم",
-    "originalTotal": "المجموع الفرعي",
-    "subtotal": "المجموع الفرعي  بعد الخصم",
+    "originalTotal": "المجموع الفرعي بعد الخصم",
+    "subtotal": "المجموع الفرعى",
     "shipping": "الشحن",
     "free": "مجاني",
     "tax": "الضريبة (15%)",

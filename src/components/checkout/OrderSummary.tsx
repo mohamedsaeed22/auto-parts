@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Clock, X, Shield, RefreshCw } from "lucide-react";
+import { Clock, Shield, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   useApplyCouponMutation,
@@ -13,45 +13,41 @@ import type { ApiResponse } from "@/services/api/types";
 
 interface OrderSummaryProps {
   currentStep: number;
-  total: number;
   couponCode: string;
-  couponDiscount: number;
   isApplyingCoupon: boolean;
   couponError: string;
   onCouponCodeChange: (code: string) => void;
   onApplyCoupon: () => void;
-  onRemoveCoupon: () => void;
 }
 
 const OrderSummary: React.FC<OrderSummaryProps> = ({
   currentStep,
-  total,
   couponCode,
-  couponDiscount,
   isApplyingCoupon,
   couponError,
   onCouponCodeChange,
   onApplyCoupon,
-  onRemoveCoupon,
 }) => {
   const { t, i18n } = useTranslation("checkout");
   const isRTL = i18n.language === "ar";
   const dispatch = useAppDispatch();
   const [applyCoupon, { isLoading: isApplying }] = useApplyCouponMutation();
   const [localError, setLocalError] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
   const [apiCartTotal, setApiCartTotal] = useState<number | null>(null);
   const [apiDiscountAmount, setApiDiscountAmount] = useState<number | null>(
     null
   );
   const [apiFinalTotal, setApiFinalTotal] = useState<number | null>(null);
+  const [couponFinalTotal, setCouponFinalTotal] = useState<number | null>(null);
 
   // Fetch server cart to reflect authoritative totals
   type ServerCart = {
     cart_items: Array<unknown>;
     cart_total: number;
     item_count: number;
-    total_discount?: number;
-    delivery_amount?: string | number;
+    total_discount: number;
+    delivery_amount: string | number;
   };
   const { data: apiCart } = useGetCartQuery(undefined, {
     // If unauthenticated, this will be skipped by the API layer or error; we handle undefined below
@@ -62,7 +58,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       id: number;
       code: string;
       name: string;
-      description: string;
+      description: string | null;
       type: "percentage" | "fixed" | string;
       value: number;
       is_valid: boolean;
@@ -89,6 +85,13 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       const result = await applyCoupon({
         coupon_code: couponCode.trim(),
       }).unwrap();
+
+      // Display success message from API response
+      if (result && typeof result.message === "string") {
+        setSuccessMessage(result.message);
+        setLocalError("");
+      }
+
       const data = (result as ApiResponse<unknown>)?.data as unknown;
       if (isApplyCouponApiData(data)) {
         // Check if coupon is valid (discount_amount > 0 and final_total > 0)
@@ -103,48 +106,44 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         setApiCartTotal(data.cart_total);
         setApiDiscountAmount(data.discount_amount);
         setApiFinalTotal(data.final_total);
+        setCouponFinalTotal(data.final_total);
       }
       // Refresh cart data from backend
       dispatch(cartApi.util.invalidateTags(["Cart"]));
       onApplyCoupon();
-      setLocalError("");
     } catch (err) {
-      let msg = t("orderSummary.applyError", "Failed to apply coupon");
+      // Display error message from API response
       const e = err as FetchBaseQueryError & { data?: { message?: unknown } };
       if (e?.data && typeof e.data.message === "string") {
-        msg = e.data.message as string;
+        setLocalError(e.data.message as string);
+      } else {
+        setLocalError(t("orderSummary.applyError", "Failed to apply coupon"));
       }
-      setLocalError(msg);
     }
   };
 
-  const handleRemoveCoupon = () => {
-    // Reset API-driven state when removing coupon
-    setApiCartTotal(null);
-    setApiDiscountAmount(null);
-    setApiFinalTotal(null);
-    onRemoveCoupon();
-  };
+  // Remove coupon functionality is not needed
 
   // Determine values to display, prioritizing API response when available
   const server = (apiCart as ApiResponse<unknown> | undefined)?.data as
     | ServerCart
     | undefined;
-  const displayedSubtotal = apiCartTotal ?? server?.cart_total ?? total;
-  const displayedDiscount =
-    apiDiscountAmount ?? server?.total_discount ?? couponDiscount;
+
+  // Get values from server response
+  const displayedSubtotal = apiCartTotal ?? server?.cart_total ?? 0;
+  const displayedDiscount = apiDiscountAmount ?? server?.total_discount ?? 0;
   const displayedShippingCost = Number(server?.delivery_amount) || 0;
-  // When server data exists, avoid adding synthetic tax; use direct subtraction
-  const computedFinal = server
-    ? Math.max(
-        0,
-        displayedSubtotal + displayedShippingCost - (displayedDiscount || 0)
-      )
-    : Math.max(
-        0,
-        displayedSubtotal + displayedSubtotal * 0.15 - (displayedDiscount || 0)
-      );
-  const finalTotal = apiFinalTotal !== null ? apiFinalTotal : computedFinal;
+
+  // Calculate original total (before discount) - used in commented out section
+  // In the API, cart_total is already after discount, so we need to add the discount back
+  // const originalTotal = displayedSubtotal + displayedDiscount;
+
+  // Calculate final total (cart_total + delivery_amount)
+  const finalTotal = server
+    ? server.cart_total + Number(server.delivery_amount || 0)
+    : apiFinalTotal !== null
+    ? apiFinalTotal
+    : displayedSubtotal + displayedShippingCost;
 
   return (
     <div
@@ -158,19 +157,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       </div>
 
       <div className="p-6">
-        {/* Delivery Info */}
-        {/* <div className="bg-logo-gold/10 rounded-xl p-4 mb-6">
-          <div className="flex items-center text-logo-black mb-2">
-            <Clock className="w-4 h-4 mx-2 text-logo-gold" />
-            <span className="font-medium text-sm">
-              {t("orderSummary.freeDelivery")}
-            </span>
-          </div>
-          <p className="text-xs text-logo-black/70">
-            {t("orderSummary.orderWithin")}
-          </p>
-        </div> */}
-
         {/* Coupon Section - Only show in first 3 steps */}
         {currentStep < 4 && (
           <div className="mb-6">
@@ -200,13 +186,18 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             {localError && !couponError && (
               <p className="text-xs text-logo-red mt-2">{localError}</p>
             )}
+            {successMessage && !localError && !couponError && (
+              <p className="text-xs text-logo-gold mt-2">{successMessage}</p>
+            )}
             {displayedDiscount > 0 && (
               <div className="mt-2 p-3 bg-logo-gold/10 rounded-lg">
                 <div className="flex items-center justify-between text-sm text-logo-black">
                   <span>{t("orderSummary.discountApplied")}</span>
-                  <span className="font-medium">
-                    -{displayedDiscount.toFixed(2)} {t("currency")}
-                  </span>
+                  <div className="flex items-center">
+                    <span className="font-medium">
+                      -{displayedDiscount.toFixed(2)} {t("currency")}
+                    </span>
+                  </div>
                 </div>
               </div>
             )}
@@ -215,26 +206,22 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
         {/* Price Breakdown */}
         <div className="space-y-3 text-sm">
-          {/* Show original total before discount if discount exists */}
-          {displayedDiscount > 0 && (
-            <div className="flex justify-between">
-              <span className="text-neutral-600">
-                {t("orderSummary.originalTotal")}
-              </span>
-              <span className="font-medium line-through text-neutral-500">
-                {(displayedSubtotal + displayedDiscount).toFixed(2)}{" "}
-                {t("currency")}
-              </span>
-            </div>
-          )}
-  {displayedDiscount > 0 && (
-            <div className="flex justify-between text-logo-gold">
-              <span>{t("orderSummary.discount")}</span>
-              <span className="font-medium">
-                -{displayedDiscount.toFixed(2)} {t("currency")}
-              </span>
-            </div>
-          )}
+          {/* Original total (before discount) */}
+          {/* <div className="flex justify-between">
+            <span className="text-neutral-600">
+              {t("cartReview.cartTotal")}
+            </span>
+            <span
+              className={`font-medium ${
+                displayedDiscount > 0 ? "line-through text-neutral-500" : ""
+              }`}
+            >
+              {originalTotal.toFixed(2)} {t("currency")}
+            </span>
+          </div> */}
+
+          {/* Subtotal after discount */}
+
           <div className="flex justify-between">
             <span className="text-neutral-600">
               {t("orderSummary.subtotal")}
@@ -243,6 +230,17 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               {displayedSubtotal.toFixed(2)} {t("currency")}
             </span>
           </div>
+
+          {/* Discount row - only shown if there is a discount */}
+          {displayedDiscount > 0 && (
+            <div className="flex justify-between text-logo-gold">
+              <span>{t("cartReview.totalDiscount")}</span>
+              <span className="font-medium">
+                -{displayedDiscount.toFixed(2)} {t("currency")}
+              </span>
+            </div>
+          )}
+          {/* Shipping cost */}
           <div className="flex justify-between">
             <span className="text-neutral-600">
               {t("orderSummary.shipping")}
@@ -253,26 +251,20 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                 : t("orderSummary.free")}
             </span>
           </div>
-          {/* Show tax only when server totals are not present */}
-          {!server && (
-            <div className="flex justify-between">
-              <span className="text-neutral-600">{t("orderSummary.tax")}</span>
-              <span className="font-medium">
-                {(displayedSubtotal * 0.15).toFixed(2)} {t("currency")}
-              </span>
-            </div>
-          )}
-        
         </div>
         <div className="border-t border-logo-gold/30 mt-4 pt-4">
           <div className="flex justify-between text-xl font-bold">
             <span className="text-logo-black">{t("orderSummary.total")}</span>
             <span className="text-logo-gold">
-              {finalTotal.toFixed(2)} {t("currency")}
+              {/* Show couponFinalTotal if available (from coupon API response), otherwise show calculated finalTotal */}
+              {(couponFinalTotal !== null && displayedDiscount > 0
+                ? couponFinalTotal + displayedShippingCost
+                : finalTotal
+              ).toFixed(2)}{" "}
+              {t("currency")}
             </span>
           </div>
         </div>
-
 
         {/* Security Features */}
         <div className="mt-6 space-y-3">

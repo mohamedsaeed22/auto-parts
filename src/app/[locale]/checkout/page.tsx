@@ -86,9 +86,7 @@ const CheckoutPage = () => {
           validCoupons[couponCode.toUpperCase() as keyof typeof validCoupons]
         );
         setCouponError("");
-      } else {
-        setCouponError("Invalid coupon code");
-      }
+      }  
       setIsApplyingCoupon(false);
     }, 1000);
   };
