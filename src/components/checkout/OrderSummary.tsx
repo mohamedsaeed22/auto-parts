@@ -51,6 +51,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
     cart_total: number;
     item_count: number;
     total_discount?: number;
+    delivery_amount?: string | number;
   };
   const { data: apiCart } = useGetCartQuery(undefined, {
     // If unauthenticated, this will be skipped by the API layer or error; we handle undefined below
@@ -90,10 +91,18 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       }).unwrap();
       const data = (result as ApiResponse<unknown>)?.data as unknown;
       if (isApplyCouponApiData(data)) {
+        // Check if coupon is valid (discount_amount > 0 and final_total > 0)
+        if (data.discount_amount === 0 && data.final_total === 0) {
+          setLocalError(
+            t("orderSummary.invalidCoupon", "This coupon is not valid")
+          );
+          return;
+        }
+
         // Update local display state based on API response
         setApiCartTotal(data.cart_total);
         setApiDiscountAmount(data.discount_amount);
-        setApiFinalTotal(data.cart_total);
+        setApiFinalTotal(data.final_total);
       }
       // Refresh cart data from backend
       dispatch(cartApi.util.invalidateTags(["Cart"]));
@@ -124,14 +133,18 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   const displayedSubtotal = apiCartTotal ?? server?.cart_total ?? total;
   const displayedDiscount =
     apiDiscountAmount ?? server?.total_discount ?? couponDiscount;
+  const displayedShippingCost = Number(server?.delivery_amount) || 0;
   // When server data exists, avoid adding synthetic tax; use direct subtraction
   const computedFinal = server
-    ? Math.max(0, displayedSubtotal - (displayedDiscount || 0))
+    ? Math.max(
+        0,
+        displayedSubtotal + displayedShippingCost - (displayedDiscount || 0)
+      )
     : Math.max(
         0,
         displayedSubtotal + displayedSubtotal * 0.15 - (displayedDiscount || 0)
       );
-  // const displayedSubtotal = apidisplayedSubtotal !== null ? apidisplayedSubtotal : computedFinal;
+  const finalTotal = apiFinalTotal !== null ? apiFinalTotal : computedFinal;
 
   return (
     <div
@@ -168,12 +181,11 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                 value={couponCode}
                 onChange={(e) => onCouponCodeChange(e.target.value)}
                 className="flex-1 px-4 py-2 border border-neutral-300 rounded-lg text-sm focus:ring-2 focus:ring-logo-gold focus:border-logo-gold"
-                disabled={couponDiscount > 0}
                 dir={isRTL ? "rtl" : "ltr"}
               />
+
               <Button
                 onClick={handleApplyCoupon}
-                disabled={!couponCode.trim() || isApplyingCoupon || isApplying}
                 size="sm"
                 className="px-3 py-2 text-xs bg-logo-gold hover:bg-logo-gold/90 text-white"
               >
@@ -188,11 +200,41 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             {localError && !couponError && (
               <p className="text-xs text-logo-red mt-2">{localError}</p>
             )}
+            {displayedDiscount > 0 && (
+              <div className="mt-2 p-3 bg-logo-gold/10 rounded-lg">
+                <div className="flex items-center justify-between text-sm text-logo-black">
+                  <span>{t("orderSummary.discountApplied")}</span>
+                  <span className="font-medium">
+                    -{displayedDiscount.toFixed(2)} {t("currency")}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
         {/* Price Breakdown */}
         <div className="space-y-3 text-sm">
+          {/* Show original total before discount if discount exists */}
+          {displayedDiscount > 0 && (
+            <div className="flex justify-between">
+              <span className="text-neutral-600">
+                {t("orderSummary.originalTotal")}
+              </span>
+              <span className="font-medium line-through text-neutral-500">
+                {(displayedSubtotal + displayedDiscount).toFixed(2)}{" "}
+                {t("currency")}
+              </span>
+            </div>
+          )}
+  {displayedDiscount > 0 && (
+            <div className="flex justify-between text-logo-gold">
+              <span>{t("orderSummary.discount")}</span>
+              <span className="font-medium">
+                -{displayedDiscount.toFixed(2)} {t("currency")}
+              </span>
+            </div>
+          )}
           <div className="flex justify-between">
             <span className="text-neutral-600">
               {t("orderSummary.subtotal")}
@@ -206,7 +248,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               {t("orderSummary.shipping")}
             </span>
             <span className="font-medium text-logo-gold">
-              {t("orderSummary.free")}
+              {displayedShippingCost > 0
+                ? `${displayedShippingCost.toFixed(2)} ${t("currency")}`
+                : t("orderSummary.free")}
             </span>
           </div>
           {/* Show tax only when server totals are not present */}
@@ -218,24 +262,17 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               </span>
             </div>
           )}
-          {/* {displayedDiscount > 0 && (
-            <div className="flex justify-between text-logo-gold">
-              <span>{t("orderSummary.discount")}</span>
-              <span className="font-medium">
-                -{displayedDiscount.toFixed(2)} {t("currency")}
-              </span>
-            </div>
-          )} */}
+        
         </div>
-
         <div className="border-t border-logo-gold/30 mt-4 pt-4">
           <div className="flex justify-between text-xl font-bold">
             <span className="text-logo-black">{t("orderSummary.total")}</span>
             <span className="text-logo-gold">
-              {displayedSubtotal.toFixed(2)} {t("currency")}
+              {finalTotal.toFixed(2)} {t("currency")}
             </span>
           </div>
         </div>
+
 
         {/* Security Features */}
         <div className="mt-6 space-y-3">

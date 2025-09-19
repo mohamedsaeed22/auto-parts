@@ -234,6 +234,7 @@ export interface Cart {
   items: CartItem[];
   subtotal: number;
   discount: number;
+  delivery_amount?: number;
   total: number;
   coupon_code?: string;
 }

@@ -41,17 +41,21 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
     cart_items: Array<{
       id: number;
       quantity: number;
+      delivery_amount?: string | number;
       product: {
         id: number;
         name: string;
         price?: string | number;
         final_price?: string | number;
         primary_image?: string;
+        brand?: { name?: string };
+        category?: { name?: string };
       };
     }>;
     cart_total: number;
     item_count: number;
     total_discount?: number;
+    delivery_amount?: string | number;
   };
 
   const { data: apiCart } = useGetCartQuery(undefined, {
@@ -184,19 +188,15 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
                   >
                     {item.title}
                   </h3>
-                  
-                    {item.originalPrice > item.finalPrice && (
-                      <span className="line-through">
-                        {item.originalPrice.toFixed(2)} {t("currency")}
-                      </span>
-                    )}
 
-                  
+                  {item.originalPrice > item.finalPrice && (
+                    <span className="line-through">
+                      {item.originalPrice.toFixed(2)} {t("currency")}
+                    </span>
+                  )}
                 </div>
                 {(item.brand || item.category) && (
-                  <div
-                    className={`flex flex-wrap items-center gap-2 mb-2 `}
-                  >
+                  <div className={`flex flex-wrap items-center gap-2 mb-2 `}>
                     {item.brand && (
                       <span className="inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full bg-logo-gold/15 text-logo-black border border-logo-gold/30">
                         {t("cartReview.brand", {
@@ -204,8 +204,8 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
                             i18n.language === "ar"
                               ? "العلامة التجارية"
                               : "Brand",
-                        })}: 
-                        <span className="font-semibold">{item.brand}</span>
+                        })}
+                        :<span className="font-semibold">{item.brand}</span>
                       </span>
                     )}
                     {item.category && (
@@ -213,8 +213,8 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
                         {t("cartReview.category", {
                           defaultValue:
                             i18n.language === "ar" ? "الفئة" : "Category",
-                        })}: 
-                        <span className="font-semibold">{item.category}</span>
+                        })}
+                        :<span className="font-semibold">{item.category}</span>
                       </span>
                     )}
                   </div>
