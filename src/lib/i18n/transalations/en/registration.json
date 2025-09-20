@@ -35,6 +35,25 @@
     "fixedLocation": "Fixed location: Cairo, Egypt",
     "uploadNote": "Image up to 5MB (jpeg, png, jpg, gif, svg)"
   },
+  "location": {
+    "searchPlaceholder": "Search for an address...",
+    "useCurrentLocation": "Use My Location",
+    "selectLocation": "Click on map to select location",
+    "locationSelected": "Location selected",
+    "searchingLocation": "Getting location...",
+    "locationError": "Failed to get location",
+    "permissionDenied": "Location permission denied",
+    "selectLocationOnMap": "Select Location on Map",
+    "changeLocation": "Change Location",
+    "hideMap": "Hide Map",
+    "selectedLocation": "Selected Location",
+    "loading": "Loading map...",
+    "instructions": "Click anywhere on the map to select your location. Drag the marker to fine-tune the position.",
+    "confirmLocation": "Confirm Location",
+    "closeMap": "Close Map",
+    "apiKeyMissing": "Google Maps API Key Required",
+    "apiKeyInstructions": "Please add your Google Maps API key to the .env.local file to enable location selection."
+  },
   "typeOptions": {
     "shop": "Shop",
     "workshop": "Workshop"

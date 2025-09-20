@@ -1,666 +1,506 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import dynamic from "next/dynamic";
-import {
-  MapPin,
-  Loader2,
-  Navigation,
-  Plus,
-  Minus,
-  Search,
-  X,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import type { LocationData } from "@/lib/validations/authSchema";
+import { MapPin, Search, Loader, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
-// Dynamically import map components to avoid SSR issues
-const MapContainer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.MapContainer),
-  { ssr: false }
-);
-const TileLayer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.TileLayer),
-  { ssr: false }
-);
-const Marker = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Marker),
-  { ssr: false }
-);
-const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
-  ssr: false,
-});
+// TypeScript interfaces
+export interface LocationData {
+  lat: number;
+  lng: number;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  postal_code: string;
+  formatted_address: string;
+}
 
-// Dynamically import the MapClickHandler to avoid hook issues
-const MapClickHandler = dynamic(
-  () =>
-    import("react-leaflet").then((mod) => {
-      const { useMapEvents } = mod;
-
-      return function MapClickHandlerComponent({
-        onLocationSelect,
-      }: {
-        onLocationSelect: (lat: number, lng: number) => void;
-      }) {
-        useMapEvents({
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          click: (e: any) => {
-            onLocationSelect(e.latlng.lat, e.latlng.lng);
-          },
-        });
-        return null;
-      };
-    }),
-  { ssr: false }
-);
-
-interface LocationPickerProps {
-  onLocationSelect: (location: LocationData) => void;
-  initialLocation?: Partial<LocationData>;
+export interface LocationPickerProps {
+  onLocationSelect: (locationData: LocationData) => void;
+  initialLocation?: { lat: number; lng: number };
+  className?: string;
   error?: string;
 }
 
-interface SearchResult {
-  display_name: string;
-  lat: string;
-  lon: string;
-  place_id: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  address: any;
+// Google Maps types - using module augmentation to avoid conflicts
+declare global {
+  interface Window {
+    initGoogleMaps?: () => void;
+  }
 }
+
+// Default location (Cairo, Egypt)
+const DEFAULT_LOCATION = { lat: 30.0444, lng: 31.2357 };
 
 export default function LocationPicker({
   onLocationSelect,
-  initialLocation,
+  initialLocation = DEFAULT_LOCATION,
+  className = "",
   error,
 }: LocationPickerProps) {
-  const { t, i18n } = useTranslation("location");
+  const { i18n } = useTranslation("registration");
   const isRTL = i18n.language === "ar";
-  const [position, setPosition] = useState<[number, number]>([
-    initialLocation?.lat || 24.7136, // Default to Riyadh
-    initialLocation?.lng || 46.6753,
-  ]);
-  const [searchValue, setSearchValue] = useState("");
+
+  // Refs
+  const mapRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const mapInstanceRef = useRef<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const markerRef = useRef<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const autocompleteRef = useRef<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+
+  // State
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState<LocationData | null>(
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(
     null
   );
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [mapInstance] = useState<any>(null);
-  const [isClient, setIsClient] = useState(false);
-  const [zoom, setZoom] = useState(10);
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  const [showSearchResults, setShowSearchResults] = useState(false);
-  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(
-    null
-  );
+  const [mapError, setMapError] = useState<string | null>(null);
+  const [showMap, setShowMap] = useState(false);
 
-  // Ensure we're on the client side
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  // Initialize position if initial location is provided
-  useEffect(() => {
-    if (initialLocation?.lat && initialLocation?.lng) {
-      setPosition([initialLocation.lat, initialLocation.lng]);
-      setZoom(15);
-      // Also set the search value to the initial address if available
-      if (initialLocation.address) {
-        setSearchValue(initialLocation.address);
-      }
+  // Load Google Maps script
+  const loadGoogleMaps = useCallback(async () => {
+    if ((window as any).google && (window as any).google.maps) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
+      setIsMapLoaded(true);
+      return;
     }
-  }, [initialLocation]);
 
-  // Reverse geocoding function using Nominatim (free)
-  const reverseGeocode = useCallback(
-    async (lat: number, lng: number) => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=ar,en`
-        );
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+    if (!apiKey) {
+      setMapError("Google Maps API key not configured");
+      return;
+    }
 
-        if (!response.ok) {
-          throw new Error(t("errors.addressFetchFailed"));
+    try {
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&language=${i18n.language}`;
+      script.async = true;
+      script.defer = true;
+
+      script.onload = () => {
+        setIsMapLoaded(true);
+      };
+
+      script.onerror = () => {
+        setMapError("Failed to load Google Maps");
+      };
+
+      document.head.appendChild(script);
+    } catch (err) {
+      console.error("Error loading Google Maps:", err);
+      setMapError("Error loading Google Maps");
+    }
+  }, [i18n.language]);
+
+  // Initialize map
+  const initializeMap = () => {
+    if (!mapRef.current || !(window as any).google || mapInstanceRef.current)
+      return; // eslint-disable-line @typescript-eslint/no-explicit-any
+
+    try {
+      // Create map
+      mapInstanceRef.current = new (window as any).google.maps.Map(
+        mapRef.current,
+        {
+          // eslint-disable-line @typescript-eslint/no-explicit-any
+          center: initialLocation,
+          zoom: 13,
+          mapTypeControl: false,
+          streetViewControl: false,
+          fullscreenControl: true,
+          zoomControl: true,
+          gestureHandling: "cooperative",
+          styles: [
+            {
+              featureType: "poi",
+              elementType: "labels",
+              stylers: [{ visibility: "off" }],
+            },
+          ],
         }
+      );
 
-        const data = await response.json();
+      // Create marker
+      markerRef.current = new (window as any).google.maps.Marker({
+        // eslint-disable-line @typescript-eslint/no-explicit-any
+        position: initialLocation,
+        map: mapInstanceRef.current,
+        draggable: true,
+        title: "Drag to adjust location",
+      });
 
-        if (data && data.display_name) {
-          const address = data.address || {};
-          const locationData: LocationData = {
-            address: data.display_name,
-            city:
-              address.city ||
-              address.town ||
-              address.village ||
-              address.suburb ||
-              "",
-            region: address.state || address.region || address.province || "",
-            country: address.country || "Saudi Arabia",
-            postalCode: address.postcode || "",
-            lat: lat,
-            lng: lng,
-            placeId: data.place_id?.toString() || "",
-            formattedAddress: data.display_name,
-          };
+      // Map click handler
+      mapInstanceRef.current.addListener("click", (event: any) => {
+        // eslint-disable-line @typescript-eslint/no-explicit-any
+        const lat = event.latLng.lat();
+        const lng = event.latLng.lng();
+        updateMarkerPosition(lat, lng);
+        reverseGeocode(lat, lng);
+      });
 
-          setCurrentLocation(locationData);
-          onLocationSelect(locationData);
-          // Update search value with the formatted address
-          setSearchValue(data.display_name);
-        }
-      } catch (error) {
-        console.error("Reverse geocoding failed:", error);
-        alert(t("errors.addressFetchFailed"));
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [t, onLocationSelect]
-  );
+      // Marker drag handler
+      markerRef.current.addListener("dragend", (event: any) => {
+        // eslint-disable-line @typescript-eslint/no-explicit-any
+        const lat = event.latLng.lat();
+        const lng = event.latLng.lng();
+        reverseGeocode(lat, lng);
+      });
 
-  // Forward geocoding (search) with improved results
-  const searchLocation = useCallback(
-    async (query: string, selectFirst: boolean = false) => {
-      if (!query.trim() || query.length < 2) {
-        setSearchResults([]);
-        setShowSearchResults(false);
-        return;
-      }
+      // Initialize autocomplete
+      if (searchInputRef.current) {
+        autocompleteRef.current = new (
+          window as any
+        ).google.maps.places.Autocomplete(searchInputRef.current, { // eslint-disable-line @typescript-eslint/no-explicit-any
+          fields: [
+            "place_id",
+            "geometry",
+            "formatted_address",
+            "address_components",
+          ],
+        });
 
-      setIsSearching(true);
-      try {
-        // Use multiple search strategies for better results
-        const searches = [
-          // Primary search with Saudi Arabia focus
-          fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-              query
-            )}&limit=10&countrycodes=sa&addressdetails=1&accept-language=ar,en&dedupe=1`
-          ),
-          // Backup search without country restriction but with Saudi context
-          fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-              query + " Saudi Arabia"
-            )}&limit=5&addressdetails=1&accept-language=ar,en&dedupe=1`
-          ),
-        ];
+        autocompleteRef.current.addListener("place_changed", () => {
+          const place = autocompleteRef.current.getPlace();
+          if (place.geometry && place.geometry.location) {
+            const lat = place.geometry.location.lat();
+            const lng = place.geometry.location.lng();
 
-        const responses = await Promise.all(searches);
-        const results = await Promise.all(responses.map((r) => r.json()));
+            updateMarkerPosition(lat, lng);
+            mapInstanceRef.current.setCenter({ lat, lng });
+            mapInstanceRef.current.setZoom(15);
 
-        // Combine and deduplicate results
-        const combinedResults = [...results[0], ...results[1]];
-        const uniqueResults = combinedResults
-          .filter(
-            (result, index, self) =>
-              index === self.findIndex((r) => r.place_id === result.place_id)
-          )
-          .slice(0, 8); // Limit to 8 results
-
-        setSearchResults(uniqueResults);
-        setShowSearchResults(!selectFirst && uniqueResults.length > 0);
-
-        // If selectFirst is true or we have results, select the first one
-        if ((selectFirst || uniqueResults.length > 0) && uniqueResults[0]) {
-          const place = uniqueResults[0];
-          const lat = parseFloat(place.lat);
-          const lng = parseFloat(place.lon);
-
-          setPosition([lat, lng]);
-          setZoom(16); // Higher zoom for better accuracy
-          setShowSearchResults(false);
-
-          // Move map to new position
-          if (mapInstance) {
-            mapInstance.setView([lat, lng], 16);
+            // Process the place data
+            processPlaceData(place);
           }
+        });
+      }
+    } catch (error) {
+      console.error("Error initializing map:", error);
+      setMapError("Failed to initialize map");
+    }
+  };
 
-          await reverseGeocode(lat, lng);
+  // Update marker position
+  const updateMarkerPosition = (lat: number, lng: number) => {
+    if (markerRef.current) {
+      markerRef.current.setPosition({ lat, lng });
+    }
+  };
+
+  // Reverse geocode coordinates to get address
+  const reverseGeocode = async (lat: number, lng: number) => {
+    if (!(window as any).google) return; // eslint-disable-line @typescript-eslint/no-explicit-any
+
+    setIsLoading(true);
+    try {
+      const geocoder = new (window as any).google.maps.Geocoder(); // eslint-disable-line @typescript-eslint/no-explicit-any
+      const response = await new Promise((resolve, reject) => {
+        geocoder.geocode(
+          { location: { lat, lng } },
+          (results: any[] | null, status: string) => {
+            // eslint-disable-line @typescript-eslint/no-explicit-any
+            if (status === "OK" && results?.[0]) {
+              resolve(results[0]);
+            } else {
+              reject(new Error("Geocoding failed"));
+            }
+          }
+        );
+      });
+
+      processPlaceData(response);
+    } catch (error) {
+      console.error("Reverse geocoding failed:", error);
+      // Fallback: create basic location data with coordinates
+      const basicLocationData: LocationData = {
+        lat,
+        lng,
+        address: `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+        city: "",
+        state: "",
+        country: "",
+        postal_code: "",
+        formatted_address: `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+      };
+      setSelectedLocation(basicLocationData);
+      onLocationSelect(basicLocationData);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Process place data from Google Maps
+  const processPlaceData = (place: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+    const lat = place.geometry.location.lat();
+    const lng = place.geometry.location.lng();
+
+    let address = "";
+    let city = "";
+    let state = "";
+    let country = "";
+    let postal_code = "";
+
+    // Extract address components
+    if (place.address_components) {
+      place.address_components.forEach((component: any) => {
+        // eslint-disable-line @typescript-eslint/no-explicit-any
+        const types = component.types;
+
+        if (types.includes("street_number") || types.includes("route")) {
+          address += component.long_name + " ";
+        } else if (types.includes("locality")) {
+          city = component.long_name;
+        } else if (types.includes("administrative_area_level_1")) {
+          state = component.long_name;
+        } else if (types.includes("country")) {
+          country = component.long_name;
+        } else if (types.includes("postal_code")) {
+          postal_code = component.long_name;
         }
-      } catch (error) {
-        console.error("Search failed:", error);
-        alert(t("errors.searchFailed"));
-      } finally {
-        setIsSearching(false);
-      }
-    },
-    [mapInstance, reverseGeocode, t]
-  );
-
-  // Debounced search effect
-  useEffect(() => {
-    if (searchTimeout) {
-      clearTimeout(searchTimeout);
+      });
     }
 
-    if (searchValue.length >= 2) {
-      const timeout = setTimeout(() => {
-        searchLocation(searchValue, false);
-      }, 500); // Reduced delay for better UX
-
-      setSearchTimeout(timeout);
-    } else {
-      setSearchResults([]);
-      setShowSearchResults(false);
-    }
-
-    return () => {
-      if (searchTimeout) {
-        clearTimeout(searchTimeout);
-      }
+    const locationData: LocationData = {
+      lat,
+      lng,
+      address: address.trim(),
+      city,
+      state,
+      country,
+      postal_code,
+      formatted_address:
+        place.formatted_address || `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
     };
-  }, [searchValue, searchLocation, searchTimeout]);
 
-  const handleMapClick = useCallback(
-    async (lat: number, lng: number) => {
-      setPosition([lat, lng]);
-      setShowSearchResults(false);
-      await reverseGeocode(lat, lng);
-    },
-    [reverseGeocode]
-  );
-
-  const handleSearchResultClick = async (result: SearchResult) => {
-    const lat = parseFloat(result.lat);
-    const lng = parseFloat(result.lon);
-
-    setPosition([lat, lng]);
-    setZoom(16);
-    setSearchValue(result.display_name);
-    setShowSearchResults(false);
-
-    if (mapInstance) {
-      mapInstance.setView([lat, lng], 16);
-    }
-
-    await reverseGeocode(lat, lng);
+    setSelectedLocation(locationData);
+    onLocationSelect(locationData);
   };
 
-  const clearSearch = () => {
-    setSearchValue("");
-    setSearchResults([]);
-    setShowSearchResults(false);
-  };
-
-  const getCurrentLocation = () => {
+  // Use current location
+  const useCurrentLocation = () => {
     if (!navigator.geolocation) {
-      alert(t("errors.locationNotSupported"));
+      alert("Geolocation is not supported by this browser");
       return;
     }
 
     setIsLoading(true);
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-        setPosition([latitude, longitude]);
-        setZoom(16);
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
 
-        if (mapInstance) {
-          mapInstance.setView([latitude, longitude], 16);
+        updateMarkerPosition(lat, lng);
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.setCenter({ lat, lng });
+          mapInstanceRef.current.setZoom(15);
         }
-
-        await reverseGeocode(latitude, longitude);
+        reverseGeocode(lat, lng);
       },
       (error) => {
         console.error("Error getting current location:", error);
-        let errorMessage = t("errors.locationFailed");
-
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            errorMessage = t("errors.permissionDenied");
-            break;
-          case error.POSITION_UNAVAILABLE:
-            errorMessage = t("errors.positionUnavailable");
-            break;
-          case error.TIMEOUT:
-            errorMessage = t("errors.timeout");
-            break;
-        }
-
-        alert(errorMessage);
+        alert(
+          "Error getting your current location. Please try again or select manually."
+        );
         setIsLoading(false);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 300000,
       }
     );
   };
 
-  const zoomIn = () => {
-    if (mapInstance) {
-      const newZoom = Math.min(zoom + 1, 18);
-      setZoom(newZoom);
-      mapInstance.setZoom(newZoom);
-    }
-  };
+  // Effects
+  useEffect(() => {
+    loadGoogleMaps();
+  }, [loadGoogleMaps]);
 
-  const zoomOut = () => {
-    if (mapInstance) {
-      const newZoom = Math.max(zoom - 1, 1);
-      setZoom(newZoom);
-      mapInstance.setZoom(newZoom);
+  useEffect(() => {
+    if (isMapLoaded && showMap) {
+      // Small delay to ensure DOM is ready
+      setTimeout(() => {
+        initializeMap();
+      }, 100);
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMapLoaded, showMap]);
 
-  // Custom icon for marker with better visibility
-  const createCustomIcon = () => {
-    if (typeof window !== "undefined") {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const L = require("leaflet");
-      return new L.Icon({
-        iconUrl:
-          "data:image/svg+xml;base64," +
-          btoa(`
-          <svg width="30" height="45" viewBox="0 0 30 45" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 0C6.7 0 0 6.7 0 15c0 15 15 30 15 30s15-15 15-30C30 6.7 23.3 0 15 0z" fill="#DC2626" stroke="#fff" stroke-width="2"/>
-            <circle cx="15" cy="15" r="8" fill="white"/>
-            <circle cx="15" cy="15" r="4" fill="#DC2626"/>
-          </svg>
-        `),
-        iconSize: [30, 45],
-        iconAnchor: [15, 45],
-        popupAnchor: [1, -34],
-      });
-    }
-    return null;
-  };
-
-  if (!isClient) {
+  // Render error state
+  if (mapError) {
     return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-center h-[350px] bg-neutral-100 rounded-lg">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          <span className={`${isRTL ? "mr-2" : "ml-2"}`}>
-            {t("loadingMap")}
-          </span>
+      <div className={`space-y-4 ${className}`} dir={isRTL ? "rtl" : "ltr"}>
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="text-red-600 mt-1" size={20} />
+            <div className="flex-1">
+              <h4 className="text-sm font-medium text-red-900 mb-1">
+                Google Maps Error
+              </h4>
+              <p className="text-sm text-red-700 mb-2">{mapError}</p>
+              <p className="text-xs text-red-600">
+                Please add your Google Maps API key to the .env.local file to
+                enable location selection.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <div
-        className={`flex items-center gap-2 mb-2 ${isRTL ? "flex-row" : ""}`}
-      >
-        <MapPin className="w-5 h-5 text-primary" />
-        <h3 className="text-lg font-medium text-neutral-700">{t("title")}</h3>
-      </div>
-
-      {/* Enhanced Search Input */}
-      <div className="space-y-2">
-        <div className="relative">
-          <input
-            type="text"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            placeholder={t("searchPlaceholder")}
-            className={`w-full ${
-              isRTL ? "pl-12 pr-3 text-right" : "pr-12 pl-3 text-left"
-            } py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-              error ? "border-accent" : "border-neutral-300"
-            }`}
-          />
-          <Search
-            className={`absolute ${
-              isRTL ? "right-3" : "left-3"
-            } top-1/2 transform -translate-y-1/2 text-neutral-400 w-5 h-5`}
-          />
-
-          {searchValue && (
-            <button
-              onClick={clearSearch}
-              className={`absolute ${
-                isRTL ? "left-3" : "right-3"
-              } top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-neutral-600`}
+    <div className={`space-y-4 ${className}`} dir={isRTL ? "rtl" : "ltr"}>
+      {/* Selected Location Display */}
+      {selectedLocation && (
+        <div className="p-4 bg-logo-gold/10 border border-logo-gold/20 rounded-lg">
+          <div className="flex items-start gap-3">
+            <MapPin className="text-logo-gold mt-1" size={20} />
+            <div className="flex-1">
+              <h4 className="text-sm font-medium text-logo-black mb-1">
+                Selected Location
+              </h4>
+              <p className="text-sm text-neutral-700">
+                {selectedLocation.formatted_address}
+              </p>
+              <div className="flex gap-4 mt-2 text-xs text-neutral-600">
+                <span>Lat: {selectedLocation.lat.toFixed(6)}</span>
+                <span>Lng: {selectedLocation.lng.toFixed(6)}</span>
+              </div>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setShowMap(!showMap)}
+              className="text-logo-gold border-logo-gold/30 hover:bg-logo-gold/10"
             >
-              <X className="w-4 h-4" />
-            </button>
-          )}
-
-          {isSearching && (
-            <div
-              className={`absolute ${
-                isRTL ? "right-10" : "left-10"
-              } top-1/2 transform -translate-y-1/2`}
-            >
-              <Loader2 className="text-primary w-4 h-4 animate-spin" />
-            </div>
-          )}
-        </div>
-
-        {/* Search Results Dropdown */}
-        {showSearchResults && searchResults.length > 0 && (
-          <div className="absolute z-50 w-full bg-background border border-neutral-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-            {searchResults.map((result, index) => (
-              <button
-                key={result.place_id || index}
-                onClick={() => handleSearchResultClick(result)}
-                className={`w-full px-4 py-3 ${
-                  isRTL ? "text-right" : "text-left"
-                } hover:bg-neutral-50 border-b border-neutral-100 last:border-b-0 focus:outline-none focus:bg-neutral-50`}
-              >
-                <div className="flex items-start gap-2">
-                  <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                  <div
-                    className={`flex-1 ${isRTL ? "text-right" : "text-left"}`}
-                  >
-                    <div className="text-sm font-medium text-gray-900 line-clamp-1">
-                      {result.display_name}
-                    </div>
-                    {result.address && (
-                      <div className="text-xs text-gray-500 mt-1">
-                        {result.address.city ||
-                          result.address.town ||
-                          result.address.village ||
-                          ""}
-                        {result.address.state && `, ${result.address.state}`}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        )}
-
-        <Button
-          type="button"
-          variant="outline"
-          onClick={getCurrentLocation}
-          disabled={isLoading}
-          className="w-full"
-        >
-          {isLoading ? (
-            <>
-              <Loader2
-                className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"} animate-spin`}
-              />
-              {t("locatingText")}
-            </>
-          ) : (
-            <>
-              <Navigation className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`} />
-              {t("useCurrentLocation")}
-            </>
-          )}
-        </Button>
-      </div>
-
-      {/* Enhanced Map Container */}
-      <div
-        className={`relative border rounded-lg overflow-hidden ${
-          error ? "border-accent" : "border-neutral-300"
-        }`}
-      >
-        <style jsx global>{`
-          .leaflet-container {
-            height: 350px;
-            width: 100%;
-            z-index: 1;
-            cursor: crosshair;
-          }
-          .leaflet-control-attribution {
-            font-size: 10px !important;
-          }
-          .leaflet-clickable {
-            cursor: pointer !important;
-          }
-          .leaflet-control-zoom {
-            display: none !important;
-          }
-        `}</style>
-
-        <MapContainer
-          center={position}
-          zoom={zoom}
-          style={{ height: "350px", width: "100%" }}
-          // whenReady={setMapInstance}
-          // onZoomEnd={(e: any) => setZoom(e.target.getZoom())}
-          zoomControl={false}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            maxZoom={18}
-          />
-
-          <Marker position={position} icon={createCustomIcon()}>
-            <Popup>
-              <div className="text-center p-2">
-                <p className="font-medium text-primary">📍 الموقع المحدد</p>
-                {currentLocation && (
-                  <p className="text-sm text-neutral-600 mt-1 max-w-xs">
-                    {currentLocation.formattedAddress}
-                  </p>
-                )}
-              </div>
-            </Popup>
-          </Marker>
-
-          <MapClickHandler onLocationSelect={handleMapClick} />
-        </MapContainer>
-
-        {/* Enhanced Zoom Controls */}
-        <div className="absolute top-4 left-4 z-[1000] bg-white rounded-lg shadow-lg border">
-          <button
-            onClick={zoomIn}
-            disabled={zoom >= 18}
-            className="block p-3 hover:bg-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed border-b transition-colors"
-            title={t("zoomIn")}
-          >
-            <Plus className="w-4 h-4" />
-          </button>
-          <button
-            onClick={zoomOut}
-            disabled={zoom <= 1}
-            className="block p-3 hover:bg-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            title={t("zoomOut")}
-          >
-            <Minus className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Enhanced instruction overlay */}
-        <div
-          className={`absolute bottom-4 ${
-            isRTL ? "right-4" : "left-4"
-          } z-[1000] bg-black bg-opacity-80 text-white text-xs px-3 py-2 rounded-lg`}
-        >
-          {t("mapInstructions")}
-        </div>
-
-        {/* Loading overlay */}
-        {isLoading && (
-          <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-[1000]">
-            <div className="flex items-center gap-2">
-              <Loader2 className="w-5 h-5 animate-spin text-primary" />
-              <span className="text-sm text-neutral-600">
-                {t("updatingLocation")}
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Enhanced Selected Location Info */}
-      {currentLocation && (
-        <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
-          <h4
-            className={`font-medium text-primary-900 mb-3 flex items-center gap-2 ${
-              isRTL ? "flex-row" : ""
-            }`}
-          >
-            <MapPin className="w-4 h-4" />
-            {t("selectedLocation")}
-          </h4>
-          <p
-            className={`text-sm text-primary-800 ${
-              isRTL ? "text-right" : "text-left"
-            } mb-3 leading-relaxed`}
-          >
-            {currentLocation.formattedAddress}
-          </p>
-          <div className="grid grid-cols-2 gap-3 text-xs text-primary-700">
-            {currentLocation.city && (
-              <div className="flex justify-between">
-                <span className="font-medium">{t("city")}:</span>
-                <span>{currentLocation.city}</span>
-              </div>
-            )}
-            {currentLocation.region && (
-              <div className="flex justify-between">
-                <span className="font-medium">{t("region")}:</span>
-                <span>{currentLocation.region}</span>
-              </div>
-            )}
-            {currentLocation.postalCode && (
-              <div className="flex justify-between">
-                <span className="font-medium">{t("postalCode")}:</span>
-                <span>{currentLocation.postalCode}</span>
-              </div>
-            )}
-            <div className="flex justify-between">
-              <span className="font-medium">{t("coordinates")}:</span>
-              <span>
-                {position[0].toFixed(6)}, {position[1].toFixed(6)}
-              </span>
-            </div>
+              {showMap ? "Hide Map" : "Change Location"}
+            </Button>
           </div>
         </div>
       )}
 
+      {/* Map Toggle Button */}
+      {!selectedLocation && (
+        <div className="text-center">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setShowMap(!showMap)}
+            className="w-full border-logo-gold/30 text-logo-gold hover:bg-logo-gold/10"
+            disabled={!isMapLoaded}
+          >
+            <MapPin className="w-4 h-4 mr-2" />
+            {!isMapLoaded ? (
+              <>
+                <Loader className="w-4 h-4 mr-2 animate-spin" />
+                Loading map...
+              </>
+            ) : showMap ? (
+              "Hide Map"
+            ) : (
+              "Select Location on Map"
+            )}
+          </Button>
+        </div>
+      )}
+
+      {/* Error Display */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-          <p
-            className={`text-sm text-red-600 ${
-              isRTL ? "text-right" : "text-left"
-            }`}
-          >
-            {error}
-          </p>
+        <div className="text-sm text-red-600 flex items-center gap-2">
+          <AlertCircle size={16} />
+          {error}
         </div>
       )}
 
-      {/* <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-        <p className="text-xs text-green-700 text-right mb-2">
-          💡 <strong>كيفية استخدام أداة تحديد الموقع:</strong>
-        </p>
-        <ul className="text-xs text-green-600 space-y-1 text-right">
-          <li>🔍 اكتب اسم المكان أو العنوان في مربع البحث</li>
-          <li>📍 انقر على النتيجة المناسبة من قائمة البحث</li>
-          <li>🗺️ أو انقر مباشرة على الخريطة لتحديد موقع دقيق</li>
-          <li>📱 استخدم "موقعي الحالي" للحصول على موقعك بدقة GPS</li>
-          <li>🔍 استخدم أزرار التكبير والتصغير للبحث بدقة أكبر</li>
-        </ul>
-      </div> */}
+      {/* Map Container */}
+      {showMap && isMapLoaded && (
+        <div className="border border-neutral-200 rounded-lg overflow-hidden shadow-lg">
+          {/* Search Controls */}
+          <div className="p-4 bg-neutral-50 border-b border-neutral-200">
+            <div className="mb-3 p-2 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800">
+              📍 Click anywhere on the map to select your location
+            </div>
+            <div className="flex gap-2">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-4 h-4" />
+                <Input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder="Search for an address..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Button
+                type="button"
+                onClick={useCurrentLocation}
+                disabled={isLoading}
+                variant="outline"
+                className="flex items-center gap-2 border-logo-gold/30 text-logo-gold hover:bg-logo-gold/10"
+              >
+                {isLoading ? (
+                  <Loader className="w-4 h-4 animate-spin" />
+                ) : (
+                  <MapPin className="w-4 h-4" />
+                )}
+                Use My Location
+              </Button>
+            </div>
+          </div>
+
+          {/* Map */}
+          <div className="relative">
+            <div
+              ref={mapRef}
+              className="w-full h-80 md:h-96"
+              style={{ minHeight: "320px" }}
+            />
+
+            {/* Map Instructions */}
+            <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg max-w-xs">
+              <p className="text-xs text-neutral-600">
+                Click anywhere on the map to select your location. Drag the
+                marker to fine-tune the position.
+              </p>
+            </div>
+
+            {/* Loading Overlay */}
+            {isLoading && (
+              <div className="absolute inset-0 bg-white/50 flex items-center justify-center">
+                <div className="text-center">
+                  <Loader className="w-8 h-8 animate-spin mx-auto mb-2 text-logo-gold" />
+                  <p className="text-sm text-neutral-600">
+                    Getting location...
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="p-4 bg-neutral-50 border-t border-neutral-200 flex gap-2 justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowMap(false)}
+            >
+              Close Map
+            </Button>
+            {selectedLocation && (
+              <Button
+                type="button"
+                onClick={() => setShowMap(false)}
+                className="bg-logo-gold hover:bg-logo-gold/90 text-white"
+              >
+                Confirm Location
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

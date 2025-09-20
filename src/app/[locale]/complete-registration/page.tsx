@@ -21,6 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import LocationPicker from "@/components/LocationPicker";
+import type { LocationData } from "@/components/LocationPicker";
 import Image from "next/image";
 
 export default function CompleteRegistrationPage() {
@@ -66,10 +68,33 @@ export default function CompleteRegistrationPage() {
     tax_number?: string;
     commercial_register?: string;
     avatar?: string;
+    type?: string;
   }>({});
 
   // Check if user has already completed registration
   const hasRedirectedRef = useRef(false);
+
+  // Handle location selection from the map
+  const handleLocationSelect = (locationData: LocationData) => {
+    setFormData((prev) => ({
+      ...prev,
+      address: locationData.address,
+      city: locationData.city,
+      state: locationData.state,
+      zip: locationData.postal_code,
+      latitude: locationData.lat.toString(),
+      longitude: locationData.lng.toString(),
+    }));
+
+    // Clear related errors
+    setErrors((prev) => ({
+      ...prev,
+      address: undefined,
+      city: undefined,
+      state: undefined,
+      zip: undefined,
+    }));
+  };
 
   useEffect(() => {
     // Check if user is not authenticated at all
@@ -95,7 +120,7 @@ export default function CompleteRegistrationPage() {
       router.push(`/${currentLocale}`);
       return;
     }
-  }, [authData, currentLocale, router]);
+  }, [authData, currentLocale, router, t]);
 
   // File validation function
   const validateFile = (file: File): string | null => {
@@ -243,15 +268,15 @@ export default function CompleteRegistrationPage() {
       const requestData = {
         name: formData.name,
         email: formData.email.trim() || undefined, // Only send if not empty
-        type: formData.type,
+        type: formData.type as "shop" | "workshop", // Type assertion after validation
         manager_name: formData.manager_name,
         address: formData.address,
         city: formData.city,
         zip: formData.zip,
         state: formData.state,
         tax_number: formData.tax_number,
-        latitude: formData.latitude, // Static value: 30.0444 (Cairo, Egypt)
-        longitude: formData.longitude, // Static value: 31.2357 (Cairo, Egypt)
+        latitude: formData.latitude,
+        longitude: formData.longitude,
         commercial_register: commercialRegister || undefined,
         avatar: avatar || undefined,
       };
@@ -266,10 +291,11 @@ export default function CompleteRegistrationPage() {
         const updatedUser = {
           ...result.data.user,
           is_registration_complete: true,
+          points: (result.data.user as any).points || 0, // eslint-disable-line @typescript-eslint/no-explicit-any - Add default points if missing, type assertion due to API response variance
         };
 
         // Update only the user data, don't replace the entire auth structure
-        storage.updateUser(updatedUser);
+        storage.updateUser(updatedUser as any); // eslint-disable-line @typescript-eslint/no-explicit-any - Type assertion for updateUser
 
         // Sync local cart to API now that registration is complete
         try {
@@ -286,7 +312,7 @@ export default function CompleteRegistrationPage() {
         }
 
         // Verify the update worked
-        const storedAuth = storage.getAuth();
+        // const storedAuth = storage.getAuth(); // Commented out unused variable
 
         clearRegistrationIncomplete();
         showSuccess(t("toasts.registrationCompleted"));
@@ -493,29 +519,18 @@ export default function CompleteRegistrationPage() {
                 error={errors.tax_number}
               />
 
-              <FormInput
-                label={t("labels.latitudeStatic")}
-                type="text"
-                id="latitude"
-                name="latitude"
-                value={formData.latitude}
-                disabled
-                placeholder={t("placeholders.latitude")}
-                helpText={t("help.fixedLocation")}
-                icon={MapPin}
-              />
-
-              <FormInput
-                label={t("labels.longitudeStatic")}
-                type="text"
-                id="longitude"
-                name="longitude"
-                value={formData.longitude}
-                disabled
-                placeholder={t("placeholders.longitude")}
-                helpText={t("help.fixedLocation")}
-                icon={MapPin}
-              />
+              {/* Location Selection - Replace static lat/lng fields */}
+              <div className="md:col-span-2 space-y-4">
+                <LocationPicker
+                  onLocationSelect={handleLocationSelect}
+                  initialLocation={{
+                    lat: parseFloat(formData.latitude),
+                    lng: parseFloat(formData.longitude),
+                  }}
+                  className="w-full"
+                  error={errors.address || errors.city}
+                />
+              </div>
             </div>
 
             {/* File Uploads */}
