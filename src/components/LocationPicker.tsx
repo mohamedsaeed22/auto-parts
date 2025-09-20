@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Loader, AlertCircle } from "lucide-react";
+import { MapPin, Search, Loader, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 // TypeScript interfaces
 export interface LocationData {
@@ -31,7 +33,7 @@ declare global {
 }
 
 // Default location (Cairo, Egypt)
-const DEFAULT_LOCATION = { lat: 30.0444, lng: 31.2357 };
+const DEFAULT_LOCATION = { lat: 24.7136, lng: 46.6753 }; // Riyadh, Saudi Arabia
 
 export default function LocationPicker({
   onLocationSelect,
@@ -46,10 +48,13 @@ export default function LocationPicker({
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
   const markerRef = useRef<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const autocompleteRef = useRef<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
 
   // State
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(
     null
   );
@@ -169,6 +174,36 @@ export default function LocationPicker({
         const lng = event.latLng.lng();
         reverseGeocode(lat, lng);
       });
+
+      // Initialize autocomplete
+      if (searchInputRef.current) {
+        autocompleteRef.current = new (
+          window as any
+        ).google.maps.places.Autocomplete(searchInputRef.current, {
+          // eslint-disable-line @typescript-eslint/no-explicit-any
+          fields: [
+            "place_id",
+            "geometry",
+            "formatted_address",
+            "address_components",
+          ],
+        });
+
+        autocompleteRef.current.addListener("place_changed", () => {
+          const place = autocompleteRef.current.getPlace();
+          if (place.geometry && place.geometry.location) {
+            const lat = place.geometry.location.lat();
+            const lng = place.geometry.location.lng();
+
+            updateMarkerPosition(lat, lng);
+            mapInstanceRef.current.setCenter({ lat, lng });
+            mapInstanceRef.current.setZoom(15);
+
+            // Process the place data
+            processPlaceData(place);
+          }
+        });
+      }
     } catch (error) {
       console.error("Error initializing map:", error);
       setMapError("Failed to initialize map");
@@ -303,6 +338,34 @@ export default function LocationPicker({
     onLocationSelect(locationData);
   };
 
+  // Use current location
+  const useCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      alert(t("location.geolocationNotSupported"));
+      return;
+    }
+
+    setIsLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        updateMarkerPosition(lat, lng);
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.setCenter({ lat, lng });
+          mapInstanceRef.current.setZoom(15);
+        }
+        reverseGeocode(lat, lng);
+      },
+      (error) => {
+        console.error("Error getting current location:", error);
+        alert(t("location.geolocationError"));
+        setIsLoading(false);
+      }
+    );
+  };
+
   // Effects
   useEffect(() => {
     loadGoogleMaps();
@@ -370,6 +433,40 @@ export default function LocationPicker({
             boxSizing: "border-box",
           }}
         >
+          {/* Search Controls */}
+          <div className="p-4 bg-neutral-50 border-b border-neutral-200">
+            <div className="flex gap-2">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-4 h-4" />
+                <Input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder={t(
+                    "location.searchPlaceholder",
+                    "Search for a location..."
+                  )}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Button
+                type="button"
+                onClick={useCurrentLocation}
+                disabled={isLoading}
+                variant="outline"
+                className="flex items-center gap-2 border-logo-gold/30 text-logo-gold hover:bg-logo-gold/10"
+              >
+                {isLoading ? (
+                  <Loader className="w-4 h-4 animate-spin" />
+                ) : (
+                  <MapPin className="w-4 h-4" />
+                )}
+                {t("location.useCurrentLocation", "Use My Location")}
+              </Button>
+            </div>
+          </div>
+
           {/* Map */}
           <div
             className="block w-full"

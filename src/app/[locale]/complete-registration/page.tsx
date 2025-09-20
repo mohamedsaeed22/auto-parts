@@ -9,7 +9,15 @@ import { useLocale } from "@/hooks/useLocale";
 import { useTranslation } from "react-i18next";
 import { useRegistrationStatus } from "@/hooks/useRegistrationStatus";
 import { showSuccess, showError } from "@/lib/toast";
-import { User, Mail, Building, MapPin, Hash, FileText, CheckCircle } from "lucide-react";
+import {
+  User,
+  Mail,
+  Building,
+  MapPin,
+  Hash,
+  FileText,
+  CheckCircle,
+} from "lucide-react";
 import { storage } from "@/lib/storage";
 import { CartSyncService } from "@/services/cartSyncService";
 import FormInput from "@/components/ui/FormInput";
@@ -52,13 +60,19 @@ export default function CompleteRegistrationPage() {
 
   // Location selection state
   const [isLocationSelected, setIsLocationSelected] = useState(false);
-  const [locationDetails, setLocationDetails] = useState<LocationData | null>(null);
+  const [locationDetails, setLocationDetails] = useState<LocationData | null>(
+    null
+  );
 
-  const [commercialRegister, setCommercialRegister] = useState<File | null>(null);
+  const [commercialRegister, setCommercialRegister] = useState<File | null>(
+    null
+  );
   const [avatar, setAvatar] = useState<File | null>(null);
-  const [commercialRegisterPreview, setCommercialRegisterPreview] = useState<string | null>(null);
+  const [commercialRegisterPreview, setCommercialRegisterPreview] = useState<
+    string | null
+  >(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  
+
   const [errors, setErrors] = useState<{
     name?: string;
     email?: string;
@@ -250,12 +264,15 @@ export default function CompleteRegistrationPage() {
     if (!formData.name.trim()) {
       newErrors.name = t("validation.nameRequired");
     }
-    
+
     // Email is optional, but if provided, should be valid
-    if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    if (
+      formData.email.trim() &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+    ) {
       newErrors.email = t("validation.emailInvalid");
     }
-    
+
     if (!formData.manager_name.trim()) {
       newErrors.manager_name = t("validation.managerRequired");
     }
@@ -286,7 +303,7 @@ export default function CompleteRegistrationPage() {
     if (!formData.zip.trim()) {
       newErrors.zip = t("validation.zipRequired");
     }
-    
+
     if (!formData.tax_number.trim()) {
       newErrors.tax_number = t("validation.taxRequired");
     }
@@ -303,8 +320,11 @@ export default function CompleteRegistrationPage() {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       // Scroll to first error
-      const firstErrorElement = document.querySelector('.text-red-500');
-      firstErrorElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const firstErrorElement = document.querySelector(".text-red-500");
+      firstErrorElement?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
       return;
     }
 
@@ -434,21 +454,23 @@ export default function CompleteRegistrationPage() {
                   {t("labels.selectLocation")}{" "}
                   <span className="text-red-500 ml-1">*</span>
                 </h3>
-                {isLocationSelected && (
+                {/* {isLocationSelected && (
                   <div className="flex items-center text-green-600">
                     <CheckCircle className="w-5 h-5 mr-1" />
-                    <span className="text-sm font-medium">Location Selected</span>
+                    <span className="text-sm font-medium">
+                      Location Selected
+                    </span>
                   </div>
-                )}
+                )} */}
               </div>
-              
-              <p className="text-sm text-gray-600 mb-4">
+
+              {/* <p className="text-sm text-gray-600 mb-4">
                 {t(
                   "help.locationRequired",
                   "Please search and select your exact business location on the map. This will help customers find you easily."
                 )}
-              </p>
-              
+              </p> */}
+
               <LocationPicker
                 onLocationSelect={handleLocationSelect}
                 initialLocation={
@@ -458,30 +480,32 @@ export default function CompleteRegistrationPage() {
                         lng: parseFloat(formData.longitude),
                       }
                     : {
-                        lat: 30.0444, // Default to Cairo, Egypt
-                        lng: 31.2357,
+                        lat: 24.7136, // Default to Riyadh, Saudi Arabia
+                        lng: 46.6753,
                       }
                 }
                 className="w-full h-96"
                 error={errors.location}
               />
-              
+
               {errors.location && (
                 <p className="text-sm text-red-500 mt-2 font-medium">
                   {errors.location}
                 </p>
               )}
 
-              {isLocationSelected && locationDetails && (
+              {/* {isLocationSelected && locationDetails && (
                 <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                   <p className="text-sm text-green-800">
-                    <strong>Selected Location:</strong> {locationDetails.address}
+                    <strong>Selected Location:</strong>{" "}
+                    {locationDetails.address}
                   </p>
                   <p className="text-xs text-green-600 mt-1">
-                    Coordinates: {locationDetails.lat.toFixed(6)}, {locationDetails.lng.toFixed(6)}
+                    Coordinates: {locationDetails.lat.toFixed(6)},{" "}
+                    {locationDetails.lng.toFixed(6)}
                   </p>
                 </div>
-              )}
+              )} */}
             </div>
 
             {/* Form Content */}
@@ -509,7 +533,10 @@ export default function CompleteRegistrationPage() {
                   />
 
                   <FormInput
-                    label={`${t("labels.email")} (${t("optional", "Optional")})`}
+                    label={`${t("labels.email")} (${t(
+                      "optional",
+                      "Optional"
+                    )})`}
                     type="email"
                     id="email"
                     name="email"
@@ -649,7 +676,8 @@ export default function CompleteRegistrationPage() {
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm font-medium text-logo-black mb-2">
                     <FileText size={16} color="gray" />
-                    {t("labels.commercialRegister")} <span className="text-red-500">*</span>
+                    {t("labels.commercialRegister")}{" "}
+                    <span className="text-red-500">*</span>
                   </label>
 
                   <input
@@ -828,10 +856,13 @@ export default function CompleteRegistrationPage() {
                   t("actions.submit")
                 )}
               </Button>
-              
+
               {!isLocationSelected && (
                 <p className="text-sm text-gray-500 mt-2">
-                  {t("help.selectLocationToSubmit", "Please select your location on the map above to enable registration")}
+                  {t(
+                    "help.selectLocationToSubmit",
+                    "Please select your location on the map above to enable registration"
+                  )}
                 </p>
               )}
             </div>
