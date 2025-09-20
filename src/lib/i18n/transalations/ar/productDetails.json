@@ -33,5 +33,6 @@
   "currency": "ر.س",
   "home": "الرئيسية",
   "loadingProductDetails": "جاري تحميل تفاصيل المنتج...",
-  "failedToLoadProductDetails": "فشل في تحميل تفاصيل المنتج"
+  "failedToLoadProductDetails": "فشل في تحميل تفاصيل المنتج",
+  "invalidProductId": "معرف المنتج غير صالح"
 }

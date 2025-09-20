@@ -288,12 +288,45 @@ const StockIndicator = ({ isRTL, t }: { isRTL: boolean; t: TranslateFn }) => (
 export default function ProductDetails() {
   const router = useRouter();
   const params = useParams();
-  const productId = parseInt(params.id as string);
+
+  // Safely parse product ID with error handling
+  const productId = (() => {
+    try {
+      const id = params.id as string;
+      if (!id || id === "undefined" || id === "null") {
+        throw new Error("Invalid product ID");
+      }
+      const parsed = parseInt(id, 10);
+      if (isNaN(parsed) || parsed <= 0) {
+        throw new Error("Invalid product ID format");
+      }
+      return parsed;
+    } catch (error) {
+      console.error("Error parsing product ID:", error);
+      return null;
+    }
+  })();
+
   const { t, i18n } = useTranslation("productDetails");
   const [selectedImage, setSelectedImage] = useState(0);
 
   const isRTL = i18n.language === "ar";
   const direction = isRTL ? "rtl" : "ltr";
+
+  // Early return if product ID is invalid
+  if (productId === null) {
+    return (
+      <div
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+        dir={isRTL ? "rtl" : "ltr"}
+      >
+        <ErrorMessage
+          message={t("invalidProductId") || "Invalid product ID"}
+          onRetry={() => router.back()}
+        />
+      </div>
+    );
+  }
 
   // Scroll to top when component mounts or productId changes
   useScrollToTop([productId]);
