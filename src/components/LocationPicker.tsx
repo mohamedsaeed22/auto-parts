@@ -59,13 +59,30 @@ export default function LocationPicker({
     null
   );
   const [mapError, setMapError] = useState<string | null>(null);
-  const [showMap, setShowMap] = useState(false);
+  const [showMap, setShowMap] = useState(true);
 
   // Load Google Maps script
   const loadGoogleMaps = useCallback(async () => {
     if ((window as any).google && (window as any).google.maps) {
       // eslint-disable-line @typescript-eslint/no-explicit-any
       setIsMapLoaded(true);
+      return;
+    }
+
+    // Check if script is already loading or loaded
+    const existingScript = document.querySelector(
+      'script[src*="maps.googleapis.com"]'
+    );
+    if (existingScript) {
+      // Script already exists, wait for it to load
+      if ((window as any).google && (window as any).google.maps) {
+        setIsMapLoaded(true);
+        return;
+      }
+      // Wait for existing script to load
+      existingScript.addEventListener("load", () => {
+        setIsMapLoaded(true);
+      });
       return;
     }
 
@@ -80,6 +97,7 @@ export default function LocationPicker({
       script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&language=${i18n.language}`;
       script.async = true;
       script.defer = true;
+      script.id = "google-maps-script"; // Add ID to identify the script
 
       script.onload = () => {
         setIsMapLoaded(true);
@@ -316,14 +334,14 @@ export default function LocationPicker({
   }, [loadGoogleMaps]);
 
   useEffect(() => {
-    if (isMapLoaded && showMap) {
+    if (isMapLoaded) {
       // Small delay to ensure DOM is ready
       setTimeout(() => {
         initializeMap();
       }, 100);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMapLoaded, showMap]);
+  }, [isMapLoaded]);
 
   // Render error state
   if (mapError) {
@@ -348,10 +366,19 @@ export default function LocationPicker({
   }
 
   return (
-    <div className={`space-y-4 ${className}`} dir={isRTL ? "rtl" : "ltr"}>
+    <div
+      className={`space-y-4 ${className}`}
+      dir={isRTL ? "rtl" : "ltr"}
+      style={{
+        position: "static",
+        zIndex: "auto",
+        maxWidth: "100%",
+        overflow: "hidden",
+      }}
+    >
       {/* Selected Location Display */}
       {selectedLocation && (
-        <div className="p-4 bg-logo-gold/10 border border-logo-gold/20 rounded-lg">
+        <div className="p-4 bg-logo-gold/10 border border-logo-gold/20 rounded-lg mb-4">
           <div className="flex items-start gap-3">
             <MapPin className="text-logo-gold mt-1" size={20} />
             <div className="flex-1">
@@ -370,41 +397,7 @@ export default function LocationPicker({
                 </span>
               </div>
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setShowMap(!showMap)}
-              className="text-logo-gold border-logo-gold/30 hover:bg-logo-gold/10"
-            >
-              {showMap ? t("location.hideMap") : t("location.changeLocation")}
-            </Button>
           </div>
-        </div>
-      )}
-
-      {/* Map Toggle Button */}
-      {!selectedLocation && (
-        <div className="text-center">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => setShowMap(!showMap)}
-            className="w-full border-logo-gold/30 text-logo-gold hover:bg-logo-gold/10"
-            disabled={!isMapLoaded}
-          >
-            <MapPin className="w-4 h-4 mr-2" />
-            {!isMapLoaded ? (
-              <>
-                <Loader className="w-4 h-4 mr-2 animate-spin" />
-                {t("location.loading")}
-              </>
-            ) : showMap ? (
-              t("location.hideMap")
-            ) : (
-              t("location.selectLocationOnMap")
-            )}
-          </Button>
         </div>
       )}
 
@@ -417,8 +410,16 @@ export default function LocationPicker({
       )}
 
       {/* Map Container */}
-      {showMap && isMapLoaded && (
-        <div className="border border-neutral-200 rounded-lg overflow-hidden shadow-lg">
+      {isMapLoaded ? (
+        <div
+          className="border border-neutral-200 rounded-lg overflow-hidden shadow-lg mb-4 block w-full"
+          style={{
+            position: "static",
+            zIndex: "auto",
+            maxWidth: "100%",
+            boxSizing: "border-box",
+          }}
+        >
           {/* Search Controls */}
           <div className="p-4 bg-neutral-50 border-b border-neutral-200">
             <div className="mb-3 p-2 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800">
@@ -454,11 +455,20 @@ export default function LocationPicker({
           </div>
 
           {/* Map */}
-          <div className="relative">
+          <div
+            className="block w-full"
+            style={{ position: "static", zIndex: "auto" }}
+          >
             <div
               ref={mapRef}
-              className="w-full h-80 md:h-96"
-              style={{ minHeight: "320px" }}
+              className="w-full h-80 md:h-96 block"
+              style={{
+                minHeight: "320px",
+                position: "static",
+                zIndex: "auto",
+                maxWidth: "100%",
+                boxSizing: "border-box",
+              }}
             />
 
             {/* Map Instructions */}
@@ -480,26 +490,21 @@ export default function LocationPicker({
               </div>
             )}
           </div>
-
-          {/* Action Buttons */}
-          <div className="p-4 bg-neutral-50 border-t border-neutral-200 flex gap-2 justify-end">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setShowMap(false)}
-            >
-              {t("location.closeMap")}
-            </Button>
-            {selectedLocation && (
-              <Button
-                type="button"
-                onClick={() => setShowMap(false)}
-                className="bg-logo-gold hover:bg-logo-gold/90 text-white"
-              >
-                {t("location.confirmLocation")}
-              </Button>
-            )}
-          </div>
+        </div>
+      ) : (
+        <div
+          className="border border-neutral-200 rounded-lg p-8 text-center block w-full mb-4"
+          style={{
+            position: "static",
+            zIndex: "auto",
+            maxWidth: "100%",
+            boxSizing: "border-box",
+          }}
+        >
+          <Loader className="w-8 h-8 animate-spin mx-auto mb-4 text-logo-gold" />
+          <p className="text-sm text-neutral-600">
+            {t("location.loading", "Loading map...")}
+          </p>
         </div>
       )}
     </div>

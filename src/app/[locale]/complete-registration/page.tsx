@@ -94,6 +94,14 @@ export default function CompleteRegistrationPage() {
       state: undefined,
       zip: undefined,
     }));
+
+    // Show success toast for location selection
+    showSuccess(
+      t(
+        "toasts.locationSelected",
+        "Location selected successfully! Address fields have been auto-filled."
+      )
+    );
   };
 
   useEffect(() => {
@@ -229,17 +237,29 @@ export default function CompleteRegistrationPage() {
     if (!formData.manager_name.trim()) {
       newErrors.manager_name = t("validation.managerRequired");
     }
-    if (!formData.address.trim()) {
-      newErrors.address = t("validation.addressRequired");
+
+    // Validate location selection (address, city, state are auto-filled from map)
+    if (
+      !formData.address.trim() ||
+      !formData.city.trim() ||
+      !formData.state.trim()
+    ) {
+      newErrors.address = t(
+        "validation.locationRequired",
+        "Please select a location on the map"
+      );
+      newErrors.city = t(
+        "validation.locationRequired",
+        "Please select a location on the map"
+      );
+      newErrors.state = t(
+        "validation.locationRequired",
+        "Please select a location on the map"
+      );
     }
-    if (!formData.city.trim()) {
-      newErrors.city = t("validation.cityRequired");
-    }
+
     if (!formData.zip.trim()) {
       newErrors.zip = t("validation.zipRequired");
-    }
-    if (!formData.state.trim()) {
-      newErrors.state = t("validation.stateRequired");
     }
     if (!formData.tax_number.trim()) {
       newErrors.tax_number = t("validation.taxRequired");
@@ -385,314 +405,384 @@ export default function CompleteRegistrationPage() {
         </div>
 
         {/* Registration Form */}
-        <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 md:p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Basic Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormInput
-                label={t("labels.name")}
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                placeholder={t("placeholders.name")}
-                required
-                icon={User}
-                error={errors.name}
-              />
-
-              <FormInput
-                label={t("labels.email")}
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder={t("placeholders.email")}
-                // helpText="Leave empty if you don't have an email"
-                icon={Mail}
-              />
-
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-neutral-700">
-                  {t("labels.type")} <span className="text-accent">*</span>
-                </label>
-                <Select
-                  value={formData.type || undefined}
-                  onValueChange={(value: "shop" | "workshop") =>
-                    setFormData((prev) => ({ ...prev, type: value }))
-                  }
-                >
-                  <SelectTrigger className="w-full h-12 px-3 py-3 border border-neutral-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
-                    <SelectValue placeholder={t("placeholders.selectType")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="shop">
-                      {t("typeOptions.shop")}
-                    </SelectItem>
-                    <SelectItem value="workshop">
-                      {t("typeOptions.workshop")}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.type && (
-                  <p className="text-sm text-red-500">{errors.type}</p>
+        <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+          <form onSubmit={handleSubmit} className="w-full">
+            {/* Location Selection Section - Inside Form Container */}
+            <div className="bg-logo-gold/5 border-b border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-logo-black mb-4 flex items-center">
+                <MapPin className="w-5 h-5 mr-2 text-logo-gold" />
+                {t("labels.selectLocation")}{" "}
+                <span className="text-red-500 ml-1">*</span>
+              </h3>
+              <p className="text-sm text-gray-600 mb-4">
+                {t(
+                  "help.locationRequired",
+                  "Please select your location on the map to auto-fill address details"
                 )}
-              </div>
-
-              <FormInput
-                label={t("labels.managerName")}
-                type="text"
-                id="manager_name"
-                name="manager_name"
-                value={formData.manager_name}
-                onChange={handleInputChange}
-                placeholder={t("placeholders.managerName")}
-                required
-                icon={User}
-                error={errors.manager_name}
+              </p>
+              <LocationPicker
+                onLocationSelect={handleLocationSelect}
+                initialLocation={{
+                  lat: parseFloat(formData.latitude),
+                  lng: parseFloat(formData.longitude),
+                }}
+                className="w-full h-80"
+                error={errors.address || errors.city || errors.state}
               />
+              {(errors.address || errors.city || errors.state) && (
+                <p className="text-sm text-red-500 mt-2">
+                  {t(
+                    "validation.locationRequired",
+                    "Please select a location on the map"
+                  )}
+                </p>
+              )}
+            </div>
 
-              <FormInput
-                label={t("labels.address")}
-                type="text"
-                id="address"
-                name="address"
-                value={formData.address}
-                onChange={handleInputChange}
-                placeholder={t("placeholders.address")}
-                required
-                icon={MapPin}
-                error={errors.address}
-              />
+            {/* Form Content */}
+            <div className="p-6 md:p-8">
+              {/* Basic Information */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div className="space-y-6">
+                  <h4 className="text-md font-semibold text-logo-black flex items-center">
+                    <User className="w-4 h-4 mr-2 text-logo-gold" />
+                    {t("sections.basicInfo", "Basic Information")}
+                  </h4>
 
-              <FormInput
-                label={t("labels.city")}
-                type="text"
-                id="city"
-                name="city"
-                value={formData.city}
-                onChange={handleInputChange}
-                placeholder={t("placeholders.city")}
-                required
-                icon={Building}
-                error={errors.city}
-              />
+                  <FormInput
+                    label={t("labels.name")}
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    placeholder={t("placeholders.name")}
+                    required
+                    icon={User}
+                    error={errors.name}
+                  />
 
-              <FormInput
-                label={t("labels.zip")}
-                type="text"
-                id="zip"
-                name="zip"
-                value={formData.zip}
-                onChange={handleInputChange}
-                placeholder={t("placeholders.zip")}
-                required
-                icon={Hash}
-                error={errors.zip}
-              />
+                  <FormInput
+                    label={t("labels.email")}
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder={t("placeholders.email")}
+                    icon={Mail}
+                  />
 
-              <FormInput
-                label={t("labels.state")}
-                type="text"
-                id="state"
-                name="state"
-                value={formData.state}
-                onChange={handleInputChange}
-                placeholder={t("placeholders.state")}
-                required
-                icon={MapPin}
-                error={errors.state}
-              />
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-neutral-700">
+                      {t("labels.type")} <span className="text-red-500">*</span>
+                    </label>
+                    <Select
+                      value={formData.type || undefined}
+                      onValueChange={(value: "shop" | "workshop") =>
+                        setFormData((prev) => ({ ...prev, type: value }))
+                      }
+                    >
+                      <SelectTrigger className="w-full h-12 px-3 py-3 border border-neutral-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-logo-gold focus:border-logo-gold transition-colors">
+                        <SelectValue
+                          placeholder={t("placeholders.selectType")}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="shop">
+                          {t("typeOptions.shop")}
+                        </SelectItem>
+                        <SelectItem value="workshop">
+                          {t("typeOptions.workshop")}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {errors.type && (
+                      <p className="text-sm text-red-500">{errors.type}</p>
+                    )}
+                  </div>
 
-              <FormInput
-                label={t("labels.taxNumber")}
-                type="text"
-                id="tax_number"
-                name="tax_number"
-                value={formData.tax_number}
-                onChange={handleInputChange}
-                placeholder={t("placeholders.taxNumber")}
-                required
-                icon={FileText}
-                error={errors.tax_number}
-              />
+                  <FormInput
+                    label={t("labels.managerName")}
+                    type="text"
+                    id="manager_name"
+                    name="manager_name"
+                    value={formData.manager_name}
+                    onChange={handleInputChange}
+                    placeholder={t("placeholders.managerName")}
+                    required
+                    icon={User}
+                    error={errors.manager_name}
+                  />
 
-              {/* Location Selection - Replace static lat/lng fields */}
-              <div className="md:col-span-2 space-y-4">
-                <LocationPicker
-                  onLocationSelect={handleLocationSelect}
-                  initialLocation={{
-                    lat: parseFloat(formData.latitude),
-                    lng: parseFloat(formData.longitude),
-                  }}
-                  className="w-full"
-                  error={errors.address || errors.city}
-                />
+                  <FormInput
+                    label={t("labels.taxNumber")}
+                    type="text"
+                    id="tax_number"
+                    name="tax_number"
+                    value={formData.tax_number}
+                    onChange={handleInputChange}
+                    placeholder={t("placeholders.taxNumber")}
+                    required
+                    icon={FileText}
+                    error={errors.tax_number}
+                  />
+                </div>
+
+                <div className="space-y-6">
+                  <h4 className="text-md font-semibold text-logo-black flex items-center">
+                    <MapPin className="w-4 h-4 mr-2 text-logo-gold" />
+                    {t("sections.addressInfo", "Address Information")}
+                  </h4>
+
+                  <FormInput
+                    label={t("labels.address")}
+                    type="text"
+                    id="address"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleInputChange}
+                    placeholder={t("placeholders.address")}
+                    required
+                    icon={MapPin}
+                    error={errors.address}
+                    readOnly
+                    className="bg-gray-50"
+                    helpText={t(
+                      "help.autoFilled",
+                      "Auto-filled from map selection"
+                    )}
+                  />
+
+                  <FormInput
+                    label={t("labels.city")}
+                    type="text"
+                    id="city"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleInputChange}
+                    placeholder={t("placeholders.city")}
+                    required
+                    icon={Building}
+                    error={errors.city}
+                    readOnly
+                    className="bg-gray-50"
+                    helpText={t(
+                      "help.autoFilled",
+                      "Auto-filled from map selection"
+                    )}
+                  />
+
+                  <FormInput
+                    label={t("labels.state")}
+                    type="text"
+                    id="state"
+                    name="state"
+                    value={formData.state}
+                    onChange={handleInputChange}
+                    placeholder={t("placeholders.state")}
+                    required
+                    icon={MapPin}
+                    error={errors.state}
+                    readOnly
+                    className="bg-gray-50"
+                    helpText={t(
+                      "help.autoFilled",
+                      "Auto-filled from map selection"
+                    )}
+                  />
+
+                  <FormInput
+                    label={t("labels.zip")}
+                    type="text"
+                    id="zip"
+                    name="zip"
+                    value={formData.zip}
+                    onChange={handleInputChange}
+                    placeholder={t("placeholders.zip")}
+                    required
+                    icon={Hash}
+                    error={errors.zip}
+                    readOnly
+                    className="bg-gray-50"
+                    helpText={t(
+                      "help.autoFilled",
+                      "Auto-filled from map selection"
+                    )}
+                  />
+                </div>
               </div>
             </div>
 
-            {/* File Uploads */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Commercial Register Upload */}
-              <div className="space-y-2">
-                <label className="flex items-center gap-2 text-sm font-medium text-logo-black mb-2">
-                  <FileText size={16} color="gray" />
-                  {t("labels.commercialRegister")}
-                </label>
+            {/* File Uploads Section */}
+            <div className="border-t border-gray-200 bg-gray-50/50 p-6 md:p-8">
+              <h4 className="text-md font-semibold text-logo-black mb-6 flex items-center">
+                <FileText className="w-4 h-4 mr-2 text-logo-gold" />
+                {t("sections.documents", "Required Documents")}
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Commercial Register Upload */}
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-logo-black mb-2">
+                    <FileText size={16} color="gray" />
+                    {t("labels.commercialRegister")}
+                  </label>
 
-                <input
-                  type="file"
-                  id="commercial_register"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    handleFileChange(file, "commercial_register");
-                  }}
-                  className="hidden"
-                  accept="image/jpeg,image/jpg,image/png,image/gif,image/svg+xml"
-                />
+                  <input
+                    type="file"
+                    id="commercial_register"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      handleFileChange(file, "commercial_register");
+                    }}
+                    className="hidden"
+                    accept="image/jpeg,image/jpg,image/png,image/gif,image/svg+xml"
+                  />
 
-                {!commercialRegister && (
-                  <label
-                    htmlFor="commercial_register"
-                    className="flex items-center justify-center w-full h-32 border-2 border-dashed border-logo-gold/50 rounded-lg cursor-pointer hover:border-logo-gold hover:bg-logo-gold/5 transition-colors"
-                  >
-                    <div className="text-center">
-                      <FileText
-                        className="mx-auto text-logo-gold mb-2"
-                        size={24}
+                  {!commercialRegister && (
+                    <label
+                      htmlFor="commercial_register"
+                      className="flex items-center justify-center w-full h-32 border-2 border-dashed border-logo-gold/50 rounded-lg cursor-pointer hover:border-logo-gold hover:bg-logo-gold/5 transition-colors"
+                    >
+                      <div className="text-center">
+                        <FileText
+                          className="mx-auto text-logo-gold mb-2"
+                          size={24}
+                        />
+                        <p className="text-sm text-logo-black">
+                          {t("uploads.clickToSelectCR")}
+                        </p>
+                        <p className="text-xs text-logo-black/60">
+                          {t("help.uploadNote")}
+                        </p>
+                      </div>
+                    </label>
+                  )}
+
+                  {commercialRegister && (
+                    <div className="relative">
+                      <Image
+                        src={commercialRegisterPreview!}
+                        alt={t("uploads.crPreviewAlt")}
+                        className="w-full h-48 object-cover rounded-lg border-2 border-logo-gold"
+                        width={400}
+                        height={192}
                       />
-                      <p className="text-sm text-logo-black">
-                        {t("uploads.clickToSelectCR")}
-                      </p>
-                      <p className="text-xs text-logo-black/60">
-                        {t("help.uploadNote")}
-                      </p>
-                    </div>
-                  </label>
-                )}
-
-                {commercialRegister && (
-                  <div className="relative">
-                    <Image
-                      src={commercialRegisterPreview!}
-                      alt={t("uploads.crPreviewAlt")}
-                      className="w-full h-48 object-cover rounded-lg border-2 border-logo-gold"
-                      width={400}
-                      height={192}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveFile("commercial_register")}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                      title="Remove file"
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveFile("commercial_register")}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        title="Remove file"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                )}
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
 
-                <p className="text-xs text-gray-500">
-                  {t("uploads.uploadCRHelp")}
-                </p>
-                {errors.commercial_register && (
-                  <p className="text-sm text-red-500">
-                    {errors.commercial_register}
+                  <p className="text-xs text-gray-500">
+                    {t("uploads.uploadCRHelp")}
                   </p>
-                )}
-              </div>
+                  {errors.commercial_register && (
+                    <p className="text-sm text-red-500">
+                      {errors.commercial_register}
+                    </p>
+                  )}
+                </div>
 
-              {/* Avatar Upload */}
-              <div className="space-y-2">
-                <label className="flex items-center gap-2 text-sm font-medium text-logo-black mb-2">
-                  <User size={16} color="gray" />
-                  {t("labels.avatar")}
-                </label>
-
-                <input
-                  type="file"
-                  id="avatar"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    handleFileChange(file, "avatar");
-                  }}
-                  className="hidden"
-                  accept="image/jpeg,image/jpg,image/png,image/gif,image/svg+xml"
-                />
-
-                {!avatar && (
-                  <label
-                    htmlFor="avatar"
-                    className="flex items-center justify-center w-full h-32 border-2 border-dashed border-logo-gold/50 rounded-lg cursor-pointer hover:border-logo-gold hover:bg-logo-gold/5 transition-colors"
-                  >
-                    <div className="text-center">
-                      <User className="mx-auto text-logo-gold mb-2" size={24} />
-                      <p className="text-sm text-logo-black">
-                        {t("uploads.clickToSelectAvatar")}
-                      </p>
-                      <p className="text-xs text-logo-black/60">
-                        {t("help.uploadNote")}
-                      </p>
-                    </div>
+                {/* Avatar Upload */}
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-logo-black mb-2">
+                    <User size={16} color="gray" />
+                    {t("labels.avatar")}
                   </label>
-                )}
 
-                {avatar && (
-                  <div className="relative">
-                    <Image
-                      src={avatarPreview!}
-                      alt={t("uploads.avatarPreviewAlt")}
-                      className="w-full h-48 object-cover rounded-lg border-2 border-logo-gold"
-                      width={400}
-                      height={192}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveFile("avatar")}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                      title="Remove file"
+                  <input
+                    type="file"
+                    id="avatar"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      handleFileChange(file, "avatar");
+                    }}
+                    className="hidden"
+                    accept="image/jpeg,image/jpg,image/png,image/gif,image/svg+xml"
+                  />
+
+                  {!avatar && (
+                    <label
+                      htmlFor="avatar"
+                      className="flex items-center justify-center w-full h-32 border-2 border-dashed border-logo-gold/50 rounded-lg cursor-pointer hover:border-logo-gold hover:bg-logo-gold/5 transition-colors"
                     >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M6 18L18 6M6 6l12 12"
+                      <div className="text-center">
+                        <User
+                          className="mx-auto text-logo-gold mb-2"
+                          size={24}
                         />
-                      </svg>
-                    </button>
-                  </div>
-                )}
+                        <p className="text-sm text-logo-black">
+                          {t("uploads.clickToSelectAvatar")}
+                        </p>
+                        <p className="text-xs text-logo-black/60">
+                          {t("help.uploadNote")}
+                        </p>
+                      </div>
+                    </label>
+                  )}
 
-                <p className="text-xs text-gray-500">
-                  {t("uploads.uploadAvatarHelp")}
-                </p>
-                {errors.avatar && (
-                  <p className="text-sm text-red-500">{errors.avatar}</p>
-                )}
+                  {avatar && (
+                    <div className="relative">
+                      <Image
+                        src={avatarPreview!}
+                        alt={t("uploads.avatarPreviewAlt")}
+                        className="w-full h-48 object-cover rounded-lg border-2 border-logo-gold"
+                        width={400}
+                        height={192}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveFile("avatar")}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        title="Remove file"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
+
+                  <p className="text-xs text-gray-500">
+                    {t("uploads.uploadAvatarHelp")}
+                  </p>
+                  {errors.avatar && (
+                    <p className="text-sm text-red-500">{errors.avatar}</p>
+                  )}
+                </div>
               </div>
             </div>
 
             {/* Submit Button */}
-            <div className="text-center pt-6">
+            <div className="border-t border-gray-200 bg-white p-6 md:p-8 text-center">
               <Button
                 type="submit"
                 disabled={isLoading}
