@@ -494,6 +494,16 @@ export default function CompleteRegistrationPage() {
                 </p>
               )}
 
+              {/* Show simple instruction text when no location is selected */}
+              {!isLocationSelected && (
+                <p className="text-sm text-gray-600 mt-2 text-center">
+                  {t(
+                    "location.simpleInstruction",
+                    "Please select a location on the map above"
+                  )}
+                </p>
+              )}
+
               {/* {isLocationSelected && locationDetails && (
                 <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                   <p className="text-sm text-green-800">
@@ -856,15 +866,6 @@ export default function CompleteRegistrationPage() {
                   t("actions.submit")
                 )}
               </Button>
-
-              {!isLocationSelected && (
-                <p className="text-sm text-gray-500 mt-2">
-                  {t(
-                    "help.selectLocationToSubmit",
-                    "Please select your location on the map above to enable registration"
-                  )}
-                </p>
-              )}
             </div>
           </form>
         </div>

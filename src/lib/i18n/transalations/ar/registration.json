@@ -16,7 +16,8 @@
     "latitudeStatic": "خط العرض (ثابت)",
     "longitudeStatic": "خط الطول (ثابت)",
     "commercialRegister": "السجل التجاري",
-    "avatar": "الصورة الشخصية"
+    "avatar": "الصورة الشخصية",
+    "selectLocation": "اختيار الموقع"
   },
   "placeholders": {
     "name": "أدخل اسمك",
@@ -35,31 +36,32 @@
     "fixedLocation": "موقع ثابت: القاهرة، مصر",
     "uploadNote": "صورة حتى 5 ميجابايت (jpeg, png, jpg, gif, svg)"
   },
-    "location": {
-      "searchPlaceholder": "ابحث عن عنوان...",
-      "useCurrentLocation": "استخدام موقعي الحالي",
-      "selectLocation": "اضغط في أي مكان على الخريطة لتحديد موقعك",
-      "locationSelected": "تم تحديد الموقع",
-      "searchingLocation": "جاري تحديد الموقع...",
-      "locationError": "فشل في تحديد الموقع",
-      "permissionDenied": "تم رفض إذن الموقع",
-      "selectLocationOnMap": "اختر الموقع على الخريطة",
-      "changeLocation": "تغيير الموقع",
-      "hideMap": "إخفاء الخريطة",
-      "selectedLocation": "الموقع المحدد",
-      "loading": "جاري تحميل الخريطة...",
-      "instructions": "اضغط في أي مكان على الخريطة لتحديد موقعك. اسحب العلامة لضبط الموضع بدقة.",
-      "dragMarker": "اسحب لضبط الموقع",
-      "confirmLocation": "تأكيد الموقع",
-      "closeMap": "إغلاق الخريطة",
-      "error": "خطأ في خرائط جوجل",
-      "apiKeyMissing": "مطلوب مفتاح خرائط جوجل",
-      "apiKeyInstructions": "يرجى إضافة مفتاح خرائط جوجل إلى ملف .env.local لتمكين تحديد الموقع.",
-      "lat": "خط العرض",
-      "lng": "خط الطول",
-      "geolocationNotSupported": "الموقع الجغرافي غير مدعوم في هذا المتصفح",
-      "geolocationError": "خطأ في الحصول على موقعك الحالي. يرجى المحاولة مرة أخرى أو الاختيار يدوياً."
-    },
+  "location": {
+    "simpleInstruction": "يرجى اختيار موقع على الخريطة أعلاه",
+    "searchPlaceholder": "ابحث عن عنوان...",
+    "useCurrentLocation": "استخدام موقعي الحالي",
+    "selectLocation": "اضغط في أي مكان على الخريطة لتحديد موقعك",
+    "locationSelected": "تم تحديد الموقع",
+    "searchingLocation": "جاري تحديد الموقع...",
+    "locationError": "فشل في تحديد الموقع",
+    "permissionDenied": "تم رفض إذن الموقع",
+    "selectLocationOnMap": "اختر الموقع على الخريطة",
+    "changeLocation": "تغيير الموقع",
+    "hideMap": "إخفاء الخريطة",
+    "selectedLocation": "الموقع المحدد",
+    "loading": "جاري تحميل الخريطة...",
+    "instructions": "اضغط في أي مكان على الخريطة لتحديد موقعك. اسحب العلامة لضبط الموضع بدقة.",
+    "dragMarker": "اسحب لضبط الموقع",
+    "confirmLocation": "تأكيد الموقع",
+    "closeMap": "إغلاق الخريطة",
+    "error": "خطأ في خرائط جوجل",
+    "apiKeyMissing": "مطلوب مفتاح خرائط جوجل",
+    "apiKeyInstructions": "يرجى إضافة مفتاح خرائط جوجل إلى ملف .env.local لتمكين تحديد الموقع.",
+    "lat": "خط العرض",
+    "lng": "خط الطول",
+    "geolocationNotSupported": "الموقع الجغرافي غير مدعوم في هذا المتصفح",
+    "geolocationError": "خطأ في الحصول على موقعك الحالي. يرجى المحاولة مرة أخرى أو الاختيار يدوياً."
+  },
   "typeOptions": {
     "shop": "متجر",
     "workshop": "ورشة"
@@ -95,5 +97,11 @@
     "registrationAlreadyCompleted": "تم إكمال التسجيل مسبقًا!",
     "registrationCompleted": "تم إكمال التسجيل بنجاح!",
     "registrationFailed": "فشل إكمال التسجيل. يرجى المحاولة مرة أخرى."
-  }
+  },
+  "sections": {
+    "basicInfo": "المعلومات الأساسية",
+    "addressInfo": "معلومات العنوان",
+    "documents": "المستندات المطلوبة"
+  },
+  "optional": "اختياري"
 }

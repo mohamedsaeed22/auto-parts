@@ -16,7 +16,8 @@
     "latitudeStatic": "Latitude (Static)",
     "longitudeStatic": "Longitude (Static)",
     "commercialRegister": "Commercial Register",
-    "avatar": "Avatar"
+    "avatar": "Avatar",
+    "selectLocation": "Select Location"
   },
   "placeholders": {
     "name": "Enter your name",
@@ -33,7 +34,8 @@
   },
   "help": {
     "fixedLocation": "Fixed location: Cairo, Egypt",
-    "uploadNote": "Image up to 5MB (jpeg, png, jpg, gif, svg)"
+    "uploadNote": "Image up to 5MB (jpeg, png, jpg, gif, svg)",
+    "locationRequired": "Please search and select your exact business location on the map. This will help customers find you easily."
   },
   "typeOptions": {
     "shop": "Shop",
@@ -50,6 +52,7 @@
   },
   "validation": {
     "nameRequired": "Name is required",
+    "emailInvalid": "Please enter a valid email address",
     "managerRequired": "Manager name is required",
     "addressRequired": "Address is required",
     "cityRequired": "City is required",
@@ -57,6 +60,7 @@
     "stateRequired": "State is required",
     "taxRequired": "Tax number is required",
     "typeRequired": "Type selection is required",
+    "locationRequired": "Please select a location on the map to continue",
     "crRequired": "Commercial register is required",
     "avatarRequired": "Avatar is required",
     "fileType": "File must be of type: jpeg, png, jpg, gif, svg",
@@ -64,11 +68,29 @@
   },
   "actions": {
     "submit": "Submit Registration",
-    "submitting": "Submitting..."
+    "submitting": "Submitting...",
+    "selectLocationFirst": "Select Location First"
   },
   "toasts": {
     "registrationAlreadyCompleted": "Registration already completed!",
     "registrationCompleted": "Registration completed successfully!",
-    "registrationFailed": "Failed to complete registration. Please try again."
-  }
+    "registrationFailed": "Failed to complete registration. Please try again.",
+    "locationSelected": "Location selected successfully! You can now edit the address details if needed."
+  },
+  "location": {
+    "simpleInstruction": "Please select a location on the map above",
+    "dragMarker": "Drag to select location",
+    "searchPlaceholder": "Search for a location...",
+    "useCurrentLocation": "Use My Location",
+    "geolocationNotSupported": "Geolocation is not supported by this browser.",
+    "geolocationError": "Error getting your location. Please try again.",
+    "error": "Failed to load map",
+    "apiKeyInstructions": "Please configure your Google Maps API key to use the map feature."
+  },
+  "sections": {
+    "basicInfo": "Basic Information",
+    "addressInfo": "Address Information",
+    "documents": "Required Documents"
+  },
+  "optional": "Optional"
 }

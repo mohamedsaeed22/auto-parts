@@ -16,7 +16,8 @@
     "latitudeStatic": "Latitude (Static)",
     "longitudeStatic": "Longitude (Static)",
     "commercialRegister": "Commercial Register",
-    "avatar": "Avatar"
+    "avatar": "Avatar",
+    "selectLocation": "Select Location"
   },
   "placeholders": {
     "name": "Enter your name",
@@ -35,31 +36,32 @@
     "fixedLocation": "Fixed location: Cairo, Egypt",
     "uploadNote": "Image up to 5MB (jpeg, png, jpg, gif, svg)"
   },
-    "location": {
-      "searchPlaceholder": "Search for an address...",
-      "useCurrentLocation": "Use My Location",
-      "selectLocation": "Click anywhere on the map to select your location",
-      "locationSelected": "Location selected",
-      "searchingLocation": "Getting location...",
-      "locationError": "Failed to get location",
-      "permissionDenied": "Location permission denied",
-      "selectLocationOnMap": "Select Location on Map",
-      "changeLocation": "Change Location",
-      "hideMap": "Hide Map",
-      "selectedLocation": "Selected Location",
-      "loading": "Loading map...",
-      "instructions": "Click anywhere on the map to select your location. Drag the marker to fine-tune the position.",
-      "dragMarker": "Drag to adjust location",
-      "confirmLocation": "Confirm Location",
-      "closeMap": "Close Map",
-      "error": "Google Maps Error",
-      "apiKeyMissing": "Google Maps API Key Required",
-      "apiKeyInstructions": "Please add your Google Maps API key to the .env.local file to enable location selection.",
-      "lat": "Lat",
-      "lng": "Lng",
-      "geolocationNotSupported": "Geolocation is not supported by this browser",
-      "geolocationError": "Error getting your current location. Please try again or select manually."
-    },
+  "location": {
+    "simpleInstruction": "Please select a location on the map above",
+    "searchPlaceholder": "Search for an address...",
+    "useCurrentLocation": "Use My Location",
+    "selectLocation": "Click anywhere on the map to select your location",
+    "locationSelected": "Location selected",
+    "searchingLocation": "Getting location...",
+    "locationError": "Failed to get location",
+    "permissionDenied": "Location permission denied",
+    "selectLocationOnMap": "Select Location on Map",
+    "changeLocation": "Change Location",
+    "hideMap": "Hide Map",
+    "selectedLocation": "Selected Location",
+    "loading": "Loading map...",
+    "instructions": "Click anywhere on the map to select your location. Drag the marker to fine-tune the position.",
+    "dragMarker": "Drag to adjust location",
+    "confirmLocation": "Confirm Location",
+    "closeMap": "Close Map",
+    "error": "Google Maps Error",
+    "apiKeyMissing": "Google Maps API Key Required",
+    "apiKeyInstructions": "Please add your Google Maps API key to the .env.local file to enable location selection.",
+    "lat": "Lat",
+    "lng": "Lng",
+    "geolocationNotSupported": "Geolocation is not supported by this browser",
+    "geolocationError": "Error getting your current location. Please try again or select manually."
+  },
   "typeOptions": {
     "shop": "Shop",
     "workshop": "Workshop"
@@ -95,5 +97,11 @@
     "registrationAlreadyCompleted": "Registration already completed!",
     "registrationCompleted": "Registration completed successfully!",
     "registrationFailed": "Failed to complete registration. Please try again."
-  }
+  },
+  "sections": {
+    "basicInfo": "Basic Information",
+    "addressInfo": "Address Information",
+    "documents": "Required Documents"
+  },
+  "optional": "Optional"
 }
