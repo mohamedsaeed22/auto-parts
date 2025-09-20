@@ -2,9 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { MapPin, Search, Loader, AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Loader, AlertCircle } from "lucide-react";
 
 // TypeScript interfaces
 export interface LocationData {
@@ -46,20 +44,17 @@ export default function LocationPicker({
 
   // Refs
   const mapRef = useRef<HTMLDivElement>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const mapInstanceRef = useRef<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
   const markerRef = useRef<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
-  const autocompleteRef = useRef<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
 
   // State
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(
     null
   );
   const [mapError, setMapError] = useState<string | null>(null);
-  const [showMap, setShowMap] = useState(true);
+  // Map is always visible - no need for showMap state
 
   // Load Google Maps script
   const loadGoogleMaps = useCallback(async () => {
@@ -88,16 +83,23 @@ export default function LocationPicker({
 
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
     if (!apiKey) {
-      setMapError("Google Maps API key not configured");
+      setMapError(
+        "Google Maps API key not configured. Please add NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to your environment variables."
+      );
       return;
     }
 
     try {
       const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&language=${i18n.language}`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places,geometry&language=${i18n.language}&callback=initGoogleMaps`;
       script.async = true;
       script.defer = true;
-      script.id = "google-maps-script"; // Add ID to identify the script
+      script.id = "google-maps-script";
+
+      // Set up global callback
+      window.initGoogleMaps = () => {
+        setIsMapLoaded(true);
+      };
 
       script.onload = () => {
         setIsMapLoaded(true);
@@ -167,36 +169,6 @@ export default function LocationPicker({
         const lng = event.latLng.lng();
         reverseGeocode(lat, lng);
       });
-
-      // Initialize autocomplete
-      if (searchInputRef.current) {
-        autocompleteRef.current = new (
-          window as any
-        ).google.maps.places.Autocomplete(searchInputRef.current, {
-          // eslint-disable-line @typescript-eslint/no-explicit-any
-          fields: [
-            "place_id",
-            "geometry",
-            "formatted_address",
-            "address_components",
-          ],
-        });
-
-        autocompleteRef.current.addListener("place_changed", () => {
-          const place = autocompleteRef.current.getPlace();
-          if (place.geometry && place.geometry.location) {
-            const lat = place.geometry.location.lat();
-            const lng = place.geometry.location.lng();
-
-            updateMarkerPosition(lat, lng);
-            mapInstanceRef.current.setCenter({ lat, lng });
-            mapInstanceRef.current.setZoom(15);
-
-            // Process the place data
-            processPlaceData(place);
-          }
-        });
-      }
     } catch (error) {
       console.error("Error initializing map:", error);
       setMapError("Failed to initialize map");
@@ -217,33 +189,64 @@ export default function LocationPicker({
     setIsLoading(true);
     try {
       const geocoder = new (window as any).google.maps.Geocoder(); // eslint-disable-line @typescript-eslint/no-explicit-any
-      const response = await new Promise((resolve, reject) => {
+      const response = await new Promise((resolve) => {
         geocoder.geocode(
           { location: { lat, lng } },
           (results: any[] | null, status: string) => {
             // eslint-disable-line @typescript-eslint/no-explicit-any
             if (status === "OK" && results?.[0]) {
               resolve(results[0]);
+            } else if (status === "REQUEST_DENIED") {
+              // Don't reject, just log the error and continue with fallback
+              console.warn(
+                "Geocoding API access denied. Using fallback location data."
+              );
+              resolve(null);
+            } else if (status === "OVER_QUERY_LIMIT") {
+              console.warn(
+                "Geocoding API quota exceeded. Using fallback location data."
+              );
+              resolve(null);
             } else {
-              reject(new Error("Geocoding failed"));
+              console.warn(
+                `Geocoding failed with status: ${status}. Using fallback location data.`
+              );
+              resolve(null);
             }
           }
         );
       });
 
-      processPlaceData(response);
+      if (response) {
+        processPlaceData(response);
+      } else {
+        // Fallback: create basic location data with coordinates
+        const basicLocationData: LocationData = {
+          lat,
+          lng,
+          address: `Location at ${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+          city: "Unknown",
+          state: "Unknown",
+          country: "Unknown",
+          postal_code: "",
+          formatted_address: `Location at ${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+        };
+        setSelectedLocation(basicLocationData);
+        onLocationSelect(basicLocationData);
+      }
     } catch (error) {
       console.error("Reverse geocoding failed:", error);
+
       // Fallback: create basic location data with coordinates
       const basicLocationData: LocationData = {
         lat,
         lng,
-        address: `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
-        city: "",
-        state: "",
-        country: "",
+        address: `Location at ${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+        city: "Unknown",
+        state: "Unknown",
+        country: "Unknown",
         postal_code: "",
-        formatted_address: `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+        formatted_address: `Location at ${lat.toFixed(6)}, ${lng.toFixed(6)}`,
       };
       setSelectedLocation(basicLocationData);
       onLocationSelect(basicLocationData);
@@ -300,34 +303,6 @@ export default function LocationPicker({
     onLocationSelect(locationData);
   };
 
-  // Use current location
-  const useCurrentLocation = () => {
-    if (!navigator.geolocation) {
-      alert(t("location.geolocationNotSupported"));
-      return;
-    }
-
-    setIsLoading(true);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-
-        updateMarkerPosition(lat, lng);
-        if (mapInstanceRef.current) {
-          mapInstanceRef.current.setCenter({ lat, lng });
-          mapInstanceRef.current.setZoom(15);
-        }
-        reverseGeocode(lat, lng);
-      },
-      (error) => {
-        console.error("Error getting current location:", error);
-        alert(t("location.geolocationError"));
-        setIsLoading(false);
-      }
-    );
-  };
-
   // Effects
   useEffect(() => {
     loadGoogleMaps();
@@ -376,31 +351,6 @@ export default function LocationPicker({
         overflow: "hidden",
       }}
     >
-      {/* Selected Location Display */}
-      {selectedLocation && (
-        <div className="p-4 bg-logo-gold/10 border border-logo-gold/20 rounded-lg mb-4">
-          <div className="flex items-start gap-3">
-            <MapPin className="text-logo-gold mt-1" size={20} />
-            <div className="flex-1">
-              <h4 className="text-sm font-medium text-logo-black mb-1">
-                {t("location.selectedLocation")}
-              </h4>
-              <p className="text-sm text-neutral-700">
-                {selectedLocation.formatted_address}
-              </p>
-              <div className="flex gap-4 mt-2 text-xs text-neutral-600">
-                <span>
-                  {t("location.lat")}: {selectedLocation.lat.toFixed(6)}
-                </span>
-                <span>
-                  {t("location.lng")}: {selectedLocation.lng.toFixed(6)}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Error Display */}
       {error && (
         <div className="text-sm text-red-600 flex items-center gap-2">
@@ -420,40 +370,6 @@ export default function LocationPicker({
             boxSizing: "border-box",
           }}
         >
-          {/* Search Controls */}
-          <div className="p-4 bg-neutral-50 border-b border-neutral-200">
-            <div className="mb-3 p-2 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800">
-              📍 {t("location.selectLocation")}
-            </div>
-            <div className="flex gap-2">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-4 h-4" />
-                <Input
-                  ref={searchInputRef}
-                  type="text"
-                  placeholder={t("location.searchPlaceholder")}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Button
-                type="button"
-                onClick={useCurrentLocation}
-                disabled={isLoading}
-                variant="outline"
-                className="flex items-center gap-2 border-logo-gold/30 text-logo-gold hover:bg-logo-gold/10"
-              >
-                {isLoading ? (
-                  <Loader className="w-4 h-4 animate-spin" />
-                ) : (
-                  <MapPin className="w-4 h-4" />
-                )}
-                {t("location.useCurrentLocation")}
-              </Button>
-            </div>
-          </div>
-
           {/* Map */}
           <div
             className="block w-full"
@@ -471,22 +387,10 @@ export default function LocationPicker({
               }}
             />
 
-            {/* Map Instructions */}
-            <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg max-w-xs">
-              <p className="text-xs text-neutral-600">
-                {t("location.instructions")}
-              </p>
-            </div>
-
             {/* Loading Overlay */}
             {isLoading && (
               <div className="absolute inset-0 bg-white/50 flex items-center justify-center">
-                <div className="text-center">
-                  <Loader className="w-8 h-8 animate-spin mx-auto mb-2 text-logo-gold" />
-                  <p className="text-sm text-neutral-600">
-                    {t("location.searchingLocation")}
-                  </p>
-                </div>
+                <Loader className="w-8 h-8 animate-spin text-logo-gold" />
               </div>
             )}
           </div>
@@ -501,10 +405,7 @@ export default function LocationPicker({
             boxSizing: "border-box",
           }}
         >
-          <Loader className="w-8 h-8 animate-spin mx-auto mb-4 text-logo-gold" />
-          <p className="text-sm text-neutral-600">
-            {t("location.loading", "Loading map...")}
-          </p>
+          <Loader className="w-8 h-8 animate-spin mx-auto text-logo-gold" />
         </div>
       )}
     </div>

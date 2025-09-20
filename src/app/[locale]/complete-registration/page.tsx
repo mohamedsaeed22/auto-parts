@@ -9,7 +9,7 @@ import { useLocale } from "@/hooks/useLocale";
 import { useTranslation } from "react-i18next";
 import { useRegistrationStatus } from "@/hooks/useRegistrationStatus";
 import { showSuccess, showError } from "@/lib/toast";
-import { User, Mail, Building, MapPin, Hash, FileText } from "lucide-react";
+import { User, Mail, Building, MapPin, Hash, FileText, CheckCircle } from "lucide-react";
 import { storage } from "@/lib/storage";
 import { CartSyncService } from "@/services/cartSyncService";
 import FormInput from "@/components/ui/FormInput";
@@ -38,28 +38,30 @@ export default function CompleteRegistrationPage() {
   // State for form fields - these must also be called before any early returns
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
-    type: "" as "" | "shop" | "workshop", // require user to pick
+    email: "", // Optional field
+    type: "" as "" | "shop" | "workshop",
     manager_name: "",
     address: "",
     city: "",
     zip: "",
     state: "",
     tax_number: "",
-    latitude: "30.0444", // Static latitude for Cairo, Egypt (valid range: -90 to 90)
-    longitude: "31.2357", // Static longitude for Cairo, Egypt (valid range: -180 to 180)
+    latitude: "", // Will be set from map selection
+    longitude: "", // Will be set from map selection
   });
 
-  const [commercialRegister, setCommercialRegister] = useState<File | null>(
-    null
-  );
+  // Location selection state
+  const [isLocationSelected, setIsLocationSelected] = useState(false);
+  const [locationDetails, setLocationDetails] = useState<LocationData | null>(null);
+
+  const [commercialRegister, setCommercialRegister] = useState<File | null>(null);
   const [avatar, setAvatar] = useState<File | null>(null);
-  const [commercialRegisterPreview, setCommercialRegisterPreview] = useState<
-    string | null
-  >(null);
+  const [commercialRegisterPreview, setCommercialRegisterPreview] = useState<string | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  
   const [errors, setErrors] = useState<{
     name?: string;
+    email?: string;
     manager_name?: string;
     address?: string;
     city?: string;
@@ -69,6 +71,7 @@ export default function CompleteRegistrationPage() {
     commercial_register?: string;
     avatar?: string;
     type?: string;
+    location?: string;
   }>({});
 
   // Check if user has already completed registration
@@ -76,30 +79,37 @@ export default function CompleteRegistrationPage() {
 
   // Handle location selection from the map
   const handleLocationSelect = (locationData: LocationData) => {
+    // Store coordinates (required)
     setFormData((prev) => ({
       ...prev,
-      address: locationData.address,
-      city: locationData.city,
-      state: locationData.state,
-      zip: locationData.postal_code,
       latitude: locationData.lat.toString(),
       longitude: locationData.lng.toString(),
+      // Auto-fill other fields if available, but allow user to edit
+      address: locationData.address || prev.address,
+      city: locationData.city || prev.city,
+      state: locationData.state || prev.state,
+      zip: locationData.postal_code || prev.zip,
     }));
 
-    // Clear related errors
+    // Mark location as selected
+    setIsLocationSelected(true);
+    setLocationDetails(locationData);
+
+    // Clear location-related errors
     setErrors((prev) => ({
       ...prev,
+      location: undefined,
       address: undefined,
       city: undefined,
       state: undefined,
       zip: undefined,
     }));
 
-    // Show success toast for location selection
+    // Show success message
     showSuccess(
       t(
         "toasts.locationSelected",
-        "Location selected successfully! Address fields have been auto-filled."
+        "Location selected successfully! You can now edit the address details if needed."
       )
     );
   };
@@ -161,6 +171,11 @@ export default function CompleteRegistrationPage() {
       ...prev,
       [name]: value,
     }));
+
+    // Clear errors for the field being edited
+    if (errors[name as keyof typeof errors]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
   };
 
   // Handle file changes
@@ -231,45 +246,52 @@ export default function CompleteRegistrationPage() {
     // Validate required fields
     const newErrors: { [key: string]: string } = {};
 
+    // Required fields validation
     if (!formData.name.trim()) {
       newErrors.name = t("validation.nameRequired");
     }
+    
+    // Email is optional, but if provided, should be valid
+    if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = t("validation.emailInvalid");
+    }
+    
     if (!formData.manager_name.trim()) {
       newErrors.manager_name = t("validation.managerRequired");
     }
 
-    // Validate location selection (address, city, state are auto-filled from map)
-    if (
-      !formData.address.trim() ||
-      !formData.city.trim() ||
-      !formData.state.trim()
-    ) {
-      newErrors.address = t(
-        "validation.locationRequired",
-        "Please select a location on the map"
-      );
-      newErrors.city = t(
-        "validation.locationRequired",
-        "Please select a location on the map"
-      );
-      newErrors.state = t(
-        "validation.locationRequired",
-        "Please select a location on the map"
-      );
-    }
-
-    if (!formData.zip.trim()) {
-      newErrors.zip = t("validation.zipRequired");
-    }
-    if (!formData.tax_number.trim()) {
-      newErrors.tax_number = t("validation.taxRequired");
-    }
-    // require type selection
+    // Type selection is required
     if (!formData.type) {
       newErrors.type = t("validation.typeRequired");
     }
 
-    // Validate file uploads
+    // Location selection is MANDATORY (latitude and longitude required)
+    if (!isLocationSelected || !formData.latitude || !formData.longitude) {
+      newErrors.location = t(
+        "validation.locationRequired",
+        "Please select a location on the map to continue"
+      );
+    }
+
+    // Address fields are required (can be auto-filled or manually entered)
+    if (!formData.address.trim()) {
+      newErrors.address = t("validation.addressRequired");
+    }
+    if (!formData.city.trim()) {
+      newErrors.city = t("validation.cityRequired");
+    }
+    if (!formData.state.trim()) {
+      newErrors.state = t("validation.stateRequired");
+    }
+    if (!formData.zip.trim()) {
+      newErrors.zip = t("validation.zipRequired");
+    }
+    
+    if (!formData.tax_number.trim()) {
+      newErrors.tax_number = t("validation.taxRequired");
+    }
+
+    // File uploads are required
     if (!commercialRegister) {
       newErrors.commercial_register = t("validation.crRequired");
     }
@@ -280,6 +302,9 @@ export default function CompleteRegistrationPage() {
     // If there are validation errors, set them and return
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      // Scroll to first error
+      const firstErrorElement = document.querySelector('.text-red-500');
+      firstErrorElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
 
@@ -287,8 +312,8 @@ export default function CompleteRegistrationPage() {
       // Create the request data object
       const requestData = {
         name: formData.name,
-        email: formData.email.trim() || undefined, // Only send if not empty
-        type: formData.type as "shop" | "workshop", // Type assertion after validation
+        email: formData.email.trim() || undefined, // Send undefined if empty (optional)
+        type: formData.type as "shop" | "workshop",
         manager_name: formData.manager_name,
         address: formData.address,
         city: formData.city,
@@ -301,8 +326,6 @@ export default function CompleteRegistrationPage() {
         avatar: avatar || undefined,
       };
 
-      // Log the data to console
-
       // Send the request to the API
       const result = await completeRegistration(requestData).unwrap();
 
@@ -311,11 +334,11 @@ export default function CompleteRegistrationPage() {
         const updatedUser = {
           ...result.data.user,
           is_registration_complete: true,
-          points: (result.data.user as any).points || 0, // eslint-disable-line @typescript-eslint/no-explicit-any - Add default points if missing, type assertion due to API response variance
+          points: (result.data.user as any).points || 0,
         };
 
         // Update only the user data, don't replace the entire auth structure
-        storage.updateUser(updatedUser as any); // eslint-disable-line @typescript-eslint/no-explicit-any - Type assertion for updateUser
+        storage.updateUser(updatedUser as any);
 
         // Sync local cart to API now that registration is complete
         try {
@@ -331,9 +354,6 @@ export default function CompleteRegistrationPage() {
           );
         }
 
-        // Verify the update worked
-        // const storedAuth = storage.getAuth(); // Commented out unused variable
-
         clearRegistrationIncomplete();
         showSuccess(t("toasts.registrationCompleted"));
 
@@ -343,7 +363,6 @@ export default function CompleteRegistrationPage() {
           router.push(previousPage);
         } else {
           // Fallback to home page if no previous page stored
-
           router.push(`/${currentLocale}`);
         }
       }
@@ -407,44 +426,71 @@ export default function CompleteRegistrationPage() {
         {/* Registration Form */}
         <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
           <form onSubmit={handleSubmit} className="w-full">
-            {/* Location Selection Section - Inside Form Container */}
+            {/* Location Selection Section - FIRST STEP */}
             <div className="bg-logo-gold/5 border-b border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-logo-black mb-4 flex items-center">
-                <MapPin className="w-5 h-5 mr-2 text-logo-gold" />
-                {t("labels.selectLocation")}{" "}
-                <span className="text-red-500 ml-1">*</span>
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-logo-black flex items-center">
+                  <MapPin className="w-5 h-5 mr-2 text-logo-gold" />
+                  {t("labels.selectLocation")}{" "}
+                  <span className="text-red-500 ml-1">*</span>
+                </h3>
+                {isLocationSelected && (
+                  <div className="flex items-center text-green-600">
+                    <CheckCircle className="w-5 h-5 mr-1" />
+                    <span className="text-sm font-medium">Location Selected</span>
+                  </div>
+                )}
+              </div>
+              
               <p className="text-sm text-gray-600 mb-4">
                 {t(
                   "help.locationRequired",
-                  "Please select your location on the map to auto-fill address details"
+                  "Please search and select your exact business location on the map. This will help customers find you easily."
                 )}
               </p>
+              
               <LocationPicker
                 onLocationSelect={handleLocationSelect}
-                initialLocation={{
-                  lat: parseFloat(formData.latitude),
-                  lng: parseFloat(formData.longitude),
-                }}
-                className="w-full h-80"
-                error={errors.address || errors.city || errors.state}
+                initialLocation={
+                  formData.latitude && formData.longitude
+                    ? {
+                        lat: parseFloat(formData.latitude),
+                        lng: parseFloat(formData.longitude),
+                      }
+                    : {
+                        lat: 30.0444, // Default to Cairo, Egypt
+                        lng: 31.2357,
+                      }
+                }
+                className="w-full h-96"
+                error={errors.location}
               />
-              {(errors.address || errors.city || errors.state) && (
-                <p className="text-sm text-red-500 mt-2">
-                  {t(
-                    "validation.locationRequired",
-                    "Please select a location on the map"
-                  )}
+              
+              {errors.location && (
+                <p className="text-sm text-red-500 mt-2 font-medium">
+                  {errors.location}
                 </p>
+              )}
+
+              {isLocationSelected && locationDetails && (
+                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-sm text-green-800">
+                    <strong>Selected Location:</strong> {locationDetails.address}
+                  </p>
+                  <p className="text-xs text-green-600 mt-1">
+                    Coordinates: {locationDetails.lat.toFixed(6)}, {locationDetails.lng.toFixed(6)}
+                  </p>
+                </div>
               )}
             </div>
 
             {/* Form Content */}
             <div className="p-6 md:p-8">
-              {/* Basic Information */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <div className="space-y-6">
-                  <h4 className="text-md font-semibold text-logo-black flex items-center">
+              {/* Form Grid Layout */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                {/* Basic Information */}
+                <div className="space-y-4">
+                  <h4 className="text-md font-semibold text-logo-black flex items-center mb-4">
                     <User className="w-4 h-4 mr-2 text-logo-gold" />
                     {t("sections.basicInfo", "Basic Information")}
                   </h4>
@@ -463,14 +509,16 @@ export default function CompleteRegistrationPage() {
                   />
 
                   <FormInput
-                    label={t("labels.email")}
+                    label={`${t("labels.email")} (${t("optional", "Optional")})`}
                     type="email"
                     id="email"
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder={t("placeholders.email")}
+                    required={false}
                     icon={Mail}
+                    error={errors.email}
                   />
 
                   <div className="space-y-2">
@@ -546,12 +594,6 @@ export default function CompleteRegistrationPage() {
                     required
                     icon={MapPin}
                     error={errors.address}
-                    readOnly
-                    className="bg-gray-50"
-                    helpText={t(
-                      "help.autoFilled",
-                      "Auto-filled from map selection"
-                    )}
                   />
 
                   <FormInput
@@ -565,12 +607,6 @@ export default function CompleteRegistrationPage() {
                     required
                     icon={Building}
                     error={errors.city}
-                    readOnly
-                    className="bg-gray-50"
-                    helpText={t(
-                      "help.autoFilled",
-                      "Auto-filled from map selection"
-                    )}
                   />
 
                   <FormInput
@@ -584,12 +620,6 @@ export default function CompleteRegistrationPage() {
                     required
                     icon={MapPin}
                     error={errors.state}
-                    readOnly
-                    className="bg-gray-50"
-                    helpText={t(
-                      "help.autoFilled",
-                      "Auto-filled from map selection"
-                    )}
                   />
 
                   <FormInput
@@ -603,12 +633,6 @@ export default function CompleteRegistrationPage() {
                     required
                     icon={Hash}
                     error={errors.zip}
-                    readOnly
-                    className="bg-gray-50"
-                    helpText={t(
-                      "help.autoFilled",
-                      "Auto-filled from map selection"
-                    )}
                   />
                 </div>
               </div>
@@ -625,7 +649,7 @@ export default function CompleteRegistrationPage() {
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm font-medium text-logo-black mb-2">
                     <FileText size={16} color="gray" />
-                    {t("labels.commercialRegister")}
+                    {t("labels.commercialRegister")} <span className="text-red-500">*</span>
                   </label>
 
                   <input
@@ -705,7 +729,7 @@ export default function CompleteRegistrationPage() {
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm font-medium text-logo-black mb-2">
                     <User size={16} color="gray" />
-                    {t("labels.avatar")}
+                    {t("labels.avatar")} <span className="text-red-500">*</span>
                   </label>
 
                   <input
@@ -785,20 +809,31 @@ export default function CompleteRegistrationPage() {
             <div className="border-t border-gray-200 bg-white p-6 md:p-8 text-center">
               <Button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || !isLocationSelected}
                 variant="gold"
                 size="lg"
-                className="px-8 py-3 text-lg"
+                className="px-8 py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <>
                     <div className="w-5 h-5 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     {t("actions.submitting")}
                   </>
+                ) : !isLocationSelected ? (
+                  <>
+                    <MapPin className="w-5 h-5 mr-2" />
+                    {t("actions.selectLocationFirst", "Select Location First")}
+                  </>
                 ) : (
                   t("actions.submit")
                 )}
               </Button>
+              
+              {!isLocationSelected && (
+                <p className="text-sm text-gray-500 mt-2">
+                  {t("help.selectLocationToSubmit", "Please select your location on the map above to enable registration")}
+                </p>
+              )}
             </div>
           </form>
         </div>
