@@ -66,6 +66,10 @@ const CheckoutPage = () => {
     }
     setOrderComplete(true);
     clearCart();
+    // Clear coupon from localStorage on successful order
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("auto_parts_coupon_code");
+    }
   };
 
   const handleApplyCoupon = async () => {
@@ -86,7 +90,7 @@ const CheckoutPage = () => {
           validCoupons[couponCode.toUpperCase() as keyof typeof validCoupons]
         );
         setCouponError("");
-      }  
+      }
       setIsApplyingCoupon(false);
     }, 1000);
   };
