@@ -26,7 +26,7 @@ export default function Header() {
   const pathname = usePathname();
   const { t } = useTranslation("header");
   const { currentLocale, changeLocale, isRTL } = useLocale();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
   const router = useRouter();
   const {
     searchQuery,
@@ -42,10 +42,7 @@ export default function Header() {
     { href: "/brands", label: t("navigation.brands") },
     { href: "/latestoffer", label: t("navigation.offers") },
     { href: "/products", label: t("navigation.products") },
-    // Only show User Pricing when authenticated and registration complete
-    ...(isAuthenticated && user?.is_registration_complete
-      ? [{ href: "/userPricing", label: t("navigation.userPricing") }]
-      : []),
+    { href: "/userPricing", label: t("navigation.userPricing") },
   ];
 
   const onLanguageChange = (newLocale: string) => {

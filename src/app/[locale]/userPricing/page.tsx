@@ -6,7 +6,6 @@ import { PricingForm } from "@/components/userPricing/PricingForm";
 import { SavedFormsList } from "@/components/userPricing/SavedFormsList";
 import { useTranslation } from "react-i18next";
 import { useAuthContext } from "@/contexts/auth-context";
-import { ProtectedPageGuard } from "@/components/auth/AuthGuard";
 
 export default function UserPricingPage() {
   const { i18n } = useTranslation();
@@ -33,45 +32,43 @@ export default function UserPricingPage() {
   // Form is now handled by the unified PricingForm component
 
   return (
-    <ProtectedPageGuard>
-      <div className="min-h-screen bg-gray-50">
-        {/* Hero Section */}
-        <HeroSection />
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <HeroSection />
 
-        {/* Main Content Section - Split Layout */}
-        <div className="container mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
-            {/* Form Side */}
-            <div className={`order-1 ${isRTL ? "lg:order-1" : "lg:order-1"}`}>
-              <PricingForm
-                form={form}
-                partImagePreview={partImagePreview}
-                requestImagePreview={requestImagePreview}
-                formImagePreview={formImagePreview}
-                isSubmitting={isSubmitting}
-                onImageChange={handleImageChange}
-                onRemoveImage={removeImage}
-                onSubmit={onSubmit}
-                isAuthenticated={isAuthenticated}
-                isRegistrationComplete={isRegistrationComplete}
-                userType={user?.type as "shop" | "workshop" | undefined}
-              />
-            </div>
+      {/* Main Content Section - Split Layout */}
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
+          {/* Form Side */}
+          <div className={`order-1 ${isRTL ? "lg:order-1" : "lg:order-1"}`}>
+            <PricingForm
+              form={form}
+              partImagePreview={partImagePreview}
+              requestImagePreview={requestImagePreview}
+              formImagePreview={formImagePreview}
+              isSubmitting={isSubmitting}
+              onImageChange={handleImageChange}
+              onRemoveImage={removeImage}
+              onSubmit={onSubmit}
+              isAuthenticated={isAuthenticated}
+              isRegistrationComplete={isRegistrationComplete}
+              userType={user?.type as "shop" | "workshop" | undefined}
+            />
+          </div>
 
-            {/* Saved Data Side */}
-            <div className={`order-2 ${isRTL ? "lg:order-2" : "lg:order-2"}`}>
-              <SavedFormsList
-                savedForms={savedForms}
-                isSendingToBackend={isSendingToBackend}
-                onSendAll={sendAllToBackend}
-                onDeleteForm={deleteSavedForm}
-                isAuthenticated={isAuthenticated}
-                isRegistrationComplete={isRegistrationComplete}
-              />
-            </div>
+          {/* Saved Data Side */}
+          <div className={`order-2 ${isRTL ? "lg:order-2" : "lg:order-2"}`}>
+            <SavedFormsList
+              savedForms={savedForms}
+              isSendingToBackend={isSendingToBackend}
+              onSendAll={sendAllToBackend}
+              onDeleteForm={deleteSavedForm}
+              isAuthenticated={isAuthenticated}
+              isRegistrationComplete={isRegistrationComplete}
+            />
           </div>
         </div>
       </div>
-    </ProtectedPageGuard>
+    </div>
   );
 }
