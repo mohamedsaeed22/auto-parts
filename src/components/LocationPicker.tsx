@@ -41,7 +41,7 @@ export default function LocationPicker({
   className = "",
   error,
 }: LocationPickerProps) {
-  const { i18n } = useTranslation("registration");
+  const { t, i18n } = useTranslation("registration");
   const isRTL = i18n.language === "ar";
 
   // Refs
@@ -63,8 +63,7 @@ export default function LocationPicker({
 
   // Load Google Maps script
   const loadGoogleMaps = useCallback(async () => {
-    if ((window as any).google && (window as any).google.maps) {
-      // eslint-disable-line @typescript-eslint/no-explicit-any
+    if ((window as any).google && (window as any).google.maps) { // eslint-disable-line @typescript-eslint/no-explicit-any
       setIsMapLoaded(true);
       return;
     }
@@ -98,44 +97,37 @@ export default function LocationPicker({
 
   // Initialize map
   const initializeMap = () => {
-    if (!mapRef.current || !(window as any).google || mapInstanceRef.current)
-      return; // eslint-disable-line @typescript-eslint/no-explicit-any
+    if (!mapRef.current || !(window as any).google || mapInstanceRef.current) return; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     try {
       // Create map
-      mapInstanceRef.current = new (window as any).google.maps.Map(
-        mapRef.current,
-        {
-          // eslint-disable-line @typescript-eslint/no-explicit-any
-          center: initialLocation,
-          zoom: 13,
-          mapTypeControl: false,
-          streetViewControl: false,
-          fullscreenControl: true,
-          zoomControl: true,
-          gestureHandling: "cooperative",
-          styles: [
-            {
-              featureType: "poi",
-              elementType: "labels",
-              stylers: [{ visibility: "off" }],
-            },
-          ],
-        }
-      );
+      mapInstanceRef.current = new (window as any).google.maps.Map(mapRef.current, { // eslint-disable-line @typescript-eslint/no-explicit-any
+        center: initialLocation,
+        zoom: 13,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: true,
+        zoomControl: true,
+        gestureHandling: "cooperative",
+        styles: [
+          {
+            featureType: "poi",
+            elementType: "labels",
+            stylers: [{ visibility: "off" }],
+          },
+        ],
+      });
 
       // Create marker
-      markerRef.current = new (window as any).google.maps.Marker({
-        // eslint-disable-line @typescript-eslint/no-explicit-any
+      markerRef.current = new (window as any).google.maps.Marker({ // eslint-disable-line @typescript-eslint/no-explicit-any
         position: initialLocation,
         map: mapInstanceRef.current,
         draggable: true,
-        title: "Drag to adjust location",
+        title: t("location.dragMarker"),
       });
 
       // Map click handler
-      mapInstanceRef.current.addListener("click", (event: any) => {
-        // eslint-disable-line @typescript-eslint/no-explicit-any
+      mapInstanceRef.current.addListener("click", (event: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
         const lat = event.latLng.lat();
         const lng = event.latLng.lng();
         updateMarkerPosition(lat, lng);
@@ -143,8 +135,7 @@ export default function LocationPicker({
       });
 
       // Marker drag handler
-      markerRef.current.addListener("dragend", (event: any) => {
-        // eslint-disable-line @typescript-eslint/no-explicit-any
+      markerRef.current.addListener("dragend", (event: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
         const lat = event.latLng.lat();
         const lng = event.latLng.lng();
         reverseGeocode(lat, lng);
@@ -152,9 +143,7 @@ export default function LocationPicker({
 
       // Initialize autocomplete
       if (searchInputRef.current) {
-        autocompleteRef.current = new (
-          window as any
-        ).google.maps.places.Autocomplete(searchInputRef.current, { // eslint-disable-line @typescript-eslint/no-explicit-any
+        autocompleteRef.current = new (window as any).google.maps.places.Autocomplete(searchInputRef.current, { // eslint-disable-line @typescript-eslint/no-explicit-any
           fields: [
             "place_id",
             "geometry",
@@ -177,8 +166,8 @@ export default function LocationPicker({
             processPlaceData(place);
           }
         });
-      }
-    } catch (error) {
+        }
+      } catch (error) {
       console.error("Error initializing map:", error);
       setMapError("Failed to initialize map");
     }
@@ -205,7 +194,7 @@ export default function LocationPicker({
             // eslint-disable-line @typescript-eslint/no-explicit-any
             if (status === "OK" && results?.[0]) {
               resolve(results[0]);
-            } else {
+    } else {
               reject(new Error("Geocoding failed"));
             }
           }
@@ -234,8 +223,7 @@ export default function LocationPicker({
   };
 
   // Process place data from Google Maps
-  const processPlaceData = (place: any) => {
-    // eslint-disable-line @typescript-eslint/no-explicit-any
+  const processPlaceData = (place: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     const lat = place.geometry.location.lat();
     const lng = place.geometry.location.lng();
 
@@ -247,8 +235,7 @@ export default function LocationPicker({
 
     // Extract address components
     if (place.address_components) {
-      place.address_components.forEach((component: any) => {
-        // eslint-disable-line @typescript-eslint/no-explicit-any
+      place.address_components.forEach((component: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
         const types = component.types;
 
         if (types.includes("street_number") || types.includes("route")) {
@@ -284,7 +271,7 @@ export default function LocationPicker({
   // Use current location
   const useCurrentLocation = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by this browser");
+      alert(t("location.geolocationNotSupported"));
       return;
     }
 
@@ -303,9 +290,7 @@ export default function LocationPicker({
       },
       (error) => {
         console.error("Error getting current location:", error);
-        alert(
-          "Error getting your current location. Please try again or select manually."
-        );
+        alert(t("location.geolocationError"));
         setIsLoading(false);
       }
     );
@@ -335,12 +320,11 @@ export default function LocationPicker({
             <AlertCircle className="text-red-600 mt-1" size={20} />
             <div className="flex-1">
               <h4 className="text-sm font-medium text-red-900 mb-1">
-                Google Maps Error
+                {t("location.error")}
               </h4>
               <p className="text-sm text-red-700 mb-2">{mapError}</p>
               <p className="text-xs text-red-600">
-                Please add your Google Maps API key to the .env.local file to
-                enable location selection.
+                {t("location.apiKeyInstructions")}
               </p>
             </div>
           </div>
@@ -358,15 +342,15 @@ export default function LocationPicker({
             <MapPin className="text-logo-gold mt-1" size={20} />
             <div className="flex-1">
               <h4 className="text-sm font-medium text-logo-black mb-1">
-                Selected Location
+                {t("location.selectedLocation")}
               </h4>
               <p className="text-sm text-neutral-700">
                 {selectedLocation.formatted_address}
               </p>
               <div className="flex gap-4 mt-2 text-xs text-neutral-600">
-                <span>Lat: {selectedLocation.lat.toFixed(6)}</span>
-                <span>Lng: {selectedLocation.lng.toFixed(6)}</span>
-              </div>
+                <span>{t("location.lat")}: {selectedLocation.lat.toFixed(6)}</span>
+                <span>{t("location.lng")}: {selectedLocation.lng.toFixed(6)}</span>
+      </div>
             </div>
             <Button
               type="button"
@@ -375,18 +359,18 @@ export default function LocationPicker({
               onClick={() => setShowMap(!showMap)}
               className="text-logo-gold border-logo-gold/30 hover:bg-logo-gold/10"
             >
-              {showMap ? "Hide Map" : "Change Location"}
+              {showMap ? t("location.hideMap") : t("location.changeLocation")}
             </Button>
+                </div>
           </div>
-        </div>
-      )}
+        )}
 
       {/* Map Toggle Button */}
       {!selectedLocation && (
         <div className="text-center">
-          <Button
-            type="button"
-            variant="outline"
+        <Button
+          type="button"
+          variant="outline"
             onClick={() => setShowMap(!showMap)}
             className="w-full border-logo-gold/30 text-logo-gold hover:bg-logo-gold/10"
             disabled={!isMapLoaded}
@@ -395,15 +379,15 @@ export default function LocationPicker({
             {!isMapLoaded ? (
               <>
                 <Loader className="w-4 h-4 mr-2 animate-spin" />
-                Loading map...
+                {t("location.loading")}
               </>
             ) : showMap ? (
-              "Hide Map"
+              t("location.hideMap")
             ) : (
-              "Select Location on Map"
-            )}
-          </Button>
-        </div>
+              t("location.selectLocationOnMap")
+          )}
+        </Button>
+      </div>
       )}
 
       {/* Error Display */}
@@ -420,7 +404,7 @@ export default function LocationPicker({
           {/* Search Controls */}
           <div className="p-4 bg-neutral-50 border-b border-neutral-200">
             <div className="mb-3 p-2 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800">
-              📍 Click anywhere on the map to select your location
+              📍 {t("location.selectLocation")}
             </div>
             <div className="flex gap-2">
               <div className="flex-1 relative">
@@ -428,7 +412,7 @@ export default function LocationPicker({
                 <Input
                   ref={searchInputRef}
                   type="text"
-                  placeholder="Search for an address..."
+                  placeholder={t("location.searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
@@ -446,7 +430,7 @@ export default function LocationPicker({
                 ) : (
                   <MapPin className="w-4 h-4" />
                 )}
-                Use My Location
+                {t("location.useCurrentLocation")}
               </Button>
             </div>
           </div>
@@ -460,12 +444,11 @@ export default function LocationPicker({
             />
 
             {/* Map Instructions */}
-            <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg max-w-xs">
-              <p className="text-xs text-neutral-600">
-                Click anywhere on the map to select your location. Drag the
-                marker to fine-tune the position.
-              </p>
-            </div>
+              <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg max-w-xs">
+                <p className="text-xs text-neutral-600">
+                  {t("location.instructions")}
+                </p>
+              </div>
 
             {/* Loading Overlay */}
             {isLoading && (
@@ -473,12 +456,12 @@ export default function LocationPicker({
                 <div className="text-center">
                   <Loader className="w-8 h-8 animate-spin mx-auto mb-2 text-logo-gold" />
                   <p className="text-sm text-neutral-600">
-                    Getting location...
+                    {t("location.searchingLocation")}
                   </p>
                 </div>
               </div>
             )}
-          </div>
+              </div>
 
           {/* Action Buttons */}
           <div className="p-4 bg-neutral-50 border-t border-neutral-200 flex gap-2 justify-end">
@@ -487,7 +470,7 @@ export default function LocationPicker({
               variant="outline"
               onClick={() => setShowMap(false)}
             >
-              Close Map
+              {t("location.closeMap")}
             </Button>
             {selectedLocation && (
               <Button
@@ -495,7 +478,7 @@ export default function LocationPicker({
                 onClick={() => setShowMap(false)}
                 className="bg-logo-gold hover:bg-logo-gold/90 text-white"
               >
-                Confirm Location
+                {t("location.confirmLocation")}
               </Button>
             )}
           </div>
