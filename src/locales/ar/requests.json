@@ -4,13 +4,15 @@
   "id": "الرقم",
   "createdAt": "تاريخ الإنشاء",
   "submittedAt": "تاريخ التقديم",
-  "price": "السعر",
+  "totalPrice": "السعر الإجمالي",
+  "workshopCode": "كود الورشة",
   "status": {
     "draft": "مسودة",
     "pending": "قيد الانتظار",
     "submitted": "مقدم",
     "accepted": "مقبول",
-    "rejected": "مرفوض"
+    "rejected": "مرفوض",
+    "completed": "مكتمل"
   },
   "filters": {
     "title": "الفلتر",
@@ -23,21 +25,46 @@
   },
   "items": {
     "title": "عناصر الطلب",
+    "itemNumber": "العنصر",
     "quantity": "الكمية",
+    "unitPrice": "سعر الوحدة",
     "created": "تاريخ الإنشاء",
+    "chassisNumber": "رقم الهيكل",
+    "attachments": "المرفقات",
     "partImage": "القطعة",
     "orderImage": "الطلب",
     "formImage": "النموذج"
   },
+  "actions": {
+    "reject": "رفض",
+    "accept": "قبول"
+  },
+  "adminPricing": {
+    "title": "قام المدير بتسعير طلبك",
+    "description": "يرجى مراجعة التسعير وقبوله أو رفضه"
+  },
+  "priceSummary": {
+    "title": "ملخص السعر",
+    "description": "المجموع المحسوب من قبل المدير",
+    "total": "المبلغ الإجمالي"
+  },
+  "registrationRequired": {
+    "title": "إكمال التسجيل مطلوب",
+    "description": "للوصول إلى طلباتك، يرجى إكمال التسجيل أولاً.",
+    "button": "إكمال التسجيل"
+  },
   "pagination": {
     "previous": "السابق",
-    "next": "التالي"
+    "next": "التالي",
+    "showing": "عرض {{from}}-{{to}} من {{total}} نتيجة"
   },
   "error": {
     "title": "خطأ في تحميل الطلبات",
+    "description": "فشل في تحميل الطلبات. يرجى المحاولة مرة أخرى.",
     "retry": "إعادة المحاولة"
   },
   "empty": {
-    "title": "لم يتم العثور على طلبات"
+    "title": "لم يتم العثور على طلبات",
+    "description": "لا توجد طلبات تطابق الفلاتر الحالية."
   }
 }

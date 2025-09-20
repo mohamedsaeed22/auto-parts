@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { useAuthContext } from '@/contexts/auth-context';
-import { storage } from '@/lib/storage';
+import { useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useAuthContext } from "@/contexts/auth-context";
+import { storage } from "@/lib/storage";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -20,7 +20,8 @@ export function AuthGuard({
 }: AuthGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated, isRegistrationComplete, isLoading } = useAuthContext();
+  const { isAuthenticated, isRegistrationComplete, isLoading } =
+    useAuthContext();
 
   useEffect(() => {
     if (isLoading) return;
@@ -28,13 +29,13 @@ export function AuthGuard({
     // Save current page for redirect after login
     if (requireAuth && !isAuthenticated) {
       storage.setPreviousPage(pathname);
-      router.push('/auth/login');
+      router.push("/auth/login");
       return;
     }
 
     // Redirect authenticated users away from auth pages
     if (requireGuest && isAuthenticated) {
-      const redirectTo = storage.getPreviousPage() || '/';
+      const redirectTo = storage.getPreviousPage() || "/";
       storage.clearPreviousPage();
       router.push(redirectTo);
       return;
@@ -42,10 +43,20 @@ export function AuthGuard({
 
     // Redirect incomplete registrations to complete profile
     if (requireComplete && isAuthenticated && !isRegistrationComplete) {
-      router.push('/auth/complete-registration');
+      storage.setPreviousPage(pathname);
+      router.push("/auth/complete-registration");
       return;
     }
-  }, [isAuthenticated, isRegistrationComplete, isLoading, pathname, router, requireAuth, requireGuest, requireComplete]);
+  }, [
+    isAuthenticated,
+    isRegistrationComplete,
+    isLoading,
+    pathname,
+    router,
+    requireAuth,
+    requireGuest,
+    requireComplete,
+  ]);
 
   // Show nothing while checking auth status
   if (isLoading) {

@@ -27,6 +27,10 @@ import type {
   RequestItemResponse,
 } from "@/services/api/requestsApi";
 import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/contexts/auth-context";
+import { useRouter } from "next/navigation";
+import { useLocale } from "@/hooks/useLocale";
+import { redirectToCompleteRegistration } from "@/lib/registrationRedirect";
 import Image from "next/image";
 
 const statusColors = {
@@ -51,6 +55,9 @@ export default function RequestsPage() {
   const { t, i18n } = useTranslation("userProfile");
   const isRTL = i18n.language === "ar";
   const { user } = useAuth();
+  const { isRegistrationComplete } = useAuthContext();
+  const router = useRouter();
+  const { currentLocale } = useLocale();
   // Default filters for comparison
   const defaultFilters = {
     status: "all" as const,
@@ -186,6 +193,44 @@ export default function RequestsPage() {
       console.error("Failed to approve/reject request:", error);
     }
   };
+
+  const handleCompleteRegistration = () => {
+    const currentPath = window.location.pathname;
+    redirectToCompleteRegistration(
+      currentPath,
+      "requests",
+      router,
+      currentLocale
+    );
+  };
+
+  // Check if registration is complete, if not show informative message
+  if (!isRegistrationComplete) {
+    return (
+      <div className="p-4 sm:p-6 lg:p-8" dir={isRTL ? "rtl" : "ltr"}>
+        <div className="max-w-md mx-auto text-center">
+          <div className="mb-6">
+            <FileText size={64} className="mx-auto text-gray-400 mb-4" />
+            <h2 className="text-xl font-bold text-gray-900 mb-2">
+              {t(
+                "requests.registrationRequired.title",
+                "Complete Registration Required"
+              )}
+            </h2>
+            <p className="text-gray-600 mb-6">
+              {t(
+                "requests.registrationRequired.description",
+                "To access your requests, please complete your registration first."
+              )}
+            </p>
+          </div>
+          <Button onClick={handleCompleteRegistration} className="w-full">
+            {t("requests.registrationRequired.button", "Complete Registration")}
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

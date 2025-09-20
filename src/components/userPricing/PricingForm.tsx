@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/hooks/useLocale";
+import { redirectToCompleteRegistration } from "@/lib/registrationRedirect";
 
 interface PricingFormProps {
   form: UseFormReturn<UserPricingFormData, object, UserPricingFormData>;
@@ -76,7 +77,8 @@ export function PricingForm({
   };
 
   const handleCompleteRegistrationClick = () => {
-    router.push(`/${currentLocale}/complete-registration`);
+    const currentPath = window.location.pathname;
+    redirectToCompleteRegistration(currentPath, null, router, currentLocale);
   };
 
   return (

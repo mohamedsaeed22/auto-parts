@@ -9,7 +9,6 @@ import {
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { ProfilePageType } from "@/app/[locale]/userprofile/page";
-import { useAuth } from "@/hooks/useAuth";
 
 export default function UserProfileSidebar({
   activePage,
@@ -20,8 +19,6 @@ export default function UserProfileSidebar({
 }) {
   const { t, i18n } = useTranslation("userProfile");
   const isRTL = i18n.language === "ar";
-  const { user } = useAuth();
-  const isRegistrationComplete = Boolean(user?.is_registration_complete);
 
   // Ensure profile is selected by default if no activePage is set
   const currentActivePage = activePage || "profile";
@@ -41,7 +38,7 @@ export default function UserProfileSidebar({
     }
   }, [currentActivePage]);
 
-  const fullMenu = [
+  const menu = [
     { key: "profile", labelKey: "sidebar.profile", icon: <User size={20} /> },
     {
       key: "addresses",
@@ -69,17 +66,6 @@ export default function UserProfileSidebar({
       icon: <Settings size={20} />,
     },
   ];
-
-  const menu = isRegistrationComplete
-    ? fullMenu
-    : fullMenu.filter((item) => item.key !== "requests");
-
-  // If registration is incomplete and current page is requests, redirect to profile
-  useEffect(() => {
-    if (!isRegistrationComplete && currentActivePage === "requests") {
-      onPageChange("profile");
-    }
-  }, [isRegistrationComplete, currentActivePage, onPageChange]);
 
   // Responsive: show sidebar on lg+, show top bar on mobile
   return (

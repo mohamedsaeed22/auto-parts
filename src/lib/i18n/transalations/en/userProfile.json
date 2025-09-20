@@ -141,6 +141,11 @@
       "title": "Error Loading Requests",
       "description": "Failed to load requests. Please try again.",
       "retry": "Retry"
+    },
+    "registrationRequired": {
+      "title": "Complete Registration Required",
+      "description": "To access your requests, please complete your registration first.",
+      "button": "Complete Registration"
     }
   },
   "settings": {

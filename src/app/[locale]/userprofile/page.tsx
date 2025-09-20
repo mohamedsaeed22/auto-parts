@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import UserProfileSidebar from "@/components/userprofile/UserProfileSidebar";
 import ProfilePageComponent from "@/components/userprofile/ProfilePage";
 import AddressesPage from "@/components/userprofile/AddressesPage";
@@ -20,13 +21,13 @@ export type ProfilePageType =
 
 export default function UserProfilePage() {
   const [activePage, setActivePage] = useState<ProfilePageType>("profile");
+  const searchParams = useSearchParams();
 
-  // Restore active page from localStorage on component mount
+  // Restore active page from localStorage or URL params on component mount
   useEffect(() => {
     try {
-      const savedPage = localStorage.getItem(
-        "userProfileActivePage"
-      ) as ProfilePageType;
+      // First check if there's a tab parameter in the URL (from redirect after registration)
+      const tabParam = searchParams.get("tab");
       const validPages: ProfilePageType[] = [
         "profile",
         "addresses",
@@ -36,15 +37,28 @@ export default function UserProfilePage() {
         "points",
       ];
 
-      if (savedPage && validPages.includes(savedPage)) {
-        setActivePage(savedPage);
+      if (tabParam && validPages.includes(tabParam as ProfilePageType)) {
+        setActivePage(tabParam as ProfilePageType);
+        // Clear the URL parameter after setting the active page
+        const url = new URL(window.location.href);
+        url.searchParams.delete("tab");
+        window.history.replaceState({}, "", url.toString());
+      } else {
+        // Fallback to localStorage if no URL parameter
+        const savedPage = localStorage.getItem(
+          "userProfileActivePage"
+        ) as ProfilePageType;
+
+        if (savedPage && validPages.includes(savedPage)) {
+          setActivePage(savedPage);
+        }
       }
     } catch (error) {
       console.warn("Failed to restore active page from localStorage:", error);
       // Fallback to default page if localStorage fails
       setActivePage("profile");
     }
-  }, []);
+  }, [searchParams]);
 
   // Ensure profile is always selected by default if no activePage is set
   useEffect(() => {

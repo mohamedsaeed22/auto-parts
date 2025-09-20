@@ -64,5 +64,75 @@
     "orders": "Orders",
     "requests": "Requests",
     "settings": "Settings"
+  },
+  "requests": {
+    "title": "Requests",
+    "create": "Create Request",
+    "id": "ID",
+    "createdAt": "Created",
+    "submittedAt": "Submitted",
+    "totalPrice": "Total Price",
+    "workshopCode": "Workshop Code",
+    "status": {
+      "draft": "Draft",
+      "pending": "Pending",
+      "submitted": "Submitted",
+      "accepted": "Accepted",
+      "rejected": "Rejected",
+      "completed": "Completed"
+    },
+    "filters": {
+      "title": "Filters",
+      "status": "Status",
+      "allStatuses": "All Statuses",
+      "dateFrom": "Date From",
+      "dateTo": "Date To",
+      "perPage": "Per Page",
+      "clear": "Clear Filters"
+    },
+    "items": {
+      "title": "Request Items",
+      "itemNumber": "Item",
+      "quantity": "Qty",
+      "unitPrice": "Unit Price",
+      "created": "Created",
+      "chassisNumber": "Chassis Number",
+      "attachments": "Attachments",
+      "partImage": "Part",
+      "orderImage": "Order",
+      "formImage": "Form"
+    },
+    "actions": {
+      "reject": "Reject",
+      "accept": "Accept"
+    },
+    "adminPricing": {
+      "title": "Admin has priced your request",
+      "description": "Please review and accept or reject the pricing"
+    },
+    "priceSummary": {
+      "title": "Price Summary",
+      "description": "Total calculated by admin",
+      "total": "Total Amount"
+    },
+    "registrationRequired": {
+      "title": "Complete Registration Required",
+      "description": "To access your requests, please complete your registration first.",
+      "button": "Complete Registration"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "showing": "Showing {{from}}-{{to}} of {{total}} results"
+    },
+    "error": {
+      "title": "Error Loading Requests",
+      "description": "Failed to load requests. Please try again.",
+      "retry": "Retry"
+    },
+    "empty": {
+      "title": "No Requests Found",
+      "description": "No requests match your current filters."
+    }
   }
 }
