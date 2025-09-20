@@ -857,11 +857,6 @@ export default function CompleteRegistrationPage() {
                     <div className="w-5 h-5 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     {t("actions.submitting")}
                   </>
-                ) : !isLocationSelected ? (
-                  <>
-                    <MapPin className="w-5 h-5 mr-2" />
-                    {t("actions.selectLocationFirst", "Select Location First")}
-                  </>
                 ) : (
                   t("actions.submit")
                 )}
