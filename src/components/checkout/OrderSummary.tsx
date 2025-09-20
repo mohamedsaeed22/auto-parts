@@ -43,10 +43,10 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   );
   const [apiFinalTotal, setApiFinalTotal] = useState<number | null>(null);
   const [couponFinalTotal, setCouponFinalTotal] = useState<number | null>(null);
+  const [isCouponApplied, setIsCouponApplied] = useState<boolean>(false);
 
   // New state for calculated cart values
   const [calculatedSubtotal, setCalculatedSubtotal] = useState<number>(0);
-  const [calculatedDiscount, setCalculatedDiscount] = useState<number>(0);
   const [calculatedTotal, setCalculatedTotal] = useState<number>(0);
 
   // Fetch server cart to reflect authoritative totals
@@ -117,6 +117,15 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
   const handleApplyCoupon = async () => {
     setLocalError("");
+
+    // Validate coupon code is not empty
+    if (!couponCode || couponCode.trim() === "") {
+      setLocalError(
+        t("orderSummary.couponRequired", "Please enter a coupon code")
+      );
+      return;
+    }
+
     try {
       const result = await applyCoupon({
         coupon_code: couponCode.trim(),
@@ -144,6 +153,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         // Set discount amount if it's greater than 0
         if (data.discount_amount > 0) {
           setApiDiscountAmount(data.discount_amount);
+          setIsCouponApplied(true);
 
           // Save the valid coupon code to localStorage
           try {
@@ -174,7 +184,32 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
     }
   };
 
-  // Remove coupon functionality is not needed
+  // Remove coupon functionality
+  const handleRemoveCoupon = () => {
+    try {
+      // Remove coupon from localStorage
+      localStorage.removeItem(COUPON_CODE_KEY);
+
+      // Reset all coupon-related states
+      setIsCouponApplied(false);
+      setApiDiscountAmount(null);
+      setApiCartTotal(null);
+      setApiFinalTotal(null);
+      setCouponFinalTotal(null);
+      setLocalError("");
+      setSuccessMessage("");
+
+      // Clear coupon code in parent component
+      onCouponCodeChange("");
+
+      // Refresh cart data to get default response
+      dispatch(cartApi.util.invalidateTags(["Cart"]));
+
+      console.log("Coupon removed successfully");
+    } catch (error) {
+      console.error("Failed to remove coupon:", error);
+    }
+  };
 
   // Auto-apply saved coupon from localStorage when component renders
   useEffect(() => {
@@ -211,6 +246,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
               if (data.discount_amount > 0) {
                 setApiDiscountAmount(data.discount_amount);
+                setIsCouponApplied(true);
                 console.log(
                   "Coupon applied successfully with discount:",
                   data.discount_amount
@@ -218,6 +254,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               } else {
                 // If the saved coupon is no longer valid, remove it from localStorage
                 localStorage.removeItem(COUPON_CODE_KEY);
+                setIsCouponApplied(false);
                 console.log(
                   "Coupon no longer valid. Removed from localStorage."
                 );
@@ -266,25 +303,18 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       cartItems: CartItem[]
     ): {
       subtotal: number;
-      discount: number;
       total: number;
     } => {
       let subtotal = 0;
-      let discount = 0;
 
       cartItems.forEach((item) => {
-        // Original price * quantity
-        const originalPrice = parseFloat(item.product.price) * item.quantity;
         // Final price * quantity
         const finalPrice = item.product.final_price * item.quantity;
-
         subtotal += finalPrice;
-        discount += originalPrice - finalPrice;
       });
 
       return {
         subtotal,
-        discount,
         total: subtotal,
       };
     };
@@ -294,11 +324,8 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       | undefined;
 
     if (server?.cart_items && server.cart_items.length > 0) {
-      const { subtotal, discount, total } = calculateCartTotal(
-        server.cart_items
-      );
+      const { subtotal, total } = calculateCartTotal(server.cart_items);
       setCalculatedSubtotal(subtotal);
-      setCalculatedDiscount(discount);
       setCalculatedTotal(total);
     }
   }, [apiCart]);
@@ -311,8 +338,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   // Get values from server response, prioritizing calculated values
   const displayedSubtotal =
     calculatedSubtotal || apiCartTotal || server?.cart_total || 0;
-  const displayedDiscount =
-    calculatedDiscount || apiDiscountAmount || server?.total_discount || 0;
   const displayedShippingCost = Number(server?.delivery_amount) || 0;
   const displayedTotalBeforeDiscount = server?.total_before_discount || 0;
 
@@ -347,17 +372,34 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                 placeholder={t("orderSummary.couponPlaceholder")}
                 value={couponCode}
                 onChange={(e) => onCouponCodeChange(e.target.value)}
-                className="flex-1 px-4 py-2 border border-neutral-300 rounded-lg text-sm focus:ring-2 focus:ring-logo-gold focus:border-logo-gold"
+                className={`flex-1 px-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-logo-gold focus:border-logo-gold ${
+                  !isCouponApplied && (!couponCode || couponCode.trim() === "")
+                    ? "border-gray-300 bg-gray-50"
+                    : "border-neutral-300 bg-white"
+                }`}
                 dir={isRTL ? "rtl" : "ltr"}
               />
 
               <Button
-                onClick={handleApplyCoupon}
+                onClick={
+                  isCouponApplied ? handleRemoveCoupon : handleApplyCoupon
+                }
+                disabled={
+                  !isCouponApplied && (!couponCode || couponCode.trim() === "")
+                }
                 size="sm"
-                className="px-3 py-2 text-xs bg-logo-gold hover:bg-logo-gold/90 text-white"
+                className={`px-3 py-2 text-xs text-white ${
+                  isCouponApplied
+                    ? "bg-red-500 hover:bg-red-600"
+                    : !couponCode || couponCode.trim() === ""
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-logo-gold hover:bg-logo-gold/90"
+                }`}
               >
                 {isApplyingCoupon || isApplying
                   ? t("orderSummary.applying")
+                  : isCouponApplied
+                  ? t("orderSummary.remove", "Remove")
                   : t("orderSummary.apply")}
               </Button>
             </div>
@@ -369,6 +411,14 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             )}
             {successMessage && !localError && !couponError && (
               <p className="text-xs text-logo-gold mt-2">{successMessage}</p>
+            )}
+            {!isCouponApplied && (!couponCode || couponCode.trim() === "") && (
+              <p className="text-xs text-gray-500 mt-2">
+                {t(
+                  "orderSummary.enterCouponCode",
+                  "Enter a coupon code to apply"
+                )}
+              </p>
             )}
           </div>
         )}
@@ -385,8 +435,8 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
         {/* Price Breakdown */}
         <div className="space-y-3 text-sm">
-          {/* Original price before discount */}
-          {displayedTotalBeforeDiscount > 0 && displayedDiscount > 0 && (
+          {/* Original price before discount - show when value > 0 */}
+          {displayedTotalBeforeDiscount > 0 && (
             <div className="flex justify-between">
               <span>
                 {t(
@@ -410,18 +460,14 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             </span>
           </div>
 
-          {/* Discount row */}
-          {apiDiscountAmount !== null &&
-            apiDiscountAmount > 0 &&
-            displayedDiscount > 0 && (
+          {/* Discount row - only show when coupon is applied */}
+          {isCouponApplied &&
+            apiDiscountAmount !== null &&
+            apiDiscountAmount > 0 && (
               <div className="flex justify-between text-logo-gold">
                 <span>{t("cartReview.totalDiscount")}</span>
                 <span className="font-medium">
-                  -
-                  {apiDiscountAmount !== null && apiDiscountAmount > 0
-                    ? apiDiscountAmount.toFixed(2)
-                    : displayedDiscount.toFixed(2)}{" "}
-                  {t("currency")}
+                  -{apiDiscountAmount.toFixed(2)} {t("currency")}
                 </span>
               </div>
             )}
@@ -442,8 +488,8 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           <div className="flex justify-between text-xl font-bold">
             <span className="text-logo-black">{t("orderSummary.total")}</span>
             <span className="text-logo-gold">
-              {/* Show couponFinalTotal if available (from coupon API response), otherwise show calculated finalTotal */}
-              {(couponFinalTotal !== null && displayedDiscount > 0
+              {/* Show couponFinalTotal if coupon is applied, otherwise show default cart total */}
+              {(isCouponApplied && couponFinalTotal !== null
                 ? couponFinalTotal + displayedShippingCost
                 : finalTotal
               ).toFixed(2)}{" "}
