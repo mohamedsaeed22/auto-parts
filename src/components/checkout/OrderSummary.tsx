@@ -74,6 +74,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   };
 
   type ServerCart = {
+    total_before_discount: number;
     cart_items: Array<CartItem>;
     cart_total: number;
     item_count: number;
@@ -313,6 +314,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   const displayedDiscount =
     calculatedDiscount || apiDiscountAmount || server?.total_discount || 0;
   const displayedShippingCost = Number(server?.delivery_amount) || 0;
+  const displayedTotalBeforeDiscount = server?.total_before_discount || 0;
 
   // Original total is used in the UI for displaying the price before discount
 
@@ -384,7 +386,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         {/* Price Breakdown */}
         <div className="space-y-3 text-sm">
           {/* Original price before discount */}
-          {/* {displayedDiscount > 0 && (
+          {displayedTotalBeforeDiscount > 0 && displayedDiscount > 0 && (
             <div className="flex justify-between">
               <span>
                 {t(
@@ -393,11 +395,10 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                 )}
               </span>
               <span className="font-medium line-through text-neutral-500">
-                {(displayedSubtotal + displayedDiscount).toFixed(2)}{" "}
-                {t("currency")}
+                {displayedTotalBeforeDiscount.toFixed(2)} {t("currency")}
               </span>
             </div>
-          )} */}
+          )}
 
           {/* Subtotal after discount */}
           <div className="flex justify-between">

@@ -38,6 +38,7 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
 
   // Fetch server cart when authenticated; skip on guest
   type ServerCart = {
+    total_before_discount: number;
     cart_items: Array<{
       id: number;
       quantity: number;
