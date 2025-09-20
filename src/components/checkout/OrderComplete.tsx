@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   CheckCircle,
@@ -23,6 +23,16 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
 }) => {
   const { t, i18n } = useTranslation("checkout");
   const isRTL = i18n.language === "ar";
+
+  // Remove coupon from localStorage when order is complete
+  useEffect(() => {
+    try {
+      localStorage.removeItem("auto_parts_coupon_code");
+      console.log("Coupon code removed from localStorage on order completion");
+    } catch (error) {
+      console.error("Failed to remove coupon from localStorage:", error);
+    }
+  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {

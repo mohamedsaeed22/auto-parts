@@ -101,15 +101,18 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
     final_total: number;
   };
 
-  const isApplyCouponApiData = (val: unknown): val is ApplyCouponApiData => {
-    if (!val || typeof val !== "object") return false;
-    const v = val as Record<string, unknown>;
-    return (
-      typeof v.cart_total === "number" &&
-      typeof v.discount_amount === "number" &&
-      typeof v.final_total === "number"
-    );
-  };
+  const isApplyCouponApiData = React.useCallback(
+    (val: unknown): val is ApplyCouponApiData => {
+      if (!val || typeof val !== "object") return false;
+      const v = val as Record<string, unknown>;
+      return (
+        typeof v.cart_total === "number" &&
+        typeof v.discount_amount === "number" &&
+        typeof v.final_total === "number"
+      );
+    },
+    []
+  );
 
   const handleApplyCoupon = async () => {
     setLocalError("");
@@ -172,34 +175,25 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
   // Remove coupon functionality is not needed
 
-  // Check for saved coupon code in localStorage on component mount
+  // Auto-apply saved coupon from localStorage when component renders
   useEffect(() => {
     const applySavedCoupon = async () => {
       try {
         const savedCouponCode = localStorage.getItem(COUPON_CODE_KEY);
 
-        // Only apply if we have a saved coupon code, no current coupon code, and no discount already applied
+        // Only apply if we have a saved coupon code and no discount already applied
         if (
           savedCouponCode &&
           savedCouponCode.trim() !== "" &&
-          !couponCode &&
           (!apiDiscountAmount || apiDiscountAmount <= 0)
         ) {
-          console.log("Found saved coupon code:", savedCouponCode);
+          console.log("Auto-applying saved coupon code:", savedCouponCode);
 
           // Update the coupon code in the parent component
           onCouponCodeChange(savedCouponCode);
 
           // Apply the coupon automatically
           try {
-            // First check if the user is logged in by checking if the cart API is available
-            if (!apiCart) {
-              console.log(
-                "User not logged in or cart not available yet. Will not apply saved coupon."
-              );
-              return;
-            }
-
             const result = await applyCoupon({
               coupon_code: savedCouponCode,
             }).unwrap();
@@ -216,11 +210,15 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
               if (data.discount_amount > 0) {
                 setApiDiscountAmount(data.discount_amount);
+                console.log(
+                  "Coupon applied successfully with discount:",
+                  data.discount_amount
+                );
               } else {
                 // If the saved coupon is no longer valid, remove it from localStorage
                 localStorage.removeItem(COUPON_CODE_KEY);
                 console.log(
-                  "Coupon no longer valid (no discount). Removed from localStorage."
+                  "Coupon no longer valid. Removed from localStorage."
                 );
               }
 
@@ -232,24 +230,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               onApplyCoupon();
             }
           } catch (error) {
-            // More detailed error logging
-            const err = error as FetchBaseQueryError & {
-              status?: number;
-              data?: unknown;
-              message?: string;
-            };
-
-            if (err?.status) {
-              console.error(
-                `Failed to apply saved coupon. Status: ${err.status}`,
-                err?.data || err
-              );
-            } else {
-              console.error(
-                "Failed to apply saved coupon:",
-                err?.message || err
-              );
-            }
+            console.error("Failed to apply saved coupon:", error);
 
             // Remove invalid coupon from localStorage
             localStorage.removeItem(COUPON_CODE_KEY);
@@ -263,11 +244,19 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       }
     };
 
-    applySavedCoupon();
-    // We need apiCart to be available before applying the coupon
-    // Other dependencies are intentionally omitted to avoid infinite loops
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiCart]);
+    // Only run if we have cart data available
+    if (apiCart) {
+      applySavedCoupon();
+    }
+  }, [
+    apiCart,
+    applyCoupon,
+    onCouponCodeChange,
+    onApplyCoupon,
+    dispatch,
+    apiDiscountAmount,
+    isApplyCouponApiData,
+  ]);
 
   // Use effect to calculate cart totals from cart items when API data changes
   useEffect(() => {

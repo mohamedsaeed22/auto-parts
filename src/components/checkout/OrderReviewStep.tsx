@@ -84,6 +84,16 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
       // Call the original onPlaceOrder callback with created order
       // result is ApiResponse<{ order: Order }>
       if (result && (result as any).data && (result as any).data.order) {
+        // Clear coupon from localStorage on successful order
+        try {
+          localStorage.removeItem("auto_parts_coupon_code");
+          console.log(
+            "Coupon code removed from localStorage after successful order"
+          );
+        } catch (error) {
+          console.error("Failed to remove coupon from localStorage:", error);
+        }
+
         onPlaceOrder((result as any).data.order);
       } else {
         showError(
