@@ -30,5 +30,8 @@
   "shareError": "Failed to share or copy link",
   "addToCartError": "Failed to add to cart",
   "tryAgain": "Try Again",
-  "currency": "SAR"
+  "currency": "SAR",
+  "home": "Home",
+  "loadingProductDetails": "Loading product details...",
+  "failedToLoadProductDetails": "Failed to load product details"
 }

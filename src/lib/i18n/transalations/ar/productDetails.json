@@ -30,5 +30,8 @@
   "shareError": "فشل في مشاركة أو نسخ الرابط",
   "addToCartError": "فشل في إضافة المنتج إلى السلة",
   "tryAgain": "إعادة المحاولة",
-  "currency": "ر.س"
+  "currency": "ر.س",
+  "home": "الرئيسية",
+  "loadingProductDetails": "جاري تحميل تفاصيل المنتج...",
+  "failedToLoadProductDetails": "فشل في تحميل تفاصيل المنتج"
 }

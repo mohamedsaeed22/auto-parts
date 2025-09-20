@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner, ErrorMessage } from "@/components/ui";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import { useFavouritesWishlist } from "@/hooks/useFavouritesWishlist";
