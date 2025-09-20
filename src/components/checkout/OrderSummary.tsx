@@ -11,6 +11,9 @@ import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { useTranslation } from "react-i18next";
 import type { ApiResponse } from "@/services/api/types";
 
+// Constants for localStorage
+const COUPON_CODE_KEY = "auto_parts_coupon_code";
+
 interface OrderSummaryProps {
   currentStep: number;
   couponCode: string;
@@ -137,6 +140,17 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         // Set discount amount if it's greater than 0
         if (data.discount_amount > 0) {
           setApiDiscountAmount(data.discount_amount);
+
+          // Save the valid coupon code to localStorage
+          try {
+            localStorage.setItem(COUPON_CODE_KEY, couponCode.trim());
+            console.log(
+              "Coupon code saved to localStorage:",
+              couponCode.trim()
+            );
+          } catch (error) {
+            console.error("Failed to save coupon code to localStorage:", error);
+          }
         }
 
         setApiFinalTotal(data.final_total);
@@ -157,6 +171,103 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   };
 
   // Remove coupon functionality is not needed
+
+  // Check for saved coupon code in localStorage on component mount
+  useEffect(() => {
+    const applySavedCoupon = async () => {
+      try {
+        const savedCouponCode = localStorage.getItem(COUPON_CODE_KEY);
+
+        // Only apply if we have a saved coupon code, no current coupon code, and no discount already applied
+        if (
+          savedCouponCode &&
+          savedCouponCode.trim() !== "" &&
+          !couponCode &&
+          (!apiDiscountAmount || apiDiscountAmount <= 0)
+        ) {
+          console.log("Found saved coupon code:", savedCouponCode);
+
+          // Update the coupon code in the parent component
+          onCouponCodeChange(savedCouponCode);
+
+          // Apply the coupon automatically
+          try {
+            // First check if the user is logged in by checking if the cart API is available
+            if (!apiCart) {
+              console.log(
+                "User not logged in or cart not available yet. Will not apply saved coupon."
+              );
+              return;
+            }
+
+            const result = await applyCoupon({
+              coupon_code: savedCouponCode,
+            }).unwrap();
+
+            if (result && typeof result.message === "string") {
+              setSuccessMessage(result.message);
+              setLocalError("");
+            }
+
+            const data = (result as ApiResponse<unknown>)?.data as unknown;
+            if (isApplyCouponApiData(data)) {
+              // Update local display state based on API response
+              setApiCartTotal(data.cart_total);
+
+              if (data.discount_amount > 0) {
+                setApiDiscountAmount(data.discount_amount);
+              } else {
+                // If the saved coupon is no longer valid, remove it from localStorage
+                localStorage.removeItem(COUPON_CODE_KEY);
+                console.log(
+                  "Coupon no longer valid (no discount). Removed from localStorage."
+                );
+              }
+
+              setApiFinalTotal(data.final_total);
+              setCouponFinalTotal(data.final_total);
+
+              // Refresh cart data
+              dispatch(cartApi.util.invalidateTags(["Cart"]));
+              onApplyCoupon();
+            }
+          } catch (error) {
+            // More detailed error logging
+            const err = error as FetchBaseQueryError & {
+              status?: number;
+              data?: unknown;
+              message?: string;
+            };
+
+            if (err?.status) {
+              console.error(
+                `Failed to apply saved coupon. Status: ${err.status}`,
+                err?.data || err
+              );
+            } else {
+              console.error(
+                "Failed to apply saved coupon:",
+                err?.message || err
+              );
+            }
+
+            // Remove invalid coupon from localStorage
+            localStorage.removeItem(COUPON_CODE_KEY);
+            console.log(
+              "Removed invalid coupon from localStorage due to error"
+            );
+          }
+        }
+      } catch (error) {
+        console.error("Error accessing localStorage:", error);
+      }
+    };
+
+    applySavedCoupon();
+    // We need apiCart to be available before applying the coupon
+    // Other dependencies are intentionally omitted to avoid infinite loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apiCart]);
 
   // Use effect to calculate cart totals from cart items when API data changes
   useEffect(() => {
@@ -310,18 +421,20 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           </div>
 
           {/* Discount row */}
-          {apiDiscountAmount !== null && apiDiscountAmount > 0 && displayedDiscount > 0 && (
-            <div className="flex justify-between text-logo-gold">
-              <span>{t("cartReview.totalDiscount")}</span>
-              <span className="font-medium">
-                -
-                {apiDiscountAmount !== null && apiDiscountAmount > 0
-                  ? apiDiscountAmount.toFixed(2)
-                  : displayedDiscount.toFixed(2)}{" "}
-                {t("currency")}
-              </span>
-            </div>
-          )}
+          {apiDiscountAmount !== null &&
+            apiDiscountAmount > 0 &&
+            displayedDiscount > 0 && (
+              <div className="flex justify-between text-logo-gold">
+                <span>{t("cartReview.totalDiscount")}</span>
+                <span className="font-medium">
+                  -
+                  {apiDiscountAmount !== null && apiDiscountAmount > 0
+                    ? apiDiscountAmount.toFixed(2)
+                    : displayedDiscount.toFixed(2)}{" "}
+                  {t("currency")}
+                </span>
+              </div>
+            )}
 
           {/* Shipping cost */}
           <div className="flex justify-between">
