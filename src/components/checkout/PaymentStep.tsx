@@ -101,11 +101,11 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {selectedMethod === key && (
+                {/* {selectedMethod === key && (
                   <span className="px-2 py-0.5 rounded-full text-xs bg-logo-gold text-logo-black">
                     {t("selected", { defaultValue: "Selected" })}
                   </span>
-                )}
+                )} */}
                 {key === "credit_card" && (
                   <div className="flex items-center space-x-2">
                     <div className="w-8 h-5 bg-logo-black rounded text-white text-xs flex items-center justify-center">

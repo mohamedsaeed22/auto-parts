@@ -249,8 +249,8 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
           >
             {isRTL ? (
               <>
-                {t("orderReview.back")}
                 <ArrowRight className="w-4 h-4 mx-2" />
+                {t("orderReview.back")}
               </>
             ) : (
               <>
