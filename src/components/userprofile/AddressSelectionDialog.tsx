@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import FormSelect from "@/components/ui/FormSelect";
 import {
   Dialog,
   DialogContent,
@@ -44,7 +43,7 @@ export default function AddressSelectionDialog({
   onSelectAddress,
   isLoading = false,
 }: AddressSelectionDialogProps) {
-  const { t, i18n } = useTranslation("userProfile");
+  const { t, i18n } = useTranslation("addressSelection");
   const isRTL = i18n.language === "ar";
 
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(
@@ -146,11 +145,11 @@ export default function AddressSelectionDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <MapPin size={20} className="text-[#b3984a]" />
-            {t("requests.addressSelection.title", "Select Delivery Address")}
+            {t("title", "Select Delivery Address")}
           </DialogTitle>
           <DialogDescription>
             {t(
-              "requests.addressSelection.description",
+              "description",
               "Choose an existing address or add a new one for your request delivery."
             )}
           </DialogDescription>
@@ -162,10 +161,7 @@ export default function AddressSelectionDialog({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-medium text-gray-900">
-                  {t(
-                    "requests.addressSelection.existingAddresses",
-                    "Existing Addresses"
-                  )}
+                  {t("existingAddresses", "Existing Addresses")}
                 </h3>
                 <Button
                   variant="outline"
@@ -174,7 +170,7 @@ export default function AddressSelectionDialog({
                   className="flex items-center gap-2"
                 >
                   <Plus size={16} />
-                  {t("requests.addressSelection.addNew", "Add New")}
+                  {t("addNew", "Add New")}
                 </Button>
               </div>
 
@@ -185,12 +181,7 @@ export default function AddressSelectionDialog({
               ) : addresses.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   <MapPin size={48} className="mx-auto mb-2 text-gray-300" />
-                  <p>
-                    {t(
-                      "requests.addressSelection.noAddresses",
-                      "No addresses found"
-                    )}
-                  </p>
+                  <p>{t("noAddresses", "No addresses found")}</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -212,10 +203,7 @@ export default function AddressSelectionDialog({
                             </h4>
                             {address.is_default && (
                               <span className="bg-[#b3984a] text-white text-xs px-2 py-1 rounded">
-                                {t(
-                                  "requests.addressSelection.default",
-                                  "Default"
-                                )}
+                                {t("default", "Default")}
                               </span>
                             )}
                             <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded capitalize">
@@ -251,87 +239,75 @@ export default function AddressSelectionDialog({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-medium text-gray-900">
-                  {t("requests.addressSelection.newAddress", "New Address")}
+                  {t("newAddress", "New Address")}
                 </h3>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setShowNewAddressForm(false)}
                 >
-                  {t("requests.addressSelection.back", "Back")}
+                  {t("back", "Back")}
                 </Button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
-                    {t("requests.addressSelection.firstName", "First Name")} *
+                    {t("firstName", "First Name")} *
                   </label>
                   <Input
                     value={newAddressForm.first_name}
                     onChange={(e) =>
                       handleInputChange("first_name", e.target.value)
                     }
-                    placeholder={t(
-                      "requests.addressSelection.firstNamePlaceholder",
-                      "Enter first name"
-                    )}
+                    placeholder={t("firstNamePlaceholder", "Enter first name")}
                     className="h-12"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
-                    {t("requests.addressSelection.lastName", "Last Name")} *
+                    {t("lastName", "Last Name")} *
                   </label>
                   <Input
                     value={newAddressForm.last_name}
                     onChange={(e) =>
                       handleInputChange("last_name", e.target.value)
                     }
-                    placeholder={t(
-                      "requests.addressSelection.lastNamePlaceholder",
-                      "Enter last name"
-                    )}
+                    placeholder={t("lastNamePlaceholder", "Enter last name")}
                     className="h-12"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
-                    {t("requests.addressSelection.phone", "Phone")} *
+                    {t("phone", "Phone")} *
                   </label>
                   <Input
                     value={newAddressForm.phone}
                     onChange={(e) => handleInputChange("phone", e.target.value)}
-                    placeholder={t(
-                      "requests.addressSelection.phonePlaceholder",
-                      "Enter phone number"
-                    )}
+                    placeholder={t("phonePlaceholder", "Enter phone number")}
                     className="h-12"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
-                    {t("requests.addressSelection.zipCode", "ZIP Code")} *
+                    {t("zipCode", "ZIP Code")} *
                   </label>
                   <Input
                     value={newAddressForm.zip_code}
                     onChange={(e) =>
                       handleInputChange("zip_code", e.target.value)
                     }
-                    placeholder={t(
-                      "requests.addressSelection.zipCodePlaceholder",
-                      "Enter ZIP code"
-                    )}
+                    placeholder={t("zipCodePlaceholder", "Enter ZIP code")}
                     className="h-12"
                   />
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700">
-                    {t("requests.addressSelection.address", "Address")} *
+                    {t("address", "Address")} *
                   </label>
                   <Input
                     value={newAddressForm.address}
@@ -339,7 +315,7 @@ export default function AddressSelectionDialog({
                       handleInputChange("address", e.target.value)
                     }
                     placeholder={t(
-                      "requests.addressSelection.addressPlaceholder",
+                      "addressPlaceholder",
                       "Enter street address"
                     )}
                     className="h-12"
@@ -348,7 +324,7 @@ export default function AddressSelectionDialog({
 
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
-                    {t("requests.addressSelection.apartment", "Apartment")}
+                    {t("apartment", "Apartment")}
                   </label>
                   <Input
                     value={newAddressForm.apartment}
@@ -356,7 +332,7 @@ export default function AddressSelectionDialog({
                       handleInputChange("apartment", e.target.value)
                     }
                     placeholder={t(
-                      "requests.addressSelection.apartmentPlaceholder",
+                      "apartmentPlaceholder",
                       "Apartment, suite, etc."
                     )}
                     className="h-12"
@@ -365,60 +341,51 @@ export default function AddressSelectionDialog({
 
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
-                    {t("requests.addressSelection.city", "City")} *
+                    {t("city", "City")} *
                   </label>
                   <Input
                     value={newAddressForm.city}
                     onChange={(e) => handleInputChange("city", e.target.value)}
-                    placeholder={t(
-                      "requests.addressSelection.cityPlaceholder",
-                      "Enter city"
-                    )}
+                    placeholder={t("cityPlaceholder", "Enter city")}
                     className="h-12"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
-                    {t("requests.addressSelection.state", "State")}
+                    {t("state", "State")}
                   </label>
                   <Input
                     value={newAddressForm.state}
                     onChange={(e) => handleInputChange("state", e.target.value)}
-                    placeholder={t(
-                      "requests.addressSelection.statePlaceholder",
-                      "Enter state"
-                    )}
+                    placeholder={t("statePlaceholder", "Enter state")}
                     className="h-12"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
-                    {t("requests.addressSelection.country", "Country")} *
+                    {t("country", "Country")} *
                   </label>
                   <Input
                     value={newAddressForm.country}
                     onChange={(e) =>
                       handleInputChange("country", e.target.value)
                     }
-                    placeholder={t(
-                      "requests.addressSelection.countryPlaceholder",
-                      "Enter country"
-                    )}
+                    placeholder={t("countryPlaceholder", "Enter country")}
                     className="h-12"
                   />
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700">
-                    {t("requests.addressSelection.notes", "Notes")}
+                    {t("notes", "Notes")}
                   </label>
                   <Input
                     value={newAddressForm.notes}
                     onChange={(e) => handleInputChange("notes", e.target.value)}
                     placeholder={t(
-                      "requests.addressSelection.notesPlaceholder",
+                      "notesPlaceholder",
                       "Additional delivery instructions"
                     )}
                     className="h-12"
@@ -431,7 +398,7 @@ export default function AddressSelectionDialog({
 
         <DialogFooter className="flex gap-2">
           <Button variant="outline" onClick={handleClose} disabled={isLoading}>
-            {t("requests.addressSelection.cancel", "Cancel")}
+            {t("cancel", "Cancel")}
           </Button>
           <Button
             onClick={
@@ -444,11 +411,8 @@ export default function AddressSelectionDialog({
           >
             {isLoading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
             {showNewAddressForm
-              ? t(
-                  "requests.addressSelection.createAndSelect",
-                  "Create & Select"
-                )
-              : t("requests.addressSelection.selectAddress", "Select Address")}
+              ? t("createAndSelect", "Use This Address")
+              : t("selectAddress", "Select Address")}
           </Button>
         </DialogFooter>
       </DialogContent>

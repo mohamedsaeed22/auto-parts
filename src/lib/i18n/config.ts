@@ -38,6 +38,7 @@ export const namespaces = [
   "notifications",
   "validation",
   "profileFormErrors",
+  "addressSelection",
 ] as const;
 
 export type Namespace = (typeof namespaces)[number];
