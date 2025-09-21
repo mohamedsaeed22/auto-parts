@@ -32,6 +32,24 @@ import { useRouter } from "next/navigation";
 import { useLocale } from "@/hooks/useLocale";
 import { redirectToCompleteRegistration } from "@/lib/registrationRedirect";
 import Image from "next/image";
+import AddressSelectionDialog from "./AddressSelectionDialog";
+
+// Type for address data in request approval
+type RequestAddressData = {
+  address_id?: number;
+  address?: {
+    first_name: string;
+    last_name: string;
+    phone: string;
+    address: string;
+    apartment?: string;
+    city: string;
+    state?: string;
+    country: string;
+    zip_code: string;
+    notes?: string;
+  };
+};
 
 const statusColors = {
   draft: "bg-gray-100 text-gray-800 border-gray-200",
@@ -91,6 +109,10 @@ export default function RequestsPage() {
 
   const [approveRequest, { isLoading: isApproving }] =
     useApproveRequestMutation();
+
+  // Address selection dialog state
+  const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
+  const [pendingRequestId, setPendingRequestId] = useState<number | null>(null);
 
   const requests: RequestResponse[] = requestsResponse?.data?.requests || [];
   const pagination = requestsResponse?.data?.pagination;
@@ -181,17 +203,61 @@ export default function RequestsPage() {
 
   const handleApproveRequest = async (
     requestId: number,
-    status: "accepted" | "rejected"
+    status: "accepted" | "rejected",
+    addressData?: RequestAddressData
   ) => {
     try {
+      const requestData: {
+        status: "accepted" | "rejected";
+        address_id?: number;
+        address?: {
+          first_name: string;
+          last_name: string;
+          phone: string;
+          address: string;
+          apartment?: string;
+          city: string;
+          state?: string;
+          country: string;
+          zip_code: string;
+          notes?: string;
+        };
+      } = { status };
+
+      // Add address data if provided
+      if (addressData) {
+        if (addressData.address_id) {
+          requestData.address_id = addressData.address_id;
+        } else if (addressData.address) {
+          requestData.address = addressData.address;
+        }
+      }
+
       await approveRequest({
         requestId,
-        data: { status },
+        data: requestData,
       }).unwrap();
       // The query will automatically refetch due to invalidatesTags
     } catch (error) {
       console.error("Failed to approve/reject request:", error);
     }
+  };
+
+  const handleAcceptRequest = (requestId: number) => {
+    setPendingRequestId(requestId);
+    setIsAddressDialogOpen(true);
+  };
+
+  const handleAddressSelected = (addressData: RequestAddressData) => {
+    if (pendingRequestId) {
+      handleApproveRequest(pendingRequestId, "accepted", addressData);
+    }
+    setIsAddressDialogOpen(false);
+    setPendingRequestId(null);
+  };
+
+  const handleRejectRequest = (requestId: number) => {
+    handleApproveRequest(requestId, "rejected");
   };
 
   const handleCompleteRegistration = () => {
@@ -508,9 +574,7 @@ export default function RequestsPage() {
                     </div>
                     <div className="flex gap-2">
                       <Button
-                        onClick={() =>
-                          handleApproveRequest(request.id, "rejected")
-                        }
+                        onClick={() => handleRejectRequest(request.id)}
                         variant="outline"
                         size="sm"
                         disabled={isApproving}
@@ -524,9 +588,7 @@ export default function RequestsPage() {
                         {t("requests.actions.reject", "Reject")}
                       </Button>
                       <Button
-                        onClick={() =>
-                          handleApproveRequest(request.id, "accepted")
-                        }
+                        onClick={() => handleAcceptRequest(request.id)}
                         size="sm"
                         disabled={isApproving}
                         className="bg-green-600 hover:bg-green-700 text-white"
@@ -818,6 +880,17 @@ export default function RequestsPage() {
           </div>
         </div>
       )}
+
+      {/* Address Selection Dialog */}
+      <AddressSelectionDialog
+        isOpen={isAddressDialogOpen}
+        onClose={() => {
+          setIsAddressDialogOpen(false);
+          setPendingRequestId(null);
+        }}
+        onSelectAddress={handleAddressSelected}
+        isLoading={isApproving}
+      />
     </div>
   );
 }
