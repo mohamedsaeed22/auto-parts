@@ -115,9 +115,7 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
                       {address.phone}
                     </p>
                   </div>
-                  <button className="text-logo-black hover:text-logo-gold text-sm font-medium">
-                    {t("shipping.edit")}
-                  </button>
+                 
                 </div>
               </div>
             ))
@@ -132,7 +130,7 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
           <DialogTrigger asChild>
             <Button
               variant="outline"
-              className="w-full mb-6 border-2 border-dashed border-logo-gold/50 py-4 text-logo-black hover:border-logo-gold flex items-center"
+              className="w-full mb-6 border-2 border-dashed border-logo-gold/50 py-4 text-logo-black hover:bg-white hover:text-gray-500 cursor-pointer flex items-center"
             >
               <Plus className="w-4 h-4 mx-2" />
               {t("shipping.addNewAddress")}
