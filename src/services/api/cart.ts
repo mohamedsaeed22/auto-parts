@@ -137,7 +137,7 @@ export function useClearCart() {
     mutationFn: clearCart,
     onSuccess: (data) => {
       queryClient.setQueryData(cartKeys.list(), data);
-      showSuccess("Cart cleared successfully");
+      // showSuccess("Cart cleared successfully");
     },
     onError: (error: unknown) => {
       showError(

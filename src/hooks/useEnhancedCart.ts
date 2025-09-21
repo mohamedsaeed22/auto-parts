@@ -270,7 +270,7 @@ export const useEnhancedCart = () => {
         dispatch(clearCart());
       }
 
-      showSuccess("Cart cleared successfully");
+      // showSuccess("Cart cleared successfully");
     } catch (error) {
       console.error("Failed to clear cart:", error);
       showError("Failed to clear cart");
