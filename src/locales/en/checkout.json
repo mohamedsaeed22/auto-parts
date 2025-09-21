@@ -154,6 +154,7 @@
     "freeDelivery": "Free Delivery",
     "orderWithin": "Order within",
     "couponPlaceholder": "Enter coupon code",
+    "enterCouponCode": "Enter a coupon code to apply",
     "applying": "Applying...",
     "apply": "Apply",
     "applyError": "Failed to apply coupon",

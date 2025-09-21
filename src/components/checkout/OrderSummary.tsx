@@ -438,10 +438,10 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           {/* Original price before discount - show when value > 0 */}
           {displayedTotalBeforeDiscount > 0 && (
             <div className="flex justify-between">
-              <span>
+              <span className="text-neutral-600">
                 {t(
                   "cartReview.cartTotalBeforeDiscount",
-                  "إجمالي السلة قبل الخصم"
+                  "Cart Total Before Discount"
                 )}
               </span>
               <span className="font-medium line-through text-neutral-500">

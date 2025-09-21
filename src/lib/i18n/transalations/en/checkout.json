@@ -59,6 +59,7 @@
     "freeDelivery": "Free delivery within two days",
     "orderWithin": "Order within 5 hours and 23 minutes",
     "couponPlaceholder": "Enter discount coupon",
+    "enterCouponCode": "Enter a coupon code to apply",
     "apply": "Apply",
     "applying": "Applying...",
     "discountApplied": "Discount applied",
@@ -97,7 +98,10 @@
     "syncInfo": "Your cart will be synchronized with the server before checkout.",
     "syncing": "Synchronizing...",
     "syncSuccess": "Cart synchronized successfully",
-    "syncError": "Failed to sync cart. Please try again."
+    "syncError": "Failed to sync cart. Please try again.",
+    "cartTotal": "Cart Total",
+    "cartTotalBeforeDiscount": "Cart Total Before Discount",
+    "totalDiscount": "Total Discount"
   },
   "emptyCart": {
     "title": "Shopping Cart is Empty",
