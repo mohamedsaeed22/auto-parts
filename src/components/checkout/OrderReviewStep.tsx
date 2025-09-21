@@ -83,7 +83,7 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
 
       // Call the original onPlaceOrder callback with created order
       // result is ApiResponse<{ order: Order }>
-      if (result && (result as any).data && (result as any).data.order) {
+      if (result && result.data && result.data.order) {
         // Clear coupon from localStorage on successful order
         try {
           localStorage.removeItem("auto_parts_coupon_code");
@@ -94,7 +94,7 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
           console.error("Failed to remove coupon from localStorage:", error);
         }
 
-        onPlaceOrder((result as any).data.order);
+        onPlaceOrder(result.data.order);
       } else {
         showError(
           t("orderReview.orderError", {
@@ -125,15 +125,20 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
 
       <div className="p-6 space-y-6">
         {/* Order Items Summary */}
-        <div className="bg-logo-gold/5 rounded-xl p-4">
-          <h3 className="font-semibold text-logo-black mb-3 flex items-center">
-            <ShoppingBag className="w-4 h-4 mx-2 text-logo-gold" />
+        <div className="bg-gradient-to-br from-logo-gold/5 to-logo-gold/10 rounded-xl p-5 border border-logo-gold/20">
+          <h3 className="font-semibold text-logo-black mb-4 flex items-center">
+            <div className="p-2 bg-logo-gold/20 rounded-lg mx-2">
+              <ShoppingBag className="w-4 h-4 text-logo-gold" />
+            </div>
             {t("orderReview.products")} ({totalItems})
           </h3>
           <div className="space-y-3">
             {items.map((item) => (
-              <div key={item.id} className="flex items-center space-x-3">
-                <div className="relative w-12 h-12 bg-white rounded-lg overflow-hidden">
+              <div
+                key={item.id}
+                className="flex items-center space-x-3 bg-white/60 rounded-lg p-3 border border-logo-gold/10"
+              >
+                <div className="relative w-14 h-14 bg-white rounded-lg overflow-hidden shadow-sm">
                   <Image
                     src={item.image}
                     alt={item.title}
@@ -142,91 +147,155 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
                   />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-sm font-medium text-logo-black">
+                  <h4 className="text-sm font-medium text-logo-black leading-tight">
                     {item.title}
                   </h4>
-                  <p className="text-xs text-neutral-600">
+                  <p className="text-xs text-neutral-600 mt-1">
                     {t("orderReview.quantity")}: {item.quantity}
                   </p>
                 </div>
-                <p className="text-sm font-medium text-logo-black">
-                  {(item.price * item.quantity).toFixed(2)} {t("currency")}
-                </p>
+                <div className="text-right">
+                  <p className="text-sm font-semibold text-logo-black">
+                    {(item.price * item.quantity).toFixed(2)} {t("currency")}
+                  </p>
+                  <p className="text-xs text-neutral-500">
+                    {item.price.toFixed(2)} {t("currency")}{" "}
+                    {isRTL ? "لكل قطعه" : "each piece"}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
         </div>
 
         {/* Shipping Address */}
-        <div className="bg-logo-gold/5 rounded-xl p-4">
-          <h3 className="font-semibold text-logo-black mb-3 flex items-center">
-            <MapPin className="w-4 h-4 mx-2 text-logo-gold" />
+        <div className="bg-gradient-to-br from-logo-gold/5 to-logo-gold/10 rounded-xl p-5 border border-logo-gold/20">
+          <h3 className="font-semibold text-logo-black mb-4 flex items-center">
+            <div className="p-2 bg-logo-gold/20 rounded-lg mx-2">
+              <MapPin className="w-4 h-4 text-logo-gold" />
+            </div>
             {t("orderReview.shippingAddress")}
           </h3>
           {selectedAddress ? (
-            <div className="text-sm text-neutral-700 space-y-1">
-              <p className="font-medium text-logo-black">
-                {selectedAddress.name}
-              </p>
-              <p>{selectedAddress.detailed_address}</p>
-              <p>{selectedAddress.city}</p>
-              <p dir="ltr">{selectedAddress.phone}</p>
-              <p className="text-xs text-neutral-500">
-                {selectedAddress.address_type === "home"
-                  ? t("address.home", { defaultValue: "Home" })
-                  : selectedAddress.address_type === "office"
-                  ? t("address.office", { defaultValue: "Office" })
-                  : t("address.other", { defaultValue: "Other" })}
-              </p>
+            <div className="bg-white/60 rounded-lg p-4 border border-logo-gold/10">
+              <div className="text-sm text-neutral-700 space-y-2">
+                <div className="flex items-center justify-between">
+                  <p className="font-semibold text-logo-black text-base">
+                    {selectedAddress.name}
+                  </p>
+                  <span className="px-2 py-1 bg-logo-gold/20 text-logo-gold text-xs rounded-full">
+                    {selectedAddress.address_type === "home"
+                      ? t("address.home", { defaultValue: "Home" })
+                      : selectedAddress.address_type === "office"
+                      ? t("address.office", { defaultValue: "Office" })
+                      : t("address.other", { defaultValue: "Other" })}
+                  </span>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-neutral-700">
+                    {selectedAddress.detailed_address}
+                  </p>
+                  <p className="text-neutral-700">{selectedAddress.city}</p>
+                  <p dir="ltr" className="text-neutral-700 font-medium">
+                    {selectedAddress.phone}
+                  </p>
+                </div>
+              </div>
             </div>
           ) : (
-            <div className="text-sm text-neutral-600">
-              {t("shipping.selectAddress")}
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <p className="text-sm text-amber-700">
+                {t("shipping.selectAddress")}
+              </p>
             </div>
           )}
         </div>
 
         {/* Payment Method */}
-        <div className="bg-logo-gold/5 rounded-xl p-4">
-          <h3 className="font-semibold text-logo-black mb-3 flex items-center">
-            <CreditCard className="w-4 h-4 mx-2 text-logo-gold" />
+        <div className="bg-gradient-to-br from-logo-gold/5 to-logo-gold/10 rounded-xl p-5 border border-logo-gold/20">
+          <h3 className="font-semibold text-logo-black mb-4 flex items-center">
+            <div className="p-2 bg-logo-gold/20 rounded-lg mx-2">
+              <CreditCard className="w-4 h-4 text-logo-gold" />
+            </div>
             {t("orderReview.paymentMethod")}
           </h3>
-          <p className="text-sm text-neutral-700">
-            {paymentMethod === "credit_card"
-              ? t("orderReview.creditCard")
-              : paymentMethod === "cash"
-              ? t("orderReview.cashOnDelivery")
-              : paymentMethod === "paypal"
-              ? "PayPal"
-              : paymentMethod === "stripe"
-              ? "Stripe"
-              : paymentMethod === "bank_transfer"
-              ? t("payment.bankTransfer", { defaultValue: "Bank Transfer" })
-              : "-"}
-          </p>
+          <div className="bg-white/60 rounded-lg p-4 border border-logo-gold/10">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-logo-gold/20 rounded-lg">
+                <CreditCard className="w-5 h-5 text-logo-gold" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-logo-black">
+                  {paymentMethod === "credit_card"
+                    ? t("orderReview.creditCard")
+                    : paymentMethod === "cash"
+                    ? t("orderReview.cashOnDelivery")
+                    : paymentMethod === "paypal"
+                    ? "PayPal"
+                    : paymentMethod === "stripe"
+                    ? "Stripe"
+                    : paymentMethod === "bank_transfer"
+                    ? t("payment.bankTransfer", {
+                        defaultValue: "Bank Transfer",
+                      })
+                    : "-"}
+                </p>
+                <p className="text-xs text-neutral-500">
+                  {paymentMethod === "credit_card"
+                    ? t("payment.creditCardDesc", {
+                        defaultValue: "Visa, MasterCard, American Express",
+                      })
+                    : paymentMethod === "cash"
+                    ? t("payment.cashOnDeliveryDesc", {
+                        defaultValue: "Pay cash when order arrives",
+                      })
+                    : isRTL
+                    ? "طريقة دفع آمنة"
+                    : "Secure payment method"}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Order Notes */}
-        <div className="bg-logo-gold/5 rounded-xl p-4">
-          <h3 className="font-semibold text-logo-black mb-3 flex items-center">
-            <FileText className="w-4 h-4 mx-2 text-logo-gold" />
-            {t("orderReview.notes", { defaultValue: "Order Notes" })}
+        <div className="bg-gradient-to-br from-logo-gold/5 to-logo-gold/10 rounded-xl p-5 border border-logo-gold/20">
+          <h3 className="font-semibold text-logo-black mb-4 flex items-center">
+            <div className="p-2 bg-logo-gold/20 rounded-lg mx-2">
+              <FileText className="w-4 h-4 text-logo-gold" />
+            </div>
+            {t("orderReview.notes")}
           </h3>
-          <Textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder={t("orderReview.notesPlaceholder", {
-              defaultValue:
-                "Add any special instructions or notes for your order (optional)",
-            })}
-            className="min-h-[80px] resize-none border-logo-gold/30 focus:border-logo-gold"
-            maxLength={500}
-          />
-          <p className="text-xs text-neutral-500 mt-1">
-            {notes.length}/500{" "}
-            {t("orderReview.characters", { defaultValue: "characters" })}
-          </p>
+          <div className="space-y-3">
+            <Textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder={t("orderReview.notesPlaceholder")}
+              className="min-h-[100px] resize-none border-logo-gold/30 focus:border-logo-gold focus:ring-2 focus:ring-logo-gold/20 transition-all duration-200 bg-white/80 backdrop-blur-sm"
+              maxLength={500}
+              dir={isRTL ? "rtl" : "ltr"}
+            />
+            <div className="flex justify-between items-center">
+              <p className="text-xs text-neutral-500">
+                {t("orderReview.characters")}: {notes.length}/500
+              </p>
+              {notes.length > 400 && (
+                <p className="text-xs text-amber-600 font-medium">
+                  {isRTL ? "اقتربت من الحد الأقصى" : "Approaching limit"}
+                </p>
+              )}
+            </div>
+            {notes.length > 0 && (
+              <div className="bg-white/60 rounded-lg p-3 border border-logo-gold/20">
+                <p className="text-xs text-neutral-600 mb-1">
+                  {isRTL ? "معاينة الملاحظة:" : "Note preview:"}
+                </p>
+                <p className="text-sm text-logo-black leading-relaxed">
+                  {notes}
+                </p>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Address Warning */}
@@ -241,11 +310,11 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
           </div>
         )}
 
-        <div className="flex gap-2">
+        <div className="flex gap-3 pt-4">
           <Button
             variant="outline"
             onClick={onBack}
-            className="flex-1 py-3 flex items-center border-logo-gold text-logo-black hover:bg-logo-gold/10 hover:text-logo-black"
+            className="flex-1 py-4 flex items-center justify-center border-logo-gold text-logo-black hover:bg-logo-gold/10 hover:text-logo-black transition-all duration-200 font-medium"
           >
             {isRTL ? (
               <>
@@ -267,7 +336,7 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
               selectedAddress?.id === undefined ||
               selectedAddress?.id === null
             }
-            className="flex-1 bg-logo-gold hover:bg-logo-gold/90 text-white py-3 flex items-center justify-center disabled:bg-logo-gold/50 disabled:text-white/70"
+            className="flex-1 bg-gradient-to-r from-logo-gold to-logo-gold/90 hover:from-logo-gold/90 hover:to-logo-gold text-white py-4 flex items-center justify-center disabled:from-logo-gold/50 disabled:to-logo-gold/50 disabled:text-white/70 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl"
           >
             {isProcessing || isCreatingOrder ? (
               <>
