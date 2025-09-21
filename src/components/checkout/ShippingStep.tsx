@@ -88,41 +88,54 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
       </div>
 
       <div className="p-6">
-        <div className="space-y-4 mb-6">
+        <div className="mb-6">
           {hasAddresses ? (
-            addresses.map((address) => (
-              <div
-                key={address.id}
-                className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${
-                  selectedAddress === address.id
-                    ? "border-logo-gold bg-logo-gold/10 shadow-md"
-                    : "border-neutral-200 hover:border-logo-gold/40"
-                }`}
-                onClick={() => onAddressSelect(address.id)}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center mb-2 space-x-2">
-                      <span className="font-semibold text-logo-black">
-                        {address.name}
-                      </span>
-                      {address.is_default && (
-                        <span className="bg-logo-gold/20 text-logo-black text-xs font-medium px-2 py-1 rounded-full">
-                          {t("shipping.default")}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-neutral-700">{address.city}</p>
-                    <p className="text-neutral-700">
-                      {address.detailed_address}
-                    </p>
-                    <p className="text-neutral-700" dir="ltr">
-                      {address.phone}
-                    </p>
-                  </div>
+            <>
+              {addresses.length > 3 && (
+                <div className="mb-3 p-2 bg-logo-gold/5 border border-logo-gold/20 rounded-lg">
+                  <p className="text-xs text-logo-gold font-medium text-center">
+                    {isRTL
+                      ? `لديك ${addresses.length} عناوين محفوظة - يمكنك التمرير للأسفل لرؤية المزيد`
+                      : `You have ${addresses.length} saved addresses - scroll down to see more`}
+                  </p>
                 </div>
+              )}
+              <div className="max-h-96 overflow-y-auto pr-2 space-y-4 scrollbar-thin scrollbar-thumb-logo-gold/30 scrollbar-track-transparent hover:scrollbar-thumb-logo-gold/50 scrollbar-thumb-rounded-full border border-logo-gold/10 rounded-lg p-2 bg-gradient-to-b from-logo-gold/5 to-transparent">
+                {addresses.map((address) => (
+                  <div
+                    key={address.id}
+                    className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${
+                      selectedAddress === address.id
+                        ? "border-logo-gold bg-logo-gold/10 shadow-md"
+                        : "border-neutral-200 hover:border-logo-gold/40"
+                    }`}
+                    onClick={() => onAddressSelect(address.id)}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center mb-2 space-x-2">
+                          <span className="font-semibold text-logo-black">
+                            {address.name}
+                          </span>
+                          {address.is_default && (
+                            <span className="bg-logo-gold/20 text-logo-black text-xs font-medium px-2 py-1 rounded-full">
+                              {t("shipping.default")}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-neutral-700">{address.city}</p>
+                        <p className="text-neutral-700">
+                          {address.detailed_address}
+                        </p>
+                        <p className="text-neutral-700" dir="ltr">
+                          {address.phone}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))
+            </>
           ) : (
             <div className="p-4 border-2 border-dashed border-neutral-300 rounded-xl text-center text-neutral-600">
               {t("shipping.noAddresses", "No saved addresses yet.")}
