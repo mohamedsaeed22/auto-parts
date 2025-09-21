@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Truck, ArrowLeft, ArrowRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
@@ -16,11 +16,13 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
+import { AddressForm } from "@/components/address";
+import { showSuccess, showError } from "@/lib/toast";
+import type { AddressFormData } from "@/lib/validations/addressSchema";
 
 import { Address } from "@/services/api/types";
 
 interface ShippingStepProps {
-  savedAddresses: Address[];
   selectedAddress: number | null;
   onAddressSelect: (id: number) => void;
   onNext: () => void;
@@ -28,7 +30,6 @@ interface ShippingStepProps {
 }
 
 const ShippingStep: React.FC<ShippingStepProps> = ({
-  savedAddresses,
   selectedAddress,
   onAddressSelect,
   onNext,
@@ -37,27 +38,26 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
   const { t, i18n } = useTranslation("checkout");
   const isRTL = i18n.language === "ar";
   const { data: addressesResp } = useGetAddressesQuery();
-  const [createAddress] = useCreateAddressMutation();
+  const [createAddress, { isLoading: isCreating }] = useCreateAddressMutation();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [formState, setFormState] = useState({
-    address_type: "home" as "home" | "office" | "other",
-    name: "",
-    phone: "",
-    city: "",
-    detailed_address: "",
-    postal_code: "",
-    is_default: false,
-  });
 
-  const addresses = addressesResp?.data?.addresses || [];
+  const addresses = useMemo(
+    () => addressesResp?.data?.addresses || [],
+    [addressesResp?.data?.addresses]
+  );
   const hasAddresses = addresses.length > 0;
 
-  const handleCreateAddress = async () => {
+  const handleCreateAddress = async (data: AddressFormData) => {
     try {
-      await createAddress(formState).unwrap();
+      const addressData = {
+        ...data,
+        is_default: data.is_default || false,
+      };
+      await createAddress(addressData).unwrap();
+      showSuccess(t("addresses.success.addSuccess"));
       setIsDialogOpen(false);
-    } catch (e) {
-      // silently fail; upstream toasts (if any) will handle
+    } catch {
+      showError(t("addresses.errors.addFailed"));
     }
   };
 
@@ -66,7 +66,7 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
     if (
       hasAddresses &&
       (!selectedAddress ||
-        !addresses.some((a: any) => a.id === selectedAddress))
+        !addresses.some((a: Address) => a.id === selectedAddress))
     ) {
       onAddressSelect(addresses[0].id);
     }
@@ -115,7 +115,6 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
                       {address.phone}
                     </p>
                   </div>
-                 
                 </div>
               </div>
             ))
@@ -148,111 +147,14 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
                 )}
               </DialogDescription>
             </DialogHeader>
-            <div className="grid grid-cols-1 gap-3">
-              <div>
-                <label className="block text-sm font-medium text-logo-black">
-                  {t("address.name")}
-                </label>
-                <input
-                  className="mt-1 w-full border border-neutral-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-logo-gold"
-                  value={formState.name}
-                  onChange={(e) =>
-                    setFormState({ ...formState, name: e.target.value })
-                  }
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-logo-black">
-                  {t("address.phone")}
-                </label>
-                <input
-                  className="mt-1 w-full border border-neutral-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-logo-gold"
-                  value={formState.phone}
-                  onChange={(e) =>
-                    setFormState({ ...formState, phone: e.target.value })
-                  }
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-logo-black">
-                  {t("address.city")}
-                </label>
-                <input
-                  className="mt-1 w-full border border-neutral-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-logo-gold"
-                  value={formState.city}
-                  onChange={(e) =>
-                    setFormState({ ...formState, city: e.target.value })
-                  }
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-logo-black">
-                  {t("address.address")}
-                </label>
-                <input
-                  className="mt-1 w-full border border-neutral-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-logo-gold"
-                  value={formState.detailed_address}
-                  onChange={(e) =>
-                    setFormState({
-                      ...formState,
-                      detailed_address: e.target.value,
-                    })
-                  }
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium text-logo-black">
-                    {t("address.postalCode")}
-                  </label>
-                  <input
-                    className="mt-1 w-full border border-neutral-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-logo-gold"
-                    value={formState.postal_code}
-                    onChange={(e) =>
-                      setFormState({
-                        ...formState,
-                        postal_code: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-logo-black">
-                    {t("address.type")}
-                  </label>
-                  <select
-                    className="mt-1 w-full border border-neutral-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-logo-gold bg-white"
-                    value={formState.address_type}
-                    onChange={(e) =>
-                      setFormState({
-                        ...formState,
-                        address_type: e.target.value as any,
-                      })
-                    }
-                  >
-                    <option value="home">
-                      {t("address.typeHome", "Home")}
-                    </option>
-                    <option value="office">
-                      {t("address.typeOffice", "Office")}
-                    </option>
-                    <option value="other">
-                      {t("address.typeOther", "Other")}
-                    </option>
-                  </select>
-                </div>
-              </div>
-              <label className="inline-flex items-center gap-2 text-sm text-logo-black">
-                <input
-                  type="checkbox"
-                  checked={formState.is_default}
-                  onChange={(e) =>
-                    setFormState({ ...formState, is_default: e.target.checked })
-                  }
-                />
-                {t("address.makeDefault")}
-              </label>
-            </div>
+            <AddressForm
+              onSubmit={handleCreateAddress}
+              onCancel={() => setIsDialogOpen(false)}
+              isCreating={isCreating}
+              showCancelButton={false}
+              submitButtonText={t("address.add")}
+              className="mt-4"
+            />
             <DialogFooter className="mt-4">
               <DialogClose asChild>
                 <Button
@@ -262,12 +164,6 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
                   {t("dialog.cancel", "Cancel")}
                 </Button>
               </DialogClose>
-              <Button
-                onClick={handleCreateAddress}
-                className="bg-logo-gold hover:bg-logo-gold/90 text-white"
-              >
-                {t("address.add")}
-              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

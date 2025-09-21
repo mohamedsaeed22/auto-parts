@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Plus,
   Edit,
@@ -14,8 +12,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
-import FormInput from "@/components/ui/FormInput";
-import FormSelect from "@/components/ui/FormSelect";
+import { AddressForm } from "@/components/address";
 import { useTranslation } from "react-i18next";
 import {
   useGetAddressesQuery,
@@ -24,11 +21,8 @@ import {
   useDeleteAddressMutation,
 } from "@/services/api";
 import { showSuccess, showError } from "@/lib/toast";
-import {
-  addressSchema,
-  addressDefaultValues,
-  type AddressFormData,
-} from "@/lib/validations/addressSchema";
+import type { AddressFormData } from "@/lib/validations/addressSchema";
+import { addressDefaultValues } from "@/lib/validations/addressSchema";
 import type { Address } from "@/services/api/types";
 
 export default function AddressesPage() {
@@ -40,29 +34,6 @@ export default function AddressesPage() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
   const [formKey, setFormKey] = useState(0);
-
-  // React Hook Form setup
-  const form = useForm<AddressFormData>({
-    resolver: zodResolver(addressSchema),
-    defaultValues: addressDefaultValues,
-    mode: "onSubmit",
-  });
-
-  const {
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-    setValue,
-    watch,
-  } = form;
-
-  // Handler for address type change
-  const handleAddressTypeChange = (value: string) => {
-    setValue("address_type", value as "home" | "office" | "other", {
-      shouldValidate: true,
-      shouldDirty: true,
-    });
-  };
 
   // API hooks
   const {
@@ -80,40 +51,12 @@ export default function AddressesPage() {
     [addressesResponse?.data?.addresses]
   );
 
-  // Effect to handle form updates when editing
-  useEffect(() => {
-    if (editingId && addresses.length > 0) {
-      const addressToEdit = addresses.find((addr) => addr.id === editingId);
-      if (addressToEdit) {
-        // Use reset with the address data
-        reset({
-          address_type: addressToEdit.address_type,
-          name: addressToEdit.name,
-          phone: addressToEdit.phone,
-          city: addressToEdit.city,
-          detailed_address: addressToEdit.detailed_address,
-          postal_code: addressToEdit.postal_code,
-          is_default: addressToEdit.is_default,
-        });
-      }
-    }
-  }, [editingId, addresses, reset]);
-
-  // Effect to track form value changes
-  useEffect(() => {
-    const subscription = watch((value) => {
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
-
   const onSubmit = async (data: AddressFormData) => {
     try {
       const addressData = {
         ...data,
         is_default: data.is_default || false,
-        address_type: data.address_type as "home" | "office" | "other",
       };
-
 
       if (editingId) {
         await updateAddress({
@@ -137,8 +80,6 @@ export default function AddressesPage() {
   };
 
   const handleEdit = (address: Address) => {
-
-    // Set editing state - useEffect will handle form population
     setEditingId(address.id);
     setShowAddForm(true);
     setFormKey((prev) => prev + 1); // Force form re-render
@@ -163,11 +104,10 @@ export default function AddressesPage() {
   };
 
   const resetForm = () => {
-    reset(addressDefaultValues);
     setShowAddForm(false);
     setEditingId(null);
     setFormKey((prev) => prev + 1);
-    };
+  };
 
   const handleCancel = () => {
     resetForm();
@@ -231,170 +171,20 @@ export default function AddressesPage() {
             {editingId ? t("addresses.editAddress") : t("addresses.addAddress")}
           </h3>
 
-          <form
+          <AddressForm
             key={formKey}
-            onSubmit={handleSubmit(onSubmit)}
-            className="space-y-4"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Address Type Select */}
-              <FormSelect
-                key={`address-type-${formKey}-${watch("address_type")}`}
-                label={t("addresses.type")}
-                placeholder={t("addresses.selectType", "Select address type")}
-                value={watch("address_type")}
-                onValueChange={handleAddressTypeChange}
-                error={
-                  errors.address_type?.message
-                    ? t(errors.address_type.message)
-                    : undefined
-                }
-                required
-                options={[
-                  { value: "home", label: t("addresses.home") },
-                  { value: "office", label: t("addresses.office") },
-                  { value: "other", label: t("addresses.other") },
-                ]}
-              />
-
-              {/* Name Input */}
-              <FormInput
-                label={t("addresses.name")}
-                placeholder={t("addresses.placeholders.fullName")}
-                value={watch("name")}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setValue("name", e.target.value, {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                  })
-                }
-                error={
-                  errors.name?.message ? t(errors.name.message) : undefined
-                }
-                required
-              />
-
-              {/* Phone Input */}
-              <FormInput
-                label={t("addresses.phone")}
-                type="tel"
-                placeholder={t("addresses.placeholders.phone")}
-                value={watch("phone")}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setValue("phone", e.target.value, {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                  })
-                }
-                error={
-                  errors.phone?.message ? t(errors.phone.message) : undefined
-                }
-                required
-              />
-
-              {/* City Input */}
-              <FormInput
-                label={t("addresses.city")}
-                placeholder={t("addresses.placeholders.city")}
-                value={watch("city")}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setValue("city", e.target.value, {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                  })
-                }
-                error={
-                  errors.city?.message ? t(errors.city.message) : undefined
-                }
-                required
-              />
-
-              {/* Detailed Address Textarea */}
-              <div className="md:col-span-2">
-                <FormInput
-                  label={t("addresses.address")}
-                  type="textarea"
-                  placeholder={t("addresses.placeholders.detailedAddress")}
-                  value={watch("detailed_address")}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                    setValue("detailed_address", e.target.value, {
-                      shouldValidate: true,
-                      shouldDirty: true,
-                    })
-                  }
-                  error={
-                    errors.detailed_address?.message
-                      ? t(errors.detailed_address.message)
-                      : undefined
-                  }
-                  required
-                  rows={3}
-                />
-              </div>
-
-              {/* Postal Code Input */}
-              <FormInput
-                label={t("addresses.postalCode")}
-                placeholder={t("addresses.placeholders.postalCode")}
-                value={watch("postal_code")}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setValue("postal_code", e.target.value, {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                  })
-                }
-                error={
-                  errors.postal_code?.message
-                    ? t(errors.postal_code.message)
-                    : undefined
-                }
-                required
-              />
-
-              {/* Default Checkbox */}
-              <div
-                className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}
-              >
-                <input
-                  type="checkbox"
-                  id="is_default"
-                  checked={watch("is_default") || false}
-                  onChange={(e) =>
-                    setValue("is_default", e.target.checked, {
-                      shouldValidate: true,
-                      shouldDirty: true,
-                    })
-                  }
-                  className="rounded"
-                />
-                <label htmlFor="is_default" className="text-sm text-gray-700">
-                  {t("addresses.default")}
-                </label>
-              </div>
-            </div>
-
-            {/* Form Actions */}
-            <div className={`flex gap-2 mt-6 ${isRTL ? "flex-row" : ""}`}>
-              <Button
-                type="submit"
-                disabled={isSubmitting || isCreating || isUpdating}
-                className="flex items-center gap-2"
-              >
-                {(isSubmitting || isCreating || isUpdating) && (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                )}
-                {editingId ? t("addresses.update") : t("addresses.save")}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleCancel}
-                disabled={isSubmitting || isCreating || isUpdating}
-              >
-                {t("addresses.cancel")}
-              </Button>
-            </div>
-          </form>
+            initialData={
+              editingId
+                ? addresses.find((addr) => addr.id === editingId)
+                : undefined
+            }
+            isEditing={!!editingId}
+            onSubmit={onSubmit}
+            onCancel={handleCancel}
+            isCreating={isCreating}
+            isUpdating={isUpdating}
+            formKey={formKey}
+          />
         </div>
       )}
 
