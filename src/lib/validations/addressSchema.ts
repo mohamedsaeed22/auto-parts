@@ -13,8 +13,6 @@ export const addressSchema = z.object({
   phone: z
     .string()
     .min(1, "addresses.validation.phone.required")
-    .min(10, "addresses.validation.phone.length")
-    .max(14, "addresses.validation.phone.length")
     .regex(
       /^(\+966|00966|966|0)?[5][0-9]{8}$/,
       "addresses.validation.phone.invalid"

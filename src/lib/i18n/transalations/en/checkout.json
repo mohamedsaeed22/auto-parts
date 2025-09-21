@@ -38,6 +38,14 @@
     "add": "Add Address",
     "update": "Update Address"
   },
+  "addresses": {
+    "success": {
+      "addSuccess": "Address added successfully!"
+    },
+    "errors": {
+      "addFailed": "Failed to add address. Please try again."
+    }
+  },
   "dialog": { "cancel": "Cancel" },
   "payment": {
     "title": "Payment Method",

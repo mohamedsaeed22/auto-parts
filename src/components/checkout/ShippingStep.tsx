@@ -53,9 +53,14 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
         ...data,
         is_default: data.is_default || false,
       };
-      await createAddress(addressData).unwrap();
+      const result = await createAddress(addressData).unwrap();
       showSuccess(t("addresses.success.addSuccess"));
       setIsDialogOpen(false);
+
+      // Auto-select the newly created address
+      if (result?.data?.id) {
+        onAddressSelect(result.data.id);
+      }
     } catch {
       showError(t("addresses.errors.addFailed"));
     }
