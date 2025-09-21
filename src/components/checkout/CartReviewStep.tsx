@@ -220,7 +220,7 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
                     )}
                   </div>
                 )}
-                <div
+                {/* <div
                   className={`flex items-center mb-3 ${
                     isRTL ? "space-x space-x-4" : "space-x-4"
                   }`}
@@ -228,10 +228,10 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
                   <span className="bg-logo-gold/15 text-logo-black text-xs font-medium px-2 py-1 rounded-full">
                     {t("cartReview.inStock")}
                   </span>
-                </div>
+                </div> */}
 
                 <div
-                  className={`flex items-center ${
+                  className={`flex items-center mt-4 ${
                     isRTL ? "space-x space-x-4" : "space-x-4"
                   }`}
                 >
