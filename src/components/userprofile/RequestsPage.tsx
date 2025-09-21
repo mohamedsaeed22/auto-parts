@@ -33,23 +33,7 @@ import { useLocale } from "@/hooks/useLocale";
 import { redirectToCompleteRegistration } from "@/lib/registrationRedirect";
 import Image from "next/image";
 import AddressSelectionDialog from "./AddressSelectionDialog";
-
-// Type for address data in request approval
-type RequestAddressData = {
-  address_id?: number;
-  address?: {
-    first_name: string;
-    last_name: string;
-    phone: string;
-    address: string;
-    apartment?: string;
-    city: string;
-    state?: string;
-    country: string;
-    zip_code: string;
-    notes?: string;
-  };
-};
+import type { ApproveRequestRequest } from "@/services/api/requestsApi";
 
 const statusColors = {
   draft: "bg-gray-100 text-gray-800 border-gray-200",
@@ -204,32 +188,18 @@ export default function RequestsPage() {
   const handleApproveRequest = async (
     requestId: number,
     status: "accepted" | "rejected",
-    addressData?: RequestAddressData
+    addressData?: Omit<ApproveRequestRequest, "status">
   ) => {
     try {
-      const requestData: {
-        status: "accepted" | "rejected";
-        address_id?: number;
-        address?: {
-          first_name: string;
-          last_name: string;
-          phone: string;
-          address: string;
-          apartment?: string;
-          city: string;
-          state?: string;
-          country: string;
-          zip_code: string;
-          notes?: string;
-        };
-      } = { status };
+      const requestData: ApproveRequestRequest = { status };
 
       // Add address data if provided
       if (addressData) {
         if (addressData.address_id) {
           requestData.address_id = addressData.address_id;
-        } else if (addressData.address) {
-          requestData.address = addressData.address;
+        } else {
+          // Add all address fields for new address
+          Object.assign(requestData, addressData);
         }
       }
 
@@ -248,7 +218,9 @@ export default function RequestsPage() {
     setIsAddressDialogOpen(true);
   };
 
-  const handleAddressSelected = (addressData: RequestAddressData) => {
+  const handleAddressSelected = (
+    addressData: Omit<ApproveRequestRequest, "status">
+  ) => {
     if (pendingRequestId) {
       handleApproveRequest(pendingRequestId, "accepted", addressData);
     }

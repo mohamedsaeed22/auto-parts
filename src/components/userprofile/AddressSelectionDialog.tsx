@@ -16,28 +16,12 @@ import {
 import { useGetAddressesQuery } from "@/services/api";
 import { Loader2, MapPin, Plus, Check } from "lucide-react";
 import type { Address } from "@/services/api/types";
-
-// Type for address data in request approval
-type RequestAddressData = {
-  address_id?: number;
-  address?: {
-    first_name: string;
-    last_name: string;
-    phone: string;
-    address: string;
-    apartment?: string;
-    city: string;
-    state?: string;
-    country: string;
-    zip_code: string;
-    notes?: string;
-  };
-};
+import type { ApproveRequestRequest } from "@/services/api/requestsApi";
 
 interface AddressSelectionDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectAddress: (addressData: RequestAddressData) => void;
+  onSelectAddress: (addressData: Omit<ApproveRequestRequest, "status">) => void;
   isLoading?: boolean;
 }
 
@@ -94,10 +78,10 @@ export default function AddressSelectionDialog({
   const handleCreateNewAddress = () => {
     // Send the new address data directly to the request (don't save to user addresses)
     const fullAddressData = {
+      address: newAddressForm.address,
       first_name: newAddressForm.first_name,
       last_name: newAddressForm.last_name,
       phone: newAddressForm.phone,
-      address: newAddressForm.address,
       apartment: newAddressForm.apartment,
       city: newAddressForm.city,
       state: newAddressForm.state,
@@ -106,7 +90,7 @@ export default function AddressSelectionDialog({
       notes: newAddressForm.notes,
     };
 
-    onSelectAddress({ address: fullAddressData });
+    onSelectAddress(fullAddressData);
   };
 
   const handleInputChange = (field: keyof NewAddressForm, value: string) => {

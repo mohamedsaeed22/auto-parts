@@ -83,18 +83,16 @@ export interface RequestsResponse {
 export interface ApproveRequestRequest {
   status: "accepted" | "rejected";
   address_id?: number;
-  address?: {
-    first_name: string;
-    last_name: string;
-    phone: string;
-    address: string;
-    apartment?: string;
-    city: string;
-    state?: string;
-    country: string;
-    zip_code: string;
-    notes?: string;
-  };
+  address?: string;
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+  apartment?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  zip_code?: string;
+  notes?: string;
 }
 
 // Approve/Reject request response interface
