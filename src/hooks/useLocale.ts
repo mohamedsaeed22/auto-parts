@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useRouter, usePathname } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { setLocale } from "@/store/slices/localeSlice";
 import { RootState } from "@/store";
 import { i18nConfig } from "@/lib/i18n";
@@ -12,6 +13,8 @@ export const useLocale = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { i18n } = useTranslation();
+  const queryClient = useQueryClient();
+  const invalidationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Get current locale from Redux state
   const currentLocale = useSelector(
@@ -25,31 +28,18 @@ export const useLocale = () => {
     }
   }, [i18n.language, currentLocale, dispatch]);
 
-  const changeLocale = (newLocale: string) => {
-    // Update Redux state
-    dispatch(setLocale(newLocale));
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (invalidationTimeoutRef.current) {
+        clearTimeout(invalidationTimeoutRef.current);
+      }
+    };
+  }, []);
 
-    // Invalidate cached queries so components refetch with the new locale
-    dispatch(
-      api.util.invalidateTags([
-        "Auth",
-        "Profile",
-        "Products",
-        "Categories",
-        "Brands",
-        "Cart",
-        "Wishlist",
-        "Favourites",
-        "Orders",
-        "Addresses",
-        "Requests",
-        "Banners",
-        "Offers",
-        "Sections",
-        "Partners",
-        "Settings",
-      ])
-    );
+  const changeLocale = (newLocale: string) => {
+    // Update Redux state first
+    dispatch(setLocale(newLocale));
 
     // Set a cookie for next-i18n-router to read the new locale
     const days = 30;
@@ -67,6 +57,35 @@ export const useLocale = () => {
     } else {
       router.push(pathname.replace(`/${currentLocale}`, `/${newLocale}`));
     }
+
+    // Clear any existing invalidation timeout to prevent multiple invalidations
+    if (invalidationTimeoutRef.current) {
+      clearTimeout(invalidationTimeoutRef.current);
+    }
+
+    // Invalidate cached queries after navigation to prevent duplicate requests
+    // Use setTimeout to ensure Redux state is updated and navigation is complete
+    invalidationTimeoutRef.current = setTimeout(() => {
+      // Only invalidate specific tags that need language updates
+      // This prevents unnecessary refetches of data that doesn't depend on language
+      dispatch(
+        api.util.invalidateTags([
+          "Products",
+          "Categories",
+          "Brands",
+          "Banners",
+          "Offers",
+          "Sections",
+          "Partners",
+        ])
+      );
+
+      // Also invalidate React Query cache for language-dependent data
+      queryClient.invalidateQueries({
+        queryKey: ["notifications"],
+        exact: false, // This will invalidate all notification queries regardless of parameters
+      });
+    }, 100); // Small delay to ensure state is updated
 
     router.refresh();
   };
