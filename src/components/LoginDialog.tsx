@@ -88,7 +88,7 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
       case "register":
         return t("registration.title");
       case "otp":
-        return t("step2");
+        return t("auth.step2");
       default:
         return t("login.title");
     }
