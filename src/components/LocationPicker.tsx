@@ -56,9 +56,7 @@ export default function LocationPicker({
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(
-    null
-  );
+  const [, setSelectedLocation] = useState<LocationData | null>(null);
   const [mapError, setMapError] = useState<string | null>(null);
   // Map is always visible - no need for showMap state
 
@@ -352,117 +350,117 @@ export default function LocationPicker({
   };
 
   // Use current location
-  // const useCurrentLocation = async () => {
-  //   if (!navigator.geolocation) {
-  //     showError(t("location.geolocationNotSupported"));
-  //     return;
-  //   }
+  const useCurrentLocation = async () => {
+    if (!navigator.geolocation) {
+      showError(t("location.geolocationNotSupported"));
+      return;
+    }
 
-  //   // Warn if not secure context (required by many browsers)
-  //   if (typeof window !== "undefined" && !window.isSecureContext) {
-  //     showError(
-  //       t(
-  //         "location.insecureContext",
-  //         "Location requires HTTPS. Please use a secure connection."
-  //       )
-  //     );
-  //     return;
-  //   }
+    // Warn if not secure context (required by many browsers)
+    if (typeof window !== "undefined" && !window.isSecureContext) {
+      showError(
+        t(
+          "location.insecureContext",
+          "Location requires HTTPS. Please use a secure connection."
+        )
+      );
+      return;
+    }
 
-  //   try {
-  //     // Preflight permission state when available to give immediate feedback
-  //     if (navigator.permissions && (navigator.permissions as any).query) {
-  //       try {
-  //         const status = await (navigator.permissions as any).query({
-  //           name: "geolocation",
-  //         });
-  //         if (status.state === "denied") {
-  //           showError(
-  //             t(
-  //               "location.permissionDenied",
-  //               "Location permission is denied. Enable it in your browser settings."
-  //             )
-  //           );
-  //           // Continue to allow manual search
-  //           return;
-  //         }
-  //       } catch {
-  //         // Ignore permission query errors
-  //       }
-  //     }
-  //   } catch {
-  //     // ignore
-  //   }
+    try {
+      // Preflight permission state when available to give immediate feedback
+      if (navigator.permissions && (navigator.permissions as any).query) {
+        try {
+          const status = await (navigator.permissions as any).query({
+            name: "geolocation",
+          });
+          if (status.state === "denied") {
+            showError(
+              t(
+                "location.permissionDenied",
+                "Location permission is denied. Enable it in your browser settings."
+              )
+            );
+            // Continue to allow manual search
+            return;
+          }
+        } catch {
+          // Ignore permission query errors
+        }
+      }
+    } catch {
+      // ignore
+    }
 
-  //   setIsLoading(true);
-  //   navigator.geolocation.getCurrentPosition(
-  //     (position) => {
-  //       const lat = position.coords.latitude;
-  //       const lng = position.coords.longitude;
+    setIsLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
 
-  //       updateMarkerPosition(lat, lng);
-  //       if (mapInstanceRef.current) {
-  //         mapInstanceRef.current.setCenter({ lat, lng });
-  //         mapInstanceRef.current.setZoom(15);
-  //       }
-  //       reverseGeocode(lat, lng);
-  //     },
-  //     (error) => {
-  //       // Provide a user-friendly message and keep the map usable
-  //       let message = t(
-  //         "location.geolocationError",
-  //         "Unable to access your location. Please enable location permissions or search manually."
-  //       );
-  //       if (error && typeof error === "object") {
-  //         const code = (error as GeolocationPositionError).code;
-  //         if (code === 1) {
-  //           message = t(
-  //             "location.permissionDenied",
-  //             "Location permission is denied. Enable it in your browser settings."
-  //           );
-  //         } else if (code === 2) {
-  //           message = t(
-  //             "location.positionUnavailable",
-  //             "Location information is unavailable. Trying again with fallback..."
-  //           );
-  //           // Try again quickly with reduced accuracy and different options
-  //           navigator.geolocation.getCurrentPosition(
-  //             (pos2) => {
-  //               const lat2 = pos2.coords.latitude;
-  //               const lng2 = pos2.coords.longitude;
-  //               updateMarkerPosition(lat2, lng2);
-  //               if (mapInstanceRef.current) {
-  //                 mapInstanceRef.current.setCenter({ lat: lat2, lng: lng2 });
-  //                 mapInstanceRef.current.setZoom(14);
-  //               }
-  //               reverseGeocode(lat2, lng2);
-  //             },
-  //             () => {
-  //               // Keep the message shown; user can search manually
-  //             },
-  //             {
-  //               enableHighAccuracy: false,
-  //               timeout: 7000,
-  //               maximumAge: 300000,
-  //             }
-  //           );
-  //         } else if (code === 3) {
-  //           message = t(
-  //             "location.timeout",
-  //             "Getting your location timed out. Try again or search manually."
-  //           );
-  //         }
-  //       }
-  //       showError(message);
-  //       setIsLoading(false);
-  //     },
-  //     {
-  //       enableHighAccuracy: true,
-  //       timeout: 10000,
-  //       maximumAge: 60000,
-  //     }
-  //   );
-  // };
+        updateMarkerPosition(lat, lng);
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.setCenter({ lat, lng });
+          mapInstanceRef.current.setZoom(15);
+        }
+        reverseGeocode(lat, lng);
+      },
+      (error) => {
+        // Provide a user-friendly message and keep the map usable
+        let message = t(
+          "location.geolocationError",
+          "Unable to access your location. Please enable location permissions or search manually."
+        );
+        if (error && typeof error === "object") {
+          const code = (error as GeolocationPositionError).code;
+          if (code === 1) {
+            message = t(
+              "location.permissionDenied",
+              "Location permission is denied. Enable it in your browser settings."
+            );
+          } else if (code === 2) {
+            message = t(
+              "location.positionUnavailable",
+              "Location information is unavailable. Trying again with fallback..."
+            );
+            // Try again quickly with reduced accuracy and different options
+            navigator.geolocation.getCurrentPosition(
+              (pos2) => {
+                const lat2 = pos2.coords.latitude;
+                const lng2 = pos2.coords.longitude;
+                updateMarkerPosition(lat2, lng2);
+                if (mapInstanceRef.current) {
+                  mapInstanceRef.current.setCenter({ lat: lat2, lng: lng2 });
+                  mapInstanceRef.current.setZoom(14);
+                }
+                reverseGeocode(lat2, lng2);
+              },
+              () => {
+                // Keep the message shown; user can search manually
+              },
+              {
+                enableHighAccuracy: false,
+                timeout: 7000,
+                maximumAge: 300000,
+              }
+            );
+          } else if (code === 3) {
+            message = t(
+              "location.timeout",
+              "Getting your location timed out. Try again or search manually."
+            );
+          }
+        }
+        showError(message);
+        setIsLoading(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000,
+      }
+    );
+  };
 
   // Effects
   useEffect(() => {
@@ -548,7 +546,7 @@ export default function LocationPicker({
                   className="pl-10"
                 />
               </div>
-              {/* <Button
+              <Button
                 type="button"
                 onClick={useCurrentLocation}
                 disabled={isLoading}
@@ -561,7 +559,7 @@ export default function LocationPicker({
                   <MapPin className="w-4 h-4" />
                 )}
                 {t("location.useCurrentLocation", "Use My Location")}
-              </Button> */}
+              </Button>
             </div>
           </div>
 
