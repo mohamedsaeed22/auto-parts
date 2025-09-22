@@ -12,11 +12,7 @@ type Props = {
   resources: unknown;
 };
 
-export default function I18NProvider({
-  children,
-  locale,
-  namespaces,
-}: Props) {
+export default function I18NProvider({ children, locale, namespaces }: Props) {
   const i18n = createInstance();
 
   // Initialize with backend resources loading
@@ -25,7 +21,7 @@ export default function I18NProvider({
     .use(
       resourcesToBackend(
         (language: string, namespace: string) =>
-          import(`@/lib/i18n/transalations/${language}/${namespace}.json`)
+          import(`@/lib/i18n/translations/${language}/${namespace}.json`)
       )
     )
     .init({

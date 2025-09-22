@@ -29,7 +29,7 @@ async function initTranslations(
     i18nInstance.use(
       resourcesToBackend(
         (language: string, namespace: string) =>
-          import(`@/lib/i18n/transalations/${language}/${namespace}.json`)
+          import(`@/lib/i18n/translations/${language}/${namespace}.json`)
       )
     );
   }
