@@ -37,6 +37,8 @@ import {
   type ProfileUpdateFormData,
 } from "@/lib/validations/profileSchema";
 import { useAuthContext } from "@/contexts/auth-context";
+import LocationPicker from "@/components/LocationPicker";
+import type { LocationData } from "@/components/LocationPicker";
 
 interface ProfileData {
   id: number;
@@ -168,6 +170,11 @@ export default function ProfilePage() {
       if (response.data && "user" in response.data) {
         const userData = (response.data as { user: ProfileData }).user;
         // Convert ProfileData to User type for auth context
+        const extractedPoints = (() => {
+          const maybe = (userData as { points?: unknown }).points;
+          return typeof maybe === "number" ? maybe : 0;
+        })();
+
         const userForAuth = {
           id: userData.id,
           name: userData.name,
@@ -185,6 +192,7 @@ export default function ProfilePage() {
           avatar: userData.avatar || undefined, // Convert null to undefined
           commercial_register: userData.commercial_register || undefined, // Convert null to undefined
           is_registration_complete: userData.is_registration_complete,
+          points: extractedPoints,
         };
         await updateUser(userForAuth);
       }
@@ -273,6 +281,46 @@ export default function ProfilePage() {
       }, 3000);
     } catch {
       showError(t("profile.copyFailed", "Failed to copy code to clipboard"));
+    }
+  };
+
+  const handleLocationSelect = (locationData: LocationData) => {
+    // Update coordinates
+    setValue("latitude", locationData.lat.toString(), {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+    setValue("longitude", locationData.lng.toString(), {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+
+    // Auto-fill address fields if provided by geocoder
+    const preferredAddress =
+      locationData.formatted_address || locationData.address;
+    if (preferredAddress) {
+      setValue("address", preferredAddress, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+    if (locationData.city) {
+      setValue("city", locationData.city, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+    if (locationData.state) {
+      setValue("state", locationData.state, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+    if (locationData.postal_code) {
+      setValue("zip", locationData.postal_code, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
     }
   };
 
@@ -709,31 +757,53 @@ export default function ProfilePage() {
         </div>
 
         {/* Latitude */}
-        <div className="col-span-full sm:col-span-1">
+        {/* <div className="col-span-full sm:col-span-1">
           <FormInput
             label={t("profile.latitude")}
             type="text"
             icon={Globe}
             disabled={true}
-            value={profile.latitude}
+            value={isEditing ? watch("latitude") : profile.latitude}
             onChange={() => {}} // No-op since it's disabled
             placeholder={t("profile.latitude")}
           />
-        </div>
+        </div> */}
 
         {/* Longitude */}
-        <div className="col-span-full sm:col-span-1">
+        {/* <div className="col-span-full sm:col-span-1">
           <FormInput
             label={t("profile.longitude")}
             type="text"
             icon={Globe}
             disabled={true}
-            value={profile.longitude}
+            value={isEditing ? watch("longitude") : profile.longitude}
             onChange={() => {}} // No-op since it's disabled
             placeholder={t("profile.longitude")}
           />
-        </div>
+        </div> */}
       </div>
+
+      {/* Location Picker - visible in edit mode */}
+      {isEditing && (
+        <div className="mt-6">
+          <div className="mb-3 flex items-center gap-2 text-gray-700">
+            <MapPin size={18} />
+            <h3 className="font-medium">
+              {t("profile.selectLocation", "Select Location on Map")}
+            </h3>
+          </div>
+          <LocationPicker
+            onLocationSelect={handleLocationSelect}
+            className="w-full h-96"
+          />
+          <p className="text-xs text-gray-500 mt-2">
+            {t(
+              "profile.locationHelp",
+              "Pick your exact location; address fields will auto-fill."
+            )}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
