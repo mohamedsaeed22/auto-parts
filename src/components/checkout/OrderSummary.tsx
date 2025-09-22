@@ -158,10 +158,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           // Save the valid coupon code to localStorage
           try {
             localStorage.setItem(COUPON_CODE_KEY, couponCode.trim());
-            console.log(
-              "Coupon code saved to localStorage:",
-              couponCode.trim()
-            );
           } catch (error) {
             console.error("Failed to save coupon code to localStorage:", error);
           }
@@ -204,8 +200,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
       // Refresh cart data to get default response
       dispatch(cartApi.util.invalidateTags(["Cart"]));
-
-      console.log("Coupon removed successfully");
     } catch (error) {
       console.error("Failed to remove coupon:", error);
     }
@@ -223,8 +217,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           savedCouponCode.trim() !== "" &&
           (!apiDiscountAmount || apiDiscountAmount <= 0)
         ) {
-          console.log("Auto-applying saved coupon code:", savedCouponCode);
-
           // Update the coupon code in the parent component
           onCouponCodeChange(savedCouponCode);
 
@@ -247,17 +239,10 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               if (data.discount_amount > 0) {
                 setApiDiscountAmount(data.discount_amount);
                 setIsCouponApplied(true);
-                console.log(
-                  "Coupon applied successfully with discount:",
-                  data.discount_amount
-                );
               } else {
                 // If the saved coupon is no longer valid, remove it from localStorage
                 localStorage.removeItem(COUPON_CODE_KEY);
                 setIsCouponApplied(false);
-                console.log(
-                  "Coupon no longer valid. Removed from localStorage."
-                );
               }
 
               setApiFinalTotal(data.final_total);
@@ -272,9 +257,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
             // Remove invalid coupon from localStorage
             localStorage.removeItem(COUPON_CODE_KEY);
-            console.log(
-              "Removed invalid coupon from localStorage due to error"
-            );
           }
         }
       } catch (error) {

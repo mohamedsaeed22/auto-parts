@@ -40,7 +40,6 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
   useEffect(() => {
     try {
       localStorage.removeItem("auto_parts_coupon_code");
-      console.log("Coupon code removed from localStorage on order completion");
     } catch (error) {
       console.error("Failed to remove coupon from localStorage:", error);
     }
@@ -656,8 +655,6 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                       defaultValue: "Track Order",
                     })}
                   </Button>
-
-                 
 
                   <Button
                     variant="outline"

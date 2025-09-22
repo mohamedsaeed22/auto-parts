@@ -87,9 +87,6 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
         // Clear coupon from localStorage on successful order
         try {
           localStorage.removeItem("auto_parts_coupon_code");
-          console.log(
-            "Coupon code removed from localStorage after successful order"
-          );
         } catch (error) {
           console.error("Failed to remove coupon from localStorage:", error);
         }
