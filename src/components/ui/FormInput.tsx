@@ -31,6 +31,9 @@ export interface FormInputProps {
   register?: UseFormRegisterReturn;
   error?: string;
 
+  // Translation
+  translationNamespace?: string;
+
   // Styling and layout
   className?: string;
   containerClassName?: string;
@@ -67,6 +70,7 @@ const FormInput = forwardRef<
       helpText,
       register,
       error,
+      translationNamespace,
       className,
       containerClassName,
       labelClassName,
@@ -81,7 +85,7 @@ const FormInput = forwardRef<
     },
     ref
   ) => {
-    const { i18n, t } = useTranslation();
+    const { i18n, t } = useTranslation(translationNamespace);
     const isRTL = i18n.language === "ar";
 
     // Auto-detect icon position based on language direction

@@ -9,15 +9,7 @@ import { useLocale } from "@/hooks/useLocale";
 import { useTranslation } from "react-i18next";
 import { useRegistrationStatus } from "@/hooks/useRegistrationStatus";
 import { showSuccess, showError } from "@/lib/toast";
-import {
-  User,
-  Mail,
-  Building,
-  MapPin,
-  Hash,
-  FileText,
-  CheckCircle,
-} from "lucide-react";
+import { User, Mail, Building, MapPin, Hash, FileText } from "lucide-react";
 import { storage } from "@/lib/storage";
 import { CartSyncService } from "@/services/cartSyncService";
 import FormInput from "@/components/ui/FormInput";
@@ -60,9 +52,6 @@ export default function CompleteRegistrationPage() {
 
   // Location selection state
   const [isLocationSelected, setIsLocationSelected] = useState(false);
-  const [locationDetails, setLocationDetails] = useState<LocationData | null>(
-    null
-  );
 
   const [commercialRegister, setCommercialRegister] = useState<File | null>(
     null
@@ -107,7 +96,6 @@ export default function CompleteRegistrationPage() {
 
     // Mark location as selected
     setIsLocationSelected(true);
-    setLocationDetails(locationData);
 
     // Clear location-related errors
     setErrors((prev) => ({
@@ -354,11 +342,11 @@ export default function CompleteRegistrationPage() {
         const updatedUser = {
           ...result.data.user,
           is_registration_complete: true,
-          points: (result.data.user as any).points || 0,
+          points: (result.data.user as { points?: number }).points || 0,
         };
 
         // Update only the user data, don't replace the entire auth structure
-        storage.updateUser(updatedUser as any);
+        storage.updateUser(updatedUser);
 
         // Sync local cart to API now that registration is complete
         try {
@@ -540,6 +528,7 @@ export default function CompleteRegistrationPage() {
                     required
                     icon={User}
                     error={errors.name}
+                    translationNamespace="registration"
                   />
 
                   <FormInput
@@ -556,6 +545,7 @@ export default function CompleteRegistrationPage() {
                     required={false}
                     icon={Mail}
                     error={errors.email}
+                    translationNamespace="registration"
                   />
 
                   <div className="space-y-2">
@@ -598,6 +588,7 @@ export default function CompleteRegistrationPage() {
                     required
                     icon={User}
                     error={errors.manager_name}
+                    translationNamespace="registration"
                   />
 
                   <FormInput
@@ -611,6 +602,7 @@ export default function CompleteRegistrationPage() {
                     required
                     icon={FileText}
                     error={errors.tax_number}
+                    translationNamespace="registration"
                   />
                 </div>
 
@@ -631,6 +623,7 @@ export default function CompleteRegistrationPage() {
                     required
                     icon={MapPin}
                     error={errors.address}
+                    translationNamespace="registration"
                   />
 
                   <FormInput
@@ -644,6 +637,7 @@ export default function CompleteRegistrationPage() {
                     required
                     icon={Building}
                     error={errors.city}
+                    translationNamespace="registration"
                   />
 
                   <FormInput
@@ -657,6 +651,7 @@ export default function CompleteRegistrationPage() {
                     required
                     icon={MapPin}
                     error={errors.state}
+                    translationNamespace="registration"
                   />
 
                   <FormInput
@@ -670,6 +665,7 @@ export default function CompleteRegistrationPage() {
                     required
                     icon={Hash}
                     error={errors.zip}
+                    translationNamespace="registration"
                   />
                 </div>
               </div>

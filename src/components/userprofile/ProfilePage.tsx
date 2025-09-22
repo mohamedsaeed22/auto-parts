@@ -10,7 +10,6 @@ import {
   MapPin,
   Building,
   FileText,
-  Globe,
   Edit,
   Save,
   X,
@@ -579,6 +578,7 @@ export default function ProfilePage() {
             }
             error={errors.name?.message}
             placeholder={t("profile.name")}
+            translationNamespace="userProfile"
           />
         </div>
 
@@ -601,6 +601,7 @@ export default function ProfilePage() {
               "profile.emailPlaceholder",
               "Enter email (optional)"
             )}
+            translationNamespace="userProfile"
           />
         </div>
 
@@ -621,6 +622,7 @@ export default function ProfilePage() {
             }
             error={errors.phone?.message}
             placeholder={t("profile.phone")}
+            translationNamespace="userProfile"
           />
         </div>
 
@@ -639,6 +641,7 @@ export default function ProfilePage() {
             }
             onChange={() => {}} // No-op since it's disabled
             placeholder={t("profile.type")}
+            translationNamespace="userProfile"
           />
         </div>
 
@@ -659,6 +662,7 @@ export default function ProfilePage() {
             }
             error={errors.manager_name?.message}
             placeholder={t("profile.managerName")}
+            translationNamespace="userProfile"
           />
         </div>
 
@@ -679,6 +683,7 @@ export default function ProfilePage() {
             }
             error={errors.address?.message}
             placeholder={t("profile.address")}
+            translationNamespace="userProfile"
           />
         </div>
 
@@ -699,6 +704,7 @@ export default function ProfilePage() {
             }
             error={errors.city?.message}
             placeholder={t("profile.city")}
+            translationNamespace="userProfile"
           />
         </div>
 
@@ -719,6 +725,7 @@ export default function ProfilePage() {
             }
             error={errors.state?.message}
             placeholder={t("profile.state")}
+            translationNamespace="userProfile"
           />
         </div>
 
@@ -739,6 +746,7 @@ export default function ProfilePage() {
             }
             error={errors.zip?.message}
             placeholder={t("profile.zip")}
+            translationNamespace="userProfile"
           />
         </div>
 
@@ -753,6 +761,7 @@ export default function ProfilePage() {
             value={profile.tax_number}
             onChange={() => {}} // No-op since it's disabled
             placeholder={t("profile.taxNumber")}
+            translationNamespace="userProfile"
           />
         </div>
 

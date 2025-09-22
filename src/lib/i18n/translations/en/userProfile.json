@@ -71,7 +71,55 @@
     "codeCopied": "User code copied to clipboard!",
     "copyFailed": "Failed to copy code to clipboard",
     "copied": "Copied!",
-    "copyCode": "Copy code"
+    "copyCode": "Copy code",
+    "selectLocation": "Select Location on Map",
+    "locationHelp": "Pick your exact location; address fields will auto-fill.",
+    "viewFile": "View File"
+  },
+  "validation": {
+    "name": {
+      "required": "Name is required",
+      "minLength": "Name must be at least 2 characters",
+      "maxLength": "Name must be less than 100 characters"
+    },
+    "email": {
+      "invalid": "Please enter a valid email address"
+    },
+    "phone": {
+      "required": "Phone number is required",
+      "length": "Phone number must be between 10-14 characters",
+      "invalid": "Please enter a valid Saudi phone number"
+    },
+    "managerName": {
+      "required": "Manager name is required",
+      "minLength": "Manager name must be at least 2 characters",
+      "maxLength": "Manager name must be less than 100 characters"
+    },
+    "address": {
+      "required": "Address is required",
+      "minLength": "Address must be at least 5 characters",
+      "maxLength": "Address must be less than 200 characters"
+    },
+    "city": {
+      "required": "City is required",
+      "minLength": "City must be at least 2 characters",
+      "maxLength": "City must be less than 50 characters"
+    },
+    "state": {
+      "required": "State is required",
+      "minLength": "State must be at least 2 characters",
+      "maxLength": "State must be less than 50 characters"
+    },
+    "zip": {
+      "required": "ZIP code is required",
+      "minLength": "ZIP code must be at least 3 characters",
+      "maxLength": "ZIP code must be less than 10 characters"
+    },
+    "avatar": {
+      "required": "Avatar is required",
+      "fileSize": "Avatar file size must be less than 5MB",
+      "fileType": "Avatar must be a valid image file (JPEG, PNG, GIF, WebP)"
+    }
   },
   "requests": {
     "title": "Requests",
