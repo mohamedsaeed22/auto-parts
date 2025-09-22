@@ -7,6 +7,7 @@ import type {
 import type { RootState } from "@/store";
 import { storage } from "@/lib/storage";
 import type { RegistrationIncompleteError } from "./types";
+import { getCurrentLocale } from "@/lib/localeService";
 
 // Base URL from your Postman collection
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL as string;
@@ -126,8 +127,9 @@ const enhancedBaseQuery: BaseQueryFn<
   unknown,
   FetchBaseQueryError | RegistrationIncompleteErrorResponse
 > = async (args, api, extraOptions) => {
-  const state = api.getState() as RootState;
-  const currentLocale = state.locale?.currentLocale || "en";
+  // Use localeService to get the most current locale
+  const currentLocale = getCurrentLocale();
+  console.log("BaseApi - Using locale for request:", currentLocale);
 
   // Only attach locale as a query param for GET requests to avoid breaking POST bodies
   let enhancedArgs: string | FetchArgs;

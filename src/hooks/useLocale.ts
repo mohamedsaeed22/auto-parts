@@ -7,6 +7,9 @@ import { setLocale } from "@/store/slices/localeSlice";
 import { RootState } from "@/store";
 import { i18nConfig } from "@/lib/i18n";
 import { api } from "@/services/api";
+import { setCurrentLocale } from "@/lib/localeService";
+import { useAuth } from "@/hooks/useAuth";
+import { useChangeLanguageMutation } from "@/services/api/authApi";
 
 export const useLocale = () => {
   const dispatch = useDispatch();
@@ -15,6 +18,8 @@ export const useLocale = () => {
   const { i18n } = useTranslation();
   const queryClient = useQueryClient();
   const invalidationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const { isAuthenticated } = useAuth();
+  const [changeLanguageMutation] = useChangeLanguageMutation();
 
   // Get current locale from Redux state
   const currentLocale = useSelector(
@@ -31,14 +36,54 @@ export const useLocale = () => {
   // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
-      if (invalidationTimeoutRef.current) {
-        clearTimeout(invalidationTimeoutRef.current);
+      const timeoutId = invalidationTimeoutRef.current;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
       }
     };
   }, []);
 
-  const changeLocale = (newLocale: string) => {
-    // Update Redux state first
+  const changeLocale = async (newLocale: string) => {
+    console.log(
+      "useLocale - changeLocale called with:",
+      newLocale,
+      "isAuthenticated:",
+      isAuthenticated
+    );
+
+    // If user is authenticated, update language preference in backend FIRST
+    if (isAuthenticated) {
+      try {
+        console.log(
+          "useLocale - Updating language preference in backend FIRST for authenticated user"
+        );
+        await changeLanguageMutation({
+          locale: newLocale as "ar" | "en",
+        }).unwrap();
+        console.log(
+          "useLocale - Language preference updated successfully in backend, now updating UI"
+        );
+      } catch (error) {
+        console.error(
+          "useLocale - Failed to update language preference in backend:",
+          error
+        );
+        // Continue with frontend language change even if backend update fails
+      }
+    } else {
+      console.log(
+        "useLocale - User not authenticated, updating frontend locale only"
+      );
+    }
+
+    // NOW update the UI after backend is updated (or if not authenticated)
+    console.log("useLocale - Updating UI after backend response");
+
+    // Update locale service (for immediate API requests)
+    setCurrentLocale(newLocale);
+    console.log("useLocale - Locale service updated to:", newLocale);
+
+    // Update Redux state
     dispatch(setLocale(newLocale));
 
     // Set a cookie for next-i18n-router to read the new locale
@@ -47,6 +92,29 @@ export const useLocale = () => {
     date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
     const expires = date.toUTCString();
     document.cookie = `NEXT_LOCALE=${newLocale};expires=${expires};path=/`;
+
+    // Invalidate cached queries to force refetch with new locale from backend
+    console.log(
+      "useLocale - Invalidating queries to fetch data with new locale"
+    );
+    dispatch(
+      api.util.invalidateTags([
+        "Products",
+        "Categories",
+        "Brands",
+        "Banners",
+        "Offers",
+        "Sections",
+        "Partners",
+      ])
+    );
+    console.log("useLocale - Query invalidation dispatched");
+
+    // Also invalidate React Query cache for language-dependent data
+    queryClient.invalidateQueries({
+      queryKey: ["notifications"],
+      exact: false,
+    });
 
     // Compute new path with updated locale
     if (
@@ -58,34 +126,7 @@ export const useLocale = () => {
       router.push(pathname.replace(`/${currentLocale}`, `/${newLocale}`));
     }
 
-    // Clear any existing invalidation timeout to prevent multiple invalidations
-    if (invalidationTimeoutRef.current) {
-      clearTimeout(invalidationTimeoutRef.current);
-    }
-
-    // Invalidate cached queries after navigation to prevent duplicate requests
-    // Use setTimeout to ensure Redux state is updated and navigation is complete
-    invalidationTimeoutRef.current = setTimeout(() => {
-      // Only invalidate specific tags that need language updates
-      // This prevents unnecessary refetches of data that doesn't depend on language
-      dispatch(
-        api.util.invalidateTags([
-          "Products",
-          "Categories",
-          "Brands",
-          "Banners",
-          "Offers",
-          "Sections",
-          "Partners",
-        ])
-      );
-
-      // Also invalidate React Query cache for language-dependent data
-      queryClient.invalidateQueries({
-        queryKey: ["notifications"],
-        exact: false, // This will invalidate all notification queries regardless of parameters
-      });
-    }, 100); // Small delay to ensure state is updated
+    // Queries are already invalidated above for immediate effect
 
     router.refresh();
   };

@@ -49,7 +49,7 @@ export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
         // Check if the response has the expected structure
         if (result.backendData.code === 200 && result.backendData.data) {
           // Store authentication data using useAuth hook
-          login(result.backendData.data);
+          await login(result.backendData.data);
 
           // Show success message
           showSuccess(t("success.loginSuccess"));

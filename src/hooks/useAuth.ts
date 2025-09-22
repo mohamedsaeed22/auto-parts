@@ -3,6 +3,7 @@ import { storage, type AuthData } from "@/lib/storage";
 import { store, persistor } from "@/store";
 import { clearCart, setCartOpen } from "@/store/slices/cartSlice";
 import { api } from "@/services/api";
+import { getCurrentLocale } from "@/lib/localeService";
 
 export function useAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -68,7 +69,7 @@ export function useAuth() {
     setAuthData(null);
   };
 
-  const login = (authData: AuthData) => {
+  const login = async (authData: AuthData) => {
     storage.setAuth(authData);
 
     // Verify storage worked
@@ -77,6 +78,29 @@ export function useAuth() {
     setIsAuthenticated(true);
     setUser(authData.user);
     setAuthData(authData);
+
+    // Auto-sync user's language preference with current app locale
+    try {
+      const currentAppLocale = getCurrentLocale();
+      console.log(
+        "useAuth - Auto-syncing language on login:",
+        currentAppLocale
+      );
+
+      // Dispatch the changeLanguage mutation to update backend
+      await store
+        .dispatch(
+          api.endpoints.changeLanguage.initiate({
+            locale: currentAppLocale as "ar" | "en",
+          })
+        )
+        .unwrap();
+
+      console.log("useAuth - Language synced successfully on login");
+    } catch (error) {
+      console.error("useAuth - Failed to sync language on login:", error);
+      // Don't block login if language sync fails
+    }
   };
 
   return {

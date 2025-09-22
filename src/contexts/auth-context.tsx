@@ -13,6 +13,7 @@ import { User } from "@/services/api/auth";
 import { CartSyncService } from "@/services/cartSyncService";
 import { persistor, store } from "@/store";
 import { clearCart, setCartOpen } from "@/store/slices/cartSlice";
+import { getCurrentLocale } from "@/lib/localeService";
 import { api } from "@/services/api";
 import { PURGE } from "redux-persist";
 
@@ -77,6 +78,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }, 100);
     } catch (error) {
       console.error("Failed to sync cart on login:", error);
+    }
+
+    // Auto-sync user's language preference with current app locale
+    try {
+      const currentAppLocale = getCurrentLocale();
+      console.log(
+        "AuthContext - Auto-syncing language on login:",
+        currentAppLocale
+      );
+
+      // Dispatch the changeLanguage mutation to update backend
+      await store
+        .dispatch(
+          api.endpoints.changeLanguage.initiate({
+            locale: currentAppLocale as "ar" | "en",
+          })
+        )
+        .unwrap();
+
+      console.log("AuthContext - Language synced successfully on login");
+    } catch (error) {
+      console.error("AuthContext - Failed to sync language on login:", error);
+      // Don't block login if language sync fails
     }
   };
 

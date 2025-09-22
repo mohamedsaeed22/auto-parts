@@ -22,7 +22,7 @@ export function GoogleLoginButton({ className }: GoogleLoginButtonProps) {
         const result = await googleLoginMutation.mutateAsync({
           google_id: (response as { credential: string }).credential,
         });
-        login(result.data.token, result.data.user);
+        await login(result.data.token, result.data.user);
       } catch {
         // Error handling is done in the mutation
       }

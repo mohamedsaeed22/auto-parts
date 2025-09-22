@@ -42,8 +42,11 @@ export const categoriesApi = api.injectEndpoints({
           searchParams.append("with_children", params.with_children.toString());
 
         const queryString = searchParams.toString();
-        return `/categories${queryString ? `?${queryString}` : ""}`;
+        const url = `/categories${queryString ? `?${queryString}` : ""}`;
+        console.log("CategoriesApi - Fetching categories with URL:", url);
+        return url;
       },
+      providesTags: ["Categories"],
     }),
   }),
 });

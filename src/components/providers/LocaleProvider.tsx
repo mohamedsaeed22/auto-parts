@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { setLocale } from "@/store/slices/localeSlice";
+import { initializeLocale } from "@/lib/localeService";
 
 interface LocaleProviderProps {
   children: React.ReactNode;
@@ -18,6 +19,9 @@ export default function LocaleProvider({
   const { i18n } = useTranslation();
 
   useEffect(() => {
+    // Initialize locale service first
+    initializeLocale();
+
     // Initialize locale state with the current i18n language or initial locale
     const currentLocale = initialLocale || i18n.language || "ar";
     dispatch(setLocale(currentLocale));
