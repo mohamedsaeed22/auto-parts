@@ -8,7 +8,7 @@ import { useGetProductsMutation } from "@/services/hooks";
 import { Product, ProductsRequest } from "@/services/api/types";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Pagination } from "@/components/ui/pagination";
+import { CustomPagination } from "@/components/ui/custom-pagination";
 
 const ProductsList = () => {
   const { t, i18n } = useTranslation("products");
@@ -37,13 +37,6 @@ const ProductsList = () => {
   // Handle retry
   const handleRetry = () => {
     getProducts(filters);
-  };
-
-  // Handle pagination
-  const handlePageChange = (page: number) => {
-    setFilters((prev) => ({ ...prev, page }));
-    // Scroll to top when changing pages
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // Simple loading skeleton
@@ -140,19 +133,11 @@ const ProductsList = () => {
 
             {/* Pagination */}
             {pagination && (
-              <div className="mt-12">
-                <Pagination
-                  currentPage={pagination.current_page}
-                  totalPages={pagination.last_page}
+              <div className="mt-12 flex justify-center">
+                <CustomPagination
                   totalItems={pagination.total}
                   itemsPerPage={pagination.per_page}
-                  onPageChange={handlePageChange}
-                  showInfo={true}
-                  showFirstLast={false}
-                  maxVisiblePages={5}
-                  size="default"
-                  variant="outline"
-                  className="justify-center"
+                  currentPage={pagination.current_page}
                 />
               </div>
             )}

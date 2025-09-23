@@ -93,8 +93,19 @@ export const productsApi = api.injectEndpoints({
     }),
 
     // Offers
-    getOffers: builder.query<ApiResponse<PaginatedResponse<Offer>>, void>({
-      query: () => "/offers",
+    getOffers: builder.query<
+      ApiResponse<PaginatedResponse<Offer>>,
+      { page?: number; per_page?: number }
+    >({
+      query: (params) => {
+        const queryParams = new URLSearchParams();
+        if (params?.page) queryParams.append("page", params.page.toString());
+        if (params?.per_page)
+          queryParams.append("per_page", params.per_page.toString());
+
+        const queryString = queryParams.toString();
+        return `/offers${queryString ? `?${queryString}` : ""}`;
+      },
       providesTags: ["Offers"],
     }),
 

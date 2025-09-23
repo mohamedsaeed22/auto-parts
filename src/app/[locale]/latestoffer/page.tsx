@@ -22,8 +22,8 @@ import {
   Home,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { LoadingSpinner, ErrorMessage, Pagination } from "@/components/ui";
-import { Breadcrumb } from "@/components/ui";
+import { LoadingSpinner, ErrorMessage } from "@/components/ui";
+import { CustomPagination } from "@/components/ui/custom-pagination";
 
 // Hero Section Component
 const HeroSection = ({ t }: { t: (key: string) => string }) => (
@@ -325,22 +325,15 @@ export default function LatestOffersPage() {
         )}
 
         {/* Pagination */}
-        {/* {offers.length > 0 && pagination && pagination.last_page > 1 && ( */}
-        <div className="mt-12 flex justify-center">
-          <Pagination
-            currentPage={pagination.current_page || 1}
-            totalPages={pagination.last_page || 1}
-            totalItems={pagination.total || offers.length}
-            itemsPerPage={pagination.per_page || 10}
-            onPageChange={handlePageChange}
-            showInfo={true}
-            showFirstLast={true}
-            maxVisiblePages={5}
-            size="md"
-            variant="outline"
-          />
-        </div>
-        {/* )} */}
+        {offers.length > 0 && pagination && pagination.last_page > 1 && (
+          <div className="mt-12 flex justify-center">
+            <CustomPagination
+              totalItems={pagination.total || offers.length}
+              itemsPerPage={pagination.per_page || 10}
+              currentPage={pagination.current_page || 1}
+            />
+          </div>
+        )}
 
         {/* Bottom CTA */}
         {offers.length > 0 && (
