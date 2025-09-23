@@ -14,61 +14,54 @@ export const axiosInstance = axios.create({
   }),
 });
 
-// Request interceptor to add auth token
+// Request interceptor to add locale header
 axiosInstance.interceptors.request.use(
-  (config) => {
-    // Attach locale in headers and as query param for GET requests
+  async (config) => {
     try {
-      // Import getCurrentLocale dynamically to avoid circular dependencies
-      let locale = "ar"; // Default fallback
+      // Dynamically import to avoid circular dependencies
+      const { getCurrentLocale, isLocaleUpdating } = await import("@/lib/localeService");
       
-      // Try to get locale from localeService first (most reliable)
-      if (typeof window !== "undefined") {
-        try {
-          // Use dynamic import to avoid circular dependency
-          const { getCurrentLocale } = require("@/lib/localeService");
-          locale = getCurrentLocale();
-          console.log("Axios interceptor - Using locale from service:", locale);
-        } catch (serviceError) {
-          console.warn("Axios interceptor - LocaleService unavailable, falling back to cookie");
-          
-          // Fallback to cookie
+      // If locale is currently being updated, wait a bit for consistency
+      if (isLocaleUpdating()) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+      
+      let locale = getCurrentLocale();
+      
+      // Fallback to cookie if service is not available
+      if (!locale || (locale !== "en" && locale !== "ar")) {
+        if (typeof document !== "undefined") {
           const cookieLocale = document.cookie
             .split(";")
             .map((c) => c.trim())
             .find((c) => c.startsWith("NEXT_LOCALE="))
             ?.split("=")[1];
-          
-          if (cookieLocale === "en" || cookieLocale === "ar") {
-            locale = cookieLocale;
-          }
+          locale = cookieLocale === "en" || cookieLocale === "ar" ? cookieLocale : "ar";
+        } else {
+          locale = "ar";
         }
       }
-      
-      // Always set locale header for all requests
+
+      // Always set both locale and Accept-Language headers for all requests
       config.headers = config.headers || {};
-      (config.headers as any).locale = locale;
-      (config.headers as any)["Accept-Language"] = locale;
-      
-      console.log("Axios interceptor - Setting locale header:", locale);
-      
-      // Also add as query param for GET requests
-      if (!config.method || config.method.toUpperCase() === "GET") {
-        const params = new URLSearchParams(
-          (config.params as Record<string, string>) || {}
-        );
-        if (!params.get("locale")) {
-          params.set("locale", locale);
-          config.params = Object.fromEntries(params.entries());
-          console.log("Axios interceptor - Adding locale query param for GET:", locale);
-        }
+      config.headers["locale"] = locale;
+      config.headers["Accept-Language"] = locale;
+
+      // For GET requests, also add locale as query parameter
+      if (config.method?.toLowerCase() === "get") {
+        config.params = config.params || {};
+        config.params.locale = locale;
       }
+
+      console.log(
+        `Axios interceptor - Request to ${config.url} with locale: ${locale}, method: ${config.method}`
+      );
     } catch (error) {
-      console.error("Axios interceptor - Error setting locale:", error);
-      // Ensure we always have a locale header even if there's an error
+      console.warn("Axios interceptor - Error setting locale:", error);
+      // Fallback to default
       config.headers = config.headers || {};
-      (config.headers as any).locale = "ar";
-      (config.headers as any)["Accept-Language"] = "ar";
+      config.headers["locale"] = "ar";
+      config.headers["Accept-Language"] = "ar";
     }
 
     // Get token from localStorage

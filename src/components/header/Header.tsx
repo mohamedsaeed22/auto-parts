@@ -27,7 +27,7 @@ export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const pathname = usePathname();
   const { t } = useTranslation("header");
-  const { currentLocale, changeLocale, isRTL } = useLocale();
+  const { currentLocale, changeLocale, isRTL, isChangingLocale } = useLocale();
   const { isAuthenticated } = useAuth();
   const router = useRouter();
   const {
@@ -132,6 +132,7 @@ export default function Header() {
                 onLanguageChange={onLanguageChange}
                 isRTL={isRTL}
                 activeLocale={currentLocale}
+                isChangingLocale={isChangingLocale}
               />
               <HeaderActions
                 totalItems={totalItems}
@@ -165,6 +166,7 @@ export default function Header() {
                 isRTL={isRTL}
                 activeLocale={currentLocale}
                 isMobile={true}
+                isChangingLocale={isChangingLocale}
               />
 
               {/* Mobile Menu Toggle */}

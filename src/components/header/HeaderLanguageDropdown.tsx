@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
@@ -9,6 +9,7 @@ interface HeaderLanguageDropdownProps {
   isRTL: boolean;
   activeLocale: string;
   isMobile?: boolean;
+  isChangingLocale?: boolean;
 }
 
 export default function HeaderLanguageDropdown({
@@ -18,6 +19,7 @@ export default function HeaderLanguageDropdown({
   isRTL,
   activeLocale,
   isMobile = false,
+  isChangingLocale = false,
 }: HeaderLanguageDropdownProps) {
   const { t } = useTranslation("header");
 
@@ -34,12 +36,17 @@ export default function HeaderLanguageDropdown({
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="p-2 text-neutral-700 hover:text-primary transition-colors"
+          disabled={isChangingLocale}
         >
-          <span className="text-lg">{currentLanguage?.flag}</span>
+          {isChangingLocale ? (
+            <Loader2 size={18} className="animate-spin" />
+          ) : (
+            <span className="text-lg">{currentLanguage?.flag}</span>
+          )}
         </button>
 
         <AnimatePresence>
-          {isOpen && (
+          {isOpen && !isChangingLocale && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -82,12 +89,17 @@ export default function HeaderLanguageDropdown({
         onClick={() => setIsOpen(!isOpen)}
         className="p-2 text-neutral-700 hover:text-primary transition-colors"
         title={currentLanguage?.name}
+        disabled={isChangingLocale}
       >
-        <span className="text-lg">{currentLanguage?.flag}</span>
+        {isChangingLocale ? (
+          <Loader2 size={18} className="animate-spin" />
+        ) : (
+          <span className="text-lg">{currentLanguage?.flag}</span>
+        )}
       </button>
 
       <AnimatePresence>
-        {isOpen && (
+        {isOpen && !isChangingLocale && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}

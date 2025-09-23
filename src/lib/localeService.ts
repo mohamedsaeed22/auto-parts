@@ -2,15 +2,50 @@
 // This avoids circular dependencies and provides a reliable way to get the current locale
 
 let currentLocale: string = "ar"; // Default to Arabic
+let isUpdating: boolean = false; // Flag to track if locale is being updated
+const localeChangeListeners: Array<(locale: string) => void> = [];
 
 export const setCurrentLocale = (locale: string) => {
   console.log("LocaleService - Setting locale to:", locale);
+  
+  // Set updating flag to prevent race conditions
+  isUpdating = true;
+  
   currentLocale = locale;
+  
+  // Notify all listeners immediately
+  localeChangeListeners.forEach(listener => {
+    try {
+      listener(locale);
+    } catch (error) {
+      console.warn("LocaleService - Error in locale change listener:", error);
+    }
+  });
+  
+  // Clear updating flag after a short delay to ensure all systems are updated
+  setTimeout(() => {
+    isUpdating = false;
+  }, 100);
+  
   // Verify the locale was set correctly
   console.log(
     "LocaleService - Verification: currentLocale is now:",
     currentLocale
   );
+};
+
+export const addLocaleChangeListener = (listener: (locale: string) => void) => {
+  localeChangeListeners.push(listener);
+  return () => {
+    const index = localeChangeListeners.indexOf(listener);
+    if (index > -1) {
+      localeChangeListeners.splice(index, 1);
+    }
+  };
+};
+
+export const isLocaleUpdating = (): boolean => {
+  return isUpdating;
 };
 
 // Initialize locale service on app load

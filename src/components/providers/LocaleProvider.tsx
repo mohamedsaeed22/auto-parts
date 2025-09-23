@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { setLocale } from "@/store/slices/localeSlice";
-import { initializeLocale } from "@/lib/localeService";
+import { initializeLocale, addLocaleChangeListener } from "@/lib/localeService";
 
 interface LocaleProviderProps {
   children: React.ReactNode;
@@ -25,7 +25,20 @@ export default function LocaleProvider({
     // Initialize locale state with the current i18n language or initial locale
     const currentLocale = initialLocale || i18n.language || "ar";
     dispatch(setLocale(currentLocale));
-  }, [dispatch, i18n.language, initialLocale]);
+
+    // Listen for locale changes from the locale service
+    const unsubscribe = addLocaleChangeListener((newLocale) => {
+      console.log("LocaleProvider - Locale service changed to:", newLocale);
+      // Update Redux state
+      dispatch(setLocale(newLocale));
+      // Update i18n language
+      if (i18n.language !== newLocale) {
+        i18n.changeLanguage(newLocale).catch(console.warn);
+      }
+    });
+
+    return unsubscribe;
+  }, [dispatch, i18n, initialLocale]);
 
   return <>{children}</>;
 }
