@@ -8,20 +8,20 @@ import {
   Heart,
   Bookmark,
   Bell,
-  Settings,
   UserCircle,
   Star,
   Gift,
   HelpCircle,
   Truck,
   LogOut,
+  Wrench,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+// import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
 import LoginDialog from "../LoginDialog";
-import UserDropdown from "./UserDropdown";
+// import UserDropdown from "./UserDropdown";
 import { useAuth } from "@/hooks/useAuth";
 import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import Image from "next/image";
@@ -49,7 +49,7 @@ export default function HeaderMobileMenu({
   onCartClick,
 }: HeaderMobileMenuProps) {
   const { t } = useTranslation("header");
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const { totalItems } = useEnhancedCart();
   const router = useRouter();
 
@@ -107,6 +107,19 @@ export default function HeaderMobileMenu({
               isCart: true,
               badge: totalItems,
             },
+            {
+              href: "/userPricing",
+              icon: Wrench,
+              label:
+                (t as unknown as (k: string) => string)(
+                  "navigation.userPricing"
+                ) ||
+                (t as unknown as (k: string) => string)(
+                  "mobileMenu.userPricing"
+                ) ||
+                "Request Pricing",
+              isActive: isActiveLink("/userPricing"),
+            },
           ],
         },
         // Main Navigation
@@ -138,27 +151,40 @@ export default function HeaderMobileMenu({
               label: t("mobileMenu.products") || "Products",
               isActive: isActiveLink("/products"),
             },
+            {
+              href: "/userPricing",
+              icon: Wrench,
+              label:
+                (t as unknown as (k: string) => string)(
+                  "navigation.userPricing"
+                ) ||
+                (t as unknown as (k: string) => string)(
+                  "mobileMenu.userPricing"
+                ) ||
+                "Request Pricing",
+              isActive: isActiveLink("/userPricing"),
+            },
           ],
         },
         // Support Section
-        {
-          type: "support",
-          title: t("mobileMenu.support") || "Support",
-          items: [
-            {
-              href: "/track-order",
-              icon: Truck,
-              label: t("mobileMenu.trackOrder") || "Track Order",
-              isActive: isActiveLink("/track-order"),
-            },
-            {
-              href: "/help",
-              icon: HelpCircle,
-              label: t("mobileMenu.help") || "Help & Support",
-              isActive: isActiveLink("/help"),
-            },
-          ],
-        },
+        // {
+        //   type: "support",
+        //   title: t("mobileMenu.support") || "Support",
+        //   items: [
+        //     {
+        //       href: "/track-order",
+        //       icon: Truck,
+        //       label: t("mobileMenu.trackOrder") || "Track Order",
+        //       isActive: isActiveLink("/track-order"),
+        //     },
+        //     {
+        //       href: "/help",
+        //       icon: HelpCircle,
+        //       label: t("mobileMenu.help") || "Help & Support",
+        //       isActive: isActiveLink("/help"),
+        //     },
+        //   ],
+        // },
       ];
     } else {
       return [
@@ -225,7 +251,12 @@ export default function HeaderMobileMenu({
     }
   };
 
-  const handleItemClick = (item: any) => {
+  type MenuItem = {
+    href?: string;
+    isCart?: boolean;
+  };
+
+  const handleItemClick = (item: MenuItem) => {
     if (item.isCart) {
       onCartClick();
     } else if (item.href && item.href !== "#") {
@@ -354,6 +385,23 @@ export default function HeaderMobileMenu({
                 </div>
               ))}
             </div>
+
+            {/* Logout Button for authenticated users */}
+            {isAuthenticated && (
+              <div className="p-4 border-t border-gray-200">
+                <Button
+                  variant="outline"
+                  className="w-full justify-center gap-2 text-red-600 border-red-200 hover:bg-red-50"
+                  onClick={() => {
+                    logout();
+                    onClose();
+                  }}
+                >
+                  <LogOut size={18} />
+                  {t("actions.logout") || "Logout"}
+                </Button>
+              </div>
+            )}
 
             {/* Footer */}
             <div className="mt-auto p-4 border-t border-gray-200 bg-gray-50">
