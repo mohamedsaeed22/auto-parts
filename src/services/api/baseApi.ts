@@ -34,18 +34,13 @@ const baseQueryWithAuth: BaseQueryFn<
         headers.set("authorization", `Bearer ${token}`);
       }
 
-      // Get current locale from Redux state for non-GET requests
-      const state = getState() as RootState;
-      const currentLocale = state.locale?.currentLocale || "en";
+      // Get current locale using localeService for consistency
+      const currentLocale = getCurrentLocale();
+      console.log("BaseApi - prepareHeaders using locale:", currentLocale);
 
-      // Only set locale header for non-GET requests (GET requests use query params)
-      if (
-        typeof args === "object" &&
-        args.method &&
-        args.method.toUpperCase() !== "GET"
-      ) {
-        headers.set("locale", currentLocale);
-      }
+      // Set locale header for ALL requests (both GET and non-GET)
+      headers.set("locale", currentLocale);
+      headers.set("Accept-Language", currentLocale);
 
       // Set default content type for form data requests
       if (typeof args === "object" && args.body instanceof FormData) {

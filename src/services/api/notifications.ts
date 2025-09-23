@@ -45,6 +45,20 @@ const getHeaders = () => {
     headers.Authorization = `Bearer ${token}`;
   }
 
+  // Add locale header for proper language response
+  try {
+    // Import getCurrentLocale dynamically to avoid circular dependencies
+    const { getCurrentLocale } = require("@/lib/localeService");
+    const locale = getCurrentLocale();
+    headers.locale = locale;
+    headers["Accept-Language"] = locale;
+    console.log("Notifications API - Setting locale header:", locale);
+  } catch (error) {
+    console.warn("Notifications API - Failed to get locale, using default:", error);
+    headers.locale = "ar";
+    headers["Accept-Language"] = "ar";
+  }
+
   return headers;
 };
 

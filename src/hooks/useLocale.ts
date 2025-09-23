@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useRouter, usePathname } from "next/navigation";
@@ -44,7 +44,7 @@ export const useLocale = () => {
     };
   }, []);
 
-  const changeLocale = async (newLocale: string) => {
+  const changeLocale = useCallback(async (newLocale: string) => {
     console.log(
       "useLocale - changeLocale called with:",
       newLocale,
@@ -80,19 +80,25 @@ export const useLocale = () => {
     // NOW update the UI after backend is updated (or if not authenticated)
     console.log("useLocale - Updating UI after backend response");
 
+    // Update locale service FIRST (for immediate API requests)
+    setCurrentLocale(newLocale);
+    console.log("useLocale - Locale service updated to:", newLocale);
+
     // Update i18n to reflect UI language immediately
     try {
       await i18n.changeLanguage(newLocale);
-    } catch (e) {}
-
-    // Update locale service (for immediate API requests)
-    setCurrentLocale(newLocale);
-    console.log("useLocale - Locale service updated to:", newLocale);
+    } catch (e) {
+      console.warn("useLocale - Failed to change i18n language:", e);
+    }
 
     // Update axios default locale header for immediate subsequent requests
     try {
       axiosInstance.defaults.headers.common["locale"] = newLocale;
-    } catch {}
+      axiosInstance.defaults.headers.common["Accept-Language"] = newLocale;
+      console.log("useLocale - Axios headers updated to:", newLocale);
+    } catch (error) {
+      console.warn("useLocale - Failed to update axios headers:", error);
+    }
 
     // Update Redux state
     dispatch(setLocale(newLocale));
@@ -140,7 +146,7 @@ export const useLocale = () => {
     // Queries are already invalidated above for immediate effect
 
     router.refresh();
-  };
+  }, [isAuthenticated, changeLanguageMutation, i18n, dispatch, queryClient, currentLocale, pathname, router]);
 
   return {
     currentLocale,
