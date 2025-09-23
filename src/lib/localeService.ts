@@ -1,11 +1,15 @@
 // Locale service to provide current locale to axios interceptor
 // This avoids circular dependencies and provides a reliable way to get the current locale
 
-let currentLocale: string = "ar"; // Default to Arabic
+let currentLocale: string | undefined;
 let isUpdating: boolean = false; // Flag to track if locale is being updated
 const localeChangeListeners: Array<(locale: string) => void> = [];
 
 export const setCurrentLocale = (locale: string) => {
+  if (locale !== "en" && locale !== "ar") {
+    console.warn("LocaleService - Invalid locale:", locale);
+    return;
+  }
   console.log("LocaleService - Setting locale to:", locale);
   
   // Set updating flag to prevent race conditions
