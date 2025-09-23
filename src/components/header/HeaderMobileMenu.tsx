@@ -25,6 +25,7 @@ import LoginDialog from "../LoginDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import Image from "next/image";
+import { useLogoutMutation } from "@/services/hooks";
 
 interface NavLink {
   href: string;
@@ -52,6 +53,17 @@ export default function HeaderMobileMenu({
   const { user, isAuthenticated, logout } = useAuth();
   const { totalItems } = useEnhancedCart();
   const router = useRouter();
+  const [logoutApi, { isLoading: isLoggingOut }] = useLogoutMutation();
+
+  const handleLogout = async () => {
+    try {
+      await logoutApi().unwrap();
+    } catch (e) {
+      // ignore API errors, proceed with local logout
+    }
+    logout();
+    onClose();
+  };
 
   // Navigation items based on authentication status
   const getNavigationItems = () => {
@@ -128,6 +140,18 @@ export default function HeaderMobileMenu({
           title: t("mobileMenu.explore") || "Explore",
           items: [
             {
+              href: "/about",
+              icon: Home,
+              label: t("navigation.about") || "About Us",
+              isActive: isActiveLink("/about"),
+            },
+            {
+              href: "/contact",
+              icon: HelpCircle,
+              label: t("navigation.contact") || "Contact Us",
+              isActive: isActiveLink("/contact"),
+            },
+            {
               href: "/",
               icon: Home,
               label: t("mobileMenu.home") || "Home",
@@ -138,6 +162,12 @@ export default function HeaderMobileMenu({
               icon: Grid3X3,
               label: t("mobileMenu.categories") || "Categories",
               isActive: isActiveLink("/categories"),
+            },
+            {
+              href: "/brands",
+              icon: Star,
+              label: t("mobileMenu.brands") || "Brands",
+              isActive: isActiveLink("/brands"),
             },
             {
               href: "/latestoffer",
@@ -194,6 +224,18 @@ export default function HeaderMobileMenu({
           title: t("mobileMenu.explore") || "Explore",
           items: [
             {
+              href: "/about",
+              icon: Home,
+              label: t("navigation.about") || "About Us",
+              isActive: isActiveLink("/about"),
+            },
+            {
+              href: "/contact",
+              icon: HelpCircle,
+              label: t("navigation.contact") || "Contact Us",
+              isActive: isActiveLink("/contact"),
+            },
+            {
               href: "/",
               icon: Home,
               label: t("mobileMenu.home") || "Home",
@@ -206,6 +248,12 @@ export default function HeaderMobileMenu({
               isActive: isActiveLink("/categories"),
             },
             {
+              href: "/brands",
+              icon: Star,
+              label: t("mobileMenu.brands") || "Brands",
+              isActive: isActiveLink("/brands"),
+            },
+            {
               href: "/latestoffer",
               icon: Gift,
               label: t("mobileMenu.offers") || "Offers",
@@ -216,6 +264,19 @@ export default function HeaderMobileMenu({
               icon: Grid3X3,
               label: t("mobileMenu.products") || "Products",
               isActive: isActiveLink("/products"),
+            },
+            {
+              href: "/userPricing",
+              icon: Wrench,
+              label:
+                (t as unknown as (k: string) => string)(
+                  "navigation.userPricing"
+                ) ||
+                (t as unknown as (k: string) => string)(
+                  "mobileMenu.userPricing"
+                ) ||
+                "Request Pricing",
+              isActive: isActiveLink("/userPricing"),
             },
           ],
         },
@@ -392,13 +453,13 @@ export default function HeaderMobileMenu({
                 <Button
                   variant="outline"
                   className="w-full justify-center gap-2 text-red-600 border-red-200 hover:bg-red-50"
-                  onClick={() => {
-                    logout();
-                    onClose();
-                  }}
+                  disabled={isLoggingOut}
+                  onClick={handleLogout}
                 >
                   <LogOut size={18} />
-                  {t("actions.logout") || "Logout"}
+                  {isLoggingOut
+                    ? (t("actions.loggingOut") as string) || "Logging out..."
+                    : (t("actions.logout") as string) || "Logout"}
                 </Button>
               </div>
             )}
