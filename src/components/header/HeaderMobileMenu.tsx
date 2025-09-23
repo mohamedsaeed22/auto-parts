@@ -119,19 +119,6 @@ export default function HeaderMobileMenu({
               isCart: true,
               badge: totalItems,
             },
-            {
-              href: "/userPricing",
-              icon: Wrench,
-              label:
-                (t as unknown as (k: string) => string)(
-                  "navigation.userPricing"
-                ) ||
-                (t as unknown as (k: string) => string)(
-                  "mobileMenu.userPricing"
-                ) ||
-                "Request Pricing",
-              isActive: isActiveLink("/userPricing"),
-            },
           ],
         },
         // Main Navigation

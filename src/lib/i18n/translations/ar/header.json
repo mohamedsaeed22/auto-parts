@@ -62,13 +62,15 @@
     "support": "الدعم",
     "home": "الرئيسية",
     "categories": "الفئات",
-    "offers": "العروض",
+    "brands": "البراندات",
+    "offers": "اخر العروض",
     "products": "المنتجات",
     "favourites": "المفضلة",
     "wishlist": "قائمة الأمنيات",
     "cart": "السلة",
     "trackOrder": "تتبع الطلب",
     "help": "المساعدة والدعم",
-    "version": "الإصدار 1.0.0"
+    "version": "الإصدار 1.0.0",
+    "userPricing": "طلب تسعير"
   }
 }

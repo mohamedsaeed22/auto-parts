@@ -62,13 +62,15 @@
     "support": "Support",
     "home": "Home",
     "categories": "Categories",
-    "offers": "Offers",
+    "brands": "Brands",
+    "offers": "Latest Offers",
     "products": "Products",
     "favourites": "Favourites",
     "wishlist": "Wishlist",
     "cart": "Cart",
     "trackOrder": "Track Order",
     "help": "Help & Support",
-    "version": "Version 1.0.0"
+    "version": "Version 1.0.0",
+    "userPricing": "Request Pricing"
   }
 }
