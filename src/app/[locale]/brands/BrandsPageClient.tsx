@@ -22,7 +22,7 @@ import {
   Car,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Pagination, LoadingSpinner, ErrorMessage } from "@/components/ui";
+import { LoadingSpinner, ErrorMessage } from "@/components/ui";
 
 // Types
 interface Brand {
@@ -258,7 +258,7 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
   // Get URL search params
   const searchParams = useSearchParams();
   const currentPage = parseInt(searchParams.get("page") || "1");
-  const itemsPerPage = 3; // You can make this configurable if needed
+  const itemsPerPage = 10; // You can make this configurable if needed
 
   // API Hooks
   const {

@@ -13,18 +13,9 @@ interface PaginationProps {
   currentPage: number;
 }
 
-const pageParser = createParser({
-  defaultValue: "1",
-  parse: (value) => {
-    const parsed = parseInt(value);
-    return isNaN(parsed) ? 1 : parsed;
-  },
-  validate: (value) => value >= 1,
-});
-
 export function CustomPagination({
   totalItems,
-  itemsPerPage,
+  itemsPerPage ,
   currentPage,
 }: PaginationProps) {
   const router = useRouter();
