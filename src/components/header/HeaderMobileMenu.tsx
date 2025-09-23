@@ -87,12 +87,12 @@ export default function HeaderMobileMenu({
               badge: user?.points,
               pointsNav: true,
             },
-            {
-              href: "/notifications",
-              icon: Bell,
-              label: t("mobileMenu.notifications") || "Notifications",
-              isActive: isActiveLink("/notifications"),
-            },
+            // {
+            //   href: "/notifications",
+            //   icon: Bell,
+            //   label: t("mobileMenu.notifications") || "Notifications",
+            //   isActive: isActiveLink("/notifications"),
+            // },
           ],
         },
         // Shopping Section

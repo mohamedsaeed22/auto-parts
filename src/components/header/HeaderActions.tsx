@@ -1,4 +1,4 @@
-import { User, ShoppingCart, Heart, Bookmark } from "lucide-react";
+import { User, ShoppingCart, Heart, Bookmark, Bell } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import LoginDialog from "../LoginDialog";
@@ -40,8 +40,21 @@ export default function HeaderActions({
         />
       )}
 
-      {/* Notifications - Only show if authenticated */}
-      {isAuthenticated && <NotificationDropdown isRTL={isRTL} />}
+      {/* Notifications - Always visible; prompt login if unauthenticated */}
+      {isAuthenticated ? (
+        <NotificationDropdown isRTL={isRTL} />
+      ) : (
+        <LoginDialog
+          trigger={
+            <button
+              className="p-2 text-neutral-700 hover:text-primary transition-colors"
+              title={t("actions.notifications") || "Notifications"}
+            >
+              <Bell size={20} />
+            </button>
+          }
+        />
+      )}
 
       {/* Favourites - Only show if authenticated */}
       {isAuthenticated && (

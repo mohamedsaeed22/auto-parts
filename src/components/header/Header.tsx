@@ -5,7 +5,7 @@ import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import { useTranslation } from "react-i18next";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Menu } from "lucide-react";
+import { Search, Menu, Bell } from "lucide-react";
 import HeaderLogo from "./HeaderLogo";
 import SearchAutocomplete from "./SearchAutocomplete";
 import HeaderLanguageDropdown from "./HeaderLanguageDropdown";
@@ -13,6 +13,8 @@ import HeaderActions from "./HeaderActions";
 import HeaderNavigation from "./HeaderNavigation";
 import HeaderMobileMenu from "./HeaderMobileMenu";
 import HeaderBottomNavigation from "./HeaderBottomNavigation";
+import NotificationDropdown from "./NotificationDropdown";
+import LoginDialog from "../LoginDialog";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/hooks/useLocale";
 import { useHeaderSearch } from "@/hooks/useHeaderSearch";
@@ -151,6 +153,22 @@ export default function Header() {
               >
                 <Search size={20} />
               </button>
+
+              {/* Notifications - Always visible on mobile; prompt login if unauthenticated */}
+              {isAuthenticated ? (
+                <NotificationDropdown isRTL={isRTL} />
+              ) : (
+                <LoginDialog
+                  trigger={
+                    <button
+                      className="p-2 text-neutral-700 hover:text-primary transition-colors"
+                      title={t("actions.notifications") || "Notifications"}
+                    >
+                      <Bell size={20} />
+                    </button>
+                  }
+                />
+              )}
 
               {/* Language Dropdown - Mobile */}
               <HeaderLanguageDropdown
