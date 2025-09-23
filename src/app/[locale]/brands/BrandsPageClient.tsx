@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useGetBrandsQuery } from "@/services/hooks";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { SEOMetadata } from "@/components/seo/SEOMetadata";
 import { StructuredData } from "@/components/seo/StructuredData";
+import { CustomPagination } from "@/components/ui/custom-pagination";
 import { seoConfig, getKeywords } from "@/lib/seo/config";
 import {
   ArrowLeft,
@@ -248,13 +249,16 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
   const router = useRouter();
   const { t, i18n } = useTranslation("brands");
   const [viewMode] = useState<"grid" | "list">("grid");
-  const [currentPage, setCurrentPage] = useState(1);
-
   const isRTL = i18n.language === "ar";
   const direction = isRTL ? "rtl" : "ltr";
 
   // Scroll to top when component mounts
   useScrollToTop();
+
+  // Get URL search params
+  const searchParams = useSearchParams();
+  const currentPage = parseInt(searchParams.get("page") || "1");
+  const itemsPerPage = 3; // You can make this configurable if needed
 
   // API Hooks
   const {
@@ -262,7 +266,10 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
     isLoading,
     error,
     refetch,
-  } = useGetBrandsQuery({ page: currentPage });
+  } = useGetBrandsQuery({
+    page: currentPage,
+    per_page: itemsPerPage,
+  });
 
   const brands = brandsResponse?.data?.items || [];
   const pagination = brandsResponse?.data?.pagination;
@@ -275,11 +282,10 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
     router.push(`/brands/${brandId}`);
   };
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    // Scroll to top when page changes
+  // Scroll to top when page changes
+  useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  }, [currentPage]);
 
   // Handle loading state
   if (isLoading) {
@@ -428,17 +434,10 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
         {/* Pagination */}
         {brands.length > 0 && pagination && pagination.last_page > 1 && (
           <div className="mt-12">
-            <Pagination
-              currentPage={pagination.current_page || 1}
-              totalPages={pagination.last_page || 1}
-              totalItems={pagination.total || brands.length}
-              itemsPerPage={pagination.per_page || 12}
-              onPageChange={handlePageChange}
-              showInfo={true}
-              showFirstLast={true}
-              maxVisiblePages={5}
-              size="lg"
-              variant="outline"
+            <CustomPagination
+              currentPage={currentPage}
+              totalItems={pagination.total}
+              itemsPerPage={3}
             />
           </div>
         )}
