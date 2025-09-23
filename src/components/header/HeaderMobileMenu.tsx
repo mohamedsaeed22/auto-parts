@@ -84,7 +84,8 @@ export default function HeaderMobileMenu({
               icon: Star,
               label: t("mobileMenu.points") || "My Points",
               isActive: isActiveLink("/userprofile/points"),
-              badge: user?.points || 0,
+              badge: user?.points,
+              pointsNav: true,
             },
             {
               href: "/notifications",
@@ -302,11 +303,17 @@ export default function HeaderMobileMenu({
   type MenuItem = {
     href?: string;
     isCart?: boolean;
+    pointsNav?: boolean;
   };
 
   const handleItemClick = (item: MenuItem) => {
     if (item.isCart) {
       onCartClick();
+    } else if (item.pointsNav) {
+      try {
+        localStorage.setItem("userProfileActivePage", "points");
+      } catch {}
+      router.push("/userprofile");
     } else if (item.href && item.href !== "#") {
       router.push(item.href);
     }
