@@ -40,21 +40,8 @@ export default function HeaderActions({
         />
       )}
 
-      {/* Notifications - Always visible; prompt login if unauthenticated */}
-      {isAuthenticated ? (
-        <NotificationDropdown isRTL={isRTL} />
-      ) : (
-        <LoginDialog
-          trigger={
-            <button
-              className="p-2 text-neutral-700 hover:text-primary transition-colors"
-              title={t("actions.notifications") || "Notifications"}
-            >
-              <Bell size={20} />
-            </button>
-          }
-        />
-      )}
+      {/* Notifications - Only show if authenticated */}
+      {isAuthenticated && <NotificationDropdown isRTL={isRTL} />}
 
       {/* Favourites - Only show if authenticated */}
       {isAuthenticated && (
