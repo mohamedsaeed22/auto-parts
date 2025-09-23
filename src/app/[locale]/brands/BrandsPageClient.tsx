@@ -437,7 +437,7 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
             <CustomPagination
               currentPage={currentPage}
               totalItems={pagination.total}
-              itemsPerPage={3}
+              itemsPerPage={itemsPerPage}
             />
           </div>
         )}

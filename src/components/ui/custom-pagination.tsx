@@ -15,7 +15,7 @@ interface PaginationProps {
 
 export function CustomPagination({
   totalItems,
-  itemsPerPage ,
+  itemsPerPage,
   currentPage,
 }: PaginationProps) {
   const router = useRouter();
@@ -51,12 +51,30 @@ export function CustomPagination({
 
   const renderPageNumbers = () => {
     const pages = [];
-    const maxVisiblePages = 5;
-    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    const maxVisiblePages = Math.min(5, totalPages); // Don't show more buttons than pages
 
-    // Adjust start if end is maxed out
-    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    let startPage = 1;
+    let endPage = totalPages;
+
+    if (totalPages > maxVisiblePages) {
+      // Calculate the middle range
+      const leftOffset = Math.floor(maxVisiblePages / 2);
+      const rightOffset = maxVisiblePages - leftOffset - 1;
+
+      if (currentPage <= leftOffset) {
+        // Near the start
+        startPage = 1;
+        endPage = maxVisiblePages;
+      } else if (currentPage >= totalPages - rightOffset) {
+        // Near the end
+        startPage = totalPages - maxVisiblePages + 1;
+        endPage = totalPages;
+      } else {
+        // Middle
+        startPage = currentPage - leftOffset;
+        endPage = currentPage + rightOffset;
+      }
+    }
 
     // Add first page and ellipsis if needed
     if (startPage > 1) {
@@ -125,17 +143,30 @@ export function CustomPagination({
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage <= 1}
       >
-        {/* is rtl rotate 180    */}
-        <ChevronLeft className={`h-4 w-4 ${isRTL ? "rotate-180" : ""}`} />
+        {isRTL ? (
+          <ChevronRight className="h-4 w-4" />
+        ) : (
+          <ChevronLeft className="h-4 w-4" />
+        )}
       </Button>
-      <div className="flex items-center space-x-2">{renderPageNumbers()}</div>
+      <div
+        className={`flex items-center gap-1 ${
+          isRTL ? "space-x-reverse " : " "
+        }`}
+      >
+        {renderPageNumbers()}
+      </div>
       <Button
         variant="outline"
         className="h-8 w-8 p-0"
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage >= totalPages}
       >
-        <ChevronRight className={`h-4 w-4 ${isRTL ? "rotate-180" : ""}`} />
+        {isRTL ? (
+          <ChevronLeft className="h-4 w-4" />
+        ) : (
+          <ChevronRight className="h-4 w-4" />
+        )}
       </Button>
     </div>
   );
