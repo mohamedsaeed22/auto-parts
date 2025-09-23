@@ -128,18 +128,6 @@ export default function HeaderMobileMenu({
           title: t("mobileMenu.explore") || "Explore",
           items: [
             {
-              href: "/about",
-              icon: Home,
-              label: t("navigation.about") || "About Us",
-              isActive: isActiveLink("/about"),
-            },
-            {
-              href: "/contact",
-              icon: HelpCircle,
-              label: t("navigation.contact") || "Contact Us",
-              isActive: isActiveLink("/contact"),
-            },
-            {
               href: "/",
               icon: Home,
               label: t("mobileMenu.home") || "Home",
@@ -181,6 +169,18 @@ export default function HeaderMobileMenu({
                 ) ||
                 "Request Pricing",
               isActive: isActiveLink("/userPricing"),
+            },
+            {
+              href: "/about",
+              icon: Home,
+              label: t("navigation.about") || "About Us",
+              isActive: isActiveLink("/about"),
+            },
+            {
+              href: "/contact",
+              icon: HelpCircle,
+              label: t("navigation.contact") || "Contact Us",
+              isActive: isActiveLink("/contact"),
             },
           ],
         },
@@ -347,15 +347,25 @@ export default function HeaderMobileMenu({
             {/* Menu Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-primary to-primary-600">
               <div className="flex items-center gap-3">
-                {isAuthenticated && user?.avatar && (
-                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white">
-                    <Image
-                      src={user.avatar}
-                      alt="User Avatar"
-                      width={40}
-                      height={40}
-                      className="w-full h-full object-cover"
-                    />
+                {isAuthenticated && (
+                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white bg-white/10 flex items-center justify-center">
+                    {user?.avatar ? (
+                      <Image
+                        src={user.avatar}
+                        alt="User Avatar"
+                        width={40}
+                        height={40}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-white font-semibold">
+                        {(
+                          user?.name?.[0] ||
+                          user?.phone?.[0] ||
+                          "U"
+                        ).toUpperCase()}
+                      </span>
+                    )}
                   </div>
                 )}
                 <div>
@@ -364,11 +374,6 @@ export default function HeaderMobileMenu({
                       ? user?.name || t("mobileMenu.welcome")
                       : t("menu.title")}
                   </h2>
-                  {isAuthenticated && user?.points && (
-                    <p className="text-sm text-white/80">
-                      {user.points} {t("mobileMenu.points")}
-                    </p>
-                  )}
                 </div>
               </div>
               <button
@@ -426,7 +431,7 @@ export default function HeaderMobileMenu({
                         >
                           <div className="relative">
                             <Icon size={20} className="flex-shrink-0" />
-                            {item.badge && item.badge > 0 && (
+                            {(item.badge ?? 0) > 0 && (
                               <span className="absolute -top-1 -right-1 bg-accent text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]">
                                 {item.badge}
                               </span>
