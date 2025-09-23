@@ -7,6 +7,7 @@ import { useGetProductsMutation } from "@/services/hooks";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useProductFilters } from "@/hooks/useProductFilters";
 import { useFilterData } from "@/hooks/useFilterData";
+import { CustomPagination } from "@/components/ui/custom-pagination";
 import { SEOMetadata } from "@/components/seo/SEOMetadata";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { seoConfig } from "@/lib/seo/config";
@@ -31,12 +32,7 @@ import {
   Home,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Breadcrumb,
-  Pagination,
-  LoadingSpinner,
-  ErrorMessage,
-} from "@/components/ui";
+import { Breadcrumb, LoadingSpinner, ErrorMessage } from "@/components/ui";
 import ProductCard from "@/components/product/ProductCard";
 import type { FilterState } from "@/lib/types/filters";
 
@@ -723,23 +719,17 @@ export default function ProductsPage({
                 </div>
 
                 {/* Pagination */}
-                {/* center the pagination */}
-                {products.length > 0 && (
-                  <div className="mt-12 flex justify-center">
-                    <Pagination
-                      currentPage={pagination?.current_page || 1}
-                      totalPages={pagination?.last_page || 1}
-                      totalItems={pagination?.total || products.length}
-                      itemsPerPage={pagination?.per_page || 12}
-                      onPageChange={updatePage}
-                      showInfo={true}
-                      showFirstLast={true}
-                      maxVisiblePages={5}
-                      size="md"
-                      variant="outline"
-                    />
-                  </div>
-                )}
+                {products.length > 0 &&
+                  pagination &&
+                  pagination.last_page > 1 && (
+                    <div className="mt-12">
+                      <CustomPagination
+                        currentPage={pagination.current_page}
+                        totalItems={pagination.total}
+                        itemsPerPage={pagination.per_page}
+                      />
+                    </div>
+                  )}
               </>
             )}
           </div>
