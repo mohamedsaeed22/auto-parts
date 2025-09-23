@@ -10,6 +10,7 @@ import { api } from "@/services/api";
 import { setCurrentLocale } from "@/lib/localeService";
 import { useAuth } from "@/hooks/useAuth";
 import { useChangeLanguageMutation } from "@/services/api/authApi";
+import { axiosInstance } from "@/lib/axios";
 
 export const useLocale = () => {
   const dispatch = useDispatch();
@@ -79,9 +80,19 @@ export const useLocale = () => {
     // NOW update the UI after backend is updated (or if not authenticated)
     console.log("useLocale - Updating UI after backend response");
 
+    // Update i18n to reflect UI language immediately
+    try {
+      await i18n.changeLanguage(newLocale);
+    } catch (e) {}
+
     // Update locale service (for immediate API requests)
     setCurrentLocale(newLocale);
     console.log("useLocale - Locale service updated to:", newLocale);
+
+    // Update axios default locale header for immediate subsequent requests
+    try {
+      axiosInstance.defaults.headers.common["locale"] = newLocale;
+    } catch {}
 
     // Update Redux state
     dispatch(setLocale(newLocale));
