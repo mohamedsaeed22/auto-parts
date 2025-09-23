@@ -27,6 +27,26 @@ axiosInstance.interceptors.request.use(
       }
       
       let locale = getCurrentLocale();
+
+      // Override with URL or cookie locale if they differ (handles first-load race where service still has default "ar")
+      if (typeof window !== "undefined") {
+        try {
+          const pathLocale = window.location.pathname.split("/")[1];
+          if ((pathLocale === "en" || pathLocale === "ar") && pathLocale !== locale) {
+            locale = pathLocale;
+          }
+          const cookieLocale = document.cookie
+            .split(";")
+            .map((c) => c.trim())
+            .find((c) => c.startsWith("NEXT_LOCALE="))
+            ?.split("=")[1];
+          if ((cookieLocale === "en" || cookieLocale === "ar") && cookieLocale !== locale) {
+            locale = cookieLocale;
+          }
+        } catch (e) {
+          console.warn("Axios interceptor - Failed syncing with URL/cookie locale:", e);
+        }
+      }
       
       // Fallback to cookie if service is not available
       if (!locale || (locale !== "en" && locale !== "ar")) {
