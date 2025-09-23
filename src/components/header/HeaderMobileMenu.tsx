@@ -15,21 +15,13 @@ import {
   Truck,
   LogOut,
   Wrench,
-  // Additional icons for better context
-  Info,
-  Phone,
-  Grid,
-  Award,
-  Tag,
-  Package,
-  DollarSign,
-  Menu,
-  Crown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+// import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
 import LoginDialog from "../LoginDialog";
+// import UserDropdown from "./UserDropdown";
 import { useAuth } from "@/hooks/useAuth";
 import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import Image from "next/image";
@@ -86,16 +78,21 @@ export default function HeaderMobileMenu({
               icon: UserCircle,
               label: t("mobileMenu.profile") || "My Profile",
               isActive: isActiveLink("/userprofile"),
-              profileNav: true,
             },
             {
               href: "/userprofile/points",
-              icon: Award, // Changed from Star to Award for points
+              icon: Star,
               label: t("mobileMenu.points") || "My Points",
               isActive: isActiveLink("/userprofile/points"),
               badge: user?.points,
               pointsNav: true,
             },
+            // {
+            //   href: "/notifications",
+            //   icon: Bell,
+            //   label: t("mobileMenu.notifications") || "Notifications",
+            //   isActive: isActiveLink("/notifications"),
+            // },
           ],
         },
         // Shopping Section
@@ -138,31 +135,31 @@ export default function HeaderMobileMenu({
             },
             {
               href: "/categories",
-              icon: Grid, // Changed from Grid3X3 to Grid for better visual
+              icon: Grid3X3,
               label: t("mobileMenu.categories") || "Categories",
               isActive: isActiveLink("/categories"),
             },
             {
               href: "/brands",
-              icon: Crown, // Changed from Star to Crown for Brands (premium feel)
+              icon: Star,
               label: t("mobileMenu.brands") || "Brands",
               isActive: isActiveLink("/brands"),
             },
             {
               href: "/latestoffer",
-              icon: Tag, // Changed from Gift to Tag for Offers (more commerce-like)
+              icon: Gift,
               label: t("mobileMenu.offers") || "Offers",
               isActive: isActiveLink("/latestoffer"),
             },
             {
               href: "/products",
-              icon: Package, // Changed from Grid3X3 to Package for Products
+              icon: Grid3X3,
               label: t("mobileMenu.products") || "Products",
               isActive: isActiveLink("/products"),
             },
             {
               href: "/userPricing",
-              icon: DollarSign, // Changed from Wrench to DollarSign for Request Pricing
+              icon: Wrench,
               label:
                 (t as unknown as (k: string) => string)(
                   "navigation.userPricing"
@@ -175,18 +172,37 @@ export default function HeaderMobileMenu({
             },
             {
               href: "/about",
-              icon: Info, // Changed from Home to Info for About Us
+              icon: Home,
               label: t("navigation.about") || "About Us",
               isActive: isActiveLink("/about"),
             },
             {
               href: "/contact",
-              icon: Phone, // Changed from HelpCircle to Phone for Contact Us
+              icon: HelpCircle,
               label: t("navigation.contact") || "Contact Us",
               isActive: isActiveLink("/contact"),
             },
           ],
         },
+        // Support Section
+        // {
+        //   type: "support",
+        //   title: t("mobileMenu.support") || "Support",
+        //   items: [
+        //     {
+        //       href: "/track-order",
+        //       icon: Truck,
+        //       label: t("mobileMenu.trackOrder") || "Track Order",
+        //       isActive: isActiveLink("/track-order"),
+        //     },
+        //     {
+        //       href: "/help",
+        //       icon: HelpCircle,
+        //       label: t("mobileMenu.help") || "Help & Support",
+        //       isActive: isActiveLink("/help"),
+        //     },
+        //   ],
+        // },
       ];
     } else {
       return [
@@ -197,13 +213,13 @@ export default function HeaderMobileMenu({
           items: [
             {
               href: "/about",
-              icon: Info, // Changed from Home to Info for About Us
+              icon: Home,
               label: t("navigation.about") || "About Us",
               isActive: isActiveLink("/about"),
             },
             {
               href: "/contact",
-              icon: Phone, // Changed from HelpCircle to Phone for Contact Us
+              icon: HelpCircle,
               label: t("navigation.contact") || "Contact Us",
               isActive: isActiveLink("/contact"),
             },
@@ -215,31 +231,31 @@ export default function HeaderMobileMenu({
             },
             {
               href: "/categories",
-              icon: Grid, // Changed from Grid3X3 to Grid for better visual
+              icon: Grid3X3,
               label: t("mobileMenu.categories") || "Categories",
               isActive: isActiveLink("/categories"),
             },
             {
               href: "/brands",
-              icon: Crown, // Changed from Star to Crown for Brands
+              icon: Star,
               label: t("mobileMenu.brands") || "Brands",
               isActive: isActiveLink("/brands"),
             },
             {
               href: "/latestoffer",
-              icon: Tag, // Changed from Gift to Tag for Offers
+              icon: Gift,
               label: t("mobileMenu.offers") || "Offers",
               isActive: isActiveLink("/latestoffer"),
             },
             {
               href: "/products",
-              icon: Package, // Changed from Grid3X3 to Package for Products
+              icon: Grid3X3,
               label: t("mobileMenu.products") || "Products",
               isActive: isActiveLink("/products"),
             },
             {
               href: "/userPricing",
-              icon: DollarSign, // Changed from Wrench to DollarSign for Request Pricing
+              icon: Wrench,
               label:
                 (t as unknown as (k: string) => string)(
                   "navigation.userPricing"
@@ -288,7 +304,6 @@ export default function HeaderMobileMenu({
     href?: string;
     isCart?: boolean;
     pointsNav?: boolean;
-    profileNav?: boolean;
   };
 
   const handleItemClick = (item: MenuItem) => {
@@ -297,11 +312,6 @@ export default function HeaderMobileMenu({
     } else if (item.pointsNav) {
       try {
         localStorage.setItem("userProfileActivePage", "points");
-      } catch {}
-      router.push("/userprofile");
-    } else if (item.profileNav) {
-      try {
-        localStorage.setItem("userProfileActivePage", "profile");
       } catch {}
       router.push("/userprofile");
     } else if (item.href && item.href !== "#") {
@@ -335,17 +345,27 @@ export default function HeaderMobileMenu({
             dir={isRTL ? "rtl" : "ltr"}
           >
             {/* Menu Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-primary to-primary">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-primary to-primary-600">
               <div className="flex items-center gap-3">
-                {isAuthenticated && user?.avatar && (
-                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white">
-                    <Image
-                      src={user.avatar}
-                      alt="User Avatar"
-                      width={40}
-                      height={40}
-                      className="w-full h-full object-cover"
-                    />
+                {isAuthenticated && (
+                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white bg-white/10 flex items-center justify-center">
+                    {user?.avatar ? (
+                      <Image
+                        src={user.avatar}
+                        alt="User Avatar"
+                        width={40}
+                        height={40}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-white font-semibold">
+                        {(
+                          user?.name?.[0] ||
+                          user?.phone?.[0] ||
+                          "U"
+                        ).toUpperCase()}
+                      </span>
+                    )}
                   </div>
                 )}
                 <div>
@@ -411,7 +431,6 @@ export default function HeaderMobileMenu({
                         >
                           <div className="relative">
                             <Icon size={20} className="flex-shrink-0" />
-                            {/* Fixed badge condition to prevent showing 0 */}
                             {(item.badge ?? 0) > 0 && (
                               <span className="absolute -top-1 -right-1 bg-accent text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]">
                                 {item.badge}
