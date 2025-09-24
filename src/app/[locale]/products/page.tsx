@@ -719,17 +719,15 @@ export default function ProductsPage({
                 </div>
 
                 {/* Pagination */}
-                {products.length > 0 &&
-                  pagination &&
-                  pagination.last_page > 1 && (
-                    <div className="mt-12">
-                      <CustomPagination
-                        currentPage={pagination.current_page}
-                        totalItems={pagination.total}
-                        itemsPerPage={pagination.per_page}
-                      />
-                    </div>
-                  )}
+
+                {pagination && (
+                  <div className="mt-12 flex justify-center">
+                    <CustomPagination
+                      totalItems={pagination.total}
+                      itemsPerPage={pagination.per_page}
+                    />
+                  </div>
+                )}
               </>
             )}
           </div>
