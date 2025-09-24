@@ -61,8 +61,12 @@ export default function HeaderLanguageDropdown({
                 {languages.map((language) => (
                   <button
                     key={language.code}
-                    className={`w-full px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-100 flex items-center gap-2 ${
+                    className={`w-full px-3 py-2 text-sm flex items-center gap-2 ${
                       isRTL ? "text-right" : "text-left"
+                    } ${
+                      language.code === activeLocale
+                        ? "bg-neutral-100 text-primary font-medium"
+                        : "text-neutral-700 hover:bg-neutral-50"
                     }`}
                     onClick={() => {
                       if (language.code !== activeLocale) {
@@ -73,6 +77,11 @@ export default function HeaderLanguageDropdown({
                   >
                     <span className="text-base">{language.flag}</span>
                     <span className="text-xs">{language.name}</span>
+                    {language.code === activeLocale && (
+                      <span className="ml-auto">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary inline-block"></span>
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
@@ -111,8 +120,12 @@ export default function HeaderLanguageDropdown({
               {languages.map((language) => (
                 <button
                   key={language.code}
-                  className={`w-full px-4 py-3 text-sm text-neutral-700 hover:bg-neutral-100 flex items-center gap-3 transition-colors ${
+                  className={`w-full px-4 py-3 text-sm flex items-center gap-3 transition-colors ${
                     isRTL ? "text-right" : "text-left"
+                  } ${
+                    language.code === activeLocale
+                      ? "bg-neutral-100 text-primary font-medium"
+                      : "text-neutral-700 hover:bg-neutral-50"
                   }`}
                   onClick={() => {
                     if (language.code !== activeLocale) {
@@ -123,6 +136,11 @@ export default function HeaderLanguageDropdown({
                 >
                   <span className="text-lg">{language.flag}</span>
                   <span>{language.name}</span>
+                  {language.code === activeLocale && (
+                    <span className="ml-auto">
+                      <span className="h-1.5 w-1.5 rounded-full bg-primary inline-block"></span>
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
