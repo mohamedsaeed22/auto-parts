@@ -166,7 +166,7 @@ export const completeRegistration = async (
   data: FormData | CompleteRegistrationRequest
 ): Promise<ApiResponse<AuthResponse>> => {
   let formData: FormData;
-  
+
   if (!(data instanceof FormData)) {
     formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
@@ -180,7 +180,7 @@ export const completeRegistration = async (
 
   // Get existing headers but remove Content-Type to let browser set it with boundary
   const headers = getHeaders();
-  delete headers['Content-Type'];
+  delete headers["Content-Type"];
 
   const response = await fetch(`${BASE_URL}/auth/complete-registration`, {
     method: "POST",

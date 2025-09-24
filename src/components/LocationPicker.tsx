@@ -371,9 +371,12 @@ export default function LocationPicker({
 
     try {
       // Request permission explicitly using the Permissions API
-      if (navigator.permissions && typeof navigator.permissions.query === 'function') {
+      if (
+        navigator.permissions &&
+        typeof navigator.permissions.query === "function"
+      ) {
         const permissionStatus = await navigator.permissions.query({
-          name: 'geolocation' as PermissionName
+          name: "geolocation" as PermissionName,
         });
 
         if (permissionStatus.state === "denied") {
