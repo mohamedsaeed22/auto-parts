@@ -15,7 +15,7 @@ const ProductsList = () => {
   const { t, i18n } = useTranslation("products");
   const { t: tCommon } = useTranslation("common");
   const isRTL = i18n.language === "ar";
-  
+
   // Use nuqs to manage page state
   const [currentPage] = useQueryState("page", parseAsInteger.withDefault(1));
 
@@ -35,7 +35,7 @@ const ProductsList = () => {
 
   // Update filters when URL page parameter changes
   useEffect(() => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       page: currentPage,
     }));
