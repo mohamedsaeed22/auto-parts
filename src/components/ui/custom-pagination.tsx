@@ -2,51 +2,27 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "./button";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { useCallback } from "react";
-import { createParser } from "nuqs";
+import { useQueryState, parseAsInteger } from "nuqs";
 import { useTranslation } from "react-i18next";
 
 interface PaginationProps {
   totalItems: number;
   itemsPerPage: number;
-  currentPage: number;
 }
 
 export function CustomPagination({
   totalItems,
   itemsPerPage,
-  currentPage,
 }: PaginationProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const { i18n } = useTranslation("");
   const isRTL = i18n.language === "ar";
+  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
 
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-  const createQueryString = useCallback(
-    (params: { [key: string]: string | number | null }) => {
-      const newSearchParams = new URLSearchParams(searchParams?.toString());
-
-      for (const [key, value] of Object.entries(params)) {
-        if (value === null) {
-          newSearchParams.delete(key);
-        } else {
-          newSearchParams.set(key, String(value));
-        }
-      }
-
-      return newSearchParams.toString();
-    },
-    [searchParams]
-  );
-
-  const handlePageChange = (page: number) => {
-    if (page < 1 || page > totalPages || page === currentPage) return;
-    const queryString = createQueryString({ page });
-    router.push(`${pathname}?${queryString}`);
+  const handlePageChange = (newPage: number) => {
+    if (newPage < 1 || newPage > totalPages || newPage === page) return;
+    setPage(newPage);
   };
 
   const renderPageNumbers = () => {
@@ -61,18 +37,18 @@ export function CustomPagination({
       const leftOffset = Math.floor(maxVisiblePages / 2);
       const rightOffset = maxVisiblePages - leftOffset - 1;
 
-      if (currentPage <= leftOffset) {
+      if (page <= leftOffset) {
         // Near the start
         startPage = 1;
         endPage = maxVisiblePages;
-      } else if (currentPage >= totalPages - rightOffset) {
+      } else if (page >= totalPages - rightOffset) {
         // Near the end
         startPage = totalPages - maxVisiblePages + 1;
         endPage = totalPages;
       } else {
         // Middle
-        startPage = currentPage - leftOffset;
-        endPage = currentPage + rightOffset;
+        startPage = page - leftOffset;
+        endPage = page + rightOffset;
       }
     }
 
@@ -81,7 +57,7 @@ export function CustomPagination({
       pages.push(
         <Button
           key={1}
-          variant={currentPage === 1 ? "default" : "outline"}
+          variant={page === 1 ? "default" : "outline"}
           className="h-8 w-8"
           onClick={() => handlePageChange(1)}
         >
@@ -102,7 +78,7 @@ export function CustomPagination({
       pages.push(
         <Button
           key={i}
-          variant={currentPage === i ? "default" : "outline"}
+          variant={page === i ? "default" : "outline"}
           className="h-8 w-8"
           onClick={() => handlePageChange(i)}
         >
@@ -123,7 +99,7 @@ export function CustomPagination({
       pages.push(
         <Button
           key={totalPages}
-          variant={currentPage === totalPages ? "default" : "outline"}
+          variant={page === totalPages ? "default" : "outline"}
           className="h-8 w-8"
           onClick={() => handlePageChange(totalPages)}
         >
@@ -140,8 +116,8 @@ export function CustomPagination({
       <Button
         variant="outline"
         className="h-8 w-8 p-0"
-        onClick={() => handlePageChange(currentPage - 1)}
-        disabled={currentPage <= 1}
+        onClick={() => handlePageChange(page - 1)}
+        disabled={page <= 1}
       >
         {isRTL ? (
           <ChevronRight className="h-4 w-4" />
@@ -159,8 +135,8 @@ export function CustomPagination({
       <Button
         variant="outline"
         className="h-8 w-8 p-0"
-        onClick={() => handlePageChange(currentPage + 1)}
-        disabled={currentPage >= totalPages}
+        onClick={() => handlePageChange(page + 1)}
+        disabled={page >= totalPages}
       >
         {isRTL ? (
           <ChevronLeft className="h-4 w-4" />

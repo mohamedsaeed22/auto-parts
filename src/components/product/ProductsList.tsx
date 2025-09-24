@@ -9,16 +9,20 @@ import { Product, ProductsRequest } from "@/services/api/types";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CustomPagination } from "@/components/ui/custom-pagination";
+import { useQueryState, parseAsInteger } from "nuqs";
 
 const ProductsList = () => {
   const { t, i18n } = useTranslation("products");
   const { t: tCommon } = useTranslation("common");
   const isRTL = i18n.language === "ar";
+  
+  // Use nuqs to manage page state
+  const [currentPage] = useQueryState("page", parseAsInteger.withDefault(1));
 
   // State for basic filters
   const [filters, setFilters] = useState<ProductsRequest>({
     per_page: 6,
-    page: 1,
+    page: currentPage,
   });
 
   // API hook
@@ -29,7 +33,15 @@ const ProductsList = () => {
   const products = productsResponse?.data?.items || [];
   const pagination = productsResponse?.data?.pagination;
 
-  // Load products on component mount
+  // Update filters when URL page parameter changes
+  useEffect(() => {
+    setFilters(prev => ({
+      ...prev,
+      page: currentPage,
+    }));
+  }, [currentPage]);
+
+  // Load products when filters change
   useEffect(() => {
     getProducts(filters);
   }, [filters, getProducts]);
@@ -132,15 +144,14 @@ const ProductsList = () => {
             </div>
 
             {/* Pagination */}
-            {/* {pagination && (
+            {pagination && (
               <div className="mt-12 flex justify-center">
                 <CustomPagination
                   totalItems={pagination.total}
                   itemsPerPage={pagination.per_page}
-                  currentPage={pagination.current_page}
                 />
               </div>
-            )} */}
+            )}
           </>
         )}
 

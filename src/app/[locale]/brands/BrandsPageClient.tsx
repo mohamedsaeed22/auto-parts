@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useGetBrandsQuery } from "@/services/hooks";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import { useQueryState, parseAsInteger } from "nuqs";
 import { SEOMetadata } from "@/components/seo/SEOMetadata";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { CustomPagination } from "@/components/ui/custom-pagination";
@@ -255,9 +256,8 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
   // Scroll to top when component mounts
   useScrollToTop();
 
-  // Get URL search params
-  const searchParams = useSearchParams();
-  const currentPage = parseInt(searchParams.get("page") || "1");
+  // Use nuqs to manage page state
+  const [currentPage] = useQueryState("page", parseAsInteger.withDefault(1));
   const itemsPerPage = 10; // You can make this configurable if needed
 
   // API Hooks
@@ -281,11 +281,6 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
   const handleViewBrand = (brandId: number) => {
     router.push(`/brands/${brandId}`);
   };
-
-  // Scroll to top when page changes
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [currentPage]);
 
   // Handle loading state
   if (isLoading) {
@@ -430,7 +425,6 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
         {brands.length > 0 && pagination && pagination.last_page > 1 && (
           <div className="mt-12">
             <CustomPagination
-              currentPage={currentPage}
               totalItems={pagination.total}
               itemsPerPage={itemsPerPage}
             />
