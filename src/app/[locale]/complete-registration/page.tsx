@@ -79,6 +79,9 @@ export default function CompleteRegistrationPage() {
     Array<{ key: string; value: string[] }>
   >([]);
 
+  // Debug: Log apiErrors changes
+  console.log("Current apiErrors state:", apiErrors);
+
   // Check if user has already completed registration
   const hasRedirectedRef = useRef(false);
 
@@ -223,18 +226,19 @@ export default function CompleteRegistrationPage() {
       setApiErrors([]);
 
       // Send the request to the API - the API mutation will handle FormData creation
-      type RegistrationResponse = { data?: { user: unknown } };
-      const mutationResult = await (
-        completeRegistration as unknown as (body: unknown) => Promise<unknown>
-      )(data);
-      const result: RegistrationResponse =
-        typeof (mutationResult as { unwrap?: unknown }).unwrap === "function"
-          ? await (
-              mutationResult as { unwrap: () => Promise<RegistrationResponse> }
-            ).unwrap()
-          : (mutationResult as RegistrationResponse);
+      console.log("About to call completeRegistration mutation");
+      const mutationResult = await completeRegistration(data);
+      console.log("Mutation result:", mutationResult);
 
-      if (result.data) {
+      // Check if there's an error in the mutation result
+      if ("error" in mutationResult) {
+        console.log("Mutation returned an error:", mutationResult.error);
+        throw mutationResult.error;
+      }
+
+      const result = mutationResult.data;
+
+      if (result && result.data) {
         // Update only the user data while preserving the existing token
         const baseUser: Record<string, unknown> =
           result.data &&
@@ -291,20 +295,62 @@ export default function CompleteRegistrationPage() {
       }
     } catch (error: unknown) {
       console.error("Error completing registration:", error);
+      console.log("Full error object:", JSON.stringify(error, null, 2));
 
-      // Handle API validation errors
-      if (error && typeof error === "object" && "data" in error) {
-        const errorData = error.data as {
+      // Handle RTK Query error structure
+      let errorData: any = null;
+
+      // Check for RTK Query error structure
+      if (error && typeof error === "object") {
+        if ("data" in error) {
+          errorData = error.data;
+        } else if ("status" in error && "data" in (error as any)) {
+          errorData = (error as any).data;
+        }
+      }
+
+      console.log("Extracted error data:", errorData);
+
+      if (errorData) {
+        const responseData = errorData as {
+          code?: number;
+          message?: string;
           errors?: Array<{ key: string; value: string[] }>;
         };
-        if (errorData.errors) {
-          setApiErrors(errorData.errors);
-          // Scroll to top where errors are displayed
-          window.scrollTo({ top: 0, behavior: "smooth" });
+
+        console.log("Response data:", responseData);
+        console.log("Response data has errors array:", responseData.errors);
+        console.log("Is errors array:", Array.isArray(responseData.errors));
+
+        if (responseData.errors && Array.isArray(responseData.errors)) {
+          console.log("Setting API errors:", responseData.errors);
+          setApiErrors(responseData.errors);
+
+          // Small delay to ensure state is updated before scrolling
+          setTimeout(() => {
+            const errorElement = document.getElementById("api-errors-section");
+            console.log("Error element found:", errorElement);
+            if (errorElement) {
+              errorElement.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+              });
+            } else {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+          }, 100);
+          return;
+        }
+
+        // Show general error message if no specific field errors
+        if (responseData.message) {
+          console.log("Showing general error message:", responseData.message);
+          showError(responseData.message);
           return;
         }
       }
 
+      console.log("Showing fallback error message");
       showError(t("toasts.registrationFailed"));
     }
   };
@@ -363,27 +409,6 @@ export default function CompleteRegistrationPage() {
         {/* Registration Form */}
         <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
           <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-            {/* API Error Messages */}
-            {apiErrors.length > 0 && (
-              <div className="p-4 bg-red-50 border-b border-red-100">
-                <div className="flex flex-col gap-2">
-                  {apiErrors.map((error, index) => (
-                    <div key={index} className="text-sm text-red-600">
-                      {error.value.map((message, messageIndex) => (
-                        <div
-                          key={messageIndex}
-                          className="flex items-start gap-2"
-                        >
-                          <span className="text-red-500">•</span>
-                          <span>{message}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* Location Selection Section - FIRST STEP */}
             <div className="bg-logo-gold/5 border-b border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
@@ -801,6 +826,53 @@ export default function CompleteRegistrationPage() {
                 </div>
               </div>
             </div>
+
+            {/* API Error Messages - Above Submit Button */}
+            {/* Debug: Show current apiErrors length */}
+            {console.log("Rendering form, apiErrors.length:", apiErrors.length)}
+            {apiErrors.length > 0 && (
+              <div
+                id="api-errors-section"
+                className="border-t border-gray-200 bg-red-50 p-6 md:p-8"
+              >
+                <div className="max-w-4xl mx-auto">
+                  <div className="flex items-start gap-3 mb-4">
+                   
+                    <div className="flex-1">
+                      <div className="space-y-3">
+                        {apiErrors.map((error, index) => (
+                          <div
+                            key={index}
+                            className="bg-white rounded-lg p-4 border border-red-200"
+                          >
+                            <div className="flex items-start gap-3">
+                              <div className="flex-shrink-0 mt-0.5">
+                                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                              </div>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-red-900 mb-1">
+                                  {t(`labels.${error.key}`, error.key)}
+                                </p>
+                                <div className="space-y-1">
+                                  {error.value.map((message, messageIndex) => (
+                                    <p
+                                      key={messageIndex}
+                                      className="text-sm text-red-700 leading-relaxed"
+                                    >
+                                      {message}
+                                    </p>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Submit Button */}
             <div className="border-t border-gray-200 bg-white p-6 md:p-8 text-center">
