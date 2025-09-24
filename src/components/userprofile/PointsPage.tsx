@@ -3,12 +3,12 @@
 import { useState } from "react";
 import {
   Wallet,
-  TrendingUp,
   Calendar,
-  Award,
   Loader2,
   ChevronLeft,
   ChevronRight,
+  TrendingUp,
+  TrendingDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
@@ -29,33 +29,55 @@ export default function PointsPage() {
     refetch,
   } = useGetPointsTransactionsQuery();
 
-  // Get points icon and color based on points value
-  const getPointsInfo = (points: number) => {
-    if (points > 0) {
+  type TransactionWithType = {
+    id: number;
+    type: "credit" | "debit";
+    points: number;
+    reason: string;
+    formatted_date: string;
+  };
+
+  type PaginationInfo = {
+    total: number;
+    per_page: number;
+    current_page: number;
+    last_page: number;
+    from: number;
+    to: number;
+  };
+
+  type PointsApiResponse = {
+    data?: {
+      items: TransactionWithType[];
+      pagination: PaginationInfo;
+    };
+    points?: number;
+  };
+
+  // Get points icon and color based on transaction type
+  const getPointsInfo = (type: string) => {
+    if (type === "credit") {
       return {
         icon: TrendingUp,
         color: "text-green-600",
         bg: "bg-green-100",
         sign: "+",
-      };
-    } else {
-      return {
-        icon: TrendingUp,
-        color: "text-red-600",
-        bg: "bg-red-100",
-        sign: "",
-      };
+      } as const;
     }
+    return {
+      icon: TrendingDown,
+      color: "text-red-600",
+      bg: "bg-red-100",
+      sign: "-",
+    } as const;
   };
 
-  const points = pointsResponse?.data?.items || [];
-  const pagination = pointsResponse?.data?.pagination;
+  const typedResponse = pointsResponse as unknown as PointsApiResponse;
+  const points = typedResponse?.data?.items || [];
+  const pagination = typedResponse?.data?.pagination;
 
-  // Calculate total points
-  const totalPoints = points.reduce(
-    (sum, transaction) => sum + transaction.points,
-    0
-  );
+  // Use total points from API response directly
+  const totalPoints = typedResponse?.points ?? 0;
 
   return (
     <div className="p-4 sm:p-6 lg:p-8" dir={isRTL ? "rtl" : "ltr"}>
@@ -182,7 +204,7 @@ export default function PointsPage() {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {points.map((transaction) => {
-                    const pointsInfo = getPointsInfo(transaction.points);
+                    const pointsInfo = getPointsInfo(transaction.type);
                     const PointsIcon = pointsInfo.icon;
 
                     return (
@@ -217,7 +239,7 @@ export default function PointsPage() {
             {/* Mobile Cards */}
             <div className="md:hidden">
               {points.map((transaction) => {
-                const pointsInfo = getPointsInfo(transaction.points);
+                const pointsInfo = getPointsInfo(transaction.type);
                 const PointsIcon = pointsInfo.icon;
 
                 return (
