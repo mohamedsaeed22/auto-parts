@@ -132,7 +132,7 @@ const ProductsList = () => {
             </div>
 
             {/* Pagination */}
-            {pagination && (
+            {/* {pagination && (
               <div className="mt-12 flex justify-center">
                 <CustomPagination
                   totalItems={pagination.total}
@@ -140,7 +140,7 @@ const ProductsList = () => {
                   currentPage={pagination.current_page}
                 />
               </div>
-            )}
+            )} */}
           </>
         )}
 
