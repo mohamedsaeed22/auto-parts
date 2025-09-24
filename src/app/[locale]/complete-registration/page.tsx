@@ -26,7 +26,10 @@ import type { LocationData } from "@/components/LocationPicker";
 import Image from "next/image";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registrationSchema, type RegistrationFormData } from "@/lib/validations/registrationSchema";
+import {
+  registrationSchema,
+  type RegistrationFormData,
+} from "@/lib/validations/registrationSchema";
 
 export default function CompleteRegistrationPage() {
   // ALL HOOKS MUST BE CALLED FIRST - before any early returns
@@ -88,7 +91,7 @@ export default function CompleteRegistrationPage() {
     // Store coordinates (required)
     setValue("latitude", locationData.lat.toString());
     setValue("longitude", locationData.lng.toString());
-    
+
     // Auto-fill other fields if available, but allow user to edit
     if (locationData.address) setValue("address", locationData.address);
     if (locationData.city) setValue("city", locationData.city);
@@ -214,7 +217,7 @@ export default function CompleteRegistrationPage() {
 
       // Create FormData for file uploads
       const formData = new FormData();
-      
+
       // Add all form fields to FormData
       Object.entries(data).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
@@ -436,10 +439,10 @@ export default function CompleteRegistrationPage() {
             {/* Form Content */}
             <div className="p-6 md:p-8">
               {/* Form Grid Layout */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                 {/* Basic Information */}
-                <div className="space-y-4">
-                  <h4 className="text-md font-semibold text-logo-black flex items-center mb-4">
+                <div className="space-y-3">
+                  <h4 className="text-md font-semibold text-logo-black flex items-center mb-3">
                     <User className="w-4 h-4 mr-2 text-logo-gold" />
                     {t("sections.basicInfo", "Basic Information")}
                   </h4>
@@ -471,7 +474,7 @@ export default function CompleteRegistrationPage() {
                     translationNamespace="registration"
                   />
 
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <label className="block text-sm font-medium text-neutral-700">
                       {t("labels.type")} <span className="text-red-500">*</span>
                     </label>
@@ -483,7 +486,7 @@ export default function CompleteRegistrationPage() {
                           value={field.value || undefined}
                           onValueChange={field.onChange}
                         >
-                          <SelectTrigger className="w-full h-12 px-3 py-3 border border-neutral-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-logo-gold focus:border-logo-gold transition-colors">
+                          <SelectTrigger className="w-full h-12 px-3 border border-neutral-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-logo-gold focus:border-logo-gold transition-colors">
                             <SelectValue
                               placeholder={t("placeholders.selectType")}
                             />
@@ -499,11 +502,14 @@ export default function CompleteRegistrationPage() {
                         </Select>
                       )}
                     />
-                    {errors.type && (
-                      <p className="text-sm text-red-500 mt-1">
-                        {errors.type.message}
-                      </p>
-                    )}
+                    <p
+                      className={
+                        "text-sm mt-1 min-h-[16px] " +
+                        (errors.type ? "text-red-500" : "opacity-0")
+                      }
+                    >
+                      {errors.type?.message || "\u00A0"}
+                    </p>
                   </div>
 
                   <FormInput
@@ -531,8 +537,9 @@ export default function CompleteRegistrationPage() {
                   />
                 </div>
 
-                <div className="space-y-6">
-                  <h4 className="text-md font-semibold text-logo-black flex items-center">
+                {/* Address Information */}
+                <div className="space-y-3">
+                  <h4 className="text-md font-semibold text-logo-black flex items-center mb-3">
                     <MapPin className="w-4 h-4 mr-2 text-logo-gold" />
                     {t("sections.addressInfo", "Address Information")}
                   </h4>
@@ -750,7 +757,9 @@ export default function CompleteRegistrationPage() {
                     {t("uploads.uploadAvatarHelp")}
                   </p>
                   {errors.avatar && (
-                    <p className="text-sm text-red-500">{errors.avatar.message}</p>
+                    <p className="text-sm text-red-500">
+                      {errors.avatar.message}
+                    </p>
                   )}
                 </div>
               </div>

@@ -94,7 +94,7 @@ const FormInput = forwardRef<
 
     // Base input classes with RTL/LTR support
     const baseInputClasses = cn(
-      "w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors",
+      "w-full h-12 px-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors",
       {
         "border-accent": error,
         "border-neutral-300": !error,
@@ -197,17 +197,16 @@ const FormInput = forwardRef<
           </p>
         )}
 
-        {error && (
-          <p
-            className={cn(
-              "text-sm text-accent",
-              isRTL ? "text-right" : "text-left",
-              errorClassName
-            )}
-          >
-            {t(error) || error}
-          </p>
-        )}
+        <p
+          className={cn(
+            "text-sm min-h-[20px]",
+            error ? "text-accent" : "opacity-0",
+            isRTL ? "text-right" : "text-left",
+            errorClassName
+          )}
+        >
+          {error ? t(error) || error : "\u00A0"}
+        </p>
       </div>
     );
   }
