@@ -313,21 +313,6 @@ export default function ProductDetails() {
   const isRTL = i18n.language === "ar";
   const direction = isRTL ? "rtl" : "ltr";
 
-  // Early return if product ID is invalid
-  if (productId === null) {
-    return (
-      <div
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
-        dir={isRTL ? "rtl" : "ltr"}
-      >
-        <ErrorMessage
-          message={t("invalidProductId") || "Invalid product ID"}
-          onRetry={() => router.back()}
-        />
-      </div>
-    );
-  }
-
   // Scroll to top when component mounts or productId changes
   useScrollToTop([productId]);
 
@@ -337,7 +322,7 @@ export default function ProductDetails() {
     isLoading,
     error,
     refetch,
-  } = useGetProductQuery(productId);
+  } = useGetProductQuery(productId as number, { skip: !productId });
 
   // Remove direct API add; rely on enhanced cart hook to decide (guest vs API)
 
@@ -516,6 +501,21 @@ export default function ProductDetails() {
     }
   };
 
+  // Early return if product ID is invalid (hooks called unconditionally above)
+  if (!productId) {
+    return (
+      <div
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+        dir={direction}
+      >
+        <ErrorMessage
+          message={t("invalidProductId") || "Invalid product ID"}
+          onRetry={() => router.back()}
+        />
+      </div>
+    );
+  }
+
   // Handle loading state
   if (isLoading) {
     return (
@@ -579,6 +579,10 @@ export default function ProductDetails() {
     return [];
   })();
 
+  // Non-typed fields or optional fields from backend response
+  type ProductOptionalFields = { weight?: number | string };
+  const productWeight = (product as ProductOptionalFields).weight;
+
   // Safe access to product properties
   const productName = product.name || "Product Name Unavailable";
   const productDescription = product.description || "No description available";
@@ -588,6 +592,10 @@ export default function ProductDetails() {
   const brandName = product.brand?.name;
   const offerInfo = product.offer;
   const hoverText = product.hover_text;
+
+  // Localized fallbacks for labels if i18n keys are missing
+  const weightLabel = t("weight", { defaultValue: isRTL ? "الوزن" : "Weight" });
+  const gramsLabel = t("grams", { defaultValue: isRTL ? "جم" : "g" });
 
   return (
     <div
@@ -644,6 +652,27 @@ export default function ProductDetails() {
               isLoading={isFavouritesLoading}
               canShowOptimisticUpdates={canShowOptimisticUpdates}
             />
+
+            {product.brand?.image && (
+              <div
+                className={`absolute bottom-4 ${
+                  isRTL ? "right-4" : "left-4"
+                } z-10 flex items-center gap-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md shadow`}
+              >
+                <Image
+                  src={product.brand.image}
+                  alt={product.brand.name || "Brand"}
+                  width={28}
+                  height={28}
+                  className="w-7 h-7 object-contain rounded"
+                />
+                {(product.brand.name || "").length > 0 && (
+                  <span className="text-xs font-medium text-neutral-800">
+                    {product.brand.name}
+                  </span>
+                )}
+              </div>
+            )}
 
             {productImages.length > 0 ? (
               <Image
@@ -730,16 +759,22 @@ export default function ProductDetails() {
           {/* Enhanced Category and Brand */}
           <div className={isRTL ? "text-right" : "text-left"}>
             <div className="flex flex-wrap gap-2 flex-row">
-              <span className="inline-block bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm capitalize font-medium">
-                {categoryName}
-              </span>
               {parentCategoryName && (
                 <span className="inline-block bg-gray-50 text-gray-600 px-3 py-1 rounded-full text-sm">
                   {parentCategoryName}
                 </span>
               )}
               {brandName && (
-                <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                <span className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                  {product.brand?.image && (
+                    <Image
+                      src={product.brand.image}
+                      alt={brandName}
+                      width={16}
+                      height={16}
+                      className="w-4 h-4 object-contain rounded"
+                    />
+                  )}
                   {brandName}
                 </span>
               )}
@@ -876,12 +911,13 @@ export default function ProductDetails() {
               <div
                 className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg flex-row`}
               >
+                
                 <span className="text-sm text-gray-600 font-medium">
                   {t("productCode")}:
                 </span>
                 <span className="text-sm font-semibold">{productCode}</span>
               </div>
-              <div
+              {/* <div
                 className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg flex-row`}
               >
                 <span className="text-sm text-gray-600 font-medium">
@@ -890,7 +926,7 @@ export default function ProductDetails() {
                 <span className="text-sm font-semibold text-green-600">
                   {t("available")}
                 </span>
-              </div>
+              </div> */}
               <div
                 className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg flex-row`}
               >
@@ -901,6 +937,18 @@ export default function ProductDetails() {
                   {categoryName}
                 </span>
               </div>
+              {productWeight && (
+                <div
+                  className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg flex-row`}
+                >
+                  <span className="text-sm text-gray-600 font-medium">
+                    {weightLabel}:
+                  </span>
+                  <span className="text-sm font-semibold">
+                    {productWeight} {gramsLabel}
+                  </span>
+                </div>
+              )}
               {brandName && (
                 <div
                   className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg flex-row`}
