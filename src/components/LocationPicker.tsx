@@ -367,29 +367,29 @@ export default function LocationPicker({
       return;
     }
 
+    setIsLoading(true);
+
     try {
-      // Preflight permission state when available to give immediate feedback
-      if (navigator.permissions && (navigator.permissions as any).query) {
-        try {
-          const status = await (navigator.permissions as any).query({
-            name: "geolocation",
-          });
-          if (status.state === "denied") {
-            showError(
-              t(
-                "location.permissionDenied",
-                "Location permission is denied. Enable it in your browser settings."
-              )
-            );
-            // Continue to allow manual search
-            return;
-          }
-        } catch {
-          // Ignore permission query errors
+      // Request permission explicitly using the Permissions API
+      if (navigator.permissions && typeof navigator.permissions.query === 'function') {
+        const permissionStatus = await navigator.permissions.query({
+          name: 'geolocation' as PermissionName
+        });
+
+        if (permissionStatus.state === "denied") {
+          setIsLoading(false);
+          showError(
+            t(
+              "location.permissionDenied",
+              "Location permission is denied. Enable it in your browser settings."
+            )
+          );
+          return;
         }
       }
-    } catch {
-      // ignore
+    } catch (error) {
+      // Ignore permission query errors and continue with geolocation request
+      console.warn("Permission API not available:", error);
     }
 
     setIsLoading(true);
@@ -531,8 +531,8 @@ export default function LocationPicker({
         >
           {/* Search Controls */}
           <div className="p-4 bg-neutral-50 border-b border-neutral-200">
-            <div className="flex gap-2">
-              <div className="flex-1 relative">
+            <div className="flex flex-col sm:flex-row gap-2">
+              <div className="w-full sm:flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-4 h-4" />
                 <Input
                   ref={searchInputRef}
@@ -551,7 +551,7 @@ export default function LocationPicker({
                 onClick={useCurrentLocation}
                 disabled={isLoading}
                 variant="outline"
-                className="flex items-center gap-2 border-logo-gold/30 text-logo-gold hover:bg-logo-gold/10"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 border-logo-gold/30 text-logo-gold hover:bg-logo-gold/10"
               >
                 {isLoading ? (
                   <Loader className="w-4 h-4 animate-spin" />

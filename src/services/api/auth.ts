@@ -163,19 +163,28 @@ export const googleLogin = async (
 };
 
 export const completeRegistration = async (
-  data: CompleteRegistrationRequest
+  data: FormData | CompleteRegistrationRequest
 ): Promise<ApiResponse<AuthResponse>> => {
-  const formData = new FormData();
+  let formData: FormData;
+  
+  if (!(data instanceof FormData)) {
+    formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined) {
+        formData.append(key, value as string);
+      }
+    });
+  } else {
+    formData = data;
+  }
 
-  Object.entries(data).forEach(([key, value]) => {
-    if (value !== undefined) {
-      formData.append(key, value);
-    }
-  });
+  // Get existing headers but remove Content-Type to let browser set it with boundary
+  const headers = getHeaders();
+  delete headers['Content-Type'];
 
   const response = await fetch(`${BASE_URL}/auth/complete-registration`, {
     method: "POST",
-    headers: getHeaders(),
+    headers,
     body: formData,
   });
   return handleResponse(response);

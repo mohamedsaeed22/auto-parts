@@ -34,7 +34,7 @@
   },
   "help": {
     "fixedLocation": "Fixed location: Cairo, Egypt",
-    "uploadNote": "Image up to 5MB (jpeg, png, jpg, gif, svg)"
+    "uploadNote": "Image up to 5MB (jpeg, png, jpg)"
   },
   "location": {
     "simpleInstruction": "Please select a location on the map above",
@@ -72,8 +72,8 @@
     "crPreviewAlt": "Commercial Register Preview",
     "avatarPreviewAlt": "Avatar Preview",
     "removeFile": "Remove file",
-    "uploadCRHelp": "Upload commercial register document (jpeg, png, jpg, gif, svg)",
-    "uploadAvatarHelp": "Upload your profile picture (jpeg, png, jpg, gif, svg)"
+    "uploadCRHelp": "Upload commercial register document (jpeg, png, jpg)",
+    "uploadAvatarHelp": "Upload your profile picture (jpeg, png, jpg)"
   },
   "validation": {
     "nameRequired": "Name is required",
@@ -86,7 +86,7 @@
     "typeRequired": "Type selection is required",
     "crRequired": "Commercial register is required",
     "avatarRequired": "Avatar is required",
-    "fileType": "File must be of type: jpeg, png, jpg, gif, svg",
+    "fileType": "File must be of type: jpeg, png, jpg",
     "fileSize": "File size must be less than 5MB"
   },
   "actions": {
@@ -96,7 +96,8 @@
   "toasts": {
     "registrationAlreadyCompleted": "Registration already completed!",
     "registrationCompleted": "Registration completed successfully!",
-    "registrationFailed": "Failed to complete registration. Please try again."
+    "registrationFailed": "Failed to complete registration. Please try again.",
+    "locationSelected": "Location selected successfully! You can now edit the address details if needed."
   },
   "sections": {
     "basicInfo": "Basic Information",

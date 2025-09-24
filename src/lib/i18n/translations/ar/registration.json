@@ -34,7 +34,7 @@
   },
   "help": {
     "fixedLocation": "موقع ثابت: القاهرة، مصر",
-    "uploadNote": "صورة حتى 5 ميجابايت (jpeg, png, jpg, gif, svg)"
+    "uploadNote": "صورة حتى 5 ميجابايت (jpeg, png, jpg)"
   },
   "location": {
     "simpleInstruction": "يرجى اختيار موقع على الخريطة أعلاه",
@@ -72,8 +72,8 @@
     "crPreviewAlt": "معاينة السجل التجاري",
     "avatarPreviewAlt": "معاينة الصورة الشخصية",
     "removeFile": "إزالة الملف",
-    "uploadCRHelp": "قم برفع مستند السجل التجاري (jpeg, png, jpg, gif, svg)",
-    "uploadAvatarHelp": "قم برفع صورتك الشخصية (jpeg, png, jpg, gif, svg)"
+    "uploadCRHelp": "قم برفع مستند السجل التجاري (jpeg, png, jpg)",
+    "uploadAvatarHelp": "قم برفع صورتك الشخصية (jpeg, png, jpg)"
   },
   "validation": {
     "nameRequired": "الاسم مطلوب",
@@ -86,7 +86,7 @@
     "typeRequired": "يجب اختيار النوع",
     "crRequired": "السجل التجاري مطلوب",
     "avatarRequired": "الصورة الشخصية مطلوبة",
-    "fileType": "يجب أن يكون الملف من نوع: jpeg, png, jpg, gif, svg",
+    "fileType": "يجب أن يكون الملف من نوع: jpeg, png, jpg",
     "fileSize": "يجب أن يكون حجم الملف أقل من 5 ميجابايت"
   },
   "actions": {
@@ -96,7 +96,8 @@
   "toasts": {
     "registrationAlreadyCompleted": "تم إكمال التسجيل مسبقًا!",
     "registrationCompleted": "تم إكمال التسجيل بنجاح!",
-    "registrationFailed": "فشل إكمال التسجيل. يرجى المحاولة مرة أخرى."
+    "registrationFailed": "فشل إكمال التسجيل. يرجى المحاولة مرة أخرى.",
+    "locationSelected": "تم اختيار الموقع بنجاح! يمكنك الآن تعديل تفاصيل العنوان إذا لزم الأمر."
   },
   "sections": {
     "basicInfo": "المعلومات الأساسية",
