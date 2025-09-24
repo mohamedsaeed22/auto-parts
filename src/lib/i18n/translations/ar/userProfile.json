@@ -256,7 +256,9 @@
       "timezone": "المنطقة الزمنية",
       "riyadh": "الرياض (GMT+3)",
       "dubai": "دبي (GMT+4)",
-      "london": "لندن (GMT+0)"
+      "london": "لندن (GMT+0)",
+      "changedSuccessfully": "تم تغيير اللغة بنجاح!",
+      "changeFailed": "فشل في تغيير اللغة. يرجى المحاولة مرة أخرى."
     },
     "company": {
       "title": "معلومات الشركة",

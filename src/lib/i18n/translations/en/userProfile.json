@@ -260,7 +260,9 @@
       "timezone": "Timezone",
       "riyadh": "Riyadh (GMT+3)",
       "dubai": "Dubai (GMT+4)",
-      "london": "London (GMT+0)"
+      "london": "London (GMT+0)",
+      "changedSuccessfully": "Language changed successfully!",
+      "changeFailed": "Failed to change language. Please try again."
     },
     "company": {
       "title": "Company Information",

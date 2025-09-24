@@ -5,16 +5,14 @@ import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import { useTranslation } from "react-i18next";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Menu, Bell } from "lucide-react";
+import { Search, Menu } from "lucide-react";
 import HeaderLogo from "./HeaderLogo";
 import SearchAutocomplete from "./SearchAutocomplete";
-import HeaderLanguageDropdown from "./HeaderLanguageDropdown";
 import HeaderActions from "./HeaderActions";
 import HeaderNavigation from "./HeaderNavigation";
 import HeaderMobileMenu from "./HeaderMobileMenu";
 import HeaderBottomNavigation from "./HeaderBottomNavigation";
 import NotificationDropdown from "./NotificationDropdown";
-import LoginDialog from "../LoginDialog";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/hooks/useLocale";
 import { useHeaderSearch } from "@/hooks/useHeaderSearch";
@@ -126,18 +124,15 @@ export default function Header() {
 
             {/* Desktop Right Actions */}
             <div className="hidden lg:flex items-center gap-2">
-              <HeaderLanguageDropdown
-                isOpen={isLanguageOpen}
-                setIsOpen={setIsLanguageOpen}
-                onLanguageChange={onLanguageChange}
-                isRTL={isRTL}
-                activeLocale={currentLocale}
-                isChangingLocale={isChangingLocale}
-              />
               <HeaderActions
                 totalItems={totalItems}
                 onCartClick={handleCartClick}
                 isRTL={isRTL}
+                isLanguageOpen={isLanguageOpen}
+                setIsLanguageOpen={setIsLanguageOpen}
+                onLanguageChange={onLanguageChange}
+                activeLocale={currentLocale}
+                isChangingLocale={isChangingLocale}
               />
             </div>
 
@@ -157,17 +152,6 @@ export default function Header() {
 
               {/* Notifications - Only show if authenticated */}
               {isAuthenticated && <NotificationDropdown isRTL={isRTL} />}
-
-              {/* Language Dropdown - Mobile */}
-              <HeaderLanguageDropdown
-                isOpen={isLanguageOpen}
-                setIsOpen={setIsLanguageOpen}
-                onLanguageChange={onLanguageChange}
-                isRTL={isRTL}
-                activeLocale={currentLocale}
-                isMobile={true}
-                isChangingLocale={isChangingLocale}
-              />
 
               {/* Mobile Menu Toggle */}
               <button
@@ -221,10 +205,12 @@ export default function Header() {
         <HeaderMobileMenu
           isOpen={isMenuOpen}
           onClose={closeMobileMenu}
-          navLinks={navLinks}
           isActiveLink={isActiveLink}
           isRTL={isRTL}
           onCartClick={handleCartClick}
+          onLanguageChange={onLanguageChange}
+          activeLocale={currentLocale}
+          isChangingLocale={isChangingLocale}
         />
       </header>
 

@@ -9,8 +9,11 @@
     "userPricing": "Request Pricing"
   },
   "language": {
+    "title": "Language",
     "arabic": "العربية",
-    "english": "English"
+    "english": "English",
+    "changedSuccessfully": "Language changed successfully!",
+    "changeFailed": "Failed to change language. Please try again."
   },
   "topBar": {
     "freeShipping": "Free shipping on orders over $50",

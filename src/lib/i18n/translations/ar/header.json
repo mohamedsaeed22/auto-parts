@@ -9,8 +9,11 @@
     "userPricing": "طلب تسعير"
   },
   "language": {
+    "title": "اللغة",
     "arabic": "العربية",
-    "english": "English"
+    "english": "English",
+    "changedSuccessfully": "تم تغيير اللغة بنجاح!",
+    "changeFailed": "فشل في تغيير اللغة. يرجى المحاولة مرة أخرى."
   },
   "topBar": {
     "freeShipping": "شحن مجاني للطلبات فوق 200 ريال",

@@ -260,9 +260,19 @@ export default function ProfilePage() {
       // Then, update the user's language preference in the backend
       await changeLanguage({ locale }).unwrap();
 
-      showSuccess("Language changed successfully!");
+      showSuccess(
+        t(
+          "settings.language.changedSuccessfully",
+          "Language changed successfully!"
+        )
+      );
     } catch {
-      showError("Failed to change language. Please try again.");
+      showError(
+        t(
+          "settings.language.changeFailed",
+          "Failed to change language. Please try again."
+        )
+      );
     }
   };
 
@@ -417,7 +427,7 @@ export default function ProfilePage() {
               onClick={() => handleLanguageChange("ar")}
               className="flex items-center gap-2"
             >
-              <span className="text-lg">🇸🇦</span>
+              <span className="text-lg">ar</span>
               العربية
             </Button>
 
@@ -427,7 +437,7 @@ export default function ProfilePage() {
               onClick={() => handleLanguageChange("en")}
               className="flex items-center gap-2"
             >
-              <span className="text-lg">🇺🇸</span>
+              <span className="text-lg">us</span>
               English
             </Button>
           </div>

@@ -7,12 +7,10 @@ import {
   ShoppingCart,
   Heart,
   Bookmark,
-  Bell,
   UserCircle,
   Wallet,
   Gift,
   HelpCircle,
-  Truck,
   LogOut,
   Wrench,
 } from "lucide-react";
@@ -26,28 +24,28 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import Image from "next/image";
 import { useLogoutMutation } from "@/services/hooks";
-
-interface NavLink {
-  href: string;
-  label: string;
-}
+import LanguageSwitch from "./LanguageSwitch";
 
 interface HeaderMobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
-  navLinks: NavLink[];
   isActiveLink: (href: string) => boolean;
   isRTL: boolean;
   onCartClick: () => void;
+  onLanguageChange?: (locale: string) => void;
+  activeLocale?: string;
+  isChangingLocale?: boolean;
 }
 
 export default function HeaderMobileMenu({
   isOpen,
   onClose,
-  navLinks,
   isActiveLink,
   isRTL,
   onCartClick,
+  onLanguageChange,
+  activeLocale,
+  isChangingLocale,
 }: HeaderMobileMenuProps) {
   const { t } = useTranslation("header");
   const { user, isAuthenticated, logout } = useAuth();
@@ -58,7 +56,7 @@ export default function HeaderMobileMenu({
   const handleLogout = async () => {
     try {
       await logoutApi().unwrap();
-    } catch (e) {
+    } catch {
       // ignore API errors, proceed with local logout
     }
     logout();
@@ -395,6 +393,26 @@ export default function HeaderMobileMenu({
                     </Button>
                   }
                 />
+              </div>
+            )}
+
+            {/* Language Selection */}
+            {onLanguageChange && activeLocale && (
+              <div className="p-4 border-b border-gray-200 bg-gray-50">
+                <div
+                  className={`flex items-center justify-between ${
+                    isRTL ? "flex-row-reverse" : ""
+                  }`}
+                >
+                  <span className="text-sm font-medium text-gray-700">
+                    {t("language.title") || "Language"}
+                  </span>
+                  <LanguageSwitch
+                    activeLocale={activeLocale}
+                    onLanguageChange={onLanguageChange}
+                    isChangingLocale={isChangingLocale}
+                  />
+                </div>
               </div>
             )}
 
