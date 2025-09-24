@@ -173,7 +173,7 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
               submitButtonText={t("address.add")}
               className="mt-4"
             />
-            <DialogFooter className="mt-4">
+            {/* <DialogFooter className="mt-4">
               <DialogClose asChild>
                 <Button
                   variant="outline"
@@ -182,7 +182,7 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
                   {t("dialog.cancel", "Cancel")}
                 </Button>
               </DialogClose>
-            </DialogFooter>
+            </DialogFooter> */}
           </DialogContent>
         </Dialog>
 

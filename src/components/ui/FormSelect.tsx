@@ -57,7 +57,7 @@ const FormSelect = forwardRef<HTMLButtonElement, FormSelectProps>(
       required = false,
       disabled = false,
       helpText,
-      register,
+      register: _register,
       error,
       value,
       onValueChange,
@@ -74,13 +74,13 @@ const FormSelect = forwardRef<HTMLButtonElement, FormSelectProps>(
     const { i18n, t } = useTranslation();
     const isRTL = i18n.language === "ar";
 
-    // Base select classes with RTL/LTR support
+    // Base select classes with RTL/LTR support and consistent height
     const baseSelectClasses = cn(
-      "h-12 px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors",
+      "h-10 px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 bg-white",
       {
-        "border-red-500": error,
-        "border-gray-300": !error,
-        "opacity-50 cursor-not-allowed": disabled,
+        "border-red-300 focus:border-red-500 focus:ring-red-500/20": error,
+        "border-gray-300 hover:border-gray-400 focus:border-primary": !error,
+        "opacity-50 cursor-not-allowed bg-gray-50": disabled,
         "text-left": !isRTL,
         "text-right": isRTL,
       },
@@ -98,14 +98,19 @@ const FormSelect = forwardRef<HTMLButtonElement, FormSelectProps>(
           <label
             htmlFor={id}
             className={cn(
-              "block text-sm font-medium text-gray-700",
+              "block text-sm font-semibold text-gray-900 mb-1",
               isRTL ? "text-right" : "text-left",
               labelClassName
             )}
           >
             {label}
             {required && (
-              <span className={cn("text-red-500", isRTL ? "mr-1" : "ml-1")}>
+              <span
+                className={cn(
+                  "text-red-500 font-bold",
+                  isRTL ? "mr-1" : "ml-1"
+                )}
+              >
                 *
               </span>
             )}
@@ -142,7 +147,7 @@ const FormSelect = forwardRef<HTMLButtonElement, FormSelectProps>(
         {helpText && (
           <p
             className={cn(
-              "text-xs text-gray-500",
+              "text-xs text-gray-600 mt-1",
               isRTL ? "text-right" : "text-left"
             )}
           >
@@ -150,40 +155,53 @@ const FormSelect = forwardRef<HTMLButtonElement, FormSelectProps>(
           </p>
         )}
 
-        <p
-          className={cn(
-            "text-sm min-h-[16px]",
-            error ? "text-red-600" : "opacity-0",
-            isRTL ? "text-right" : "text-left",
-            errorClassName
-          )}
-          id={errorId}
-        >
-          {(() => {
-            if (!error) return "\u00A0";
-            if (error === "Invalid input") {
-              const isTypeField = id === "type" || name === "type";
-              if (isTypeField) {
-                const fallback = isRTL
-                  ? "نوع المستخدم مطلوب"
-                  : "User type is required";
-                return t("validation.typeRequired", fallback);
-              }
-              if (label) {
-                const clean = label.replace(/\s*\*\s*$/, "").trim();
-                return isRTL
-                  ? t("validation.fieldRequiredAr", "{{field}} مطلوب", {
-                      field: clean,
-                    })
-                  : t("validation.fieldRequired", "{{field}} is required", {
-                      field: clean,
-                    });
-              }
-              return t("validation.invalidInput", "Invalid input");
-            }
-            return t(error) || error;
-          })()}
-        </p>
+        {error && (
+          <div
+            className={cn(
+              "flex items-center gap-1 mt-0.5",
+              isRTL ? "text-right" : "text-left",
+              errorClassName
+            )}
+            id={errorId}
+          >
+            <svg
+              className="w-3 h-3 text-red-500 flex-shrink-0"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <p className="text-xs text-red-600 font-medium">
+              {(() => {
+                if (error === "Invalid input") {
+                  const isTypeField = id === "type" || name === "type";
+                  if (isTypeField) {
+                    const fallback = isRTL
+                      ? "نوع المستخدم مطلوب"
+                      : "User type is required";
+                    return t("validation.typeRequired", fallback);
+                  }
+                  if (label) {
+                    const clean = label.replace(/\s*\*\s*$/, "").trim();
+                    return isRTL
+                      ? t("validation.fieldRequiredAr", "{{field}} مطلوب", {
+                          field: clean,
+                        })
+                      : t("validation.fieldRequired", "{{field}} is required", {
+                          field: clean,
+                        });
+                  }
+                  return t("validation.invalidInput", "Invalid input");
+                }
+                return t(error) || error;
+              })()}
+            </p>
+          </div>
+        )}
       </div>
     );
   }
