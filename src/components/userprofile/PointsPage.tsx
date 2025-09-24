@@ -84,7 +84,7 @@ export default function PointsPage() {
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 p-6 rounded-lg">
+        {/* <div className="bg-white border border-gray-200 p-6 rounded-lg">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">
@@ -96,9 +96,9 @@ export default function PointsPage() {
             </div>
             <Award className="w-8 h-8 text-gray-400" />
           </div>
-        </div>
+        </div> */}
 
-        <div className="bg-white border border-gray-200 p-6 rounded-lg">
+        {/* <div className="bg-white border border-gray-200 p-6 rounded-lg">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">
@@ -119,7 +119,7 @@ export default function PointsPage() {
             </div>
             <Calendar className="w-8 h-8 text-gray-400" />
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Points Transactions */}

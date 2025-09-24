@@ -258,7 +258,6 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
 
   // Use nuqs to manage page state
   const [currentPage] = useQueryState("page", parseAsInteger.withDefault(1));
-  const itemsPerPage = 10; // You can make this configurable if needed
 
   // API Hooks
   const {
@@ -268,7 +267,6 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
     refetch,
   } = useGetBrandsQuery({
     page: currentPage,
-    per_page: itemsPerPage,
   });
 
   const brands = brandsResponse?.data?.items || [];
@@ -426,7 +424,7 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
           <div className="mt-12">
             <CustomPagination
               totalItems={pagination.total}
-              itemsPerPage={itemsPerPage}
+              itemsPerPage={pagination.per_page}
             />
           </div>
         )}

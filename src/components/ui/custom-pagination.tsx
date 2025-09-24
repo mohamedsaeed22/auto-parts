@@ -16,12 +16,17 @@ export function CustomPagination({
 }: PaginationProps) {
   const { i18n } = useTranslation("");
   const isRTL = i18n.language === "ar";
-  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
+  const [page, setPage] = useQueryState("page", parseAsInteger);
 
   const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const currentPage = page || 1; // Use 1 as display default when page is null
+
+  console.log("CustomPagination: page from nuqs:", page);
+  console.log("CustomPagination: currentPage (display):", currentPage);
 
   const handlePageChange = (newPage: number) => {
-    if (newPage < 1 || newPage > totalPages || newPage === page) return;
+    if (newPage < 1 || newPage > totalPages || newPage === currentPage) return;
+    console.log("CustomPagination: Setting page to:", newPage);
     setPage(newPage);
   };
 
@@ -37,18 +42,18 @@ export function CustomPagination({
       const leftOffset = Math.floor(maxVisiblePages / 2);
       const rightOffset = maxVisiblePages - leftOffset - 1;
 
-      if (page <= leftOffset) {
+      if (currentPage <= leftOffset) {
         // Near the start
         startPage = 1;
         endPage = maxVisiblePages;
-      } else if (page >= totalPages - rightOffset) {
+      } else if (currentPage >= totalPages - rightOffset) {
         // Near the end
         startPage = totalPages - maxVisiblePages + 1;
         endPage = totalPages;
       } else {
         // Middle
-        startPage = page - leftOffset;
-        endPage = page + rightOffset;
+        startPage = currentPage - leftOffset;
+        endPage = currentPage + rightOffset;
       }
     }
 
@@ -57,7 +62,7 @@ export function CustomPagination({
       pages.push(
         <Button
           key={1}
-          variant={page === 1 ? "default" : "outline"}
+          variant={currentPage === 1 ? "default" : "outline"}
           className="h-8 w-8"
           onClick={() => handlePageChange(1)}
         >
@@ -78,7 +83,7 @@ export function CustomPagination({
       pages.push(
         <Button
           key={i}
-          variant={page === i ? "default" : "outline"}
+          variant={currentPage === i ? "default" : "outline"}
           className="h-8 w-8"
           onClick={() => handlePageChange(i)}
         >
@@ -99,7 +104,7 @@ export function CustomPagination({
       pages.push(
         <Button
           key={totalPages}
-          variant={page === totalPages ? "default" : "outline"}
+          variant={currentPage === totalPages ? "default" : "outline"}
           className="h-8 w-8"
           onClick={() => handlePageChange(totalPages)}
         >
@@ -116,8 +121,8 @@ export function CustomPagination({
       <Button
         variant="outline"
         className="h-8 w-8 p-0"
-        onClick={() => handlePageChange(page - 1)}
-        disabled={page <= 1}
+        onClick={() => handlePageChange(currentPage - 1)}
+        disabled={currentPage <= 1}
       >
         {isRTL ? (
           <ChevronRight className="h-4 w-4" />
@@ -135,8 +140,8 @@ export function CustomPagination({
       <Button
         variant="outline"
         className="h-8 w-8 p-0"
-        onClick={() => handlePageChange(page + 1)}
-        disabled={page >= totalPages}
+        onClick={() => handlePageChange(currentPage + 1)}
+        disabled={currentPage >= totalPages}
       >
         {isRTL ? (
           <ChevronLeft className="h-4 w-4" />

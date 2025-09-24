@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import ProductCard from "./ProductCard";
 import { useTranslation } from "react-i18next";
 import { useGetProductsMutation } from "@/services/hooks";
-import { Product, ProductsRequest } from "@/services/api/types";
+import { Product } from "@/services/api/types";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CustomPagination } from "@/components/ui/custom-pagination";
@@ -16,14 +16,8 @@ const ProductsList = () => {
   const { t: tCommon } = useTranslation("common");
   const isRTL = i18n.language === "ar";
 
-  // Use nuqs to manage page state
-  const [currentPage] = useQueryState("page", parseAsInteger.withDefault(1));
-
-  // State for basic filters
-  const [filters, setFilters] = useState<ProductsRequest>({
-    per_page: 6,
-    page: currentPage,
-  });
+  // Use nuqs to manage page state - null when no page param exists
+  const [currentPage] = useQueryState("page", parseAsInteger);
 
   // API hook
   const [getProducts, { data: productsResponse, isLoading, error }] =
@@ -33,22 +27,34 @@ const ProductsList = () => {
   const products = productsResponse?.data?.items || [];
   const pagination = productsResponse?.data?.pagination;
 
-  // Update filters when URL page parameter changes
+  // Load products when page parameter changes
   useEffect(() => {
-    setFilters((prev) => ({
-      ...prev,
-      page: currentPage,
-    }));
-  }, [currentPage]);
-
-  // Load products when filters change
-  useEffect(() => {
+    console.log("ProductsList: currentPage from nuqs:", currentPage);
+    
+    const filters: { page?: number } = {};
+    
+    // Only include page parameter if it exists in URL
+    if (currentPage !== null) {
+      filters.page = currentPage;
+      console.log("ProductsList: Sending request with page:", currentPage);
+    } else {
+      console.log("ProductsList: Sending request without page parameter");
+    }
+    
+    console.log("ProductsList: Final filters:", filters);
     getProducts(filters);
-  }, [filters, getProducts]);
+  }, [currentPage, getProducts]);
 
   // Handle retry
   const handleRetry = () => {
-    getProducts(filters);
+    const currentFilters: { page?: number } = {};
+    
+    // Only include page parameter if it exists in URL
+    if (currentPage !== null) {
+      currentFilters.page = currentPage;
+    }
+    
+    getProducts(currentFilters);
   };
 
   // Simple loading skeleton

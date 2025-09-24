@@ -84,7 +84,7 @@ export default function HeaderMobileMenu({
               icon: Wallet,
               label: t("mobileMenu.points") || "My Wallet",
               isActive: isActiveLink("/userprofile/points"),
-              badge: user?.points,
+              // badge: user?.points,
               pointsNav: true,
             },
             // {
