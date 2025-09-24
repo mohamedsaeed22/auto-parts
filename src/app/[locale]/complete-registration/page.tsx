@@ -24,6 +24,9 @@ import {
 import LocationPicker from "@/components/LocationPicker";
 import type { LocationData } from "@/components/LocationPicker";
 import Image from "next/image";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registrationSchema, type RegistrationFormData } from "@/lib/validations/registrationSchema";
 
 export default function CompleteRegistrationPage() {
   // ALL HOOKS MUST BE CALLED FIRST - before any early returns
@@ -35,47 +38,42 @@ export default function CompleteRegistrationPage() {
   const { clearRegistrationIncomplete } = useRegistrationStatus();
   const { t } = useTranslation("registration");
 
-  // State for form fields - these must also be called before any early returns
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "", // Optional field
-    type: "" as "" | "shop" | "workshop",
-    manager_name: "",
-    address: "",
-    city: "",
-    zip: "",
-    state: "",
-    tax_number: "",
-    latitude: "", // Will be set from map selection
-    longitude: "", // Will be set from map selection
+  // React Hook Form setup
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    watch,
+    formState: { errors },
+    clearErrors,
+  } = useForm<RegistrationFormData>({
+    resolver: zodResolver(registrationSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      type: undefined,
+      manager_name: "",
+      address: "",
+      city: "",
+      zip: "",
+      state: "",
+      tax_number: "",
+      latitude: "",
+      longitude: "",
+    },
   });
 
-  // Location selection state
-  const [isLocationSelected, setIsLocationSelected] = useState(false);
+  // Watch latitude and longitude to determine if location is selected
+  const latitude = watch("latitude");
+  const longitude = watch("longitude");
+  const isLocationSelected = Boolean(latitude && longitude);
 
-  const [commercialRegister, setCommercialRegister] = useState<File | null>(
-    null
-  );
-  const [avatar, setAvatar] = useState<File | null>(null);
+  // State for file uploads and previews
   const [commercialRegisterPreview, setCommercialRegisterPreview] = useState<
     string | null
   >(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-
-  const [errors, setErrors] = useState<{
-    name?: string;
-    email?: string;
-    manager_name?: string;
-    address?: string;
-    city?: string;
-    zip?: string;
-    state?: string;
-    tax_number?: string;
-    commercial_register?: string;
-    avatar?: string;
-    type?: string;
-    location?: string;
-  }>({});
 
   // State for API errors
   const [apiErrors, setApiErrors] = useState<
@@ -88,29 +86,17 @@ export default function CompleteRegistrationPage() {
   // Handle location selection from the map
   const handleLocationSelect = (locationData: LocationData) => {
     // Store coordinates (required)
-    setFormData((prev) => ({
-      ...prev,
-      latitude: locationData.lat.toString(),
-      longitude: locationData.lng.toString(),
-      // Auto-fill other fields if available, but allow user to edit
-      address: locationData.address || prev.address,
-      city: locationData.city || prev.city,
-      state: locationData.state || prev.state,
-      zip: locationData.postal_code || prev.zip,
-    }));
-
-    // Mark location as selected
-    setIsLocationSelected(true);
+    setValue("latitude", locationData.lat.toString());
+    setValue("longitude", locationData.lng.toString());
+    
+    // Auto-fill other fields if available, but allow user to edit
+    if (locationData.address) setValue("address", locationData.address);
+    if (locationData.city) setValue("city", locationData.city);
+    if (locationData.state) setValue("state", locationData.state);
+    if (locationData.postal_code) setValue("zip", locationData.postal_code);
 
     // Clear location-related errors
-    setErrors((prev) => ({
-      ...prev,
-      location: undefined,
-      address: undefined,
-      city: undefined,
-      state: undefined,
-      zip: undefined,
-    }));
+    clearErrors(["latitude", "longitude", "address", "city", "state", "zip"]);
 
     // Show success message
     showSuccess(
@@ -169,179 +155,79 @@ export default function CompleteRegistrationPage() {
     return null;
   };
 
-  // Handle input changes
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    // Clear errors for the field being edited
-    if (errors[name as keyof typeof errors]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
-    }
-  };
-
   // Handle file changes
   const handleFileChange = (
     file: File | undefined,
     fieldName: "commercial_register" | "avatar"
   ) => {
-    // Clear previous errors
-    setErrors((prev) => ({ ...prev, [fieldName]: undefined }));
-
     if (fieldName === "commercial_register") {
-      setCommercialRegister(file || null);
       if (file) {
         // Validate file
         const validationError = validateFile(file);
         if (validationError) {
-          setErrors((prev) => ({ ...prev, [fieldName]: validationError }));
           return;
         }
-
+        setValue("commercial_register", file);
         // Create preview for image files
         const reader = new FileReader();
         reader.onload = (e) =>
           setCommercialRegisterPreview(e.target?.result as string);
         reader.readAsDataURL(file);
       } else {
+        setValue("commercial_register", undefined as any);
         setCommercialRegisterPreview(null);
       }
     } else if (fieldName === "avatar") {
-      setAvatar(file || null);
       if (file) {
         // Validate file
         const validationError = validateFile(file);
         if (validationError) {
-          setErrors((prev) => ({ ...prev, [fieldName]: validationError }));
           return;
         }
-
+        setValue("avatar", file);
         const reader = new FileReader();
         reader.onload = (e) => setAvatarPreview(e.target?.result as string);
         reader.readAsDataURL(file);
       } else {
+        setValue("avatar", undefined as any);
         setAvatarPreview(null);
       }
     }
   };
 
   const handleRemoveFile = (fieldName: "commercial_register" | "avatar") => {
-    // Clear errors when removing file
-    setErrors((prev) => ({ ...prev, [fieldName]: undefined }));
-
     if (fieldName === "commercial_register") {
-      setCommercialRegister(null);
+      setValue("commercial_register", undefined as any);
       setCommercialRegisterPreview(null);
     } else if (fieldName === "avatar") {
-      setAvatar(null);
+      setValue("avatar", undefined as any);
       setAvatarPreview(null);
     }
   };
 
   // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Clear previous errors
-    setErrors({});
-
-    // Clear any previous errors
-    setApiErrors([]);
-    const newErrors: { [key: string]: string } = {};
-
-    // Required fields validation
-    if (!formData.name.trim()) {
-      newErrors.name = t("validation.nameRequired");
-    }
-
-    // Email is optional, but if provided, should be valid
-    if (
-      formData.email.trim() &&
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
-    ) {
-      newErrors.email = t("validation.emailInvalid");
-    }
-
-    if (!formData.manager_name.trim()) {
-      newErrors.manager_name = t("validation.managerRequired");
-    }
-
-    // Type selection is required
-    if (!formData.type) {
-      newErrors.type = t("validation.typeRequired");
-    }
-
-    // Location selection is MANDATORY (latitude and longitude required)
-    if (!isLocationSelected || !formData.latitude || !formData.longitude) {
-      newErrors.location = t(
-        "validation.locationRequired",
-        "Please select a location on the map to continue"
-      );
-    }
-
-    // Address fields are required (can be auto-filled or manually entered)
-    if (!formData.address.trim()) {
-      newErrors.address = t("validation.addressRequired");
-    }
-    if (!formData.city.trim()) {
-      newErrors.city = t("validation.cityRequired");
-    }
-    if (!formData.state.trim()) {
-      newErrors.state = t("validation.stateRequired");
-    }
-    if (!formData.zip.trim()) {
-      newErrors.zip = t("validation.zipRequired");
-    }
-
-    if (!formData.tax_number.trim()) {
-      newErrors.tax_number = t("validation.taxRequired");
-    }
-
-    // File uploads are required
-    if (!commercialRegister) {
-      newErrors.commercial_register = t("validation.crRequired");
-    }
-    if (!avatar) {
-      newErrors.avatar = t("validation.avatarRequired");
-    }
-
-    // If there are validation errors, set them and return
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      // Scroll to first error
-      const firstErrorElement = document.querySelector(".text-red-500");
-      firstErrorElement?.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-      return;
-    }
-
+  const onSubmit = async (data: RegistrationFormData) => {
     try {
-      // Create the request data object
-      const requestData = {
-        name: formData.name,
-        email: formData.email.trim() || undefined, // Send undefined if empty (optional)
-        type: formData.type as "shop" | "workshop",
-        manager_name: formData.manager_name,
-        address: formData.address,
-        city: formData.city,
-        zip: formData.zip,
-        state: formData.state,
-        tax_number: formData.tax_number,
-        latitude: formData.latitude,
-        longitude: formData.longitude,
-        commercial_register: commercialRegister || undefined,
-        avatar: avatar || undefined,
-      };
+      setIsLoading(true);
+      // Clear any previous errors
+      setApiErrors([]);
+
+      // Create FormData for file uploads
+      const formData = new FormData();
+      
+      // Add all form fields to FormData
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          if (value instanceof File) {
+            formData.append(key, value);
+          } else {
+            formData.append(key, value.toString());
+          }
+        }
+      });
 
       // Send the request to the API
-      const result = await completeRegistration(requestData).unwrap();
+      const result = await completeRegistration(formData).unwrap();
 
       if (result.data) {
         // Update only the user data while preserving the existing token
@@ -453,7 +339,7 @@ export default function CompleteRegistrationPage() {
 
         {/* Registration Form */}
         <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
-          <form onSubmit={handleSubmit} className="w-full">
+          <form onSubmit={handleSubmit(onSubmit)} className="w-full">
             {/* API Error Messages */}
             {apiErrors.length > 0 && (
               <div className="p-4 bg-red-50 border-b border-red-100">
@@ -503,10 +389,10 @@ export default function CompleteRegistrationPage() {
               <LocationPicker
                 onLocationSelect={handleLocationSelect}
                 initialLocation={
-                  formData.latitude && formData.longitude
+                  watch("latitude") && watch("longitude")
                     ? {
-                        lat: parseFloat(formData.latitude),
-                        lng: parseFloat(formData.longitude),
+                        lat: parseFloat(watch("latitude")),
+                        lng: parseFloat(watch("longitude")),
                       }
                     : {
                         lat: 24.7136, // Default to Riyadh, Saudi Arabia
@@ -517,9 +403,9 @@ export default function CompleteRegistrationPage() {
                 error={errors.location}
               />
 
-              {errors.location && (
+              {(errors.latitude || errors.longitude) && (
                 <p className="text-sm text-red-500 mt-2 font-medium">
-                  {errors.location}
+                  {errors.latitude?.message || errors.longitude?.message}
                 </p>
               )}
 
@@ -562,13 +448,11 @@ export default function CompleteRegistrationPage() {
                     label={t("labels.name")}
                     type="text"
                     id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
+                    {...register("name")}
                     placeholder={t("placeholders.name")}
                     required
                     icon={User}
-                    error={errors.name}
+                    error={errors.name?.message}
                     translationNamespace="registration"
                   />
 
@@ -579,13 +463,11 @@ export default function CompleteRegistrationPage() {
                     )})`}
                     type="email"
                     id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
+                    {...register("email")}
                     placeholder={t("placeholders.email")}
                     required={false}
                     icon={Mail}
-                    error={errors.email}
+                    error={errors.email?.message}
                     translationNamespace="registration"
                   />
 
@@ -593,28 +475,34 @@ export default function CompleteRegistrationPage() {
                     <label className="block text-sm font-medium text-neutral-700">
                       {t("labels.type")} <span className="text-red-500">*</span>
                     </label>
-                    <Select
-                      value={formData.type || undefined}
-                      onValueChange={(value: "shop" | "workshop") =>
-                        setFormData((prev) => ({ ...prev, type: value }))
-                      }
-                    >
-                      <SelectTrigger className="w-full h-12 px-3 py-3 border border-neutral-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-logo-gold focus:border-logo-gold transition-colors">
-                        <SelectValue
-                          placeholder={t("placeholders.selectType")}
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="shop">
-                          {t("typeOptions.shop")}
-                        </SelectItem>
-                        <SelectItem value="workshop">
-                          {t("typeOptions.workshop")}
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Controller
+                      name="type"
+                      control={control}
+                      render={({ field }) => (
+                        <Select
+                          value={field.value || undefined}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger className="w-full h-12 px-3 py-3 border border-neutral-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-logo-gold focus:border-logo-gold transition-colors">
+                            <SelectValue
+                              placeholder={t("placeholders.selectType")}
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="shop">
+                              {t("typeOptions.shop")}
+                            </SelectItem>
+                            <SelectItem value="workshop">
+                              {t("typeOptions.workshop")}
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
                     {errors.type && (
-                      <p className="text-sm text-red-500">{errors.type}</p>
+                      <p className="text-sm text-red-500 mt-1">
+                        {errors.type.message}
+                      </p>
                     )}
                   </div>
 
@@ -622,13 +510,11 @@ export default function CompleteRegistrationPage() {
                     label={t("labels.managerName")}
                     type="text"
                     id="manager_name"
-                    name="manager_name"
-                    value={formData.manager_name}
-                    onChange={handleInputChange}
+                    {...register("manager_name")}
                     placeholder={t("placeholders.managerName")}
                     required
                     icon={User}
-                    error={errors.manager_name}
+                    error={errors.manager_name?.message}
                     translationNamespace="registration"
                   />
 
@@ -636,13 +522,11 @@ export default function CompleteRegistrationPage() {
                     label={t("labels.taxNumber")}
                     type="text"
                     id="tax_number"
-                    name="tax_number"
-                    value={formData.tax_number}
-                    onChange={handleInputChange}
+                    {...register("tax_number")}
                     placeholder={t("placeholders.taxNumber")}
                     required
                     icon={FileText}
-                    error={errors.tax_number}
+                    error={errors.tax_number?.message}
                     translationNamespace="registration"
                   />
                 </div>
@@ -657,13 +541,11 @@ export default function CompleteRegistrationPage() {
                     label={t("labels.address")}
                     type="text"
                     id="address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleInputChange}
+                    {...register("address")}
                     placeholder={t("placeholders.address")}
                     required
                     icon={MapPin}
-                    error={errors.address}
+                    error={errors.address?.message}
                     translationNamespace="registration"
                   />
 
@@ -671,13 +553,11 @@ export default function CompleteRegistrationPage() {
                     label={t("labels.city")}
                     type="text"
                     id="city"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleInputChange}
+                    {...register("city")}
                     placeholder={t("placeholders.city")}
                     required
                     icon={Building}
-                    error={errors.city}
+                    error={errors.city?.message}
                     translationNamespace="registration"
                   />
 
@@ -685,13 +565,11 @@ export default function CompleteRegistrationPage() {
                     label={t("labels.state")}
                     type="text"
                     id="state"
-                    name="state"
-                    value={formData.state}
-                    onChange={handleInputChange}
+                    {...register("state")}
                     placeholder={t("placeholders.state")}
                     required
                     icon={MapPin}
-                    error={errors.state}
+                    error={errors.state?.message}
                     translationNamespace="registration"
                   />
 
@@ -699,13 +577,11 @@ export default function CompleteRegistrationPage() {
                     label={t("labels.zip")}
                     type="text"
                     id="zip"
-                    name="zip"
-                    value={formData.zip}
-                    onChange={handleInputChange}
+                    {...register("zip")}
                     placeholder={t("placeholders.zip")}
                     required
                     icon={Hash}
-                    error={errors.zip}
+                    error={errors.zip?.message}
                     translationNamespace="registration"
                   />
                 </div>
@@ -738,7 +614,7 @@ export default function CompleteRegistrationPage() {
                     accept="image/jpeg,image/jpg,image/png,image/gif,image/svg+xml"
                   />
 
-                  {!commercialRegister && (
+                  {!commercialRegisterPreview && (
                     <label
                       htmlFor="commercial_register"
                       className="flex items-center justify-center w-full h-32 border-2 border-dashed border-logo-gold/50 rounded-lg cursor-pointer hover:border-logo-gold hover:bg-logo-gold/5 transition-colors"
@@ -758,7 +634,7 @@ export default function CompleteRegistrationPage() {
                     </label>
                   )}
 
-                  {commercialRegister && (
+                  {commercialRegisterPreview && (
                     <div className="relative">
                       <Image
                         src={commercialRegisterPreview!}
@@ -795,7 +671,7 @@ export default function CompleteRegistrationPage() {
                   </p>
                   {errors.commercial_register && (
                     <p className="text-sm text-red-500">
-                      {errors.commercial_register}
+                      {errors.commercial_register.message}
                     </p>
                   )}
                 </div>
@@ -818,7 +694,7 @@ export default function CompleteRegistrationPage() {
                     accept="image/jpeg,image/jpg,image/png,image/gif,image/svg+xml"
                   />
 
-                  {!avatar && (
+                  {!avatarPreview && (
                     <label
                       htmlFor="avatar"
                       className="flex items-center justify-center w-full h-32 border-2 border-dashed border-logo-gold/50 rounded-lg cursor-pointer hover:border-logo-gold hover:bg-logo-gold/5 transition-colors"
@@ -838,7 +714,7 @@ export default function CompleteRegistrationPage() {
                     </label>
                   )}
 
-                  {avatar && (
+                  {avatarPreview && (
                     <div className="relative">
                       <Image
                         src={avatarPreview!}
@@ -874,7 +750,7 @@ export default function CompleteRegistrationPage() {
                     {t("uploads.uploadAvatarHelp")}
                   </p>
                   {errors.avatar && (
-                    <p className="text-sm text-red-500">{errors.avatar}</p>
+                    <p className="text-sm text-red-500">{errors.avatar.message}</p>
                   )}
                 </div>
               </div>
@@ -884,7 +760,7 @@ export default function CompleteRegistrationPage() {
             <div className="border-t border-gray-200 bg-white p-6 md:p-8 text-center">
               <Button
                 type="submit"
-                disabled={isLoading || !isLocationSelected}
+                disabled={isLoading}
                 variant="gold"
                 size="lg"
                 className="px-8 py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
