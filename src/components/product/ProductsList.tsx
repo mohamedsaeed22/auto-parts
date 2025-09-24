@@ -30,9 +30,9 @@ const ProductsList = () => {
   // Load products when page parameter changes
   useEffect(() => {
     console.log("ProductsList: currentPage from nuqs:", currentPage);
-    
+
     const filters: { page?: number } = {};
-    
+
     // Only include page parameter if it exists in URL
     if (currentPage !== null) {
       filters.page = currentPage;
@@ -40,7 +40,7 @@ const ProductsList = () => {
     } else {
       console.log("ProductsList: Sending request without page parameter");
     }
-    
+
     console.log("ProductsList: Final filters:", filters);
     getProducts(filters);
   }, [currentPage, getProducts]);
@@ -48,12 +48,12 @@ const ProductsList = () => {
   // Handle retry
   const handleRetry = () => {
     const currentFilters: { page?: number } = {};
-    
+
     // Only include page parameter if it exists in URL
     if (currentPage !== null) {
       currentFilters.page = currentPage;
     }
-    
+
     getProducts(currentFilters);
   };
 
