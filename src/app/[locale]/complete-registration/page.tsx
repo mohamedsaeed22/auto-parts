@@ -33,7 +33,8 @@ export default function CompleteRegistrationPage() {
   const router = useRouter();
   const { currentLocale } = useLocale();
   const { clearRegistrationIncomplete } = useRegistrationStatus();
-  const { t } = useTranslation("registration");
+  const { t, i18n } = useTranslation("registration");
+  const isRTL = i18n.language === "ar";
 
   // React Hook Form setup
   const {
@@ -451,7 +452,10 @@ export default function CompleteRegistrationPage() {
 
               {hasLocationError && (
                 <p className="text-sm text-red-500 mt-2 font-medium">
-                  {t("validation.locationRequired", "Location is required")}
+                  {t(
+                    "validation.locationRequired",
+                    isRTL ? "الموقع مطلوب" : "Location is required"
+                  )}
                 </p>
               )}
 
