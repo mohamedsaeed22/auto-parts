@@ -7,8 +7,8 @@ import { useTranslation } from "react-i18next";
 import { useGetOffersQuery } from "@/services/hooks";
 import { Offer } from "@/services/api/types";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import { useQueryState, parseAsInteger } from "nuqs";
 import {
-  ArrowLeft,
   ShoppingCart,
   Percent,
   DollarSign,
@@ -175,7 +175,6 @@ export default function LatestOffersPage() {
   const router = useRouter();
   const { t, i18n } = useTranslation("offers");
   const [viewMode] = useState<"grid" | "list">("grid");
-  const [currentPage, setCurrentPage] = useState(1);
 
   const isRTL = i18n.language === "ar";
   const direction = isRTL ? "rtl" : "ltr";
@@ -183,13 +182,18 @@ export default function LatestOffersPage() {
   // Scroll to top when component mounts
   useScrollToTop();
 
+  // Use nuqs to manage page state - default to 1 when no page param exists
+  const [currentPage] = useQueryState("page", parseAsInteger.withDefault(1));
+
   // API Hooks
   const {
     data: offersResponse,
     isLoading,
     error,
     refetch,
-  } = useGetOffersQuery();
+  } = useGetOffersQuery({
+    page: currentPage,
+  });
 
   const offers = offersResponse?.data?.items || [];
   const pagination = offersResponse?.data?.pagination;
@@ -200,12 +204,6 @@ export default function LatestOffersPage() {
 
   const handleViewOffer = (offerId: number) => {
     router.push(`/offers/${offerId}`);
-  };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    // You can add API call here to fetch offers for the new page
-    // For now, we'll just update the state
   };
 
   // Handle loading state
@@ -286,7 +284,10 @@ export default function LatestOffersPage() {
             {t("foundOffers") || "Found Offers"}
           </h2>
           <p className="text-gray-600">
-            {t("offersCount") || `${offers.length} amazing offers available`}
+            {pagination
+              ? t("offersCount") ||
+                `${pagination.total} amazing offers available`
+              : t("offersCount") || `${offers.length} amazing offers available`}
           </p>
         </div>
 
@@ -325,12 +326,11 @@ export default function LatestOffersPage() {
         )}
 
         {/* Pagination */}
-        {offers.length > 0 && pagination && pagination.last_page > 1 && (
+        {pagination && (
           <div className="mt-12 flex justify-center">
             <CustomPagination
-              totalItems={pagination.total || offers.length}
-              itemsPerPage={pagination.per_page || 10}
-              currentPage={pagination.current_page || 1}
+              totalItems={pagination.total}
+              itemsPerPage={pagination.per_page}
             />
           </div>
         )}
