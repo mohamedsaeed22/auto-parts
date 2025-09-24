@@ -10,10 +10,27 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, id } = await params;
 
-  // Fetch brand data for metadata
-  const brand = await fetchBrandById(id, locale);
+  try {
+    // Fetch brand data for metadata
+    const brand = await fetchBrandById(id, locale);
 
-  return generateBrandPageMetadata(brand, locale);
+    if (!brand) {
+      // Return default metadata for non-existent brands
+      return {
+        title: "Brand Not Found",
+        description: "The requested brand could not be found.",
+      };
+    }
+
+    return generateBrandPageMetadata(brand, locale);
+  } catch (error) {
+    console.error("Error generating brand metadata:", error);
+    // Return fallback metadata in case of errors
+    return {
+      title: "Error Loading Brand",
+      description: "There was an error loading the brand information.",
+    };
+  }
 }
 
 export default function BrandLayout({ children }: Props) {

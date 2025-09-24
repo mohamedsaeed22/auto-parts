@@ -56,6 +56,9 @@ export async function fetchBrandById(id: string | number, locale?: string) {
     });
 
     if (!response.ok) {
+      if (response.status === 404) {
+        return null; // Return null for 404 to handle non-existent brands gracefully
+      }
       throw new Error(`Failed to fetch brand: ${response.status}`);
     }
 
@@ -63,7 +66,7 @@ export async function fetchBrandById(id: string | number, locale?: string) {
     return data.data || null;
   } catch (error) {
     console.error("Error fetching brand:", error);
-    return null;
+    throw error; // Re-throw the error to be handled by error boundaries
   }
 }
 

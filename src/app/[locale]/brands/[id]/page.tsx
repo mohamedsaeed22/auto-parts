@@ -22,13 +22,14 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner, ErrorMessage } from "@/components/ui";
+import { da } from "date-fns/locale";
 
 // Types
 interface Brand {
   id: number;
   name: string;
   image?: string;
-  products_count?: number;
+  number_of_products?: number;
 }
 
 // Brand Header Component
@@ -41,6 +42,7 @@ const BrandHeader = ({
   isRTL: boolean;
   t: (key: string) => string;
 }) => (
+
   <div className="bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 rounded-2xl p-8 mb-8">
     <div
       className={`grid grid-cols-1 lg:grid-cols-2 gap-8 items-center ${
@@ -105,7 +107,7 @@ const BrandHeader = ({
               dir={isRTL ? "rtl" : "ltr"}
             >
               <p className="text-xl font-semibold text-gray-900">
-                {brand.products_count || 0} {t("products") || "Products"}
+                {brand.number_of_products || 0} {t("products") || "Products"}
               </p>
               <p className="text-gray-600">
                 {t("availableForThisBrand") || "available for this brand"}
@@ -204,9 +206,9 @@ export default function BrandPage() {
     error,
     refetch,
   } = useGetBrandsQuery();
-
   const brands = brandsResponse?.data?.items || [];
   const brand = brands.find((b: Brand) => b.id === brandId);
+  console.log(brand);
 
   // Products state and API
   const [products, setProducts] = useState<Product[]>([]);
