@@ -78,7 +78,9 @@ export default function CompleteRegistrationPage() {
   }>({});
 
   // State for API errors
-  const [apiErrors, setApiErrors] = useState<Array<{ key: string; value: string[] }>>([]);
+  const [apiErrors, setApiErrors] = useState<
+    Array<{ key: string; value: string[] }>
+  >([]);
 
   // Check if user has already completed registration
   const hasRedirectedRef = useRef(false);
@@ -380,18 +382,20 @@ export default function CompleteRegistrationPage() {
       }
     } catch (error: unknown) {
       console.error("Error completing registration:", error);
-      
+
       // Handle API validation errors
-      if (error && typeof error === 'object' && 'data' in error) {
-        const errorData = error.data as { errors?: Array<{ key: string; value: string[] }> };
+      if (error && typeof error === "object" && "data" in error) {
+        const errorData = error.data as {
+          errors?: Array<{ key: string; value: string[] }>;
+        };
         if (errorData.errors) {
           setApiErrors(errorData.errors);
           // Scroll to top where errors are displayed
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          window.scrollTo({ top: 0, behavior: "smooth" });
           return;
         }
       }
-      
+
       showError(t("toasts.registrationFailed"));
     }
   };
@@ -457,7 +461,10 @@ export default function CompleteRegistrationPage() {
                   {apiErrors.map((error, index) => (
                     <div key={index} className="text-sm text-red-600">
                       {error.value.map((message, messageIndex) => (
-                        <div key={messageIndex} className="flex items-start gap-2">
+                        <div
+                          key={messageIndex}
+                          className="flex items-start gap-2"
+                        >
                           <span className="text-red-500">•</span>
                           <span>{message}</span>
                         </div>
