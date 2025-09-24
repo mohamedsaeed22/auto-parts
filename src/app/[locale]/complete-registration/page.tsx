@@ -222,25 +222,11 @@ export default function CompleteRegistrationPage() {
       // Clear any previous errors
       setApiErrors([]);
 
-      // Create FormData for file uploads
-      const formData = new FormData();
-
-      // Add all form fields to FormData
-      Object.entries(data).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          if (value instanceof File) {
-            formData.append(key, value);
-          } else {
-            formData.append(key, value.toString());
-          }
-        }
-      });
-
-      // Send the request to the API with minimal type assumptions
+      // Send the request to the API - the API mutation will handle FormData creation
       type RegistrationResponse = { data?: { user: unknown } };
       const mutationResult = await (
         completeRegistration as unknown as (body: unknown) => Promise<unknown>
-      )(formData);
+      )(data);
       const result: RegistrationResponse =
         typeof (mutationResult as { unwrap?: unknown }).unwrap === "function"
           ? await (

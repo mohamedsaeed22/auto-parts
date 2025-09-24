@@ -112,8 +112,8 @@ const FormInput = forwardRef<
       if (type === "textarea") {
         return (
           <textarea
-            {...register}
             {...props}
+            {...register}
             id={id}
             name={name}
             placeholder={placeholder}
@@ -140,8 +140,8 @@ const FormInput = forwardRef<
           )}
 
           <input
-            {...register}
             {...props}
+            {...register}
             type={type}
             id={id}
             name={name}
