@@ -10,6 +10,10 @@ import {
   Plus,
   Heart,
   Bookmark,
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  Pause,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Product } from "@/services/api/types";
@@ -108,10 +112,88 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const productName = product.name || "Product Name Unavailable";
   const productPrice = product.price || "0";
   const productFinalPrice = product.final_price || Number(productPrice);
-  const productImage = product.primary_image || "/placeholder-product.jpg";
   const categoryName = product.category?.name || "Unknown Category";
   const hasDiscount = product.discount_type || product.offer;
   const discountInfo = product.discount_info;
+
+  // Image handling logic
+  const getAvailableImages = (): string[] => {
+    const images: string[] = [];
+
+    // Add primary image if it exists and is not empty
+    if (product.primary_image && product.primary_image.trim() !== "") {
+      images.push(product.primary_image);
+    }
+
+    // Add other images from the images array
+    if (product.images && Array.isArray(product.images)) {
+      product.images.forEach((img: string) => {
+        if (img && img.trim() !== "" && !images.includes(img)) {
+          images.push(img);
+        }
+      });
+    }
+
+    // If no images found, use placeholder
+    if (images.length === 0) {
+      images.push("/placeholder-product.jpg");
+    }
+
+    return images;
+  };
+
+  const availableImages = getAvailableImages();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isAutoSwipeActive, setIsAutoSwipeActive] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
+  const currentImage =
+    availableImages[currentImageIndex] || "/placeholder-product.jpg";
+
+  // Auto-swipe effect
+  useEffect(() => {
+    if (availableImages.length <= 1 || !isAutoSwipeActive || isHovered) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % availableImages.length);
+    }, 2000); // 2 seconds
+
+    return () => clearInterval(interval);
+  }, [availableImages.length, isAutoSwipeActive, isHovered]);
+
+  // Image navigation functions
+  const nextImage = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev + 1) % availableImages.length);
+  };
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImageIndex(
+      (prev) => (prev - 1 + availableImages.length) % availableImages.length
+    );
+  };
+
+  const selectImage = (index: number) => {
+    setCurrentImageIndex(index);
+  };
+
+  const toggleAutoSwipe = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsAutoSwipeActive(!isAutoSwipeActive);
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
 
   // Check authentication and registration status for visual feedback
   const isAuthenticated = storage.isAuthenticated();
@@ -203,7 +285,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         id: product.id,
         title: productName,
         price: productFinalPrice,
-        image: productImage,
+        image: currentImage,
         category: categoryName,
         description: product.description || "",
       });
@@ -238,14 +320,77 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <div className="bg-card rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-border overflow-hidden">
             <div className="flex flex-col sm:flex-row">
               {/* Image Container */}
-              <div className="relative w-full sm:w-48 h-48 sm:h-40 overflow-hidden bg-neutral-100 flex-shrink-0 flex items-center justify-center">
+              <div
+                className="relative w-full sm:w-48 h-48 sm:h-40 overflow-hidden bg-neutral-100 flex-shrink-0 flex items-center justify-center"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
                 <Image
-                  src={productImage}
+                  src={currentImage}
                   alt={productName}
                   width={300}
                   height={300}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
+
+                {/* Image Navigation - Only show if multiple images */}
+                {availableImages.length > 1 && (
+                  <>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      className="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 p-0 bg-white/80 hover:bg-white border-gray-300 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={prevImage}
+                    >
+                      <ChevronLeft size={12} />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 p-0 bg-white/80 hover:bg-white border-gray-300 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={nextImage}
+                    >
+                      <ChevronRight size={12} />
+                    </Button>
+                  </>
+                )}
+
+                {/* Image Thumbnails - Only show if multiple images */}
+                {availableImages.length > 1 && (
+                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {availableImages.map((img, index) => (
+                      <button
+                        key={index}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          selectImage(index);
+                        }}
+                        className={`w-2 h-2 rounded-full transition-colors ${
+                          index === currentImageIndex
+                            ? "bg-white"
+                            : "bg-white/50 hover:bg-white/75"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {/* Auto-swipe Toggle Button - Only show if multiple images */}
+                {availableImages.length > 1 && (
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    className="absolute top-2 left-2 w-6 h-6 p-0 bg-white/80 hover:bg-white border-gray-300 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={toggleAutoSwipe}
+                  >
+                    {isAutoSwipeActive ? (
+                      <Pause size={12} />
+                    ) : (
+                      <Play size={12} />
+                    )}
+                  </Button>
+                )}
 
                 {/* Action Buttons */}
                 <div
@@ -444,15 +589,74 @@ const ProductCard: React.FC<ProductCardProps> = ({
       <Link href={`/product/${product.id}`}>
         <div className="bg-card rounded-lg shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col border border-border overflow-hidden">
           {/* Image Container with Badges */}
-          <div className="relative aspect-square overflow-hidden bg-neutral-100">
+          <div
+            className="relative aspect-square overflow-hidden bg-neutral-100"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
             {/* Product Image */}
             <Image
-              src={productImage}
+              src={currentImage}
               alt={productName}
               width={300}
               height={300}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
+
+            {/* Image Navigation - Only show if multiple images */}
+            {availableImages.length > 1 && (
+              <>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 p-0 bg-white/80 hover:bg-white border-gray-300 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={prevImage}
+                >
+                  <ChevronLeft size={12} />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 p-0 bg-white/80 hover:bg-white border-gray-300 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={nextImage}
+                >
+                  <ChevronRight size={12} />
+                </Button>
+              </>
+            )}
+
+            {/* Image Thumbnails - Only show if multiple images */}
+            {availableImages.length > 1 && (
+              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                {availableImages.map((img, index) => (
+                  <button
+                    key={index}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      selectImage(index);
+                    }}
+                    className={`w-2 h-2 rounded-full transition-colors ${
+                      index === currentImageIndex
+                        ? "bg-white"
+                        : "bg-white/50 hover:bg-white/75"
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Auto-swipe Toggle Button - Only show if multiple images */}
+            {availableImages.length > 1 && (
+              <Button
+                size="icon"
+                variant="outline"
+                className="absolute top-2 left-2 w-6 h-6 p-0 bg-white/80 hover:bg-white border-gray-300 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={toggleAutoSwipe}
+              >
+                {isAutoSwipeActive ? <Pause size={12} /> : <Play size={12} />}
+              </Button>
+            )}
 
             {/* Action Buttons - Always Visible */}
             <div
