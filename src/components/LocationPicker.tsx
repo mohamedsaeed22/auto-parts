@@ -58,6 +58,7 @@ export default function LocationPicker({
   const [searchQuery, setSearchQuery] = useState("");
   const [, setSelectedLocation] = useState<LocationData | null>(null);
   const [mapError, setMapError] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
   // Map is always visible - no need for showMap state
 
   // Load Google Maps script
@@ -371,8 +372,10 @@ export default function LocationPicker({
 
     // For mobile devices, we need to directly call getCurrentPosition to trigger the permission prompt
     // Checking permission status first can prevent the prompt from appearing on mobile
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
-                     (window.innerWidth <= 768);
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      ) || window.innerWidth <= 768;
 
     // Only check permission status on desktop, not on mobile
     if (!isMobile) {
@@ -427,7 +430,7 @@ export default function LocationPicker({
           const code = (error as GeolocationPositionError).code;
           if (code === 1) {
             // Permission denied - this happens after user explicitly denies
-            message = isMobile 
+            message = isMobile
               ? t(
                   "location.permissionDeniedMobile",
                   "Location access was denied. To enable location access, go to your browser settings and allow location for this site."
@@ -485,7 +488,28 @@ export default function LocationPicker({
 
   // Effects
   useEffect(() => {
+    // Detect mobile device
+    const checkMobile = () => {
+      const userAgent =
+        navigator.userAgent || navigator.vendor || (window as any).opera;
+      const isMobileDevice =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          userAgent
+        ) || window.innerWidth <= 768;
+      setIsMobile(isMobileDevice);
+    };
+
+    checkMobile();
+
+    // Listen for window resize to update mobile detection
+    window.addEventListener("resize", checkMobile);
+
     loadGoogleMaps();
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+    };
   }, [loadGoogleMaps]);
 
   useEffect(() => {
@@ -553,7 +577,11 @@ export default function LocationPicker({
           {/* Search Controls */}
           <div className="p-4 bg-neutral-50 border-b border-neutral-200">
             <div className="flex flex-col sm:flex-row gap-2">
-              <div className="w-full sm:flex-1 relative">
+              <div
+                className={`relative ${
+                  isMobile ? "w-full" : "w-full sm:flex-1"
+                }`}
+              >
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-4 h-4" />
                 <Input
                   ref={searchInputRef}
@@ -567,20 +595,23 @@ export default function LocationPicker({
                   className="pl-10"
                 />
               </div>
-              <Button
-                type="button"
-                onClick={useCurrentLocation}
-                disabled={isLoading}
-                variant="outline"
-                className="w-full sm:w-auto flex items-center justify-center gap-2 border-logo-gold/30 text-logo-gold hover:bg-logo-gold/10"
-              >
-                {isLoading ? (
-                  <Loader className="w-4 h-4 animate-spin" />
-                ) : (
-                  <MapPin className="w-4 h-4" />
-                )}
-                {t("location.useCurrentLocation", "Use My Location")}
-              </Button>
+              {/* Only show "Use My Location" button on desktop */}
+              {!isMobile && (
+                <Button
+                  type="button"
+                  onClick={useCurrentLocation}
+                  disabled={isLoading}
+                  variant="outline"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 border-logo-gold/30 text-logo-gold hover:bg-logo-gold/10"
+                >
+                  {isLoading ? (
+                    <Loader className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <MapPin className="w-4 h-4" />
+                  )}
+                  {t("location.useCurrentLocation", "Use My Location")}
+                </Button>
+              )}
             </div>
           </div>
 
