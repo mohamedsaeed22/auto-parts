@@ -16,22 +16,22 @@ const optionalFileSchema = z
   .refine((file) => {
     if (!file) return true;
     return file.size <= MAX_FILE_SIZE;
-  }, "validation.documentImage.fileSize")
+  }, "auth:validation.documentImage.fileSize")
   .refine((file) => {
     if (!file) return true;
     return ACCEPTED_IMAGE_TYPES.includes(file.type);
-  }, "validation.documentImage.fileType");
+  }, "auth:validation.documentImage.fileType");
 
 // Required file schema
 const requiredFileSchema = z
-  .instanceof(File, { message: "validation.documentImage.required" })
+  .instanceof(File, { message: "auth:validation.documentImage.required" })
   .refine(
     (file) => file.size <= MAX_FILE_SIZE,
-    "validation.documentImage.fileSize"
+    "auth:validation.documentImage.fileSize"
   )
   .refine(
     (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
-    "validation.documentImage.fileType"
+    "auth:validation.documentImage.fileType"
   );
 
 // Base schema for common fields

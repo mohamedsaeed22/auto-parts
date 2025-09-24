@@ -22,6 +22,7 @@ export default function UserPricingPage() {
     formImagePreview,
     isSubmitting,
     isSendingToBackend,
+    apiErrors,
     handleImageChange,
     removeImage,
     onSubmit,
@@ -53,6 +54,7 @@ export default function UserPricingPage() {
               isAuthenticated={isAuthenticated}
               isRegistrationComplete={isRegistrationComplete}
               userType={user?.type as "shop" | "workshop" | undefined}
+              apiErrors={apiErrors}
             />
           </div>
 

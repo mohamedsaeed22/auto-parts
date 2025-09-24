@@ -28,6 +28,7 @@ interface PricingFormProps {
   isAuthenticated: boolean;
   isRegistrationComplete: boolean;
   userType?: "shop" | "workshop" | null;
+  apiErrors?: Array<{ key: string; value: string[] }>;
 }
 
 export function PricingForm({
@@ -42,6 +43,7 @@ export function PricingForm({
   isAuthenticated,
   isRegistrationComplete,
   userType: userProfileType,
+  apiErrors = [],
 }: PricingFormProps) {
   const { t } = useTranslation("userPricing");
   const router = useRouter();
@@ -233,6 +235,41 @@ export function PricingForm({
           {/* Submit Button */}
           <FormSubmissionButton isSubmitting={isSubmitting} />
         </form>
+
+        {/* API Error Messages - Above Submit Button */}
+        {apiErrors.length > 0 && (
+          <div className="mt-6 border border-red-200 bg-red-50 p-4 rounded-lg">
+            <div className="space-y-3">
+              {apiErrors.map((error, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-lg p-3 border border-red-200"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 mt-0.5">
+                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-red-900 mb-1">
+                        {t(`form.fields.${error.key}.label`, error.key)}
+                      </p>
+                      <div className="space-y-1">
+                        {error.value.map((message, messageIndex) => (
+                          <p
+                            key={messageIndex}
+                            className="text-sm text-red-700 leading-relaxed"
+                          >
+                            {message}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Additional Information */}
         <InformationPanel userType={currentUserType || "workshop"} />

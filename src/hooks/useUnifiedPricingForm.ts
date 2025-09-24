@@ -32,6 +32,9 @@ export function useUnifiedPricingForm(userType?: "shop" | "workshop" | null) {
   const [formImagePreview, setFormImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSendingToBackend, setIsSendingToBackend] = useState(false);
+  const [apiErrors, setApiErrors] = useState<
+    Array<{ key: string; value: string[] }>
+  >([]);
 
   const router = useRouter();
   const { currentLocale } = useLocale();
@@ -121,14 +124,36 @@ export function useUnifiedPricingForm(userType?: "shop" | "workshop" | null) {
     if (!file) {
       // Clear image and preview
       form.setValue(field, undefined);
+      form.clearErrors(field);
       if (field === "partImage") setPartImagePreview(null);
       if (field === "requestImage") setRequestImagePreview(null);
       if (field === "formImage") setFormImagePreview(null);
       return;
     }
 
+    // Immediate client-side validation similar to complete-registration
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+
+    if (!allowedTypes.includes(file.type)) {
+      form.setError(field, {
+        type: "manual",
+        message: "auth:validation.documentImage.fileType",
+      });
+      return;
+    }
+
+    if (file.size > maxSize) {
+      form.setError(field, {
+        type: "manual",
+        message: "auth:validation.documentImage.fileSize",
+      });
+      return;
+    }
+
     // Set the file in form
     form.setValue(field, file);
+    form.clearErrors(field);
 
     // Create and set preview
     try {
@@ -204,6 +229,7 @@ export function useUnifiedPricingForm(userType?: "shop" | "workshop" | null) {
     }
 
     setIsSendingToBackend(true);
+    setApiErrors([]);
 
     try {
       // Prepare items array based on user type
@@ -238,13 +264,28 @@ export function useUnifiedPricingForm(userType?: "shop" | "workshop" | null) {
       showSuccess(t("success.requestSent") || "Request sent successfully!");
     } catch (error: unknown) {
       console.error("Error sending data:", error);
-      const errorMessage =
-        (error as { data?: { message?: string }; message?: string })?.data
-          ?.message ||
-        (error as { message?: string })?.message ||
-        t("errors.sendFailed") ||
-        "حدث خطأ أثناء الإرسال. حاول مرة أخرى.";
-      showError(errorMessage);
+      // Try to extract API structured errors similar to complete-registration
+      let extracted: any = null;
+      if (error && typeof error === "object") {
+        const errObj = error as any;
+        if (errObj.data) extracted = errObj.data;
+        else if (errObj.status && errObj.data) extracted = errObj.data;
+      }
+
+      if (extracted && Array.isArray(extracted.errors)) {
+        setApiErrors(
+          extracted.errors as Array<{ key: string; value: string[] }>
+        );
+      } else {
+        const errorMessage =
+          extracted?.message ||
+          (error as { message?: string })?.message ||
+          t("errors.sendFailed") ||
+          "حدث خطأ أثناء الإرسال. حاول مرة أخرى.";
+        // Show toast and also reflect as a general API error block
+        showError(errorMessage);
+        setApiErrors([{ key: "general", value: [errorMessage] }]);
+      }
     } finally {
       setIsSendingToBackend(false);
     }
@@ -258,6 +299,7 @@ export function useUnifiedPricingForm(userType?: "shop" | "workshop" | null) {
     formImagePreview,
     isSubmitting,
     isSendingToBackend,
+    apiErrors,
     handleImageChange,
     removeImage,
     onSubmit,
