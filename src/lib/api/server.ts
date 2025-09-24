@@ -46,29 +46,7 @@ export async function fetchCategoryById(id: string | number, locale?: string) {
   }
 }
 
-// Brand API
-export async function fetchBrandById(id: string | number, locale?: string) {
-  try {
-    const url = new URL(`${API_BASE_URL}/brands/${id}`);
-    if (locale) url.searchParams.set("locale", locale);
-    const response = await fetch(url.toString(), {
-      next: { revalidate: 3600 },
-    });
-
-    if (!response.ok) {
-      if (response.status === 404) {
-        return null; // Return null for 404 to handle non-existent brands gracefully
-      }
-      throw new Error(`Failed to fetch brand: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data.data || null;
-  } catch (error) {
-    console.error("Error fetching brand:", error);
-    throw error; // Re-throw the error to be handled by error boundaries
-  }
-}
+ 
 
 // Offer API
 export async function fetchOfferById(id: string | number, locale?: string) {
