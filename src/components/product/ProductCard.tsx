@@ -256,9 +256,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   } flex flex-col gap-1`}
                 >
                   <Button
-                    size="sm"
+                    size="icon"
                     variant={isInFavourites ? "default" : "outline"}
-                    className={`w-10 h-10 rounded-full shadow-lg transition-colors duration-300 ${
+                    className={`!w-7 !h-7 p-0 rounded-full shadow-lg transition-colors duration-300 ${
                       isInFavourites
                         ? "bg-red-500 border-red-500 hover:bg-red-600 text-white"
                         : "bg-white border-neutral-200 hover:bg-gray-50"
@@ -269,10 +269,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     disabled={isLoading(`favourite-${product.id}`)}
                   >
                     {isLoading(`favourite-${product.id}`) ? (
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-neutral-600"></div>
+                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-neutral-600"></div>
                     ) : (
                       <Heart
-                        size={20}
+                        size={14}
                         className={`${
                           isInFavourites
                             ? "text-white fill-white"
@@ -283,9 +283,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   </Button>
 
                   <Button
-                    size="sm"
+                    size="icon"
                     variant="outline"
-                    className={`w-10 h-10 rounded-full shadow-lg transition-colors duration-300 !border-2 ${
+                    className={`!w-7 !h-7 p-0 rounded-full shadow-lg transition-colors duration-300 !border-2 ${
                       isInWishlist
                         ? "!bg-blue-500 !border-blue-500 hover:!bg-blue-600 !text-white"
                         : "!bg-white !border-neutral-200 hover:!bg-gray-50 !text-neutral-700"
@@ -294,10 +294,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     disabled={isLoading(`wishlist-${product.id}`)}
                   >
                     {isLoading(`wishlist-${product.id}`) ? (
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-neutral-600"></div>
+                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-neutral-600"></div>
                     ) : (
                       <Bookmark
-                        size={20}
+                        size={8}
                         className={isInWishlist ? "fill-current" : ""}
                       />
                     )}
@@ -464,9 +464,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
             >
               {variant === "default" && (
                 <Button
-                  size="sm"
+                  size="icon"
                   variant={isInFavourites ? "default" : "outline"}
-                  className={`w-12 h-12 rounded-full shadow-lg transition-colors duration-300 ${
+                  className={`!w-7 !h-7 p-0 rounded-full shadow-lg transition-colors duration-300 ${
                     isInFavourites
                       ? "bg-red-500 border-red-500 hover:bg-red-600 text-white"
                       : "bg-white border-neutral-200 hover:bg-gray-50"
@@ -477,10 +477,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   disabled={isLoading(`favourite-${product.id}`)}
                 >
                   {isLoading(`favourite-${product.id}`) ? (
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-neutral-600"></div>
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-neutral-600"></div>
                   ) : (
                     <Heart
-                      size={24}
+                      size={14}
                       className={`${
                         isInFavourites
                           ? "text-white fill-white"
@@ -493,9 +493,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
               {variant === "favourites" ? (
                 <Button
-                  size="sm"
+                  size="icon"
                   variant="destructive"
-                  className="w-10 h-10 rounded-full shadow-lg transition-colors duration-300"
+                  className="!w-7 !h-7 p-0 rounded-full shadow-lg transition-colors duration-300"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -505,16 +505,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   disabled={isLoading(`favourite-${product.id}`)}
                 >
                   {isLoading(`favourite-${product.id}`) ? (
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
                   ) : (
-                    <Trash size={18} className="text-white" />
+                    <Trash size={12} className="text-white" />
                   )}
                 </Button>
               ) : variant === "wishlist" ? (
                 <Button
-                  size="sm"
+                  size="icon"
                   variant="destructive"
-                  className="w-10 h-10 rounded-full shadow-lg transition-colors duration-300"
+                  className="!w-7 !h-7 p-0 rounded-full shadow-lg transition-colors duration-300"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -524,16 +524,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   disabled={isLoading(`wishlist-${product.id}`)}
                 >
                   {isLoading(`wishlist-${product.id}`) ? (
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
                   ) : (
-                    <Trash size={18} className="text-white" />
+                    <Trash size={12} className="text-white" />
                   )}
                 </Button>
               ) : (
                 <Button
-                  size="sm"
+                  size="icon"
                   variant="outline"
-                  className={`w-12 h-12 rounded-full shadow-lg transition-colors duration-300 !border-2 ${
+                  className={`!w-7 !h-7 p-0 rounded-full shadow-lg transition-colors duration-300 !border-2 ${
                     isInWishlist
                       ? "!bg-blue-500 !border-blue-500 hover:!bg-blue-600 !text-white"
                       : "!bg-white !border-neutral-200 hover:!bg-gray-50 !text-neutral-700"
@@ -547,10 +547,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   disabled={isLoading(`wishlist-${product.id}`)}
                 >
                   {isLoading(`wishlist-${product.id}`) ? (
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-neutral-600"></div>
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-neutral-600"></div>
                   ) : (
                     <Bookmark
-                      size={24}
+                      size={14}
                       className={isInWishlist ? "fill-current" : ""}
                       style={{
                         color: isInWishlist ? "#ffffff" : "#374151",
