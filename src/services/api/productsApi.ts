@@ -35,6 +35,9 @@ export const productsApi = api.injectEndpoints({
         if (params?.description)
           formData.append("description", params.description);
         if (params?.search) formData.append("search", params.search);
+        if (params?.page) formData.append("page", params.page.toString());
+        if (params?.per_page)
+          formData.append("per_page", params.per_page.toString());
 
         return {
           url: "/products",

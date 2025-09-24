@@ -16,8 +16,8 @@ const ProductsList = () => {
   const { t: tCommon } = useTranslation("common");
   const isRTL = i18n.language === "ar";
 
-  // Use nuqs to manage page state - null when no page param exists
-  const [currentPage] = useQueryState("page", parseAsInteger);
+  // Use nuqs to manage page state - default to 1 when no page param exists
+  const [currentPage] = useQueryState("page", parseAsInteger.withDefault(1));
 
   // API hook
   const [getProducts, { data: productsResponse, isLoading, error }] =
@@ -31,28 +31,20 @@ const ProductsList = () => {
   useEffect(() => {
     console.log("ProductsList: currentPage from nuqs:", currentPage);
 
-    const filters: { page?: number } = {};
+    const filters = {
+      page: currentPage,
+    };
 
-    // Only include page parameter if it exists in URL
-    if (currentPage !== null) {
-      filters.page = currentPage;
-      console.log("ProductsList: Sending request with page:", currentPage);
-    } else {
-      console.log("ProductsList: Sending request without page parameter");
-    }
-
+    console.log("ProductsList: Sending request with page:", currentPage);
     console.log("ProductsList: Final filters:", filters);
     getProducts(filters);
   }, [currentPage, getProducts]);
 
   // Handle retry
   const handleRetry = () => {
-    const currentFilters: { page?: number } = {};
-
-    // Only include page parameter if it exists in URL
-    if (currentPage !== null) {
-      currentFilters.page = currentPage;
-    }
+    const currentFilters = {
+      page: currentPage,
+    };
 
     getProducts(currentFilters);
   };
