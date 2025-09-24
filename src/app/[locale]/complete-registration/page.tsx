@@ -14,13 +14,7 @@ import { storage } from "@/lib/storage";
 import { CartSyncService } from "@/services/cartSyncService";
 import FormInput from "@/components/ui/FormInput";
 import { LoadingSpinner } from "@/components/ui";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import FormSelect from "@/components/ui/FormSelect";
 import LocationPicker from "@/components/LocationPicker";
 import type { LocationData } from "@/components/LocationPicker";
 import Image from "next/image";
@@ -177,7 +171,10 @@ export default function CompleteRegistrationPage() {
           setCommercialRegisterPreview(e.target?.result as string);
         reader.readAsDataURL(file);
       } else {
-        setValue("commercial_register", undefined as any);
+        setValue(
+          "commercial_register",
+          undefined as unknown as RegistrationFormData["commercial_register"]
+        );
         setCommercialRegisterPreview(null);
       }
     } else if (fieldName === "avatar") {
@@ -192,7 +189,10 @@ export default function CompleteRegistrationPage() {
         reader.onload = (e) => setAvatarPreview(e.target?.result as string);
         reader.readAsDataURL(file);
       } else {
-        setValue("avatar", undefined as any);
+        setValue(
+          "avatar",
+          undefined as unknown as RegistrationFormData["avatar"]
+        );
         setAvatarPreview(null);
       }
     }
@@ -200,10 +200,16 @@ export default function CompleteRegistrationPage() {
 
   const handleRemoveFile = (fieldName: "commercial_register" | "avatar") => {
     if (fieldName === "commercial_register") {
-      setValue("commercial_register", undefined as any);
+      setValue(
+        "commercial_register",
+        undefined as unknown as RegistrationFormData["commercial_register"]
+      );
       setCommercialRegisterPreview(null);
     } else if (fieldName === "avatar") {
-      setValue("avatar", undefined as any);
+      setValue(
+        "avatar",
+        undefined as unknown as RegistrationFormData["avatar"]
+      );
       setAvatarPreview(null);
     }
   };
@@ -211,7 +217,6 @@ export default function CompleteRegistrationPage() {
   // Handle form submission
   const onSubmit = async (data: RegistrationFormData) => {
     try {
-      setIsLoading(true);
       // Clear any previous errors
       setApiErrors([]);
 
@@ -229,19 +234,46 @@ export default function CompleteRegistrationPage() {
         }
       });
 
-      // Send the request to the API
-      const result = await completeRegistration(formData).unwrap();
+      // Send the request to the API with minimal type assumptions
+      type RegistrationResponse = { data?: { user: unknown } };
+      const mutationResult = await (
+        completeRegistration as unknown as (body: unknown) => Promise<unknown>
+      )(formData);
+      const result: RegistrationResponse =
+        typeof (mutationResult as { unwrap?: unknown }).unwrap === "function"
+          ? await (
+              mutationResult as { unwrap: () => Promise<RegistrationResponse> }
+            ).unwrap()
+          : (mutationResult as RegistrationResponse);
 
       if (result.data) {
         // Update only the user data while preserving the existing token
-        const updatedUser = {
-          ...result.data.user,
+        const baseUser: Record<string, unknown> =
+          result.data &&
+          typeof result.data.user === "object" &&
+          result.data.user !== null
+            ? (result.data.user as Record<string, unknown>)
+            : {};
+
+        let pointsValue = 0;
+        const maybePoints = baseUser["points"];
+        if (typeof maybePoints === "number") {
+          pointsValue = maybePoints;
+        }
+
+        const updatedUser = Object.assign({}, baseUser, {
           is_registration_complete: true,
-          points: (result.data.user as { points?: number }).points || 0,
-        };
+          points: pointsValue,
+        }) as Record<string, unknown>;
 
         // Update only the user data, don't replace the entire auth structure
-        storage.updateUser(updatedUser);
+        // Fall back to existing user object shape if necessary
+        const currentUser = (authData?.user ?? {}) as unknown as Record<
+          string,
+          unknown
+        >;
+        const mergedUser = Object.assign({}, currentUser, updatedUser);
+        storage.updateUser(mergedUser as NonNullable<typeof authData>["user"]);
 
         // Sync local cart to API now that registration is complete
         try {
@@ -403,7 +435,7 @@ export default function CompleteRegistrationPage() {
                       }
                 }
                 className="w-full h-96"
-                error={errors.location}
+                error={undefined}
               />
 
               {(errors.latitude || errors.longitude) && (
@@ -475,41 +507,29 @@ export default function CompleteRegistrationPage() {
                   />
 
                   <div className="space-y-1">
-                    <label className="block text-sm font-medium text-neutral-700">
-                      {t("labels.type")} <span className="text-red-500">*</span>
-                    </label>
                     <Controller
                       name="type"
                       control={control}
                       render={({ field }) => (
-                        <Select
-                          value={field.value || undefined}
+                        <FormSelect
+                          id="type"
+                          name="type"
+                          label={t("labels.type")}
+                          required
+                          placeholder={t("placeholders.selectType")}
+                          value={field.value}
                           onValueChange={field.onChange}
-                        >
-                          <SelectTrigger className="w-full h-12 px-3 border border-neutral-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-logo-gold focus:border-logo-gold transition-colors">
-                            <SelectValue
-                              placeholder={t("placeholders.selectType")}
-                            />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="shop">
-                              {t("typeOptions.shop")}
-                            </SelectItem>
-                            <SelectItem value="workshop">
-                              {t("typeOptions.workshop")}
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
+                          options={[
+                            { value: "shop", label: t("typeOptions.shop") },
+                            {
+                              value: "workshop",
+                              label: t("typeOptions.workshop"),
+                            },
+                          ]}
+                          error={errors.type?.message}
+                        />
                       )}
                     />
-                    <p
-                      className={
-                        "text-sm mt-1 min-h-[16px] " +
-                        (errors.type ? "text-red-500" : "opacity-0")
-                      }
-                    >
-                      {errors.type?.message || "\u00A0"}
-                    </p>
                   </div>
 
                   <FormInput
@@ -678,7 +698,16 @@ export default function CompleteRegistrationPage() {
                   </p>
                   {errors.commercial_register && (
                     <p className="text-sm text-red-500">
-                      {errors.commercial_register.message}
+                      {errors.commercial_register.message ===
+                      "Input not instance of File"
+                        ? t(
+                            "validation.crRequired",
+                            "Commercial register image is required"
+                          )
+                        : errors.commercial_register.message
+                        ? t(errors.commercial_register.message) ||
+                          errors.commercial_register.message
+                        : ""}
                     </p>
                   )}
                 </div>
@@ -758,7 +787,14 @@ export default function CompleteRegistrationPage() {
                   </p>
                   {errors.avatar && (
                     <p className="text-sm text-red-500">
-                      {errors.avatar.message}
+                      {errors.avatar.message === "Input not instance of File"
+                        ? t(
+                            "validation.avatarRequired",
+                            "Profile image is required"
+                          )
+                        : errors.avatar.message
+                        ? t(errors.avatar.message) || errors.avatar.message
+                        : ""}
                     </p>
                   )}
                 </div>

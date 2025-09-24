@@ -71,7 +71,7 @@ const FormSelect = forwardRef<HTMLButtonElement, FormSelectProps>(
     },
     ref
   ) => {
-    const { i18n } = useTranslation();
+    const { i18n, t } = useTranslation();
     const isRTL = i18n.language === "ar";
 
     // Base select classes with RTL/LTR support
@@ -87,8 +87,13 @@ const FormSelect = forwardRef<HTMLButtonElement, FormSelectProps>(
       selectClassName
     );
 
+    const errorId = id ? `${id}-error` : undefined;
+
     return (
-      <div className={cn("space-y-2", containerClassName, className)}>
+      <div
+        className={cn("space-y-2", containerClassName, className)}
+        dir={isRTL ? "rtl" : "ltr"}
+      >
         {label && (
           <label
             htmlFor={id}
@@ -113,11 +118,20 @@ const FormSelect = forwardRef<HTMLButtonElement, FormSelectProps>(
           disabled={disabled}
           {...props}
         >
-          <SelectTrigger className={baseSelectClasses} ref={ref}>
+          <SelectTrigger
+            className={baseSelectClasses}
+            ref={ref}
+            aria-invalid={Boolean(error) || undefined}
+            aria-describedby={error ? errorId : undefined}
+            dir={isRTL ? "rtl" : "ltr"}
+          >
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
-          <SelectContent>
-            {options.map((option) => (
+          <SelectContent
+            className={cn(isRTL ? "text-right" : "text-left")}
+            dir={isRTL ? "rtl" : "ltr"}
+          >
+            {options.map((option: { value: string; label: string }) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
               </SelectItem>
@@ -136,17 +150,40 @@ const FormSelect = forwardRef<HTMLButtonElement, FormSelectProps>(
           </p>
         )}
 
-        {error && (
-          <p
-            className={cn(
-              "text-sm text-red-600",
-              isRTL ? "text-right" : "text-left",
-              errorClassName
-            )}
-          >
-            {error}
-          </p>
-        )}
+        <p
+          className={cn(
+            "text-sm min-h-[16px]",
+            error ? "text-red-600" : "opacity-0",
+            isRTL ? "text-right" : "text-left",
+            errorClassName
+          )}
+          id={errorId}
+        >
+          {(() => {
+            if (!error) return "\u00A0";
+            if (error === "Invalid input") {
+              const isTypeField = id === "type" || name === "type";
+              if (isTypeField) {
+                const fallback = isRTL
+                  ? "نوع المستخدم مطلوب"
+                  : "User type is required";
+                return t("validation.typeRequired", fallback);
+              }
+              if (label) {
+                const clean = label.replace(/\s*\*\s*$/, "").trim();
+                return isRTL
+                  ? t("validation.fieldRequiredAr", "{{field}} مطلوب", {
+                      field: clean,
+                    })
+                  : t("validation.fieldRequired", "{{field}} is required", {
+                      field: clean,
+                    });
+              }
+              return t("validation.invalidInput", "Invalid input");
+            }
+            return t(error) || error;
+          })()}
+        </p>
       </div>
     );
   }
