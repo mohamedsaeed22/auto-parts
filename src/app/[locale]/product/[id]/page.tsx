@@ -588,7 +588,6 @@ export default function ProductDetails() {
   const productDescription = product.description || "No description available";
   const productCode = product.product_identifier || "N/A";
   const categoryName = product.category?.name || "Unknown Category";
-  const parentCategoryName = product.category?.parent?.name;
   const brandName = product.brand?.name;
   const offerInfo = product.offer;
   const hoverText = product.hover_text;
@@ -652,27 +651,6 @@ export default function ProductDetails() {
               isLoading={isFavouritesLoading}
               canShowOptimisticUpdates={canShowOptimisticUpdates}
             />
-
-            {product.brand?.image && (
-              <div
-                className={`absolute bottom-4 ${
-                  isRTL ? "right-4" : "left-4"
-                } z-10 flex items-center gap-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md shadow`}
-              >
-                <Image
-                  src={product.brand.image}
-                  alt={product.brand.name || "Brand"}
-                  width={28}
-                  height={28}
-                  className="w-7 h-7 object-contain rounded"
-                />
-                {(product.brand.name || "").length > 0 && (
-                  <span className="text-xs font-medium text-neutral-800">
-                    {product.brand.name}
-                  </span>
-                )}
-              </div>
-            )}
 
             {productImages.length > 0 ? (
               <Image
@@ -756,30 +734,7 @@ export default function ProductDetails() {
             />
           </div>
 
-          {/* Enhanced Category and Brand */}
-          <div className={isRTL ? "text-right" : "text-left"}>
-            <div className="flex flex-wrap gap-2 flex-row">
-              {parentCategoryName && (
-                <span className="inline-block bg-gray-50 text-gray-600 px-3 py-1 rounded-full text-sm">
-                  {parentCategoryName}
-                </span>
-              )}
-              {brandName && (
-                <span className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                  {product.brand?.image && (
-                    <Image
-                      src={product.brand.image}
-                      alt={brandName}
-                      width={16}
-                      height={16}
-                      className="w-4 h-4 object-contain rounded"
-                    />
-                  )}
-                  {brandName}
-                </span>
-              )}
-            </div>
-          </div>
+          {/* Category and Brand chips removed to avoid duplicating details */}
 
           {/* Enhanced Offer Information */}
           {offerInfo && (
@@ -911,7 +866,6 @@ export default function ProductDetails() {
               <div
                 className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg flex-row`}
               >
-                
                 <span className="text-sm text-gray-600 font-medium">
                   {t("productCode")}:
                 </span>
