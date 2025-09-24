@@ -263,7 +263,7 @@ const cartSlice = createSlice({
       })
       .addCase(syncCartOnLogin.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Failed to sync cart";
+        state.error = action.error.message || "errors.syncFailed";
       })
       .addCase(addToCartAPI.fulfilled, (state, action) => {
         state.items = action.payload;

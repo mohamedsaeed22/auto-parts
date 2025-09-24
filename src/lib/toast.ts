@@ -1,4 +1,5 @@
 import toast from "react-hot-toast";
+import { getCurrentLocale } from "@/lib/localeService";
 
 // Track recent toast messages to prevent duplicates
 const recentToasts = new Map<string, number>();
@@ -35,10 +36,35 @@ export const showSuccess = (message: string) => {
   return null;
 };
 
-// Error toast
+// Error toast with translation support
 export const showError = (message: string) => {
-  if (shouldShowToast(message)) {
-    return toast.error(message);
+  // Check if message is a translation key (contains dots or starts with namespace)
+  const isTranslationKey =
+    message.includes(".") || message.startsWith("errors.");
+
+  let displayMessage = message;
+
+  if (isTranslationKey) {
+    // Simple translation mapping for cart errors
+    const translations: Record<string, Record<string, string>> = {
+      ar: {
+        "errors.syncFailed": "فشل في مزامنة السلة",
+        "errors.quantityUpdateFailed": "فشل في تحديث الكمية",
+      },
+      en: {
+        "errors.syncFailed": "Failed to sync cart",
+        "errors.quantityUpdateFailed": "Failed to update quantity",
+      },
+    };
+
+    const currentLocale = getCurrentLocale();
+    const localeTranslations =
+      translations[currentLocale] || translations["ar"];
+    displayMessage = localeTranslations[message] || message;
+  }
+
+  if (shouldShowToast(displayMessage)) {
+    return toast.error(displayMessage);
   }
   return null;
 };
@@ -47,12 +73,12 @@ export const showError = (message: string) => {
 export const showWarning = (message: string) => {
   if (shouldShowToast(message)) {
     return toast(message, {
-      icon: '⚠️',
+      icon: "⚠️",
       style: {
-        background: '#fff7ed',
-        color: '#9a3412',
-        border: '1px solid #fdba74'
-      }
+        background: "#fff7ed",
+        color: "#9a3412",
+        border: "1px solid #fdba74",
+      },
     });
   }
   return null;

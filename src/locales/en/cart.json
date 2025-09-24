@@ -13,7 +13,9 @@
     "loadingFailed": "Failed to load cart items",
     "updateFailed": "Failed to update cart item",
     "removeFailed": "Failed to remove cart item",
-    "clearFailed": "Failed to clear cart"
+    "clearFailed": "Failed to clear cart",
+    "syncFailed": "Failed to sync cart",
+    "quantityUpdateFailed": "Failed to update quantity"
   },
   "success": {
     "updated": "Cart updated successfully",

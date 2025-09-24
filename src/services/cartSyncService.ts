@@ -4,6 +4,7 @@ import { selectCartItems } from "@/store/selectors/cartSelectors";
 import { cartApi } from "./api/cartApi";
 import type { CartItem } from "@/store/slices/cartSlice";
 import { toast } from "react-hot-toast";
+import { showError } from "@/lib/toast";
 
 /**
  * Cart Synchronization Service
@@ -46,7 +47,7 @@ export class CartSyncService {
         throw new Error(response.message || "Failed to sync cart");
       }
     } catch (error) {
-      toast.error("Failed to sync cart");
+      showError("errors.syncFailed");
       return false;
     }
   }
@@ -172,7 +173,7 @@ export class CartSyncService {
         // Invalidate cart cache to ensure fresh data
         store.dispatch(cartApi.util.invalidateTags(["Cart"]));
       } catch (error) {
-        toast.error("Failed to sync cart");
+        showError("errors.syncFailed");
       }
     } else {
       // User hasn't completed registration - sync API cart to local storage

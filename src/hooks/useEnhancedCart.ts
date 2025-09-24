@@ -2,6 +2,7 @@ import { useCallback, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { store } from "@/store";
 import { useAuthContext } from "@/contexts/auth-context";
+import { useTranslation } from "react-i18next";
 import {
   addToCart as addToCartAction,
   removeFromCart,
@@ -48,6 +49,7 @@ import { storage } from "@/lib/storage";
 export const useEnhancedCart = () => {
   const dispatch = useAppDispatch();
   const { isAuthenticated, isRegistrationComplete } = useAuthContext();
+  const { t } = useTranslation("cart");
 
   // Fallback to storage if context is not working
   const fallbackAuth = storage.isAuthenticated();
@@ -204,7 +206,7 @@ export const useEnhancedCart = () => {
       } catch (error) {
         // Only show error for API operations
         if (shouldUseAPI) {
-          showError("Failed to update quantity");
+          showError(t("errors.quantityUpdateFailed"));
         } else {
           // For localStorage, still update even if there's an error
           dispatch(updateQuantity({ id, quantity }));

@@ -13,7 +13,9 @@
     "loadingFailed": "فشل تحميل محتويات السلة",
     "updateFailed": "فشل تحديث المنتج في السلة",
     "removeFailed": "فشل إزالة المنتج من السلة",
-    "clearFailed": "فشل تفريغ السلة"
+    "clearFailed": "فشل تفريغ السلة",
+    "syncFailed": "فشل في مزامنة السلة",
+    "quantityUpdateFailed": "فشل في تحديث الكمية"
   },
   "success": {
     "updated": "تم تحديث السلة بنجاح",
