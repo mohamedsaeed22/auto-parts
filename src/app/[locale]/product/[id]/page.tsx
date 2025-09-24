@@ -14,6 +14,10 @@ import {
   RotateCcw,
   Info,
   Home,
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  Pause,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner, ErrorMessage } from "@/components/ui";
@@ -308,6 +312,8 @@ export default function ProductDetails() {
 
   const { t, i18n } = useTranslation("productDetails");
   const [selectedImage, setSelectedImage] = useState(0);
+  const [isAutoSwipeActive, setIsAutoSwipeActive] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
 
   const isRTL = i18n.language === "ar";
   const direction = isRTL ? "rtl" : "ltr";
@@ -387,6 +393,65 @@ export default function ProductDetails() {
     localWishlistState !== null
       ? localWishlistState
       : product?.in_wishlist === true;
+
+  // Image navigation functions
+  const nextImage = () => {
+    if (productImages && productImages.length > 1) {
+      setSelectedImage((prev) => (prev + 1) % productImages.length);
+    }
+  };
+
+  const prevImage = () => {
+    if (productImages && productImages.length > 1) {
+      setSelectedImage(
+        (prev) => (prev - 1 + productImages.length) % productImages.length
+      );
+    }
+  };
+
+  const toggleAutoSwipe = () => {
+    setIsAutoSwipeActive(!isAutoSwipeActive);
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
+  // Auto-swipe effect for product images - moved here to avoid conditional hook calls
+  useEffect(() => {
+    if (!product) return;
+
+    // Create images array including primary_image
+    const images: string[] = [];
+
+    // Add primary image if it exists and is not empty
+    if (product.primary_image && product.primary_image.trim() !== "") {
+      images.push(product.primary_image);
+    }
+
+    // Add other images from the images array
+    if (product.images && Array.isArray(product.images)) {
+      product.images.forEach((img: string) => {
+        if (img && img.trim() !== "" && !images.includes(img)) {
+          images.push(img);
+        }
+      });
+    }
+
+    if (images.length <= 1 || !isAutoSwipeActive || isHovered) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setSelectedImage((prev) => (prev + 1) % images.length);
+    }, 2000); // 2 seconds
+
+    return () => clearInterval(interval);
+  }, [product, isAutoSwipeActive, isHovered]);
 
   const handleAddToCart = async () => {
     if (!product) return;
@@ -559,19 +624,26 @@ export default function ProductDetails() {
     );
   }
 
-  // Prepare images array with safety checks
+  // Prepare images array with safety checks - include primary_image as first image
   const productImages = (() => {
-    if (
-      product.images &&
-      Array.isArray(product.images) &&
-      product.images.length > 0
-    ) {
-      return product.images;
+    const images: string[] = [];
+
+    // Add primary image if it exists and is not empty
+    if (product.primary_image && product.primary_image.trim() !== "") {
+      images.push(product.primary_image);
     }
-    if (product.primary_image) {
-      return [product.primary_image];
+
+    // Add other images from the images array
+    if (product.images && Array.isArray(product.images)) {
+      product.images.forEach((img: string) => {
+        if (img && img.trim() !== "" && !images.includes(img)) {
+          images.push(img);
+        }
+      });
     }
-    return [];
+
+    // If no images found, return empty array
+    return images;
   })();
 
   // Non-typed fields or optional fields from backend response
@@ -633,7 +705,11 @@ export default function ProductDetails() {
       >
         {/* Enhanced Product Images */}
         <div className="space-y-4">
-          <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
+          <div
+            className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden group"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
             <ProductBadges product={product} isRTL={isRTL} t={t} />
             <ProductActions
               isRTL={isRTL}
@@ -663,6 +739,58 @@ export default function ProductDetails() {
               <div className="w-full h-full flex items-center justify-center text-gray-400">
                 No image available
               </div>
+            )}
+
+            {/* Image Navigation Controls - Only show if multiple images */}
+            {productImages.length > 1 && (
+              <>
+                {/* Navigation Arrows */}
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 p-0 bg-white/95 hover:bg-white border-gray-300 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity text-gray-700 hover:text-gray-900"
+                  onClick={prevImage}
+                >
+                  <ChevronLeft size={20} className="text-gray-700" />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 p-0 bg-white/95 hover:bg-white border-gray-300 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity text-gray-700 hover:text-gray-900"
+                  onClick={nextImage}
+                >
+                  <ChevronRight size={20} className="text-gray-700" />
+                </Button>
+
+                {/* Auto-swipe Toggle Button */}
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="absolute top-4 left-4 w-10 h-10 p-0 bg-white/95 hover:bg-white border-gray-300 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity text-gray-700 hover:text-gray-900"
+                  onClick={toggleAutoSwipe}
+                >
+                  {isAutoSwipeActive ? (
+                    <Pause size={20} className="text-gray-700" />
+                  ) : (
+                    <Play size={20} className="text-gray-700" />
+                  )}
+                </Button>
+
+                {/* Image Thumbnails Dots */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  {productImages.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedImage(index)}
+                      className={`w-3 h-3 rounded-full transition-colors ${
+                        index === selectedImage
+                          ? "bg-white"
+                          : "bg-white/50 hover:bg-white/75"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
             )}
           </div>
 

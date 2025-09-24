@@ -339,18 +339,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     <Button
                       size="icon"
                       variant="outline"
-                      className="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 p-0 bg-white/80 hover:bg-white border-gray-300 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 p-0 bg-white/90 hover:bg-white border-gray-300 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity text-gray-700 hover:text-gray-900"
                       onClick={prevImage}
                     >
-                      <ChevronLeft size={12} />
+                      <ChevronLeft size={12} className="text-gray-700" />
                     </Button>
                     <Button
                       size="icon"
                       variant="outline"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 p-0 bg-white/80 hover:bg-white border-gray-300 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 p-0 bg-white/90 hover:bg-white border-gray-300 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity text-gray-700 hover:text-gray-900"
                       onClick={nextImage}
                     >
-                      <ChevronRight size={12} />
+                      <ChevronRight size={12} className="text-gray-700" />
                     </Button>
                   </>
                 )}
@@ -609,18 +609,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 <Button
                   size="icon"
                   variant="outline"
-                  className="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 p-0 bg-white/80 hover:bg-white border-gray-300 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 p-0 bg-white/90 hover:bg-white border-gray-300 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity text-gray-700 hover:text-gray-900"
                   onClick={prevImage}
                 >
-                  <ChevronLeft size={12} />
+                  <ChevronLeft size={12} className="text-gray-700" />
                 </Button>
                 <Button
                   size="icon"
                   variant="outline"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 p-0 bg-white/80 hover:bg-white border-gray-300 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 p-0 bg-white/90 hover:bg-white border-gray-300 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity text-gray-700 hover:text-gray-900"
                   onClick={nextImage}
                 >
-                  <ChevronRight size={12} />
+                  <ChevronRight size={12} className="text-gray-700" />
                 </Button>
               </>
             )}
@@ -644,18 +644,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   />
                 ))}
               </div>
-            )}
-
-            {/* Auto-swipe Toggle Button - Only show if multiple images */}
-            {availableImages.length > 1 && (
-              <Button
-                size="icon"
-                variant="outline"
-                className="absolute top-2 left-2 w-6 h-6 p-0 bg-white/80 hover:bg-white border-gray-300 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={toggleAutoSwipe}
-              >
-                {isAutoSwipeActive ? <Pause size={12} /> : <Play size={12} />}
-              </Button>
             )}
 
             {/* Action Buttons - Always Visible */}
