@@ -390,7 +390,6 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             {t("foundBrands") || "Found Brands"}
           </h2>
-          
         </div>
 
         {/* Brands Grid/List */}

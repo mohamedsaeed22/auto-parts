@@ -20,6 +20,7 @@ import {
   Zap,
   Shield,
   Clock,
+  Grid,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -196,16 +197,22 @@ const CategoryCard = ({
 
 // Hero Section Component
 const HeroSection = ({ t }: { t: (key: string) => string }) => (
-  <div className="bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-white py-20">
+  // Replace your hero section categories with this brand-style layout
+
+  <div className="bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-white py-16">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center">
-        <h1 className="text-4xl md:text-5xl font-bold mb-6">
-          {t("hero.title")}
-        </h1>
-        <p className="text-xl md:text-2xl text-white/80 max-w-3xl mx-auto mb-8">
+        <div className="flex items-center justify-center gap-2 md:gap-3 mb-4 flex-wrap">
+          <Package className="h-6 w-6 md:h-8 md:w-8 text-white/70" />
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">
+            {t("hero.title")}
+          </h1>
+          <Grid className="h-6 w-6 md:h-8 md:w-8 text-white/70" />
+        </div>
+        <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/80 max-w-3xl mx-auto mb-6">
           {t("hero.subtitle")}
         </p>
-        <div className="flex items-center justify-center gap-8 text-white/70">
+        <div className="flex items-center justify-center gap-3 md:gap-6 text-white/70 flex-wrap">
           <div className="flex items-center gap-2">
             <Package className="h-5 w-5" />
             <span>{t("hero.categories")}</span>
