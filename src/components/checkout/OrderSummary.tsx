@@ -371,10 +371,19 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                 }`}
               >
                 {isApplyingCoupon || isApplying
-                  ? t("orderSummary.applying")
+                  ? t("orderSummary.applying", {
+                      defaultValue:
+                        i18n.language === "ar"
+                          ? "جاري التطبيق..."
+                          : "Applying...",
+                    })
                   : isCouponApplied
-                  ? t("orderSummary.remove", "Remove")
-                  : t("orderSummary.apply")}
+                  ? t("orderSummary.remove", {
+                      defaultValue: i18n.language === "ar" ? "حذف" : "Remove",
+                    })
+                  : t("orderSummary.apply", {
+                      defaultValue: i18n.language === "ar" ? "تطبيق" : "Apply",
+                    })}
               </Button>
             </div>
             {couponError && (
