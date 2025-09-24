@@ -77,6 +77,9 @@ export default function CompleteRegistrationPage() {
     location?: string;
   }>({});
 
+  // State for API errors
+  const [apiErrors, setApiErrors] = useState<Array<{ key: string; value: string[] }>>([]);
+
   // Check if user has already completed registration
   const hasRedirectedRef = useRef(false);
 
@@ -245,7 +248,8 @@ export default function CompleteRegistrationPage() {
     // Clear previous errors
     setErrors({});
 
-    // Validate required fields
+    // Clear any previous errors
+    setApiErrors([]);
     const newErrors: { [key: string]: string } = {};
 
     // Required fields validation
@@ -376,6 +380,18 @@ export default function CompleteRegistrationPage() {
       }
     } catch (error: unknown) {
       console.error("Error completing registration:", error);
+      
+      // Handle API validation errors
+      if (error && typeof error === 'object' && 'data' in error) {
+        const errorData = error.data as { errors?: Array<{ key: string; value: string[] }> };
+        if (errorData.errors) {
+          setApiErrors(errorData.errors);
+          // Scroll to top where errors are displayed
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+      }
+      
       showError(t("toasts.registrationFailed"));
     }
   };
@@ -434,6 +450,24 @@ export default function CompleteRegistrationPage() {
         {/* Registration Form */}
         <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
           <form onSubmit={handleSubmit} className="w-full">
+            {/* API Error Messages */}
+            {apiErrors.length > 0 && (
+              <div className="p-4 bg-red-50 border-b border-red-100">
+                <div className="flex flex-col gap-2">
+                  {apiErrors.map((error, index) => (
+                    <div key={index} className="text-sm text-red-600">
+                      {error.value.map((message, messageIndex) => (
+                        <div key={messageIndex} className="flex items-start gap-2">
+                          <span className="text-red-500">•</span>
+                          <span>{message}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Location Selection Section - FIRST STEP */}
             <div className="bg-logo-gold/5 border-b border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
