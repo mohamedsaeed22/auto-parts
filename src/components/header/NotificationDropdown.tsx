@@ -159,9 +159,11 @@ export default function NotificationDropdown({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.15, ease: "easeOut" }}
-            className={`absolute top-full mt-2 ${
-              isRTL ? "left-0" : "right-0"
-            } w-80 bg-white rounded-lg shadow-lg border border-neutral-200 z-50 max-h-96 overflow-hidden`}
+            className={`fixed sm:absolute top-16 sm:top-full mt-2 ${
+              isRTL
+                ? "left-1/2 -translate-x-1/2 sm:left-0 sm:translate-x-0"
+                : "left-1/2 -translate-x-1/2 sm:right-0 sm:translate-x-0"
+            } w-[calc(100vw-2rem)] sm:w-80 bg-white rounded-lg shadow-lg border border-neutral-200 z-50 max-h-96 overflow-hidden`}
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-neutral-100">
