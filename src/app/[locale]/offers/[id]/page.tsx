@@ -227,7 +227,7 @@ export default function OfferPage() {
   const handleGoBack = () => {
     router.push("/");
   };
-  
+
   // Handle loading state
   if (isLoading) {
     return (
@@ -313,7 +313,10 @@ export default function OfferPage() {
           {t("latestOffers")}
         </button>
         <span>/</span>
-        <span className="text-gray-900">{t("latestOffers") || "Latest Offers"}</span>
+        <span className="text-gray-900">
+          {t("latestOffers") || "Latest Offers"} - {offer.discount_amount}
+          {offer.discount_type === "percentage" ? "%" : "$"}
+        </span>
       </nav>
 
       {/* Offer Header */}
