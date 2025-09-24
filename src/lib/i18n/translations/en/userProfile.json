@@ -2,7 +2,7 @@
   "sidebar": {
     "profile": "Profile",
     "overview": "Profile",
-    "points": "My Points",
+    "points": "My Wallet",
     "notifications": "Notifications",
     "orders": "Orders",
     "addresses": "Addresses",
@@ -471,9 +471,9 @@
     }
   },
   "points": {
-    "title": "My Points",
+    "title": "My Wallet",
     "description": "Track your points and redeem them for great rewards",
-    "totalPoints": "Total Points",
+    "totalPoints": "Total Wallet",
     "totalTransactions": "Total Transactions",
     "thisMonth": "This Month",
     "loading": "Loading points...",
@@ -482,10 +482,10 @@
     "noTransactions": "No points transactions yet",
     "noTransactionsDesc": "Your points transactions will appear here when you earn or use points.",
     "transactions": {
-      "title": "Points Transactions",
+      "title": "Wallet Transactions",
       "date": "Date",
       "reason": "Reason",
-      "points": "Points"
+      "points": "Wallet"
     },
     "pagination": {
       "showing": "Showing {{from}} to {{to}} of {{total}} transactions",
@@ -493,7 +493,7 @@
     },
     "availableForRedemption": "Available for Redemption",
     "availableRewards": "Available Rewards",
-    "pointsHistory": "Points History",
+    "pointsHistory": "Wallet History",
     "earned": "Earned",
     "redeemed": "Redeemed",
     "productPurchase": "Product Purchase",

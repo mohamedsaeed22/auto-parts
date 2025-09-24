@@ -4,7 +4,7 @@ import {
   MapPin,
   ShoppingBag,
   Settings,
-  Star,
+  Wallet,
 } from "lucide-react";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -58,7 +58,7 @@ export default function UserProfileSidebar({
     {
       key: "points",
       labelKey: "sidebar.points",
-      icon: <Star size={20} />,
+      icon: <Wallet size={20} />,
     },
     {
       key: "settings",

@@ -9,7 +9,7 @@ import {
   Bookmark,
   Bell,
   UserCircle,
-  Star,
+  Wallet,
   Gift,
   HelpCircle,
   Truck,
@@ -81,8 +81,8 @@ export default function HeaderMobileMenu({
             },
             {
               href: "/userprofile/points",
-              icon: Star,
-              label: t("mobileMenu.points") || "My Points",
+              icon: Wallet,
+              label: t("mobileMenu.points") || "My Wallet",
               isActive: isActiveLink("/userprofile/points"),
               badge: user?.points,
               pointsNav: true,
@@ -141,7 +141,7 @@ export default function HeaderMobileMenu({
             },
             {
               href: "/brands",
-              icon: Star,
+              icon: Wallet,
               label: t("mobileMenu.brands") || "Brands",
               isActive: isActiveLink("/brands"),
             },
@@ -237,7 +237,7 @@ export default function HeaderMobileMenu({
             },
             {
               href: "/brands",
-              icon: Star,
+              icon: Wallet,
               label: t("mobileMenu.brands") || "Brands",
               isActive: isActiveLink("/brands"),
             },

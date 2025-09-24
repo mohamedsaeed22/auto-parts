@@ -151,7 +151,7 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
                 <div className="flex items-center gap-1 mt-1">
                   <div className="w-3 h-3 bg-gradient-to-r from-[#b3984a] to-[#d4af37] rounded-full"></div>
                   <span className="text-xs text-neutral-600 font-medium">
-                    {user.points} Points
+                    {user.points} Wallet
                   </span>
                 </div>
               )}

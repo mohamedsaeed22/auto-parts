@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import {
-  Star,
+  Wallet,
   TrendingUp,
   Calendar,
   Award,
@@ -80,7 +80,7 @@ export default function PointsPage() {
               </p>
               <p className="text-2xl font-bold">{totalPoints}</p>
             </div>
-            <Star className="w-8 h-8 opacity-80" />
+            <Wallet className="w-8 h-8 opacity-80" />
           </div>
         </div>
 
@@ -144,7 +144,7 @@ export default function PointsPage() {
           </div>
         ) : points.length === 0 ? (
           <div className="p-6 text-center">
-            <Star className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+            <Wallet className="w-12 h-12 text-gray-300 mx-auto mb-4" />
             <p className="text-gray-600 mb-2">{t("points.noTransactions")}</p>
             <p className="text-sm text-gray-500">
               {t("points.noTransactionsDesc")}

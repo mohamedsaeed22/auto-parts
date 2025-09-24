@@ -2,7 +2,7 @@
   "sidebar": {
     "profile": "الملف الشخصي",
     "overview": "الملف الشخصي",
-    "points": "نقاطي",
+    "points": "محفظتى",
     "notifications": "الإشعارات",
     "orders": "الطلبات",
     "addresses": "العناوين",
@@ -467,21 +467,21 @@
     }
   },
   "points": {
-    "title": "نقاطي",
+    "title": "محفظتى",
     "description": "تابع نقاطك واستبدلها بمكافآت رائعة",
-    "totalPoints": "إجمالي النقاط",
+    "totalPoints": "إجمالي المحفظة",
     "totalTransactions": "إجمالي المعاملات",
     "thisMonth": "هذا الشهر",
-    "loading": "جاري تحميل النقاط...",
-    "error": "فشل في تحميل النقاط",
+    "loading": "جاري تحميل المحفظة...",
+    "error": "فشل في تحميل المحفظة",
     "retry": "إعادة المحاولة",
     "noTransactions": "لا توجد معاملات نقاط بعد",
-    "noTransactionsDesc": "ستظهر معاملات النقاط هنا عند كسب أو استخدام النقاط.",
+    "noTransactionsDesc": "ستظهر معاملات المحفظة هنا عند كسب أو استخدام المحفظة.",
     "transactions": {
-      "title": "معاملات النقاط",
+      "title": "معاملات المحفظة",
       "date": "التاريخ",
       "reason": "السبب",
-      "points": "النقاط"
+      "points": "المحفظة"
     },
     "pagination": {
       "showing": "عرض {{from}} إلى {{to}} من {{total}} معاملة",
@@ -489,7 +489,7 @@
     },
     "availableForRedemption": "للاستبدال",
     "availableRewards": "المكافآت المتاحة",
-    "pointsHistory": "تاريخ النقاط",
+    "pointsHistory": "تاريخ المحفظة",
     "earned": "مكتسب",
     "redeemed": "مستبدل",
     "productPurchase": "شراء منتج",
