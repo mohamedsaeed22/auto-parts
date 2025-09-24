@@ -65,6 +65,7 @@ export default function CompleteRegistrationPage() {
   const latitude = watch("latitude");
   const longitude = watch("longitude");
   const isLocationSelected = Boolean(latitude && longitude);
+  const hasLocationError = Boolean(errors.latitude || errors.longitude);
 
   // State for file uploads and previews
   const [commercialRegisterPreview, setCommercialRegisterPreview] = useState<
@@ -421,26 +422,36 @@ export default function CompleteRegistrationPage() {
                 )}
               </p> */}
 
-              <LocationPicker
-                onLocationSelect={handleLocationSelect}
-                initialLocation={
-                  watch("latitude") && watch("longitude")
-                    ? {
-                        lat: parseFloat(watch("latitude")),
-                        lng: parseFloat(watch("longitude")),
-                      }
-                    : {
-                        lat: 24.7136, // Default to Riyadh, Saudi Arabia
-                        lng: 46.6753,
-                      }
+              <div
+                className={
+                  "rounded-lg overflow-hidden " +
+                  (hasLocationError
+                    ? "border border-red-500 ring-2 ring-red-200"
+                    : "border border-gray-200")
                 }
-                className="w-full h-96"
-                error={undefined}
-              />
+                aria-invalid={hasLocationError || undefined}
+              >
+                <LocationPicker
+                  onLocationSelect={handleLocationSelect}
+                  initialLocation={
+                    watch("latitude") && watch("longitude")
+                      ? {
+                          lat: parseFloat(watch("latitude")),
+                          lng: parseFloat(watch("longitude")),
+                        }
+                      : {
+                          lat: 24.7136, // Default to Riyadh, Saudi Arabia
+                          lng: 46.6753,
+                        }
+                  }
+                  className="w-full h-96"
+                  error={undefined}
+                />
+              </div>
 
-              {(errors.latitude || errors.longitude) && (
+              {hasLocationError && (
                 <p className="text-sm text-red-500 mt-2 font-medium">
-                  {errors.latitude?.message || errors.longitude?.message}
+                  {t("validation.locationRequired", "Location is required")}
                 </p>
               )}
 
