@@ -77,16 +77,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         window.dispatchEvent(new CustomEvent("cartSyncComplete"));
       }, 100);
     } catch (error) {
-      console.error("Failed to sync cart on login:", error);
+      // Failed to sync cart on login
     }
 
     // Auto-sync user's language preference with current app locale
     try {
       const currentAppLocale = getCurrentLocale();
-      console.log(
-        "AuthContext - Auto-syncing language on login:",
-        currentAppLocale
-      );
 
       // Dispatch the changeLanguage mutation to update backend
       await store
@@ -96,10 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           })
         )
         .unwrap();
-
-      console.log("AuthContext - Language synced successfully on login");
     } catch (error) {
-      console.error("AuthContext - Failed to sync language on login:", error);
       // Don't block login if language sync fails
     }
   };
@@ -130,14 +123,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Force persist to flush immediately
       await persistor.flush();
     } catch (error) {
-      console.error("Failed to clear carts on logout:", error);
       // Even if clearing fails, still clear the UI
       store.dispatch(clearCart());
       store.dispatch(setCartOpen(false));
       try {
         await persistor.purge();
       } catch (purgeError) {
-        console.error("Failed to purge persistor:", purgeError);
+        // Failed to purge persistor
       }
     }
 
@@ -158,7 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         await CartSyncService.handleRegistrationComplete();
       } catch (error) {
-        console.error("Failed to sync cart on registration completion:", error);
+        // Failed to sync cart on registration completion
       }
     }
   };

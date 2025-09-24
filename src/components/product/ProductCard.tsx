@@ -149,7 +149,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
       } catch (error) {
         clearTimeout(timeoutId);
         // Revert local state if API call fails
-        console.error("Failed to toggle favourite:", error);
         setLocalFavouriteState(!newFavouriteState);
         setHasOptimisticFavUpdate(false);
       }
@@ -182,7 +181,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
         // The useEffect will handle resetting the optimistic flag when server confirms
       } catch (error) {
         // Revert local state if API call fails
-        console.error("Failed to toggle wishlist:", error);
         setLocalWishlistState(!newWishlistState);
         setHasOptimisticWishUpdate(false);
       }
@@ -210,7 +208,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         description: product.description || "",
       });
     } catch (error) {
-      console.error("❌ Failed to add to cart:", error);
+      // Failed to add to cart
     }
   };
 

@@ -13,7 +13,7 @@
   "phone": {
     "required": "Phone number is required",
     "length": "Phone number must be 10-14 digits",
-    "invalid": "Enter a valid Saudi phone number starting with 05 (e.g., 00966501234568)"
+    "invalid": "Enter a valid Saudi phone number starting with 50 (e.g., 00966501234568)"
   },
   "email": {
     "invalid": "Please enter a valid email address"

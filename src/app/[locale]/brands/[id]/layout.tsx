@@ -21,7 +21,6 @@ async function fetchBrands(locale?: string) {
     const data = await response.json();
     return data.data?.items || [];
   } catch (error) {
-    console.error("Error fetching brands:", error);
     return [];
   }
 }
@@ -54,7 +53,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     return generateBrandPageMetadata(brand, locale);
   } catch (error) {
-    console.error("Error generating brand metadata:", error);
     return {
       title:
         locale === "ar"

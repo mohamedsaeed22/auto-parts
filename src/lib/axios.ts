@@ -52,10 +52,7 @@ axiosInstance.interceptors.request.use(
             locale = cookieLocale;
           }
         } catch (e) {
-          console.warn(
-            "Axios interceptor - Failed syncing with URL/cookie locale:",
-            e
-          );
+          
         }
       }
 
@@ -86,12 +83,7 @@ axiosInstance.interceptors.request.use(
         config.params = config.params || {};
         config.params.locale = locale;
       }
-
-      console.log(
-        `Axios interceptor - Request to ${config.url} with locale: ${locale}, method: ${config.method}`
-      );
     } catch (error) {
-      console.warn("Axios interceptor - Error setting locale:", error);
       // Fallback to default
       config.headers = config.headers || {};
       config.headers["locale"] = "ar";
@@ -107,7 +99,7 @@ axiosInstance.interceptors.request.use(
           config.headers.Authorization = `Bearer ${parsed.token}`;
         }
       } catch (error) {
-        console.error("Error parsing auth data:", error);
+        // Error parsing auth data
       }
     }
     return config;

@@ -77,7 +77,6 @@ export const useFavouritesWishlist = () => {
       }
       return next;
     } catch (error) {
-      console.error("Failed to toggle favourite:", error);
       showError("Failed to update favourites. Please try again.");
     } finally {
       setLoading(key, false);
@@ -107,7 +106,6 @@ export const useFavouritesWishlist = () => {
       }
       return next;
     } catch (error) {
-      console.error("Failed to toggle wishlist:", error);
       showError("Failed to update wishlist. Please try again.");
     } finally {
       setLoading(key, false);
@@ -125,7 +123,6 @@ export const useFavouritesWishlist = () => {
     try {
       await addFavourite({ product_id: productId }).unwrap();
     } catch (error) {
-      console.error("Failed to add favourite:", error);
       showError("Failed to add to favourites. Please try again.");
     } finally {
       setLoading(key, false);
@@ -143,7 +140,6 @@ export const useFavouritesWishlist = () => {
     try {
       await removeFavourite({ product_id: productId }).unwrap();
     } catch (error) {
-      console.error("Failed to remove favourite:", error);
       showError("Failed to remove from favourites. Please try again.");
     } finally {
       setLoading(key, false);
@@ -161,7 +157,6 @@ export const useFavouritesWishlist = () => {
     try {
       await addToWishlist({ product_id: productId }).unwrap();
     } catch (error) {
-      console.error("Failed to add to wishlist:", error);
       showError("Failed to add to wishlist. Please try again.");
     } finally {
       setLoading(key, false);
@@ -179,7 +174,6 @@ export const useFavouritesWishlist = () => {
     try {
       await removeFromWishlist({ product_id: productId }).unwrap();
     } catch (error) {
-      console.error("Failed to remove from wishlist:", error);
       showError("Failed to remove from wishlist. Please try again.");
     } finally {
       setLoading(key, false);

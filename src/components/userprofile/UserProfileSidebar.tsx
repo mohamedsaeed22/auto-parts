@@ -33,9 +33,7 @@ export default function UserProfileSidebar({
       ) {
         localStorage.setItem("userProfileActivePage", currentActivePage);
       }
-    } catch (error) {
-      console.warn("Failed to save active page to localStorage:", error);
-    }
+    } catch (error) {}
   }, [currentActivePage]);
 
   const menu = [

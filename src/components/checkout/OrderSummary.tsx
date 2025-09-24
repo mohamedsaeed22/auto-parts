@@ -158,9 +158,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           // Save the valid coupon code to localStorage
           try {
             localStorage.setItem(COUPON_CODE_KEY, couponCode.trim());
-          } catch (error) {
-            console.error("Failed to save coupon code to localStorage:", error);
-          }
+          } catch (error) {}
         }
 
         setApiFinalTotal(data.final_total);
@@ -200,9 +198,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
       // Refresh cart data to get default response
       dispatch(cartApi.util.invalidateTags(["Cart"]));
-    } catch (error) {
-      console.error("Failed to remove coupon:", error);
-    }
+    } catch (error) {}
   };
 
   // Auto-apply saved coupon from localStorage when component renders
@@ -253,15 +249,11 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               onApplyCoupon();
             }
           } catch (error) {
-            console.error("Failed to apply saved coupon:", error);
-
             // Remove invalid coupon from localStorage
             localStorage.removeItem(COUPON_CODE_KEY);
           }
         }
-      } catch (error) {
-        console.error("Error accessing localStorage:", error);
-      }
+      } catch (error) {}
     };
 
     // Only run if we have cart data available

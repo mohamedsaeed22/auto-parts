@@ -98,7 +98,6 @@ export default function SearchAutocomplete({
         setShowSuggestions(false);
       }
     } catch (error) {
-      console.error("Error fetching search suggestions:", error);
       setSuggestions([]);
       setShowSuggestions(false);
     } finally {

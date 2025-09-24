@@ -42,7 +42,7 @@ export const storage = {
       // Dispatch custom event to notify components of auth data change
       window.dispatchEvent(new Event("authChange"));
     } catch (error) {
-      console.error("Error storing auth data:", error);
+      // Error storing auth data
     }
   },
 
@@ -50,7 +50,6 @@ export const storage = {
     try {
       const currentAuth = storage.getAuth();
       if (!currentAuth) {
-        console.error("No existing auth data to update");
         return;
       }
 
@@ -74,7 +73,7 @@ export const storage = {
       // Dispatch custom event to notify components of auth data change
       window.dispatchEvent(new Event("authChange"));
     } catch (error) {
-      console.error("Error updating user data:", error);
+      // Error updating user data
     }
   },
 
@@ -84,7 +83,6 @@ export const storage = {
       const authData = localStorage.getItem(AUTH_STORAGE_KEY);
       return authData ? JSON.parse(authData) : null;
     } catch (error) {
-      console.error("Error retrieving auth data:", error);
       return null;
     }
   },
@@ -97,7 +95,7 @@ export const storage = {
       // Dispatch custom event to notify components of auth data change
       window.dispatchEvent(new Event("authChange"));
     } catch (error) {
-      console.error("Error removing auth data:", error);
+      // Error removing auth data
     }
   },
 
@@ -130,7 +128,7 @@ export const storage = {
     try {
       localStorage.setItem(REGISTRATION_CODE_KEY, code);
     } catch (error) {
-      console.error("Error storing registration code:", error);
+      // Error storing registration code
     }
   },
 
@@ -139,7 +137,6 @@ export const storage = {
     try {
       return localStorage.getItem(REGISTRATION_CODE_KEY);
     } catch (error) {
-      console.error("Error retrieving registration code:", error);
       return null;
     }
   },
@@ -149,7 +146,7 @@ export const storage = {
     try {
       localStorage.removeItem(REGISTRATION_CODE_KEY);
     } catch (error) {
-      console.error("Error clearing registration code:", error);
+      // Error clearing registration code
     }
   },
 
@@ -158,7 +155,7 @@ export const storage = {
     try {
       localStorage.setItem(PREVIOUS_PAGE_KEY, url);
     } catch (error) {
-      console.error("Error storing previous page:", error);
+      // Error storing previous page
     }
   },
 
@@ -167,7 +164,6 @@ export const storage = {
     try {
       return localStorage.getItem(PREVIOUS_PAGE_KEY);
     } catch (error) {
-      console.error("Error retrieving previous page:", error);
       return null;
     }
   },
@@ -177,7 +173,7 @@ export const storage = {
     try {
       localStorage.removeItem(PREVIOUS_PAGE_KEY);
     } catch (error) {
-      console.error("Error clearing previous page:", error);
+      // Error clearing previous page
     }
   },
 };

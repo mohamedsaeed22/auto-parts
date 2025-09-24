@@ -42,7 +42,6 @@ const BrandHeader = ({
   isRTL: boolean;
   t: (key: string) => string;
 }) => (
-
   <div className="bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 rounded-2xl p-8 mb-8">
     <div
       className={`grid grid-cols-1 lg:grid-cols-2 gap-8 items-center ${
@@ -208,7 +207,6 @@ export default function BrandPage() {
   } = useGetBrandsQuery();
   const brands = brandsResponse?.data?.items || [];
   const brand = brands.find((b: Brand) => b.id === brandId);
-  console.log(brand);
 
   // Products state and API
   const [products, setProducts] = useState<Product[]>([]);
@@ -230,7 +228,6 @@ export default function BrandPage() {
           }
         })
         .catch((error) => {
-          console.error("Error fetching products:", error);
           setProductsError(error.message || "Failed to load products");
         })
         .finally(() => {

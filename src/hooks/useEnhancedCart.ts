@@ -110,9 +110,7 @@ export const useEnhancedCart = () => {
         // This ensures quantities and items are always in sync with the server
         try {
           await syncAPICartToLocal();
-        } catch (error) {
-          console.error("Failed to sync API cart to local on load:", error);
-        }
+        } catch (error) {}
       }
     };
 
@@ -128,9 +126,7 @@ export const useEnhancedCart = () => {
         try {
           await refetchCart();
           await syncAPICartToLocal();
-        } catch (error) {
-          console.error("Failed to refresh cart after sync:", error);
-        }
+        } catch (error) {}
       }
     };
 
@@ -167,10 +163,8 @@ export const useEnhancedCart = () => {
           return; // Exit early for localStorage operations
         }
       } catch (error) {
-        console.error("addToCart error:", error);
         // Only show error for API operations
         if (shouldUseAPI) {
-          console.error("Failed to add to cart:", error);
           showError("Failed to add product to cart");
         } else {
           // For localStorage, still add the item even if there's an error
@@ -210,7 +204,6 @@ export const useEnhancedCart = () => {
       } catch (error) {
         // Only show error for API operations
         if (shouldUseAPI) {
-          console.error("Failed to update quantity:", error);
           showError("Failed to update quantity");
         } else {
           // For localStorage, still update even if there's an error
@@ -244,7 +237,6 @@ export const useEnhancedCart = () => {
       } catch (error) {
         // Only show error for API operations
         if (shouldUseAPI) {
-          console.error("Failed to remove from cart:", error);
           // showError("Failed to remove product from cart");
         } else {
           // For localStorage, still remove even if there's an error
@@ -272,7 +264,6 @@ export const useEnhancedCart = () => {
 
       // showSuccess("Cart cleared successfully");
     } catch (error) {
-      console.error("Failed to clear cart:", error);
       showError("Failed to clear cart");
     } finally {
       dispatch(setLoading(false));

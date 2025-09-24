@@ -60,7 +60,6 @@ export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
           throw new Error("Invalid response from backend");
         }
       } catch (error) {
-        console.error("Google login error:", error);
         showError(t("errors.googleLoginError"));
       }
     },
@@ -97,7 +96,7 @@ export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
     try {
       await onSubmit(data);
     } catch (error) {
-      console.error("Error in form submission:", error);
+      // Error in form submission
     }
   };
 

@@ -60,8 +60,6 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
       }
       // If not protected, stay on current page
     } catch (error: unknown) {
-      console.error("Error logging out:", error);
-
       // Check if it's a 404 error (route not found)
       const errorObj = error as { status?: number; data?: { code?: number } };
       const is404Error =
@@ -147,7 +145,6 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
                 {user.name || "User"}
               </p>
               <p className="text-xs text-neutral-500">{user.phone}</p>
-            
             </div>
 
             {/* Menu Items */}

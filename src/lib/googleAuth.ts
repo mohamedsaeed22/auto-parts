@@ -50,7 +50,6 @@ export const handleCredentialResponse = async (response: {
     const data = await backendResponse.json();
     return { user, backendData: data };
   } catch (error) {
-    console.error("Error handling Google credential:", error);
     throw error;
   }
 };

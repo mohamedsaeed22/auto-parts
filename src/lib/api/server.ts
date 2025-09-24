@@ -20,7 +20,6 @@ export async function fetchProductById(id: string | number, locale?: string) {
     const data = await response.json();
     return data.data || null;
   } catch (error) {
-    console.error("Error fetching product:", error);
     return null;
   }
 }
@@ -41,12 +40,9 @@ export async function fetchCategoryById(id: string | number, locale?: string) {
     const data = await response.json();
     return data.data || null;
   } catch (error) {
-    console.error("Error fetching category:", error);
     return null;
   }
 }
-
- 
 
 // Offer API
 export async function fetchOfferById(id: string | number, locale?: string) {
@@ -64,7 +60,6 @@ export async function fetchOfferById(id: string | number, locale?: string) {
     const data = await response.json();
     return data.data || null;
   } catch (error) {
-    console.error("Error fetching offer:", error);
     return null;
   }
 }

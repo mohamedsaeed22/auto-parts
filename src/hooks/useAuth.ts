@@ -82,10 +82,6 @@ export function useAuth() {
     // Auto-sync user's language preference with current app locale
     try {
       const currentAppLocale = getCurrentLocale();
-      console.log(
-        "useAuth - Auto-syncing language on login:",
-        currentAppLocale
-      );
 
       // Dispatch the changeLanguage mutation to update backend
       await store
@@ -95,10 +91,7 @@ export function useAuth() {
           })
         )
         .unwrap();
-
-      console.log("useAuth - Language synced successfully on login");
     } catch (error) {
-      console.error("useAuth - Failed to sync language on login:", error);
       // Don't block login if language sync fails
     }
   };

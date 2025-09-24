@@ -69,7 +69,6 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
       onSuccess?.();
     } catch (error) {
       // Error handling is done by the mutations
-      console.error("Address form submission error:", error);
     }
   };
 

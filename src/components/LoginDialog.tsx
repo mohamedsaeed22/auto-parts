@@ -53,7 +53,6 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
       setCurrentStep("otp");
       showSuccess(t("success.codeSent"));
     } catch (error) {
-      console.error("Error sending OTP:", error);
       showError(t("errors.otpSendError"));
     } finally {
       setIsLoading(false);

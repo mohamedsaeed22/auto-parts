@@ -46,7 +46,6 @@ export class CartSyncService {
         throw new Error(response.message || "Failed to sync cart");
       }
     } catch (error) {
-      console.error("Failed to sync local cart to API:", error);
       toast.error("Failed to sync cart");
       return false;
     }
@@ -84,7 +83,6 @@ export class CartSyncService {
 
       return true; // Empty cart is also a success
     } catch (error) {
-      console.error("Failed to sync API cart to local:", error);
       // Don't show error to user as this is a background operation
       return false;
     }
@@ -174,7 +172,6 @@ export class CartSyncService {
         // Invalidate cart cache to ensure fresh data
         store.dispatch(cartApi.util.invalidateTags(["Cart"]));
       } catch (error) {
-        console.error("Failed to sync cart on login:", error);
         toast.error("Failed to sync cart");
       }
     } else {
@@ -267,7 +264,6 @@ export class CartSyncService {
       // No API items, just sync local to API
       return await this.syncLocalCartToAPI();
     } catch (error) {
-      console.error("Failed to merge carts:", error);
       toast.error("Failed to merge carts");
       return false;
     }
@@ -284,7 +280,6 @@ export class CartSyncService {
       // Clear API cart if user is authenticated
       await store.dispatch(cartApi.endpoints.clearCart.initiate()).unwrap();
     } catch (error) {
-      console.error("Failed to clear carts:", error);
       // Still clear local cart even if API fails
       store.dispatch(clearCart());
     }

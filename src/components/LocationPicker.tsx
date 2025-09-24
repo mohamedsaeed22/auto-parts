@@ -116,7 +116,6 @@ export default function LocationPicker({
 
       document.head.appendChild(script);
     } catch (err) {
-      console.error("Error loading Google Maps:", err);
       setMapError("Error loading Google Maps");
     }
   }, [i18n.language]);
@@ -209,7 +208,6 @@ export default function LocationPicker({
         });
       }
     } catch (error) {
-      console.error("Error initializing map:", error);
       setMapError("Failed to initialize map");
     }
   };
@@ -236,20 +234,13 @@ export default function LocationPicker({
             if (status === "OK" && results?.[0]) {
               resolve(results[0]);
             } else if (status === "REQUEST_DENIED") {
-              // Don't reject, just log the error and continue with fallback
-              console.warn(
-                "Geocoding API access denied. Using fallback location data."
-              );
+             
               resolve(null);
             } else if (status === "OVER_QUERY_LIMIT") {
-              console.warn(
-                "Geocoding API quota exceeded. Using fallback location data."
-              );
+             
               resolve(null);
             } else {
-              console.warn(
-                `Geocoding failed with status: ${status}. Using fallback location data.`
-              );
+            
               resolve(null);
             }
           }
@@ -275,8 +266,6 @@ export default function LocationPicker({
         setSearchQuery(basicLocationData.formatted_address);
       }
     } catch (error) {
-      console.error("Reverse geocoding failed:", error);
-
       // Fallback: create basic location data with coordinates
       const basicLocationData: LocationData = {
         lat,
@@ -402,7 +391,6 @@ export default function LocationPicker({
         }
       } catch (error) {
         // Ignore permission query errors and continue with geolocation request
-        console.warn("Permission API not available:", error);
       }
     }
 

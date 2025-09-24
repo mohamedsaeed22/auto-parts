@@ -7,7 +7,7 @@
   "validation.managerName.maxLength": "Manager name must not exceed 100 characters",
   "validation.phone.required": "Phone number is required",
   "validation.phone.length": "Phone number must be 10-14 digits",
-  "validation.phone.invalid": "Enter a valid Saudi phone number starting with 05 (e.g., 00966501234568)",
+  "validation.phone.invalid": "Enter a valid Saudi phone number starting with 50 (e.g., 00966501234568)",
   "validation.email.invalid": "Please enter a valid email address",
   "validation.address.required": "Address is required",
   "validation.address.minLength": "Address must be at least 5 characters",

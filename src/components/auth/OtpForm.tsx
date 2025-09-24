@@ -85,7 +85,6 @@ export default function OtpForm({
         // No navigation needed
       }
     } catch (error) {
-      console.error("Error verifying OTP:", error);
       showError(t("errors.otpVerifyError"));
     }
   };
@@ -99,7 +98,6 @@ export default function OtpForm({
       setCountdown(60);
       setCanResend(false);
     } catch (error) {
-      console.error("Error resending OTP:", error);
       showError(t("errors.otpResendError"));
     }
   };

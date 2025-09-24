@@ -79,9 +79,6 @@ export default function CompleteRegistrationPage() {
     Array<{ key: string; value: string[] }>
   >([]);
 
-  // Debug: Log apiErrors changes
-  console.log("Current apiErrors state:", apiErrors);
-
   // Check if user has already completed registration
   const hasRedirectedRef = useRef(false);
 
@@ -226,13 +223,10 @@ export default function CompleteRegistrationPage() {
       setApiErrors([]);
 
       // Send the request to the API - the API mutation will handle FormData creation
-      console.log("About to call completeRegistration mutation");
       const mutationResult = await completeRegistration(data);
-      console.log("Mutation result:", mutationResult);
 
       // Check if there's an error in the mutation result
       if ("error" in mutationResult) {
-        console.log("Mutation returned an error:", mutationResult.error);
         throw mutationResult.error;
       }
 
@@ -275,10 +269,7 @@ export default function CompleteRegistrationPage() {
             window.dispatchEvent(new CustomEvent("cartSyncComplete"));
           }, 100);
         } catch (syncError) {
-          console.error(
-            "Cart sync after registration completion failed:",
-            syncError
-          );
+          // Cart sync after registration completion failed
         }
 
         clearRegistrationIncomplete();
@@ -294,9 +285,6 @@ export default function CompleteRegistrationPage() {
         }
       }
     } catch (error: unknown) {
-      console.error("Error completing registration:", error);
-      console.log("Full error object:", JSON.stringify(error, null, 2));
-
       // Handle RTK Query error structure
       let errorData: any = null;
 
@@ -309,8 +297,6 @@ export default function CompleteRegistrationPage() {
         }
       }
 
-      console.log("Extracted error data:", errorData);
-
       if (errorData) {
         const responseData = errorData as {
           code?: number;
@@ -318,18 +304,12 @@ export default function CompleteRegistrationPage() {
           errors?: Array<{ key: string; value: string[] }>;
         };
 
-        console.log("Response data:", responseData);
-        console.log("Response data has errors array:", responseData.errors);
-        console.log("Is errors array:", Array.isArray(responseData.errors));
-
         if (responseData.errors && Array.isArray(responseData.errors)) {
-          console.log("Setting API errors:", responseData.errors);
           setApiErrors(responseData.errors);
 
           // Small delay to ensure state is updated before scrolling
           setTimeout(() => {
             const errorElement = document.getElementById("api-errors-section");
-            console.log("Error element found:", errorElement);
             if (errorElement) {
               errorElement.scrollIntoView({
                 behavior: "smooth",
@@ -344,13 +324,11 @@ export default function CompleteRegistrationPage() {
 
         // Show general error message if no specific field errors
         if (responseData.message) {
-          console.log("Showing general error message:", responseData.message);
           showError(responseData.message);
           return;
         }
       }
 
-      console.log("Showing fallback error message");
       showError(t("toasts.registrationFailed"));
     }
   };
@@ -828,8 +806,6 @@ export default function CompleteRegistrationPage() {
             </div>
 
             {/* API Error Messages - Above Submit Button */}
-            {/* Debug: Show current apiErrors length */}
-            {console.log("Rendering form, apiErrors.length:", apiErrors.length)}
             {apiErrors.length > 0 && (
               <div
                 id="api-errors-section"
@@ -837,7 +813,6 @@ export default function CompleteRegistrationPage() {
               >
                 <div className="max-w-4xl mx-auto">
                   <div className="flex items-start gap-3 mb-4">
-                   
                     <div className="flex-1">
                       <div className="space-y-3">
                         {apiErrors.map((error, index) => (

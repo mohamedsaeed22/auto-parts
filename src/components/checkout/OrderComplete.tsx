@@ -40,9 +40,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
   useEffect(() => {
     try {
       localStorage.removeItem("auto_parts_coupon_code");
-    } catch (error) {
-      console.error("Failed to remove coupon from localStorage:", error);
-    }
+    } catch (error) {}
   }, []);
 
   const getStatusColor = (status: string) => {

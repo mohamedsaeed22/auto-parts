@@ -244,7 +244,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ]);
     dynamicPages.push(...offerPages);
   } catch (error) {
-    console.error("Error fetching dynamic pages for sitemap:", error);
     // Continue with static pages only if dynamic fetch fails
   }
 
@@ -260,7 +259,6 @@ async function fetchProducts() {
     // return response.json();
     return [];
   } catch (error) {
-    console.error("Error fetching products:", error);
     return [];
   }
 }
@@ -272,7 +270,6 @@ async function fetchCategories() {
     // return response.json();
     return [];
   } catch (error) {
-    console.error("Error fetching categories:", error);
     return [];
   }
 }
@@ -284,7 +281,6 @@ async function fetchBrands() {
     // return response.json();
     return [];
   } catch (error) {
-    console.error("Error fetching brands:", error);
     return [];
   }
 }
@@ -296,7 +292,6 @@ async function fetchOffers() {
     // return response.json();
     return [];
   } catch (error) {
-    console.error("Error fetching offers:", error);
     return [];
   }
 }

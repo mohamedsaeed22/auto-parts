@@ -36,7 +36,6 @@ const baseQueryWithAuth: BaseQueryFn<
 
       // Get current locale using localeService for consistency
       const currentLocale = getCurrentLocale();
-      console.log("BaseApi - prepareHeaders using locale:", currentLocale);
 
       // Set locale header for ALL requests (both GET and non-GET)
       headers.set("locale", currentLocale);
@@ -58,8 +57,6 @@ const baseQueryWithAuth: BaseQueryFn<
 
   // Handle unauthorized responses (401)
   if (result.error && result.error.status === 401) {
-    console.warn("BaseApi - 401 Unauthorized detected, clearing auth data");
-
     // Clear auth data on 401
     storage.removeAuth();
 
@@ -124,7 +121,6 @@ const enhancedBaseQuery: BaseQueryFn<
 > = async (args, api, extraOptions) => {
   // Use localeService to get the most current locale
   const currentLocale = getCurrentLocale();
-  console.log("BaseApi - Using locale for request:", currentLocale);
 
   // Only attach locale as a query param for GET requests to avoid breaking POST bodies
   let enhancedArgs: string | FetchArgs;

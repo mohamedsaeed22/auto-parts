@@ -54,7 +54,6 @@ export default function UserProfilePage() {
         }
       }
     } catch (error) {
-      console.warn("Failed to restore active page from localStorage:", error);
       // Fallback to default page if localStorage fails
       setActivePage("profile");
     }
@@ -77,7 +76,7 @@ export default function UserProfilePage() {
           localStorage.removeItem("userProfileActivePage");
         }
       } catch (error) {
-        console.warn("Failed to clear localStorage:", error);
+        
       }
     };
   }, []);

@@ -38,7 +38,6 @@ export const useLocale = () => {
   // Listen to locale service changes for immediate UI updates
   useEffect(() => {
     const unsubscribe = addLocaleChangeListener((newLocale) => {
-      console.log("useLocale - Locale service changed to:", newLocale);
       // Force immediate UI update
       if (i18n.language !== newLocale) {
         i18n.changeLanguage(newLocale).catch(console.warn);
@@ -61,126 +60,107 @@ export const useLocale = () => {
     };
   }, []);
 
-  const changeLocale = useCallback(async (newLocale: string) => {
-    if (isChangingLocale) {
-      console.log("useLocale - Already changing locale, ignoring request");
-      return;
-    }
-
-    setIsChangingLocale(true);
-    
-    console.log(
-      "useLocale - changeLocale called with:",
-      newLocale,
-      "isAuthenticated:",
-      isAuthenticated
-    );
-
-    try {
-      // Step 1: Update locale service IMMEDIATELY (this triggers listeners)
-      setCurrentLocale(newLocale);
-      console.log("useLocale - Locale service updated to:", newLocale);
-
-      // Step 2: Update axios headers immediately for subsequent requests
-      try {
-        axiosInstance.defaults.headers.common["locale"] = newLocale;
-        axiosInstance.defaults.headers.common["Accept-Language"] = newLocale;
-        console.log("useLocale - Axios headers updated to:", newLocale);
-      } catch (error) {
-        console.warn("useLocale - Failed to update axios headers:", error);
+  const changeLocale = useCallback(
+    async (newLocale: string) => {
+      if (isChangingLocale) {
+        return;
       }
 
-      // Step 3: Update i18n immediately for UI
+      setIsChangingLocale(true);
+
       try {
-        await i18n.changeLanguage(newLocale);
-        console.log("useLocale - i18n language changed to:", newLocale);
-      } catch (e) {
-        console.warn("useLocale - Failed to change i18n language:", e);
-      }
+        // Step 1: Update locale service IMMEDIATELY (this triggers listeners)
+        setCurrentLocale(newLocale);
 
-      // Step 4: Update Redux state
-      dispatch(setLocale(newLocale));
-
-      // Step 5: Set cookie for persistence
-      const days = 30;
-      const date = new Date();
-      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-      const expires = date.toUTCString();
-      document.cookie = `NEXT_LOCALE=${newLocale};expires=${expires};path=/`;
-
-      // Step 6: If user is authenticated, update backend preference
-      if (isAuthenticated) {
+        // Step 2: Update axios headers immediately for subsequent requests
         try {
-          console.log("useLocale - Updating language preference in backend");
-          await changeLanguageMutation({
-            locale: newLocale as "ar" | "en",
-          }).unwrap();
-          console.log("useLocale - Backend language preference updated successfully");
-        } catch (error) {
-          console.error("useLocale - Failed to update backend language preference:", error);
-          // Don't fail the entire operation if backend update fails
+          axiosInstance.defaults.headers.common["locale"] = newLocale;
+          axiosInstance.defaults.headers.common["Accept-Language"] = newLocale;
+        } catch (error) {}
+
+        // Step 3: Update i18n immediately for UI
+        try {
+          await i18n.changeLanguage(newLocale);
+        } catch (e) {}
+
+        // Step 4: Update Redux state
+        dispatch(setLocale(newLocale));
+
+        // Step 5: Set cookie for persistence
+        const days = 30;
+        const date = new Date();
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+        const expires = date.toUTCString();
+        document.cookie = `NEXT_LOCALE=${newLocale};expires=${expires};path=/`;
+
+        // Step 6: If user is authenticated, update backend preference
+        if (isAuthenticated) {
+          try {
+            await changeLanguageMutation({
+              locale: newLocale as "ar" | "en",
+            }).unwrap();
+          } catch (error) {
+            // Don't fail the entire operation if backend update fails
+          }
         }
+
+        // Step 7: Invalidate all cached queries to force refetch with new locale
+
+        // Invalidate RTK Query cache
+        dispatch(
+          api.util.invalidateTags([
+            "Products",
+            "Categories",
+            "Brands",
+            "Banners",
+            "Offers",
+            "Sections",
+            "Partners",
+          ])
+        );
+
+        // Invalidate React Query cache
+        queryClient.invalidateQueries({
+          queryKey: ["notifications"],
+          exact: false,
+        });
+
+        // Step 8: Update URL and refresh
+        // Compute new path with updated locale
+        if (
+          currentLocale === i18nConfig.defaultLocale &&
+          !i18nConfig.prefixDefault
+        ) {
+          router.push("/" + newLocale + pathname);
+        } else {
+          router.push(pathname.replace(`/${currentLocale}`, `/${newLocale}`));
+        }
+
+        // Small delay to ensure all updates are processed before refresh
+        setTimeout(() => {
+          router.refresh();
+        }, 100);
+      } catch (error) {
+        // Error during locale change
+      } finally {
+        // Reset changing flag after a delay to ensure all operations complete
+        setTimeout(() => {
+          setIsChangingLocale(false);
+        }, 500);
       }
-
-      // Step 7: Invalidate all cached queries to force refetch with new locale
-      console.log("useLocale - Invalidating queries to fetch data with new locale");
-      
-      // Invalidate RTK Query cache
-      dispatch(
-        api.util.invalidateTags([
-          "Products",
-          "Categories",
-          "Brands",
-          "Banners",
-          "Offers",
-          "Sections",
-          "Partners",
-        ])
-      );
-
-      // Invalidate React Query cache
-      queryClient.invalidateQueries({
-        queryKey: ["notifications"],
-        exact: false,
-      });
-
-      console.log("useLocale - Query invalidation dispatched");
-
-      // Step 8: Update URL and refresh
-      // Compute new path with updated locale
-      if (
-        currentLocale === i18nConfig.defaultLocale &&
-        !i18nConfig.prefixDefault
-      ) {
-        router.push("/" + newLocale + pathname);
-      } else {
-        router.push(pathname.replace(`/${currentLocale}`, `/${newLocale}`));
-      }
-
-      // Small delay to ensure all updates are processed before refresh
-      setTimeout(() => {
-        router.refresh();
-      }, 100);
-
-    } catch (error) {
-      console.error("useLocale - Error during locale change:", error);
-    } finally {
-      // Reset changing flag after a delay to ensure all operations complete
-      setTimeout(() => {
-        setIsChangingLocale(false);
-      }, 500);
-    }
-  }, [
-    isChangingLocale,
-    isAuthenticated, 
-    changeLanguageMutation, 
-    i18n, 
-    dispatch, 
-    queryClient, 
-    currentLocale, 
-    pathname, 
-    router
-  ]);
+    },
+    [
+      isChangingLocale,
+      isAuthenticated,
+      changeLanguageMutation,
+      i18n,
+      dispatch,
+      queryClient,
+      currentLocale,
+      pathname,
+      router,
+    ]
+  );
 
   return {
     currentLocale,

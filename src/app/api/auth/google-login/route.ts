@@ -22,7 +22,6 @@ export async function POST(request: NextRequest) {
       google_id: google_id,
     });
   } catch (error) {
-    console.error("Google login API error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

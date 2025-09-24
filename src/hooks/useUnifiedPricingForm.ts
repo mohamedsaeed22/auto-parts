@@ -162,7 +162,7 @@ export function useUnifiedPricingForm(userType?: "shop" | "workshop" | null) {
       if (field === "requestImage") setRequestImagePreview(preview);
       if (field === "formImage") setFormImagePreview(preview);
     } catch (error) {
-      console.error("Error creating file preview:", error);
+      // Error creating file preview
     }
   };
 
@@ -206,7 +206,6 @@ export function useUnifiedPricingForm(userType?: "shop" | "workshop" | null) {
 
       showSuccess(t("success.formSaved") || "تم حفظ النموذج بنجاح!");
     } catch (error) {
-      console.error("Error saving form:", error);
       showError(t("errors.saveFailed") || "حدث خطأ أثناء حفظ البيانات");
     } finally {
       setIsSubmitting(false);
@@ -263,7 +262,6 @@ export function useUnifiedPricingForm(userType?: "shop" | "workshop" | null) {
       setSavedForms([]);
       showSuccess(t("success.requestSent") || "Request sent successfully!");
     } catch (error: unknown) {
-      console.error("Error sending data:", error);
       // Try to extract API structured errors similar to complete-registration
       let extracted: any = null;
       if (error && typeof error === "object") {

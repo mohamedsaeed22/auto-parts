@@ -87,9 +87,7 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
         // Clear coupon from localStorage on successful order
         try {
           localStorage.removeItem("auto_parts_coupon_code");
-        } catch (error) {
-          console.error("Failed to remove coupon from localStorage:", error);
-        }
+        } catch (error) {}
 
         onPlaceOrder(result.data.order);
       } else {
@@ -101,7 +99,6 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
         return;
       }
     } catch (error) {
-      console.error("Error creating order:", error);
       showError(
         t("orderReview.orderError", {
           defaultValue: "Failed to create order. Please try again.",

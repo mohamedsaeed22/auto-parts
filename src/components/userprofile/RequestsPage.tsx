@@ -208,9 +208,7 @@ export default function RequestsPage() {
         data: requestData,
       }).unwrap();
       // The query will automatically refetch due to invalidatesTags
-    } catch (error) {
-      console.error("Failed to approve/reject request:", error);
-    }
+    } catch (error) {}
   };
 
   const handleAcceptRequest = (requestId: number) => {

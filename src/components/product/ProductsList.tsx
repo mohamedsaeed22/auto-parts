@@ -29,14 +29,9 @@ const ProductsList = () => {
 
   // Load products when page parameter changes
   useEffect(() => {
-    console.log("ProductsList: currentPage from nuqs:", currentPage);
-
     const filters = {
       page: currentPage,
     };
-
-    console.log("ProductsList: Sending request with page:", currentPage);
-    console.log("ProductsList: Final filters:", filters);
     getProducts(filters);
   }, [currentPage, getProducts]);
 

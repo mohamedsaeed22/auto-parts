@@ -21,12 +21,8 @@ export function CustomPagination({
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const currentPage = page || 1; // Use 1 as display default when page is null
 
-  console.log("CustomPagination: page from nuqs:", page);
-  console.log("CustomPagination: currentPage (display):", currentPage);
-
   const handlePageChange = (newPage: number) => {
     if (newPage < 1 || newPage > totalPages || newPage === currentPage) return;
-    console.log("CustomPagination: Setting page to:", newPage);
     setPage(newPage);
   };
 

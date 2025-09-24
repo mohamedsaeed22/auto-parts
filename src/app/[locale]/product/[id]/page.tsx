@@ -302,7 +302,6 @@ export default function ProductDetails() {
       }
       return parsed;
     } catch (error) {
-      console.error("Error parsing product ID:", error);
       return null;
     }
   })();
@@ -433,7 +432,6 @@ export default function ProductDetails() {
         }
       } catch (error) {
         // Revert local state if API call fails
-        console.error("Failed to toggle favourite:", error);
         setLocalFavouriteState(!newFavouriteState);
       }
     } else {
@@ -462,7 +460,6 @@ export default function ProductDetails() {
         }
       } catch (error) {
         // Revert local state if API call fails
-        console.error("Failed to toggle wishlist:", error);
         setLocalWishlistState(!newWishlistState);
       }
     } else {
@@ -489,13 +486,11 @@ export default function ProductDetails() {
         showSuccess(t("linkCopied"));
       }
     } catch (error) {
-      console.error("Failed to share:", error);
       // Fallback: copy to clipboard
       try {
         await navigator.clipboard.writeText(window.location.href);
         showSuccess(t("linkCopied"));
       } catch (clipboardError) {
-        console.error("Failed to copy to clipboard:", clipboardError);
         showError(t("shareError"));
       }
     }

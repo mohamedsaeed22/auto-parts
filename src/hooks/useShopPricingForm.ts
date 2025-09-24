@@ -108,9 +108,7 @@ export function useShopPricingForm() {
       if (field === "partImage") setPartImagePreview(preview);
       if (field === "requestImage") setRequestImagePreview(preview);
       if (field === "formImage") setFormImagePreview(preview);
-    } catch (error) {
-      console.error("Error creating file preview:", error);
-    }
+    } catch (error) {}
   };
 
   const removeImage = (field: "partImage" | "requestImage" | "formImage") => {
@@ -147,7 +145,6 @@ export function useShopPricingForm() {
       setRequestImagePreview(null);
       setFormImagePreview(null);
     } catch (error) {
-      console.error("Error saving form:", error);
       alert("حدث خطأ أثناء حفظ البيانات");
     } finally {
       setIsSubmitting(false);
@@ -192,7 +189,6 @@ export function useShopPricingForm() {
       setSavedForms([]);
       showSuccess(t("success.requestSent") || "Request sent successfully!");
     } catch (error: unknown) {
-      console.error("Error sending data:", error);
       const errorMessage =
         (error as { data?: { message?: string }; message?: string })?.data
           ?.message ||
