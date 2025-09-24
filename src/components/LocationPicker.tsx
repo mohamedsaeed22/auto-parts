@@ -369,33 +369,41 @@ export default function LocationPicker({
 
     setIsLoading(true);
 
-    try {
-      // Request permission explicitly using the Permissions API
-      if (
-        navigator.permissions &&
-        typeof navigator.permissions.query === "function"
-      ) {
-        const permissionStatus = await navigator.permissions.query({
-          name: "geolocation" as PermissionName,
-        });
+    // For mobile devices, we need to directly call getCurrentPosition to trigger the permission prompt
+    // Checking permission status first can prevent the prompt from appearing on mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                     (window.innerWidth <= 768);
 
-        if (permissionStatus.state === "denied") {
-          setIsLoading(false);
-          showError(
-            t(
-              "location.permissionDenied",
-              "Location permission is denied. Enable it in your browser settings."
-            )
-          );
-          return;
+    // Only check permission status on desktop, not on mobile
+    if (!isMobile) {
+      try {
+        // Request permission explicitly using the Permissions API (desktop only)
+        if (
+          navigator.permissions &&
+          typeof navigator.permissions.query === "function"
+        ) {
+          const permissionStatus = await navigator.permissions.query({
+            name: "geolocation" as PermissionName,
+          });
+
+          if (permissionStatus.state === "denied") {
+            setIsLoading(false);
+            showError(
+              t(
+                "location.permissionDenied",
+                "Location permission is denied. Enable it in your browser settings."
+              )
+            );
+            return;
+          }
         }
+      } catch (error) {
+        // Ignore permission query errors and continue with geolocation request
+        console.warn("Permission API not available:", error);
       }
-    } catch (error) {
-      // Ignore permission query errors and continue with geolocation request
-      console.warn("Permission API not available:", error);
     }
 
-    setIsLoading(true);
+    // Directly request location - this will trigger the permission prompt on mobile
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const lat = position.coords.latitude;
@@ -407,6 +415,7 @@ export default function LocationPicker({
           mapInstanceRef.current.setZoom(15);
         }
         reverseGeocode(lat, lng);
+        setIsLoading(false);
       },
       (error) => {
         // Provide a user-friendly message and keep the map usable
@@ -417,10 +426,16 @@ export default function LocationPicker({
         if (error && typeof error === "object") {
           const code = (error as GeolocationPositionError).code;
           if (code === 1) {
-            message = t(
-              "location.permissionDenied",
-              "Location permission is denied. Enable it in your browser settings."
-            );
+            // Permission denied - this happens after user explicitly denies
+            message = isMobile 
+              ? t(
+                  "location.permissionDeniedMobile",
+                  "Location access was denied. To enable location access, go to your browser settings and allow location for this site."
+                )
+              : t(
+                  "location.permissionDenied",
+                  "Location permission is denied. Enable it in your browser settings."
+                );
           } else if (code === 2) {
             message = t(
               "location.positionUnavailable",
@@ -437,9 +452,11 @@ export default function LocationPicker({
                   mapInstanceRef.current.setZoom(14);
                 }
                 reverseGeocode(lat2, lng2);
+                setIsLoading(false);
               },
               () => {
                 // Keep the message shown; user can search manually
+                setIsLoading(false);
               },
               {
                 enableHighAccuracy: false,
@@ -447,6 +464,7 @@ export default function LocationPicker({
                 maximumAge: 300000,
               }
             );
+            return; // Don't show error message yet, wait for fallback
           } else if (code === 3) {
             message = t(
               "location.timeout",
@@ -459,7 +477,7 @@ export default function LocationPicker({
       },
       {
         enableHighAccuracy: true,
-        timeout: 10000,
+        timeout: 15000, // Increased timeout for mobile
         maximumAge: 60000,
       }
     );

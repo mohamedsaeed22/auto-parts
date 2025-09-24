@@ -84,6 +84,11 @@
     "useCurrentLocation": "Use My Location",
     "geolocationNotSupported": "Geolocation is not supported by this browser.",
     "geolocationError": "Error getting your location. Please try again.",
+    "permissionDenied": "Location permission is denied. Enable it in your browser settings.",
+    "permissionDeniedMobile": "Location access was denied. To enable location access, go to your browser settings and allow location for this site.",
+    "positionUnavailable": "Location information is unavailable. Trying again with fallback...",
+    "timeout": "Getting your location timed out. Try again or search manually.",
+    "insecureContext": "Location requires HTTPS. Please use a secure connection.",
     "error": "Failed to load map",
     "apiKeyInstructions": "Please configure your Google Maps API key to use the map feature."
   },
