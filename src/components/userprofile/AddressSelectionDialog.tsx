@@ -139,7 +139,7 @@ export default function AddressSelectionDialog({
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent
-        className="max-w-2xl max-h-[90vh] overflow-y-auto"
+        className="max-w-2xl max-h-[90vh] overflow-hidden"
         dir={isRTL ? "rtl" : "ltr"}
       >
         <DialogHeader>
@@ -155,7 +155,7 @@ export default function AddressSelectionDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 scrollbar-thumb-rounded-full">
           {/* Existing Addresses */}
           {!showNewAddressForm && (
             <div className="space-y-4">

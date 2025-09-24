@@ -153,7 +153,10 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
               {t("shipping.addNewAddress")}
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-lg" dir={isRTL ? "rtl" : "ltr"}>
+          <DialogContent
+            className="sm:max-w-lg max-h-[90vh] overflow-hidden"
+            dir={isRTL ? "rtl" : "ltr"}
+          >
             <DialogHeader>
               <DialogTitle className="text-logo-black">
                 {t("shipping.addAddressTitle", "Add New Address")}

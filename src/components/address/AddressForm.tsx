@@ -110,163 +110,165 @@ export default function AddressForm({
   const isLoading = isSubmitting || isCreating || isUpdating;
 
   return (
-    <form
-      key={formKey}
-      onSubmit={handleSubmit(handleFormSubmit)}
-      className={`space-y-4 ${className}`}
-      dir={isRTL ? "rtl" : "ltr"}
-    >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Address Type Select */}
-        <FormSelect
-          key={`address-type-${formKey}-${watch("address_type")}`}
-          label={t("addresses.type")}
-          placeholder={t("addresses.selectType", "Select address type")}
-          value={watch("address_type")}
-          onValueChange={handleAddressTypeChange}
-          error={
-            errors.address_type?.message
-              ? t(errors.address_type.message)
-              : undefined
-          }
-          required
-          options={[
-            { value: "home", label: t("addresses.home") },
-            { value: "office", label: t("addresses.office") },
-            { value: "other", label: t("addresses.other") },
-          ]}
-        />
+    <div className="max-h-[60vh] sm:max-h-[70vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 scrollbar-thumb-rounded-full">
+      <form
+        key={formKey}
+        onSubmit={handleSubmit(handleFormSubmit)}
+        className={`space-y-4 ${className}`}
+        dir={isRTL ? "rtl" : "ltr"}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Address Type Select */}
+          <FormSelect
+            key={`address-type-${formKey}-${watch("address_type")}`}
+            label={t("addresses.type")}
+            placeholder={t("addresses.selectType", "Select address type")}
+            value={watch("address_type")}
+            onValueChange={handleAddressTypeChange}
+            error={
+              errors.address_type?.message
+                ? t(errors.address_type.message)
+                : undefined
+            }
+            required
+            options={[
+              { value: "home", label: t("addresses.home") },
+              { value: "office", label: t("addresses.office") },
+              { value: "other", label: t("addresses.other") },
+            ]}
+          />
 
-        {/* Name Input */}
-        <FormInput
-          label={t("addresses.name")}
-          placeholder={t("addresses.placeholders.fullName")}
-          value={watch("name")}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setValue("name", e.target.value, {
-              shouldValidate: true,
-              shouldDirty: true,
-            })
-          }
-          error={errors.name?.message ? t(errors.name.message) : undefined}
-          required
-        />
-
-        {/* Phone Input */}
-        <FormInput
-          label={t("addresses.phone")}
-          type="tel"
-          placeholder={t("addresses.placeholders.phone")}
-          value={watch("phone")}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setValue("phone", e.target.value, {
-              shouldValidate: true,
-              shouldDirty: true,
-            })
-          }
-          error={errors.phone?.message ? t(errors.phone.message) : undefined}
-          required
-        />
-
-        {/* City Input */}
-        <FormInput
-          label={t("addresses.city")}
-          placeholder={t("addresses.placeholders.city")}
-          value={watch("city")}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setValue("city", e.target.value, {
-              shouldValidate: true,
-              shouldDirty: true,
-            })
-          }
-          error={errors.city?.message ? t(errors.city.message) : undefined}
-          required
-        />
-
-        {/* Detailed Address Textarea */}
-        <div className="md:col-span-2">
+          {/* Name Input */}
           <FormInput
-            label={t("addresses.address")}
-            type="textarea"
-            placeholder={t("addresses.placeholders.detailedAddress")}
-            value={watch("detailed_address")}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-              setValue("detailed_address", e.target.value, {
+            label={t("addresses.name")}
+            placeholder={t("addresses.placeholders.fullName")}
+            value={watch("name")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("name", e.target.value, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            error={errors.name?.message ? t(errors.name.message) : undefined}
+            required
+          />
+
+          {/* Phone Input */}
+          <FormInput
+            label={t("addresses.phone")}
+            type="tel"
+            placeholder={t("addresses.placeholders.phone")}
+            value={watch("phone")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("phone", e.target.value, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            error={errors.phone?.message ? t(errors.phone.message) : undefined}
+            required
+          />
+
+          {/* City Input */}
+          <FormInput
+            label={t("addresses.city")}
+            placeholder={t("addresses.placeholders.city")}
+            value={watch("city")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("city", e.target.value, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            error={errors.city?.message ? t(errors.city.message) : undefined}
+            required
+          />
+
+          {/* Detailed Address Textarea */}
+          <div className="md:col-span-2">
+            <FormInput
+              label={t("addresses.address")}
+              type="textarea"
+              placeholder={t("addresses.placeholders.detailedAddress")}
+              value={watch("detailed_address")}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setValue("detailed_address", e.target.value, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+              error={
+                errors.detailed_address?.message
+                  ? t(errors.detailed_address.message)
+                  : undefined
+              }
+              required
+              rows={3}
+            />
+          </div>
+
+          {/* Postal Code Input */}
+          <FormInput
+            label={t("addresses.postalCode")}
+            placeholder={t("addresses.placeholders.postalCode")}
+            value={watch("postal_code")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("postal_code", e.target.value, {
                 shouldValidate: true,
                 shouldDirty: true,
               })
             }
             error={
-              errors.detailed_address?.message
-                ? t(errors.detailed_address.message)
+              errors.postal_code?.message
+                ? t(errors.postal_code.message)
                 : undefined
             }
             required
-            rows={3}
           />
+
+          {/* Default Checkbox */}
+          <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}>
+            <input
+              type="checkbox"
+              id="is_default"
+              checked={watch("is_default") || false}
+              onChange={(e) =>
+                setValue("is_default", e.target.checked, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+              className="rounded"
+            />
+            <label htmlFor="is_default" className="text-sm text-gray-700">
+              {t("addresses.default")}
+            </label>
+          </div>
         </div>
 
-        {/* Postal Code Input */}
-        <FormInput
-          label={t("addresses.postalCode")}
-          placeholder={t("addresses.placeholders.postalCode")}
-          value={watch("postal_code")}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setValue("postal_code", e.target.value, {
-              shouldValidate: true,
-              shouldDirty: true,
-            })
-          }
-          error={
-            errors.postal_code?.message
-              ? t(errors.postal_code.message)
-              : undefined
-          }
-          required
-        />
-
-        {/* Default Checkbox */}
-        <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}>
-          <input
-            type="checkbox"
-            id="is_default"
-            checked={watch("is_default") || false}
-            onChange={(e) =>
-              setValue("is_default", e.target.checked, {
-                shouldValidate: true,
-                shouldDirty: true,
-              })
-            }
-            className="rounded"
-          />
-          <label htmlFor="is_default" className="text-sm text-gray-700">
-            {t("addresses.default")}
-          </label>
-        </div>
-      </div>
-
-      {/* Form Actions */}
-      <div className={`flex gap-2 mt-6 ${isRTL ? "flex-row" : ""}`}>
-        <Button
-          type="submit"
-          disabled={isLoading}
-          className="flex items-center gap-2"
-        >
-          {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-          {submitButtonText ||
-            (isEditing ? t("addresses.update") : t("addresses.save"))}
-        </Button>
-        {showCancelButton && (
+        {/* Form Actions */}
+        <div className={`flex gap-2 mt-6 ${isRTL ? "flex-row" : ""}`}>
           <Button
-            type="button"
-            variant="outline"
-            onClick={handleCancel}
+            type="submit"
             disabled={isLoading}
+            className="flex items-center gap-2"
           >
-            {cancelButtonText || t("addresses.cancel")}
+            {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+            {submitButtonText ||
+              (isEditing ? t("addresses.update") : t("addresses.save"))}
           </Button>
-        )}
-      </div>
-    </form>
+          {showCancelButton && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleCancel}
+              disabled={isLoading}
+            >
+              {cancelButtonText || t("addresses.cancel")}
+            </Button>
+          )}
+        </div>
+      </form>
+    </div>
   );
 }
