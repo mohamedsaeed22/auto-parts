@@ -44,7 +44,7 @@ export function CustomPagination({
   );
 
   const handlePageChange = (page: number) => {
-    if (page < 1 || page > totalPages) return;
+    if (page < 1 || page > totalPages || page === currentPage) return;
     const queryString = createQueryString({ page });
     router.push(`${pathname}?${queryString}`);
   };

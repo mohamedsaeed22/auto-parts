@@ -390,11 +390,7 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             {t("foundBrands") || "Found Brands"}
           </h2>
-          <p className="text-gray-600">
-            {pagination
-              ? `${pagination.total} premium brands available`
-              : `${brands.length} premium brands available`}
-          </p>
+          
         </div>
 
         {/* Brands Grid/List */}
