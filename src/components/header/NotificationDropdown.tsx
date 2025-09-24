@@ -40,6 +40,12 @@ export default function NotificationDropdown({
     refetch,
   } = useNotifications(currentPage, perPage);
 
+  // Handle authentication errors
+  const isAuthError =
+    (error as any)?.status === 401 ||
+    error?.message?.includes("401") ||
+    error?.message?.includes("Unauthorized");
+
   const deleteNotificationMutation = useDeleteNotification();
   const deleteAllNotificationsMutation = useDeleteAllNotifications();
 
@@ -106,6 +112,9 @@ export default function NotificationDropdown({
     return timeString;
   };
 
+  // Keep the notification icon visible even with auth errors
+  // This provides better UX - users can see the notification area exists
+
   return (
     <div className="relative" ref={dropdownRef}>
       {/* Notification Button */}
@@ -116,7 +125,7 @@ export default function NotificationDropdown({
       >
         <div className="relative">
           <Bell size={20} />
-          {totalNotifications > 0 && (
+          {totalNotifications > 0 && !isAuthError && (
             <motion.span
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -125,6 +134,18 @@ export default function NotificationDropdown({
               } bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium`}
             >
               {totalNotifications > 99 ? "99+" : totalNotifications}
+            </motion.span>
+          )}
+          {isAuthError && (
+            <motion.span
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className={`absolute -top-2 ${
+                isRTL ? "-left-2" : "-right-2"
+              } bg-yellow-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium`}
+              title="Authentication required"
+            >
+              !
             </motion.span>
           )}
         </div>
@@ -199,14 +220,26 @@ export default function NotificationDropdown({
                 <div className="flex flex-col items-center justify-center p-8 text-center">
                   <AlertCircle size={24} className="text-red-500 mb-2" />
                   <p className="text-sm text-red-600 mb-2">
-                    {t("error", "Failed to load notifications")}
+                    {isAuthError
+                      ? t("authError", "Please log in to view notifications")
+                      : t("error", "Failed to load notifications")}
                   </p>
-                  <button
-                    onClick={handleRefresh}
-                    className="text-sm text-primary hover:underline"
-                  >
-                    {t("retry", "Try again")}
-                  </button>
+                  {!isAuthError && (
+                    <button
+                      onClick={handleRefresh}
+                      className="text-sm text-primary hover:underline"
+                    >
+                      {t("retry", "Try again")}
+                    </button>
+                  )}
+                  {isAuthError && (
+                    <button
+                      onClick={() => window.location.reload()}
+                      className="text-sm text-primary hover:underline mt-2"
+                    >
+                      {t("refreshPage", "Refresh page")}
+                    </button>
+                  )}
                 </div>
               ) : notifications.length === 0 ? (
                 <div className="flex flex-col items-center justify-center p-8 text-center">

@@ -31,8 +31,18 @@ export interface NotificationsResponse {
   };
 }
 
-export interface NotificationsApiResponse
-  extends ApiResponse<NotificationsResponse> {}
+export type NotificationsApiResponse = ApiResponse<NotificationsResponse>;
+
+// Custom error type for API errors
+export class ApiError extends Error {
+  status?: number;
+
+  constructor(message: string, status?: number) {
+    super(message);
+    this.status = status;
+    this.name = "ApiError";
+  }
+}
 
 // API Helper Functions
 const getHeaders = () => {
@@ -48,12 +58,12 @@ const getHeaders = () => {
   // Add locale header for proper language response
   try {
     // Import getCurrentLocale dynamically to avoid circular dependencies
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { getCurrentLocale } = require("@/lib/localeService");
     const locale = getCurrentLocale();
     headers.locale = locale;
     headers["Accept-Language"] = locale;
-  } catch (error) {
-   
+  } catch {
     headers.locale = "ar";
     headers["Accept-Language"] = "ar";
   }
@@ -66,7 +76,14 @@ const handleResponse = async <T>(
 ): Promise<ApiResponse<T>> => {
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.message || "An error occurred");
+    const errorMessage = error.message || "An error occurred";
+
+    // If it's a 401 error, we should handle it specially
+    if (response.status === 401) {
+      throw new ApiError(errorMessage, 401);
+    }
+
+    throw new Error(errorMessage);
   }
   return response.json();
 };
@@ -114,7 +131,22 @@ export const useNotifications = (page: number = 1, perPage: number = 5) => {
     queryFn: () => getNotifications(page, perPage),
     enabled: !!storage.getToken(),
     staleTime: 30000, // 30 seconds
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false, // Disable aggressive refetching
+    retry: (failureCount, error: Error | ApiError) => {
+      // Don't retry on 401 errors (authentication issues)
+      if (error instanceof ApiError && error.status === 401) {
+        return false;
+      }
+      if (
+        error?.message?.includes("401") ||
+        error?.message?.includes("Unauthorized")
+      ) {
+        return false;
+      }
+      // Retry up to 2 times for other errors
+      return failureCount < 2;
+    },
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 };
 
@@ -127,13 +159,15 @@ export const useDeleteNotification = () => {
       // Invalidate and refetch notifications
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
       try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const { getCurrentLocale } = require("@/lib/localeService");
         const locale = getCurrentLocale();
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const translations = require(`@/lib/i18n/translations/${locale}/notifications.json`);
         const message =
           translations?.success?.deleted || "Notification deleted successfully";
         showSuccess(message);
-      } catch (e) {
+      } catch {
         showSuccess("Notification deleted successfully");
       }
     },
@@ -152,14 +186,16 @@ export const useDeleteAllNotifications = () => {
       // Invalidate and refetch notifications
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
       try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const { getCurrentLocale } = require("@/lib/localeService");
         const locale = getCurrentLocale();
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const translations = require(`@/lib/i18n/translations/${locale}/notifications.json`);
         const message =
           translations?.success?.allDeleted ||
           "All notifications deleted successfully";
         showSuccess(message);
-      } catch (e) {
+      } catch {
         showSuccess("All notifications deleted successfully");
       }
     },
@@ -171,6 +207,18 @@ export const useDeleteAllNotifications = () => {
 
 // Hook to get notification count
 export const useNotificationCount = () => {
-  const { data } = useNotifications(1, 1); // Only get first page to get total count
+  const { data, error } = useNotifications(1, 1); // Only get first page to get total count
+
+  // Return 0 if there's an authentication error
+  if (error instanceof ApiError && error.status === 401) {
+    return 0;
+  }
+  if (
+    error?.message?.includes("401") ||
+    error?.message?.includes("Unauthorized")
+  ) {
+    return 0;
+  }
+
   return data?.data?.pagination?.total || 0;
 };
