@@ -54,7 +54,10 @@ const getHeaders = () => {
     headers["Accept-Language"] = locale;
     console.log("Notifications API - Setting locale header:", locale);
   } catch (error) {
-    console.warn("Notifications API - Failed to get locale, using default:", error);
+    console.warn(
+      "Notifications API - Failed to get locale, using default:",
+      error
+    );
     headers.locale = "ar";
     headers["Accept-Language"] = "ar";
   }
@@ -127,7 +130,16 @@ export const useDeleteNotification = () => {
     onSuccess: () => {
       // Invalidate and refetch notifications
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      showSuccess("Notification deleted successfully");
+      try {
+        const { getCurrentLocale } = require("@/lib/localeService");
+        const locale = getCurrentLocale();
+        const translations = require(`@/lib/i18n/translations/${locale}/notifications.json`);
+        const message =
+          translations?.success?.deleted || "Notification deleted successfully";
+        showSuccess(message);
+      } catch (e) {
+        showSuccess("Notification deleted successfully");
+      }
     },
     onError: (error) => {
       showError(error.message);
@@ -143,7 +155,17 @@ export const useDeleteAllNotifications = () => {
     onSuccess: () => {
       // Invalidate and refetch notifications
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      showSuccess("All notifications deleted successfully");
+      try {
+        const { getCurrentLocale } = require("@/lib/localeService");
+        const locale = getCurrentLocale();
+        const translations = require(`@/lib/i18n/translations/${locale}/notifications.json`);
+        const message =
+          translations?.success?.allDeleted ||
+          "All notifications deleted successfully";
+        showSuccess(message);
+      } catch (e) {
+        showSuccess("All notifications deleted successfully");
+      }
     },
     onError: (error) => {
       showError(error.message);

@@ -12,11 +12,12 @@ import { AuthOnlyGuard } from "@/components/auth/AuthGuard";
 import { useApiErrorHandler } from "@/hooks/useApiErrorHandler";
 import React from "react";
 import ProductCard from "@/components/product/ProductCard";
+import { useRouter } from "next/navigation";
 
 export default function FavouritesPage() {
   const { t } = useTranslation("favourites");
   const { data: favouritesData, isLoading, error } = useGetFavouritesQuery();
-
+  const router = useRouter();
   // Handle API errors (403 registration incomplete, 401 unauthorized, etc.)
   // Disable toasts since ProtectedPageGuard handles authentication toasts
   useApiErrorHandler(
@@ -76,7 +77,7 @@ export default function FavouritesPage() {
                   "Start adding products to your favourites to see them here."}
               </p>
               <Button
-                onClick={() => window.history.back()}
+                onClick={() => router.push("/products")}  
                 className="bg-logo-gold hover:bg-logo-gold/90"
               >
                 {t("empty.browseButton") || "Browse Products"}
