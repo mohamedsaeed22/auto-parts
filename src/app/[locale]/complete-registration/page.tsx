@@ -223,7 +223,7 @@ export default function CompleteRegistrationPage() {
   const validateLocationAndSubmit = async (data: RegistrationFormData) => {
     // Check if location is selected
     if (!data.latitude || !data.longitude) {
-      const message = isRTL 
+      const message = isRTL
         ? "يرجى تحديد موقع على الخريطة"
         : "Please select a location on the map";
       showError(t("validation.locationRequired", message));
@@ -434,7 +434,10 @@ export default function CompleteRegistrationPage() {
 
         {/* Registration Form */}
         <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
-          <form onSubmit={handleSubmit(validateLocationAndSubmit)} className="w-full">
+          <form
+            onSubmit={handleSubmit(validateLocationAndSubmit)}
+            className="w-full"
+          >
             {/* Location Selection Section - FIRST STEP */}
             <div className="bg-logo-gold/5 border-b border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
