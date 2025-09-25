@@ -14,8 +14,10 @@
     "updateFailed": "فشل تحديث المنتج في السلة",
     "removeFailed": "فشل إزالة المنتج من السلة",
     "clearFailed": "فشل تفريغ السلة",
-    "syncFailed": "فشل في مزامنة السلة",
-    "quantityUpdateFailed": "فشل في تحديث الكمية"
+    "syncFailed": "تم تعديل كميه المنتجات لنفاذها من المخزون",
+    "quantityUpdateFailed": "تم تعديل كميه المنتجات لنفاذها من المخزون",
+    "stockExceeded": "لا يمكن إضافة المزيد. الكمية المتاحة: {{stock}}",
+    "outOfStock": "نفد من المخزون"
   },
   "success": {
     "updated": "تم تحديث السلة بنجاح",

@@ -14,8 +14,10 @@
     "updateFailed": "Failed to update cart item",
     "removeFailed": "Failed to remove cart item",
     "clearFailed": "Failed to clear cart",
-    "syncFailed": "Failed to sync cart",
-    "quantityUpdateFailed": "Failed to update quantity"
+    "syncFailed": "The quantity of the products has been adjusted due to their depletion from stock.",
+    "quantityUpdateFailed": "The quantity of the products has been adjusted due to their depletion from stock.",
+    "stockExceeded": "Cannot add more. Available stock: {{stock}}",
+    "outOfStock": "Out of stock"
   },
   "success": {
     "updated": "Cart updated successfully",

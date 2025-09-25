@@ -23,13 +23,14 @@ import { Button } from "@/components/ui/button";
 import { LoadingSpinner, ErrorMessage } from "@/components/ui";
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { useEnhancedCart } from "@/hooks/useEnhancedCart";
+import { useStockAwareCart } from "@/hooks/useStockAwareCart";
 import { useFavouritesWishlist } from "@/hooks/useFavouritesWishlist";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useTranslation } from "react-i18next";
 import { useGetProductQuery } from "@/services/hooks";
 import { showSuccess, showError } from "@/lib/toast";
 import { storage } from "@/lib/storage";
+import { Product } from "@/services/api/types";
 
 // Loading Component
 
@@ -281,13 +282,51 @@ const PriceSection = ({
   );
 };
 
-const StockIndicator = ({ isRTL, t }: { isRTL: boolean; t: TranslateFn }) => (
-  <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : "flex-row"}`}>
-    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-    <span className="text-sm font-medium text-green-600">{t("inStock")}</span>
-    <span className="text-sm text-gray-500">- {t("readyToShip")}</span>
-  </div>
-);
+const StockIndicator = ({ 
+  product, 
+  isRTL, 
+  t,
+  getProductStockStatus 
+}: { 
+  product: Product | undefined;
+  isRTL: boolean; 
+  t: TranslateFn;
+  getProductStockStatus: (product: Product) => { message: string; type: 'success' | 'warning' | 'error' };
+}) => {
+  if (!product) {
+    return (
+      <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : "flex-row"}`}>
+        <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
+        <span className="text-sm font-medium text-gray-500">Loading...</span>
+      </div>
+    );
+  }
+
+  const stockStatus = getProductStockStatus(product);
+  const colorClass = 
+    stockStatus.type === 'error' 
+      ? 'text-red-600' 
+      : stockStatus.type === 'warning' 
+      ? 'text-orange-600' 
+      : 'text-green-600';
+  
+  const dotClass = 
+    stockStatus.type === 'error' 
+      ? 'bg-red-500' 
+      : stockStatus.type === 'warning' 
+      ? 'bg-orange-500' 
+      : 'bg-green-500';
+
+  return (
+    <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : "flex-row"}`}>
+      <div className={`w-3 h-3 ${dotClass} rounded-full ${stockStatus.type === 'success' ? 'animate-pulse' : ''}`}></div>
+      <span className={`text-sm font-medium ${colorClass}`}>{stockStatus.message}</span>
+      {stockStatus.type === 'success' && (
+        <span className="text-sm text-gray-500">- {t("readyToShip")}</span>
+      )}
+    </div>
+  );
+};
 
 export default function ProductDetails() {
   const router = useRouter();
@@ -331,9 +370,18 @@ export default function ProductDetails() {
 
   // Remove direct API add; rely on enhanced cart hook to decide (guest vs API)
 
-  // Use Redux hook for local cart state
-  const { items, addToCart, removeFromCart, updateQuantity, loading } =
-    useEnhancedCart();
+  // Use Redux hook for local cart state with stock validation
+  const { 
+    items, 
+    addToCart, 
+    removeFromCart, 
+    updateQuantity, 
+    loading,
+    canAddToCart,
+    canIncreaseQuantity,
+    isProductOutOfStock,
+    getProductStockStatus
+  } = useStockAwareCart();
 
   // Use favourites/wishlist hook
   const {
@@ -455,24 +503,17 @@ export default function ProductDetails() {
 
   const handleAddToCart = async () => {
     if (!product) return;
-    // Delegate logic to enhanced hook (guest => localStorage only; logged-in => API)
-    addToCart({
-      id: product.id,
-      title: product.name || "Product",
-      price: Number(product.final_price) || Number(product.price) || 0,
-      image: product.primary_image || "",
-      category: product.category?.name || "Unknown Category",
-      description: product.description || "",
-    });
+    // Use stock-aware cart which handles validation automatically
+    await addToCart(product);
   };
 
-  const handleQuantityChange = (newQuantity: number) => {
+  const handleQuantityChange = async (newQuantity: number) => {
     if (!product) return;
 
     if (newQuantity <= 0) {
-      removeFromCart(product.id);
+      await removeFromCart(product.id);
     } else {
-      updateQuantity(product.id, newQuantity);
+      await updateQuantity(product.id, newQuantity, product);
     }
   };
 
@@ -833,7 +874,12 @@ export default function ProductDetails() {
 
             {/* Stock Status */}
             <div className="mt-3">
-              <StockIndicator isRTL={isRTL} t={t} />
+              <StockIndicator 
+                product={product} 
+                isRTL={isRTL} 
+                t={t} 
+                getProductStockStatus={getProductStockStatus}
+              />
             </div>
           </div>
 
@@ -919,8 +965,8 @@ export default function ProductDetails() {
               {!isInCart ? (
                 <Button
                   onClick={handleAddToCart}
-                  disabled={loading}
-                  className={`w-full h-12 flex items-center justify-center gap-2 text-sm font-medium bg-primary text-white ${
+                  disabled={loading || isProductOutOfStock(product) || !canAddToCart(product)}
+                  className={`w-full h-12 flex items-center justify-center gap-2 text-sm font-medium bg-primary text-white disabled:bg-gray-400 disabled:cursor-not-allowed ${
                     isRTL ? "flex-row" : "flex-row"
                   }`}
                   size="sm"
@@ -930,12 +976,12 @@ export default function ProductDetails() {
                   ) : isRTL ? (
                     <>
                       <ShoppingCart size={16} />
-                      <span>{t("addToCart")}</span>
+                      <span>{isProductOutOfStock(product) ? t("outOfStock") : t("addToCart")}</span>
                     </>
                   ) : (
                     <>
                       <ShoppingCart size={16} />
-                      <span>{t("addToCart")}</span>
+                      <span>{isProductOutOfStock(product) ? t("outOfStock") : t("addToCart")}</span>
                     </>
                   )}
                 </Button>
@@ -962,7 +1008,8 @@ export default function ProductDetails() {
                     </span>
                     <button
                       onClick={() => handleQuantityChange(currentQuantity + 1)}
-                      className="w-8 h-8 bg-white/20 rounded-md text-white flex items-center justify-center"
+                      disabled={!canIncreaseQuantity(product)}
+                      className="w-8 h-8 bg-white/20 rounded-md text-white flex items-center justify-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
                     >
                       <Plus size={14} />
                     </button>

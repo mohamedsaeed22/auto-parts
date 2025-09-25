@@ -77,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         window.dispatchEvent(new CustomEvent("cartSyncComplete"));
       }, 100);
     } catch (error) {
-      // Failed to sync cart on login
+      // The quantity of the products has been adjusted due to their depletion from stock. on login
     }
 
     // Auto-sync user's language preference with current app locale
@@ -150,7 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         await CartSyncService.handleRegistrationComplete();
       } catch (error) {
-        // Failed to sync cart on registration completion
+        // The quantity of the products has been adjusted due to their depletion from stock. on registration completion
       }
     }
   };

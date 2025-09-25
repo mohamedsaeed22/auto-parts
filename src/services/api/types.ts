@@ -135,6 +135,7 @@ export interface Product {
   price: string;
   discount_type: "percentage" | "fixed" | null;
   discount_amount: string | null;
+  stock: number;
   final_price: number;
   discount_info: string;
   brand: Brand | null;
@@ -161,6 +162,7 @@ export interface Product {
   description: string;
   hover_text: string;
   product_identifier: string;
+  weight: number;
   // Add new fields for favourites and wishlist status
   in_favorites: boolean | null;
   in_wishlist: boolean | null;

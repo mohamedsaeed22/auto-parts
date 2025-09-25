@@ -1,4 +1,4 @@
-import { useEnhancedCart } from "@/hooks/useEnhancedCart";
+import { useStockAwareCart } from "@/hooks/useStockAwareCart";
 import { useFavouritesWishlist } from "@/hooks/useFavouritesWishlist";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -32,8 +32,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const { t, i18n } = useTranslation("product");
   const isRTL = i18n.language === "ar";
-  const { items, addToCart, updateQuantity, removeFromCart, isItemLoading } =
-    useEnhancedCart();
+  const {
+    items,
+    addToCart,
+    updateQuantity,
+    removeFromCart,
+    isItemLoading,
+    canAddToCart,
+    canIncreaseQuantity,
+    isProductOutOfStock,
+    getProductStockStatus,
+  } = useStockAwareCart();
   const { handleToggleFavourite, handleToggleWishlist, isLoading } =
     useFavouritesWishlist();
   const cartItem = items.find((item) => item.id === product.id);
@@ -280,35 +289,24 @@ const ProductCard: React.FC<ProductCardProps> = ({
     e.preventDefault();
     e.stopPropagation();
 
-    try {
-      await addToCart({
-        id: product.id,
-        title: productName,
-        price: productFinalPrice,
-        image: currentImage,
-        category: categoryName,
-        description: product.description || "",
-      });
-    } catch (error) {
-      // Failed to add to cart
-    }
+    await addToCart(product);
   };
 
-  const handleIncreaseQuantity = (e: React.MouseEvent) => {
+  const handleIncreaseQuantity = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (cartItem) {
-      updateQuantity(product.id, cartItem.quantity + 1);
+      await updateQuantity(product.id, cartItem.quantity + 1, product);
     }
   };
 
-  const handleDecreaseQuantity = (e: React.MouseEvent) => {
+  const handleDecreaseQuantity = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (cartItem && cartItem.quantity > 1) {
-      updateQuantity(product.id, cartItem.quantity - 1);
+      await updateQuantity(product.id, cartItem.quantity - 1, product);
     } else if (cartItem && cartItem.quantity === 1) {
-      removeFromCart(product.id);
+      await removeFromCart(product.id);
     }
   };
 
@@ -524,16 +522,24 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   {!isInCart ? (
                     <Button
                       size="sm"
-                      className="bg-primary hover:bg-primary/90 text-white rounded px-4 py-2 flex items-center gap-2 transition-colors duration-200"
+                      className="bg-primary hover:bg-primary/90 text-white rounded px-4 py-2 flex items-center gap-2 transition-colors duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
                       onClick={handleAddToCart}
-                      disabled={isItemLoading(product.id)}
+                      disabled={
+                        isItemLoading(product.id) ||
+                        isProductOutOfStock(product) ||
+                        !canAddToCart(product)
+                      }
                     >
                       {isItemLoading(product.id) ? (
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                       ) : (
                         <ShoppingCart size={16} />
                       )}
-                      <span>{t("addToCart")}</span>
+                      <span>
+                        {isProductOutOfStock(product)
+                          ? t("outOfStock")
+                          : t("addToCart")}
+                      </span>
                     </Button>
                   ) : (
                     <div className="flex items-center bg-white border border-primary/20 rounded overflow-hidden shadow-sm">
@@ -563,8 +569,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
                         onClick={handleIncreaseQuantity}
                         size="sm"
                         variant="ghost"
-                        className="h-8 w-8 p-0 hover:bg-green-50 text-green-600 hover:text-green-700 rounded-none border-l border-primary/10 transition-colors duration-200"
-                        disabled={isItemLoading(product.id)}
+                         className="h-8 w-8 p-0 hover:bg-green-50 text-green-600 hover:text-green-700 rounded-none border-l border-primary/10 transition-colors duration-200 disabled:text-gray-400 disabled:cursor-not-allowed"
+                        disabled={
+                          isItemLoading(product.id) ||
+                          !canIncreaseQuantity(product)
+                        }
                       >
                         {isItemLoading(product.id) ? (
                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
@@ -776,11 +785,43 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {/* Product Info */}
           <div className="p-3 flex flex-col flex-1">
             {/* Product Name */}
-            <h3 className="text-md font-medium text-neutral-900 mb-3 group-hover:text-primary transition-colors overflow-hidden">
+            <h3 className="text-md font-medium text-neutral-900 mb-2 group-hover:text-primary transition-colors overflow-hidden">
               <span className="block truncate" title={productName}>
                 {productName}
               </span>
             </h3>
+
+            {/* Stock Status */}
+            <div className="mb-2">
+              {(() => {
+                const stockStatus = getProductStockStatus(product);
+                const currentQuantity = cartItem?.quantity || 0;
+                const showDebugInfo = process.env.NODE_ENV === "development";
+
+                return (
+                  <div className="space-y-1">
+                    <span
+                      className={`text-xs font-medium ${
+                        stockStatus.type === "error"
+                          ? "text-red-600"
+                          : stockStatus.type === "warning"
+                          ? "text-orange-600"
+                          : "text-green-600"
+                      }`}
+                    >
+                      {stockStatus.message}
+                    </span>
+                    {showDebugInfo && currentQuantity > 0 && (
+                      <div className="text-xs text-gray-500">
+                        In cart: {currentQuantity} | Stock: {product.stock} |
+                        Can increase:{" "}
+                        {canIncreaseQuantity(product) ? "Yes" : "No"}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+            </div>
 
             {/* Price and Add to Cart Section */}
             <div className="mt-auto">
@@ -804,19 +845,33 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 {!isInCart ? (
                   <Button
                     size="sm"
-                    className="bg-primary hover:bg-primary/90 text-white rounded px-2 py-1 flex items-center gap-1 transition-colors duration-200 text-xs relative z-10"
+                    className="bg-primary hover:bg-primary/90 text-white rounded px-2 py-1 flex items-center gap-1 transition-colors duration-200 text-xs relative z-10 disabled:bg-gray-400 disabled:cursor-not-allowed"
                     onClick={(e) => {
                       handleAddToCart(e);
                     }}
-                    disabled={isItemLoading(product.id)}
-                    style={{ pointerEvents: "auto", cursor: "pointer" }}
+                    disabled={
+                      isItemLoading(product.id) ||
+                      isProductOutOfStock(product) ||
+                      !canAddToCart(product)
+                    }
+                    style={{
+                      pointerEvents: "auto",
+                      cursor:
+                        isProductOutOfStock(product) || !canAddToCart(product)
+                          ? "not-allowed"
+                          : "pointer",
+                    }}
                   >
                     {isItemLoading(product.id) ? (
                       <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
                     ) : (
                       <ShoppingCart size={12} />
                     )}
-                    <span>{t("addToCart")}</span>
+                    <span>
+                      {isProductOutOfStock(product)
+                        ? t("outOfStock")
+                        : t("addToCart")}
+                    </span>
                   </Button>
                 ) : (
                   <div className="flex items-center bg-white border border-primary/20 rounded overflow-hidden shadow-sm">
@@ -846,8 +901,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
                       onClick={handleIncreaseQuantity}
                       size="sm"
                       variant="ghost"
-                      className="h-7 w-7 p-0 hover:bg-green-50 text-green-600 hover:text-green-700 rounded-none border-l border-primary/10 transition-colors duration-200"
-                      disabled={isItemLoading(product.id)}
+                      className="h-7 w-7 p-0 hover:bg-green-50 text-green-600 hover:text-green-700 rounded-none border-l border-primary/10 transition-colors duration-200 disabled:text-gray-400 disabled:cursor-not-allowed"
+                      disabled={
+                        isItemLoading(product.id) ||
+                        !canIncreaseQuantity(product)
+                      }
                     >
                       {isItemLoading(product.id) ? (
                         <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-green-600"></div>

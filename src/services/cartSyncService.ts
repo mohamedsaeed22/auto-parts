@@ -44,7 +44,10 @@ export class CartSyncService {
         toast.success("Cart synced successfully");
         return true;
       } else {
-        throw new Error(response.message || "Failed to sync cart");
+        throw new Error(
+          response.message ||
+            "The quantity of the products has been adjusted due to their depletion from stock."
+        );
       }
     } catch (error) {
       showError("errors.syncFailed");

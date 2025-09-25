@@ -48,12 +48,15 @@ export const showError = (message: string) => {
     // Simple translation mapping for cart errors
     const translations: Record<string, Record<string, string>> = {
       ar: {
-        "errors.syncFailed": "فشل في مزامنة السلة",
-        "errors.quantityUpdateFailed": "فشل في تحديث الكمية",
+        "errors.syncFailed": "تم تعديل كميه المنتجات لنفاذها من المخزون",
+        "errors.quantityUpdateFailed":
+          "تم تعديل كميه المنتجات لنفاذها من المخزون",
       },
       en: {
-        "errors.syncFailed": "Failed to sync cart",
-        "errors.quantityUpdateFailed": "Failed to update quantity",
+        "errors.syncFailed":
+          "The quantity of the products has been adjusted due to their depletion from stock.",
+        "errors.quantityUpdateFailed":
+          "The quantity of the products has been adjusted due to their depletion from stock.",
       },
     };
 

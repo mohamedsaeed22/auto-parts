@@ -140,12 +140,24 @@ export const useEnhancedCart = () => {
   }, [shouldUseAPI, refetchCart, syncAPICartToLocal]);
 
   /**
-   * Add item to cart
+   * Add item to cart with stock validation
    */
   const addToCart = useCallback(
-    async (item: Omit<CartItem, "quantity">) => {
+    async (item: Omit<CartItem, "quantity">, product?: { stock?: number }) => {
       try {
         dispatch(setLoading(true));
+
+        // Check if product stock is provided and validate
+        if (product && typeof product.stock === 'number') {
+          const currentItem = items.find(cartItem => cartItem.id === item.id);
+          const currentQuantity = currentItem?.quantity || 0;
+          
+          // Check if adding one more would exceed stock
+          if (currentQuantity + 1 > product.stock) {
+            showError(`Only ${product.stock} items available in stock. You already have ${currentQuantity} in your cart.`);
+            return;
+          }
+        }
 
         if (shouldUseAPI) {
           // Use API
@@ -177,16 +189,22 @@ export const useEnhancedCart = () => {
         dispatch(setLoading(false));
       }
     },
-    [shouldUseAPI, addToCartAPI, dispatch, finalIsAuthenticated]
+    [shouldUseAPI, addToCartAPI, dispatch, finalIsAuthenticated, items]
   );
 
   /**
-   * Update item quantity
+   * Update item quantity with stock validation
    */
   const handleUpdateQuantity = useCallback(
-    async (id: number, quantity: number) => {
+    async (id: number, quantity: number, productStock?: number) => {
       try {
         dispatch(setItemLoading({ id, loading: true }));
+
+        // Check stock validation if productStock is provided
+        if (typeof productStock === 'number' && quantity > productStock) {
+          showError(`Only ${productStock} items available in stock.`);
+          return;
+        }
 
         if (shouldUseAPI) {
           // Use the product ID directly for the API call
@@ -215,7 +233,7 @@ export const useEnhancedCart = () => {
         dispatch(setItemLoading({ id, loading: false }));
       }
     },
-    [shouldUseAPI, updateCartItemAPI, dispatch]
+    [shouldUseAPI, updateCartItemAPI, dispatch, t]
   );
 
   /**

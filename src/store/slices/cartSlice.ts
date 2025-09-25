@@ -13,6 +13,7 @@ export interface CartItem {
   quantity: number;
   category?: string;
   description?: string;
+  stock?: number; // Add stock information to cart items
 }
 
 interface CartState {
