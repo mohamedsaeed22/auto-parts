@@ -98,23 +98,28 @@ export function PricingForm({
             </div>
           </div>
         ) : !isRegistrationComplete ? (
-          <div className="mb-6 p-4 rounded-lg border flex items-center gap-3 text-orange-700 bg-orange-50 border-orange-200">
-            <AlertCircle size={20} />
-            <div className="flex-1">
-              <p className="font-medium">
-                {t("auth.completeRegistrationRequired")}
-              </p>
-              <p className="text-sm text-orange-600">
-                {t("auth.status.completeRegistration")}
-              </p>
+          <div className="mb-6 p-4 rounded-lg border flex flex-col sm:flex-row items-start sm:items-center gap-3 text-orange-700 bg-orange-50 border-orange-200">
+            <div className="flex items-center gap-2">
+              <AlertCircle size={20} />
+              <div>
+                <p className="font-medium">
+                  {t("auth.completeRegistrationRequired")}
+                </p>
+                <p className="text-sm text-orange-600">
+                  {t("auth.status.completeRegistration")}
+                </p>
+              </div>
             </div>
-            <Button
-              onClick={handleCompleteRegistrationClick}
-              size="sm"
-              className="bg-orange-600 hover:bg-orange-700 text-white"
-            >
-              {t("auth.buttons.completeRegistration")}
-            </Button>
+
+            <div className="sm:ml-auto">
+              <Button
+                onClick={handleCompleteRegistrationClick}
+                size="sm"
+                className="bg-orange-600 hover:bg-orange-700 text-white w-full sm:w-auto"
+              >
+                {t("auth.buttons.completeRegistration")}
+              </Button>
+            </div>
           </div>
         ) : null}
       </>
