@@ -6,7 +6,7 @@ const fileSchema = z
   .refine((file) => {
     const allowedTypes = [
       "image/jpeg",
-      "image/jpg", 
+      "image/jpg",
       "image/png",
       "image/gif",
       "image/svg+xml",
@@ -25,7 +25,7 @@ export const registrationSchema = z.object({
     .string()
     .min(1, "validation.nameRequired")
     .max(100, "validation.nameTooLong"),
-  
+
   email: z
     .string()
     .optional()
@@ -33,62 +33,67 @@ export const registrationSchema = z.object({
       if (!email || email.trim() === "") return true; // Optional field
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }, "validation.emailInvalid"),
-  
-  type: z
-    .enum(["shop", "workshop"], {
-      required_error: "validation.typeRequired",
-      invalid_type_error: "validation.typeRequired",
-    }),
-  
+
+  type: z.enum(["shop", "workshop"], {
+    required_error: "validation.typeRequired",
+    invalid_type_error: "validation.typeRequired",
+  }),
+
   manager_name: z
     .string()
     .min(1, "validation.managerRequired")
     .max(100, "validation.managerTooLong"),
-  
-  // Location Information (required)
+
+  // Location Information (conditionally required)
   latitude: z
     .string()
-    .min(1, "validation.locationRequired")
-    .refine((val) => !isNaN(parseFloat(val)), "validation.locationInvalid"),
-  
+    .optional()
+    .refine((val) => {
+      if (!val || val.trim() === "") return true; // Optional if empty
+      return !isNaN(parseFloat(val));
+    }, "validation.locationInvalid"),
+
   longitude: z
     .string()
-    .min(1, "validation.locationRequired")
-    .refine((val) => !isNaN(parseFloat(val)), "validation.locationInvalid"),
-  
+    .optional()
+    .refine((val) => {
+      if (!val || val.trim() === "") return true; // Optional if empty
+      return !isNaN(parseFloat(val));
+    }, "validation.locationInvalid"),
+
   // Address Information
   address: z
     .string()
     .min(1, "validation.addressRequired")
     .max(255, "validation.addressTooLong"),
-  
+
   city: z
     .string()
     .min(1, "validation.cityRequired")
     .max(100, "validation.cityTooLong"),
-  
+
   state: z
     .string()
     .min(1, "validation.stateRequired")
     .max(100, "validation.stateTooLong"),
-  
+
   zip: z
     .string()
     .min(1, "validation.zipRequired")
     .max(20, "validation.zipTooLong"),
-  
+
   // Business Information
   tax_number: z
     .string()
     .min(1, "validation.taxRequired")
     .max(50, "validation.taxTooLong"),
-  
+
   // File Uploads
   commercial_register: fileSchema.refine(
     (file) => file !== null && file !== undefined,
     "validation.crRequired"
   ),
-  
+
   avatar: fileSchema.refine(
     (file) => file !== null && file !== undefined,
     "validation.avatarRequired"

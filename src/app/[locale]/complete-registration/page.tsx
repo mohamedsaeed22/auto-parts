@@ -50,7 +50,7 @@ export default function CompleteRegistrationPage() {
     defaultValues: {
       name: "",
       email: "",
-      type: undefined,
+      type: undefined, // No pre-selected value
       manager_name: "",
       address: "",
       city: "",
@@ -73,6 +73,21 @@ export default function CompleteRegistrationPage() {
   );
   const hasLocationError = Boolean(errors.latitude || errors.longitude);
 
+  // Determine if location validation should be shown
+  const shouldShowLocationError = hasLocationError && !isLocationSelected;
+
+  // Debug: Watch all form values
+  const allFormValues = watch();
+  console.log("All form values:", allFormValues);
+
+  // Debug function to manually check form values
+  const debugFormValues = () => {
+    console.log("=== MANUAL FORM DEBUG ===");
+    console.log("All form values:", allFormValues);
+    console.log("Form errors:", errors);
+    console.log("Form is valid:", Object.keys(errors).length === 0);
+  };
+
   // State for file uploads and previews
   const [commercialRegisterPreview, setCommercialRegisterPreview] = useState<
     string | null
@@ -89,9 +104,9 @@ export default function CompleteRegistrationPage() {
 
   // Handle location selection from the map
   const handleLocationSelect = (locationData: LocationData) => {
-    // Store coordinates as numbers (required)
-    setValue("latitude", locationData.lat);
-    setValue("longitude", locationData.lng);
+    // Store coordinates as strings (required by schema)
+    setValue("latitude", locationData.lat.toString());
+    setValue("longitude", locationData.lng.toString());
 
     // Auto-fill other fields if available, but allow user to edit
     if (locationData.address) setValue("address", locationData.address.trim());
@@ -228,20 +243,20 @@ export default function CompleteRegistrationPage() {
       // Clear any previous errors
       setApiErrors([]);
 
-      // Validate location first
+      // Validate location only if coordinates are provided but invalid
       if (
-        !data.latitude ||
-        !data.longitude ||
-        isNaN(Number(data.latitude)) ||
-        isNaN(Number(data.longitude))
+        (data.latitude && isNaN(Number(data.latitude))) ||
+        (data.longitude && isNaN(Number(data.longitude)))
       ) {
         setApiErrors([
           {
             key: "location",
             value: [
               t(
-                "validation.locationRequired",
-                isRTL ? "الموقع مطلوب" : "Location is required"
+                "validation.locationInvalid",
+                isRTL
+                  ? "إحداثيات الموقع غير صحيحة"
+                  : "Invalid location coordinates"
               ),
             ],
           },
@@ -249,38 +264,58 @@ export default function CompleteRegistrationPage() {
         return;
       }
 
-      // Create FormData for file uploads
-      const formData = new FormData();
+      // Debug: Log the form data before processing
+      console.log("=== FORM SUBMISSION DEBUG ===");
+      console.log("Form data received:", data);
+      console.log("Form data type:", typeof data);
+      console.log("Form data entries:", Object.entries(data));
+      console.log("Form data keys:", Object.keys(data));
+      console.log("Form data values:", Object.values(data));
 
-      // Add all form fields to FormData
-      Object.entries(data).forEach(([key, value]) => {
-        // Skip undefined, null, or empty string values
-        if (value === undefined || value === null || value === "") {
-          return;
-        }
+      // Debug each field individually
+      console.log("Individual field values:");
+      console.log("- name:", data.name, typeof data.name);
+      console.log("- email:", data.email, typeof data.email);
+      console.log("- type:", data.type, typeof data.type);
+      console.log(
+        "- manager_name:",
+        data.manager_name,
+        typeof data.manager_name
+      );
+      console.log("- address:", data.address, typeof data.address);
+      console.log("- city:", data.city, typeof data.city);
+      console.log("- zip:", data.zip, typeof data.zip);
+      console.log("- state:", data.state, typeof data.state);
+      console.log("- tax_number:", data.tax_number, typeof data.tax_number);
+      console.log("- latitude:", data.latitude, typeof data.latitude);
+      console.log("- longitude:", data.longitude, typeof data.longitude);
 
-        // Handle file fields
-        if (key === "commercial_register" || key === "avatar") {
-          // For files, we need to check if there's a file in the input
-          const fileInput = document.getElementById(key) as HTMLInputElement;
-          if (fileInput && fileInput.files && fileInput.files[0]) {
-            formData.append(key, fileInput.files[0]);
-            console.log(`Appending file for ${key}:`, fileInput.files[0].name);
-          } else {
-            console.warn(`No file found for ${key}`);
-          }
-        } else {
-          // Handle other form fields
-          formData.append(key, value.toString());
-          console.log(`Appending field ${key}:`, value.toString());
-        }
-      });
+      // Handle file uploads by getting files from the DOM inputs
+      const commercialRegisterInput = document.getElementById(
+        "commercial_register"
+      ) as HTMLInputElement;
+      const avatarInput = document.getElementById("avatar") as HTMLInputElement;
 
-      // Send the request to the API with minimal type assumptions
+      const commercialRegisterFile = commercialRegisterInput?.files?.[0];
+      const avatarFile = avatarInput?.files?.[0];
+
+      console.log("Commercial register file:", commercialRegisterFile);
+      console.log("Avatar file:", avatarFile);
+
+      // Prepare the data object for the API service
+      const registrationData = {
+        ...data,
+        commercial_register: commercialRegisterFile,
+        avatar: avatarFile,
+      };
+
+      console.log("Registration data being sent to API:", registrationData);
+
+      // Send the request to the API - let the API service handle FormData creation
       type RegistrationResponse = { data?: { user: unknown } };
       const mutationResult = await (
         completeRegistration as unknown as (body: unknown) => Promise<unknown>
-      )(formData);
+      )(registrationData);
       const result: RegistrationResponse =
         typeof (mutationResult as { unwrap?: unknown }).unwrap === "function"
           ? await (
@@ -345,15 +380,33 @@ export default function CompleteRegistrationPage() {
       }
     } catch (error: unknown) {
       console.error("Error completing registration:", error);
+      console.log("Full error object:", JSON.stringify(error, null, 2));
 
       // Handle API validation errors
       if (error && typeof error === "object" && "data" in error) {
         const errorData = error.data as {
+          code?: number;
+          message?: string;
           errors?: Array<{ key: string; value: string[] }>;
         };
-        if (errorData.errors) {
+        console.log("Error data:", errorData);
+
+        // Check if it's a 422 validation error with the specific format
+        if (
+          errorData.code === 422 &&
+          errorData.errors &&
+          Array.isArray(errorData.errors)
+        ) {
+          console.log("Server validation errors:", errorData.errors);
           setApiErrors(errorData.errors);
           // Scroll to top where errors are displayed
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          return;
+        }
+
+        // Handle other error formats
+        if (errorData.errors && Array.isArray(errorData.errors)) {
+          setApiErrors(errorData.errors);
           window.scrollTo({ top: 0, behavior: "smooth" });
           return;
         }
@@ -442,7 +495,15 @@ export default function CompleteRegistrationPage() {
             <div className="bg-logo-gold/5 border-b border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-logo-black flex items-center">
-                  <MapPin className="w-5 h-5 mr-2 text-logo-gold" />
+                  <MapPin
+                    className={`w-5 h-5 mr-2 ${
+                      shouldShowLocationError
+                        ? "text-red-500"
+                        : isLocationSelected
+                        ? "text-green-500"
+                        : "text-logo-gold"
+                    }`}
+                  />
                   {t("labels.selectLocation")}{" "}
                   <span className="text-red-500 ml-1">*</span>
                 </h3>
@@ -466,11 +527,13 @@ export default function CompleteRegistrationPage() {
               <div
                 className={
                   "rounded-lg overflow-hidden " +
-                  (hasLocationError
-                    ? "border border-red-500 ring-2 ring-red-200"
-                    : "border border-gray-200")
+                  (shouldShowLocationError
+                    ? "border-2 border-red-500 ring-2 ring-red-200"
+                    : isLocationSelected
+                    ? "border-2 border-green-500 ring-2 ring-green-200"
+                    : "border-2 border-gray-300 ring-2 ring-gray-100")
                 }
-                aria-invalid={hasLocationError || undefined}
+                aria-invalid={shouldShowLocationError || undefined}
               >
                 <LocationPicker
                   onLocationSelect={handleLocationSelect}
@@ -487,7 +550,7 @@ export default function CompleteRegistrationPage() {
                   }
                   className="w-full h-96"
                   error={
-                    hasLocationError
+                    shouldShowLocationError
                       ? t(
                           "validation.locationRequired",
                           isRTL ? "الموقع مطلوب" : "Location is required"
@@ -499,20 +562,42 @@ export default function CompleteRegistrationPage() {
 
               {/* Location Status Message */}
               {!isLocationSelected ? (
-                <p className="text-sm text-gray-600 mt-2 text-center">
-                  {t(
-                    "location.simpleInstruction",
-                    "Please select a location on the map above"
-                  )}
-                </p>
-              ) : hasLocationError ? (
-                <p className="text-sm text-red-500 mt-2 font-medium">
-                  {t(
-                    "validation.locationRequired",
-                    isRTL ? "الموقع مطلوب" : "Location is required"
-                  )}
-                </p>
-              ) : null}
+                <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
+                    <p className="text-sm text-amber-700 font-medium">
+                      {t(
+                        "location.requiredInstruction",
+                        "Please select your business location on the map above"
+                      )}
+                    </p>
+                  </div>
+                </div>
+              ) : shouldShowLocationError ? (
+                <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                    <p className="text-sm text-red-700 font-medium">
+                      {t(
+                        "validation.locationRequired",
+                        isRTL ? "الموقع مطلوب" : "Location is required"
+                      )}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <p className="text-sm text-green-700 font-medium">
+                      {t(
+                        "location.selectedSuccess",
+                        "Location selected successfully!"
+                      )}
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {/* {isLocationSelected && locationDetails && (
                 <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
@@ -867,24 +952,110 @@ export default function CompleteRegistrationPage() {
             <div className="border-t border-gray-200 bg-white p-6 md:p-8">
               {/* API Error Messages */}
               {apiErrors.length > 0 && (
-                <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-lg">
-                  <div className="flex flex-col gap-2">
-                    {apiErrors.map((error, index) => (
-                      <div key={index} className="text-sm text-red-600">
-                        {error.value.map((message, messageIndex) => (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <svg
+                        className="w-3 h-3 text-white"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-sm font-semibold text-red-800 mb-2">
+                        {t("errors.validationErrors", "Validation Errors")}
+                      </h4>
+                      <div className="space-y-3">
+                        {apiErrors.map((error, index) => (
                           <div
-                            key={messageIndex}
-                            className="flex items-start gap-2"
+                            key={index}
+                            className="bg-white rounded-md p-3 border border-red-200"
                           >
-                            <span className="text-red-500">•</span>
-                            <span>{message}</span>
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-xs font-medium text-red-700 bg-red-100 px-2 py-1 rounded">
+                                {error.key === "avatar" &&
+                                  t("labels.avatar", "Profile Image")}
+                                {error.key === "commercial_register" &&
+                                  t(
+                                    "labels.commercialRegister",
+                                    "Commercial Register"
+                                  )}
+                                {error.key === "name" &&
+                                  t("labels.name", "Name")}
+                                {error.key === "email" &&
+                                  t("labels.email", "Email")}
+                                {error.key === "type" &&
+                                  t("labels.type", "Business Type")}
+                                {error.key === "manager_name" &&
+                                  t("labels.managerName", "Manager Name")}
+                                {error.key === "address" &&
+                                  t("labels.address", "Address")}
+                                {error.key === "city" &&
+                                  t("labels.city", "City")}
+                                {error.key === "state" &&
+                                  t("labels.state", "State")}
+                                {error.key === "zip" &&
+                                  t("labels.zip", "ZIP Code")}
+                                {error.key === "tax_number" &&
+                                  t("labels.taxNumber", "Tax Number")}
+                                {error.key === "latitude" &&
+                                  t("labels.latitude", "Latitude")}
+                                {error.key === "longitude" &&
+                                  t("labels.longitude", "Longitude")}
+                                {![
+                                  "avatar",
+                                  "commercial_register",
+                                  "name",
+                                  "email",
+                                  "type",
+                                  "manager_name",
+                                  "address",
+                                  "city",
+                                  "state",
+                                  "zip",
+                                  "tax_number",
+                                  "latitude",
+                                  "longitude",
+                                ].includes(error.key) && error.key}
+                              </span>
+                            </div>
+                            <div className="space-y-1">
+                              {error.value.map((message, messageIndex) => (
+                                <div
+                                  key={messageIndex}
+                                  className="flex items-start gap-2 text-sm text-red-700"
+                                >
+                                  <span className="text-red-500 mt-1">•</span>
+                                  <span>{message}</span>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         ))}
                       </div>
-                    ))}
+                    </div>
                   </div>
                 </div>
               )}
+
+              {/* Debug Button */}
+              <div className="text-center mb-4">
+                <Button
+                  type="button"
+                  onClick={debugFormValues}
+                  variant="outline"
+                  size="sm"
+                  className="mr-4"
+                >
+                  Debug Form Values
+                </Button>
+              </div>
 
               {/* Submit Button */}
               <div className="text-center">

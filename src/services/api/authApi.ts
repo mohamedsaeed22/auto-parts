@@ -71,25 +71,71 @@ export const authApi = api.injectEndpoints({
       CompleteRegistrationRequest
     >({
       query: (data) => {
+        console.log("=== API SERVICE DEBUG ===");
+        console.log("Data received in API service:", data);
+        console.log("Data type:", typeof data);
+        console.log("Data keys:", Object.keys(data));
+        console.log("Data values:", Object.values(data));
+
+        // Create FormData for file uploads
         const formData = new FormData();
 
+        console.log("Appending form fields:");
+        console.log("- name:", data.name, typeof data.name);
         formData.append("name", data.name);
+
+        console.log("- email:", data.email, typeof data.email);
         if (data.email) formData.append("email", data.email);
+
+        console.log("- type:", data.type, typeof data.type);
         formData.append("type", data.type);
+
+        console.log(
+          "- manager_name:",
+          data.manager_name,
+          typeof data.manager_name
+        );
         formData.append("manager_name", data.manager_name);
+
+        console.log("- address:", data.address, typeof data.address);
         formData.append("address", data.address);
+
+        console.log("- city:", data.city, typeof data.city);
         formData.append("city", data.city);
+
+        console.log("- zip:", data.zip, typeof data.zip);
         formData.append("zip", data.zip);
+
+        console.log("- state:", data.state, typeof data.state);
         formData.append("state", data.state);
+
+        console.log("- tax_number:", data.tax_number, typeof data.tax_number);
         formData.append("tax_number", data.tax_number);
+
+        console.log("- latitude:", data.latitude, typeof data.latitude);
         formData.append("latitude", data.latitude);
+
+        console.log("- longitude:", data.longitude, typeof data.longitude);
         formData.append("longitude", data.longitude);
 
+        console.log(
+          "- commercial_register:",
+          data.commercial_register,
+          typeof data.commercial_register
+        );
         if (data.commercial_register) {
           formData.append("commercial_register", data.commercial_register);
         }
+
+        console.log("- avatar:", data.avatar, typeof data.avatar);
         if (data.avatar) {
           formData.append("avatar", data.avatar);
+        }
+
+        // Debug: Log the FormData contents
+        console.log("FormData contents:");
+        for (const [key, value] of formData.entries()) {
+          console.log(`${key}:`, value);
         }
 
         return {
