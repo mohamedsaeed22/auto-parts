@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   CheckCircle,
   Package,
@@ -34,6 +35,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
   order,
 }) => {
   const { t, i18n } = useTranslation("checkout");
+  const router = useRouter();
   const isRTL = i18n.language === "ar";
 
   // Remove coupon from localStorage when order is complete
@@ -117,6 +119,13 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     // You could add a toast notification here
+  };
+
+  const handleTrackOrder = () => {
+    // Set the localStorage variable to navigate to orders page
+    localStorage.setItem("userProfileActivePage", "orders");
+    // Navigate to user profile
+    router.push("/userprofile");
   };
 
   return (
@@ -645,6 +654,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                   </Button>
 
                   <Button
+                    onClick={handleTrackOrder}
                     variant="outline"
                     className="w-full border-2 border-logo-gold text-logo-gold   py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-300"
                   >
@@ -654,7 +664,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                     })}
                   </Button>
 
-                  <Button
+                  {/* <Button
                     variant="outline"
                     className="w-full border-2 border-neutral-300 text-neutral-700  py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-300"
                   >
@@ -662,7 +672,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                     {t("orderComplete.contactSupport", {
                       defaultValue: "Contact Support",
                     })}
-                  </Button>
+                  </Button> */}
                 </CardContent>
               </Card>
 
