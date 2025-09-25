@@ -584,7 +584,7 @@ export default function LocationPicker({
                 />
               </div>
               {/* Only show "Use My Location" button on desktop */}
-              {!isMobile && (
+              {/* {!isMobile && (
                 <Button
                   type="button"
                   onClick={useCurrentLocation}
@@ -599,7 +599,7 @@ export default function LocationPicker({
                   )}
                   {t("location.useCurrentLocation", "Use My Location")}
                 </Button>
-              )}
+              )} */}
             </div>
           </div>
 

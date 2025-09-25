@@ -94,26 +94,6 @@ export default function CompleteRegistrationPage() {
     Array<{ key: string; value: string[] }>
   >([]);
 
-  // Debug: Watch all form values
-  const allFormValues = watch();
-
-  // Debug function to manually check form values
-  const debugFormValues = () => {
-    console.log("=== MANUAL FORM DEBUG ===");
-    console.log("All form values:", allFormValues);
-    console.log("Form errors:", errors);
-    console.log("Form is valid:", Object.keys(errors).length === 0);
-    console.log("API Errors:", apiErrors);
-
-    // Test setting API errors manually
-    setApiErrors([
-      {
-        key: "test",
-        value: ["This is a test error message"],
-      },
-    ]);
-  };
-
   // Check if user has already completed registration
   const hasRedirectedRef = useRef(false);
 
@@ -379,34 +359,96 @@ export default function CompleteRegistrationPage() {
       );
 
       // Handle API validation errors
-      if (error && typeof error === "object" && "data" in error) {
-        const errorData = error.data as {
-          code?: number;
-          message?: string;
-          errors?: Array<{ key: string; value: string[] }>;
-        };
-        console.log("Error data:", errorData);
-        console.log("Error data code:", errorData.code);
-        console.log("Error data errors:", errorData.errors);
-        console.log("Is errors array?", Array.isArray(errorData.errors));
+      if (error && typeof error === "object") {
+        // Check if error has the direct structure (code, message, errors)
+        if ("code" in error && "errors" in error) {
+          const errorData = error as {
+            code?: number;
+            message?: string;
+            errors?: Array<{ key: string; value: string[] }>;
+          };
+          console.log("Direct error data:", errorData);
+          console.log("Error code:", errorData.code);
+          console.log("Error errors:", errorData.errors);
+          console.log("Is errors array?", Array.isArray(errorData.errors));
 
-        // Check if it's a 422 validation error with the specific format
-        if (
-          errorData.code === 422 &&
-          errorData.errors &&
-          Array.isArray(errorData.errors)
-        ) {
-          console.log("Server validation errors:", errorData.errors);
-          setApiErrors(errorData.errors);
-          // Scroll to top where errors are displayed
+          // Check if it's a 422 validation error with the specific format
+          if (
+            errorData.code === 422 &&
+            errorData.errors &&
+            Array.isArray(errorData.errors)
+          ) {
+            console.log("Server validation errors:", errorData.errors);
+            setApiErrors(errorData.errors);
+            // Scroll to top where errors are displayed
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            return;
+          }
+        }
+
+        // Check if error has nested data structure
+        if ("data" in error) {
+          const errorData = error.data as {
+            code?: number;
+            message?: string;
+            errors?: Array<{ key: string; value: string[] }>;
+          };
+          console.log("Nested error data:", errorData);
+          console.log("Error data code:", errorData.code);
+          console.log("Error data errors:", errorData.errors);
+          console.log("Is errors array?", Array.isArray(errorData.errors));
+
+          // Check if it's a 422 validation error with the specific format
+          if (
+            errorData.code === 422 &&
+            errorData.errors &&
+            Array.isArray(errorData.errors)
+          ) {
+            console.log("Server validation errors:", errorData.errors);
+            setApiErrors(errorData.errors);
+            // Scroll to top where errors are displayed
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            return;
+          }
+
+          // Handle other error formats
+          if (errorData.errors && Array.isArray(errorData.errors)) {
+            console.log("Setting API errors:", errorData.errors);
+            setApiErrors(errorData.errors);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            return;
+          }
+        }
+      }
+
+      // Try to extract errors from any possible structure
+      console.log("Trying to extract errors from any structure...");
+
+      // Check if error itself has errors array
+      if (error && typeof error === "object" && "errors" in error) {
+        const errors = (
+          error as { errors?: Array<{ key: string; value: string[] }> }
+        ).errors;
+        if (Array.isArray(errors)) {
+          console.log("Found errors array in error object:", errors);
+          setApiErrors(errors);
           window.scrollTo({ top: 0, behavior: "smooth" });
           return;
         }
-
-        // Handle other error formats
-        if (errorData.errors && Array.isArray(errorData.errors)) {
-          console.log("Setting API errors:", errorData.errors);
-          setApiErrors(errorData.errors);
+      }
+      console.log("Api errors:", response.data.errors);
+      // Check if error has response property (common in axios errors)
+      if (error && typeof error === "object" && "response" in error) {
+        const response = (
+          error as {
+            response?: {
+              data?: { errors?: Array<{ key: string; value: string[] }> };
+            };
+          }
+        ).response;
+        if (response && response.data && response.data.errors) {
+          console.log("Found errors in response.data:", response.data.errors);
+          setApiErrors(response.data.errors);
           window.scrollTo({ top: 0, behavior: "smooth" });
           return;
         }
@@ -472,27 +514,6 @@ export default function CompleteRegistrationPage() {
         {/* Registration Form */}
         <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
           <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-            {/* API Error Messages */}
-            {apiErrors.length > 0 && (
-              <div className="p-4 bg-red-50 border-b border-red-100">
-                <div className="flex flex-col gap-2">
-                  {apiErrors.map((error, index) => (
-                    <div key={index} className="text-sm text-red-600">
-                      {error.value.map((message, messageIndex) => (
-                        <div
-                          key={messageIndex}
-                          className="flex items-start gap-2"
-                        >
-                          <span className="text-red-500">•</span>
-                          <span>{message}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* Location Selection Section - FIRST STEP */}
             <div className="bg-logo-gold/5 border-b border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
@@ -1000,6 +1021,8 @@ export default function CompleteRegistrationPage() {
                     t("actions.submit")
                   )}
                 </Button>
+
+              
               </div>
             </div>
           </form>
