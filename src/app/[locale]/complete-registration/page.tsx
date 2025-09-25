@@ -219,6 +219,24 @@ export default function CompleteRegistrationPage() {
     }
   };
 
+  // Validate location before submission
+  const validateLocationAndSubmit = async (data: RegistrationFormData) => {
+    // Check if location is selected
+    if (!data.latitude || !data.longitude) {
+      const message = isRTL 
+        ? "يرجى تحديد موقع على الخريطة"
+        : "Please select a location on the map";
+      showError(t("validation.locationRequired", message));
+      const locationSection = document.querySelector(".bg-logo-gold\\/5");
+      if (locationSection) {
+        locationSection.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      return;
+    }
+
+    onSubmit(data);
+  };
+
   // Handle form submission
   const onSubmit = async (data: RegistrationFormData) => {
     try {
@@ -298,14 +316,22 @@ export default function CompleteRegistrationPage() {
       console.log("Full error object:", JSON.stringify(error, null, 2));
 
       // Handle RTK Query error structure
-      let errorData: any = null;
+      let errorData: unknown = null;
 
       // Check for RTK Query error structure
+      interface ErrorWithData {
+        data?: unknown;
+        status?: number;
+      }
+
       if (error && typeof error === "object") {
         if ("data" in error) {
-          errorData = error.data;
-        } else if ("status" in error && "data" in (error as any)) {
-          errorData = (error as any).data;
+          errorData = (error as ErrorWithData).data;
+        } else if ("status" in error && typeof error === "object") {
+          const errorObj = error as ErrorWithData;
+          if ("data" in errorObj) {
+            errorData = errorObj.data;
+          }
         }
       }
 
@@ -408,7 +434,7 @@ export default function CompleteRegistrationPage() {
 
         {/* Registration Form */}
         <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
-          <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+          <form onSubmit={handleSubmit(validateLocationAndSubmit)} className="w-full">
             {/* Location Selection Section - FIRST STEP */}
             <div className="bg-logo-gold/5 border-b border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
