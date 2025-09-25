@@ -65,23 +65,24 @@ export default function CompleteRegistrationPage() {
   // Watch latitude and longitude to determine if location is selected
   const latitude = watch("latitude");
   const longitude = watch("longitude");
+
+  // Strict validation for location selection
   const isLocationSelected = Boolean(
     latitude &&
       longitude &&
       !isNaN(Number(latitude)) &&
-      !isNaN(Number(longitude))
+      !isNaN(Number(longitude)) &&
+      latitude.trim() !== "" &&
+      longitude.trim() !== ""
   );
+
   const hasLocationError = Boolean(errors.latitude || errors.longitude);
 
-  // Determine if location validation should be shown
-  const shouldShowLocationError = hasLocationError && !isLocationSelected;
+  // Location is always required now
+  const isLocationRequired = !isLocationSelected;
 
-  // Check if location is required (no lat/lng values)
-  const isLocationRequired =
-    !latitude ||
-    !longitude ||
-    latitude.trim() === "" ||
-    longitude.trim() === "";
+  // Show error if location is not selected
+  const shouldShowLocationError = !isLocationSelected;
 
   // State for file uploads and previews
   const [commercialRegisterPreview, setCommercialRegisterPreview] = useState<
@@ -238,6 +239,17 @@ export default function CompleteRegistrationPage() {
       // Clear any previous errors
       setApiErrors([]);
 
+      // First check: Location must be selected
+      if (!isLocationSelected) {
+        showError(t("validation.locationRequired"));
+        // Scroll to the map section
+        const mapSection = document.querySelector(".location-picker-section");
+        if (mapSection) {
+          mapSection.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        return;
+      }
+
       // Validate location only if coordinates are provided but invalid
       if (
         (data.latitude && isNaN(Number(data.latitude))) ||
@@ -278,7 +290,6 @@ export default function CompleteRegistrationPage() {
         avatar: avatarFile,
       };
 
- 
       // Send the request to the API - let the API service handle FormData creation
       type RegistrationResponse = { data?: { user: unknown } };
       const mutationResult = await (
@@ -347,7 +358,10 @@ export default function CompleteRegistrationPage() {
         }
       }
     } catch (error: unknown) {
-      console.log("----------------------------Error7777777777777777777777777777777777777:", error);
+      console.log(
+        "----------------------------Error7777777777777777777777777777777777777:",
+        error
+      );
       // Handle API validation errors - simple approach
       if (error && typeof error === "object" && "data" in error) {
         const errorData = error.data as {
@@ -446,7 +460,7 @@ export default function CompleteRegistrationPage() {
             )}
 
             {/* Location Selection Section - FIRST STEP */}
-            <div className="bg-logo-gold/5 border-b border-gray-200 p-6">
+            <div className="bg-logo-gold/5 border-b border-gray-200 p-6 location-picker-section">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-logo-black flex items-center">
                   <MapPin
@@ -519,45 +533,71 @@ export default function CompleteRegistrationPage() {
               </div>
 
               {/* Location Status Message */}
-              {isLocationRequired ? (
-                <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                  <div className="flex items-center justify-center gap-2">
-                    <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
-                    <p className="text-sm text-amber-700 font-medium">
-                      {t(
-                        "location.requiredInstruction",
-                        isRTL
-                          ? "يرجى تحديد موقعك على الخريطة أعلاه"
-                          : "Please select your business location on the map above"
-                      )}
-                    </p>
+              <div className="mt-3">
+                {isLocationRequired ? (
+                  <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg shadow-sm">
+                    <div className="flex items-center gap-3">
+                      <div className="flex-shrink-0">
+                        <MapPin className="w-5 h-5 text-amber-500" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-amber-800">
+                          {t(
+                            "location.requiredInstruction",
+                            isRTL
+                              ? "يجب تحديد موقعك على الخريطة لإكمال التسجيل"
+                              : "Please select your business location on the map to complete registration"
+                          )}
+                        </p>
+                        <p className="text-xs text-amber-600 mt-1">
+                          {t(
+                            "location.requiredHelp",
+                            isRTL
+                              ? ""
+                              : "This helps customers find your business easily"
+                          )}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ) : shouldShowLocationError ? (
-                <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <div className="flex items-center justify-center gap-2">
-                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                    <p className="text-sm text-red-700 font-medium">
-                      {t(
-                        "validation.locationRequired",
-                        isRTL ? "الموقع مطلوب" : "Location is required"
-                      )}
-                    </p>
+                ) : shouldShowLocationError ? (
+                  <div className="p-4 bg-red-50 border-2 border-red-200 rounded-lg shadow-sm">
+                    <div className="flex items-center gap-3">
+                      <div className="flex-shrink-0">
+                        <MapPin className="w-5 h-5 text-red-500" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-red-800">
+                          {t(
+                            "validation.locationRequired",
+                            isRTL
+                              ? "الموقع مطلوب لإكمال التسجيل"
+                              : "Location is required to complete registration"
+                          )}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ) : isLocationSelected ? (
-                <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
-                  <div className="flex items-center justify-center gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <p className="text-sm text-green-700 font-medium">
-                      {t(
-                        "location.selectedSuccess",
-                        "Location selected successfully!"
-                      )}
-                    </p>
+                ) : isLocationSelected ? (
+                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg shadow-sm">
+                    <div className="flex items-center gap-3">
+                      <div className="flex-shrink-0">
+                        <MapPin className="w-5 h-5 text-green-500" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-green-800">
+                          {t(
+                            "location.selectedSuccess",
+                            isRTL
+                              ? "تم تحديد الموقع بنجاح!"
+                              : "Location selected successfully!"
+                          )}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ) : null}
+                ) : null}
+              </div>
 
               {/* {isLocationSelected && locationDetails && (
                 <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
