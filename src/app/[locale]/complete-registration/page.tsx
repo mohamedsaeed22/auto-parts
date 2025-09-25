@@ -66,7 +66,10 @@ export default function CompleteRegistrationPage() {
   const latitude = watch("latitude");
   const longitude = watch("longitude");
   const isLocationSelected = Boolean(
-    latitude && longitude && !isNaN(Number(latitude)) && !isNaN(Number(longitude))
+    latitude &&
+      longitude &&
+      !isNaN(Number(latitude)) &&
+      !isNaN(Number(longitude))
   );
   const hasLocationError = Boolean(errors.latitude || errors.longitude);
 
@@ -94,7 +97,8 @@ export default function CompleteRegistrationPage() {
     if (locationData.address) setValue("address", locationData.address.trim());
     if (locationData.city) setValue("city", locationData.city.trim());
     if (locationData.state) setValue("state", locationData.state.trim());
-    if (locationData.postal_code) setValue("zip", locationData.postal_code.trim());
+    if (locationData.postal_code)
+      setValue("zip", locationData.postal_code.trim());
 
     // Clear location-related errors
     clearErrors(["latitude", "longitude", "address", "city", "state", "zip"]);
@@ -225,12 +229,23 @@ export default function CompleteRegistrationPage() {
       setApiErrors([]);
 
       // Validate location first
-      if (!data.latitude || !data.longitude || 
-          isNaN(Number(data.latitude)) || isNaN(Number(data.longitude))) {
-        setApiErrors([{
-          key: "location",
-          value: [t("validation.locationRequired", isRTL ? "الموقع مطلوب" : "Location is required")]
-        }]);
+      if (
+        !data.latitude ||
+        !data.longitude ||
+        isNaN(Number(data.latitude)) ||
+        isNaN(Number(data.longitude))
+      ) {
+        setApiErrors([
+          {
+            key: "location",
+            value: [
+              t(
+                "validation.locationRequired",
+                isRTL ? "الموقع مطلوب" : "Location is required"
+              ),
+            ],
+          },
+        ]);
         return;
       }
 
@@ -240,12 +255,12 @@ export default function CompleteRegistrationPage() {
       // Add all form fields to FormData
       Object.entries(data).forEach(([key, value]) => {
         // Skip undefined, null, or empty string values
-        if (value === undefined || value === null || value === '') {
+        if (value === undefined || value === null || value === "") {
           return;
         }
 
         // Handle file fields
-        if (key === 'commercial_register' || key === 'avatar') {
+        if (key === "commercial_register" || key === "avatar") {
           // For files, we need to check if there's a file in the input
           const fileInput = document.getElementById(key) as HTMLInputElement;
           if (fileInput && fileInput.files && fileInput.files[0]) {
@@ -857,7 +872,10 @@ export default function CompleteRegistrationPage() {
                     {apiErrors.map((error, index) => (
                       <div key={index} className="text-sm text-red-600">
                         {error.value.map((message, messageIndex) => (
-                          <div key={messageIndex} className="flex items-start gap-2">
+                          <div
+                            key={messageIndex}
+                            className="flex items-start gap-2"
+                          >
                             <span className="text-red-500">•</span>
                             <span>{message}</span>
                           </div>

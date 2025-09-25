@@ -63,7 +63,7 @@ export function useUnifiedPricingForm(userType?: "shop" | "workshop" | null) {
     if (!isAuthenticated) {
       return "workshop"; // Default for unauthenticated users
     }
-    
+
     // Try to get from parameter first, then from storage
     const effectiveUserType = userType || getUserTypeFromStorage();
     return effectiveUserType === "shop" ? "store" : "workshop";
@@ -85,7 +85,7 @@ export function useUnifiedPricingForm(userType?: "shop" | "workshop" | null) {
   useEffect(() => {
     const newUserType = getEffectiveUserType();
     const currentUserType = form.getValues("userType");
-    
+
     // Only update if the user type has actually changed
     if (currentUserType !== newUserType) {
       form.setValue("userType", newUserType);
