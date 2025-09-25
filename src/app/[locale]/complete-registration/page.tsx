@@ -574,7 +574,9 @@ export default function CompleteRegistrationPage() {
                     <p className="text-sm text-amber-700 font-medium">
                       {t(
                         "location.requiredInstruction",
-                        "Please select your business location on the map above"
+                        isRTL
+                          ? "يرجى تحديد موقعك على الخريطة أعلاه"
+                          : "Please select your business location on the map above"
                       )}
                     </p>
                   </div>
@@ -979,19 +981,6 @@ export default function CompleteRegistrationPage() {
                   </div>
                 </div>
               )}
-
-              {/* Debug Button */}
-              <div className="text-center mb-4">
-                <Button
-                  type="button"
-                  onClick={debugFormValues}
-                  variant="outline"
-                  size="sm"
-                  className="mr-4"
-                >
-                  Debug Form Values
-                </Button>
-              </div>
 
               {/* Submit Button */}
               <div className="text-center">
