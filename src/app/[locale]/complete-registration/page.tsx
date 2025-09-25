@@ -837,7 +837,6 @@ export default function CompleteRegistrationPage() {
               >
                 <div className="max-w-4xl mx-auto">
                   <div className="flex items-start gap-3 mb-4">
-                   
                     <div className="flex-1">
                       <div className="space-y-3">
                         {apiErrors.map((error, index) => (
