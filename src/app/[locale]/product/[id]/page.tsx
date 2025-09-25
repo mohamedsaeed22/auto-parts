@@ -282,20 +282,25 @@ const PriceSection = ({
   );
 };
 
-const StockIndicator = ({ 
-  product, 
-  isRTL, 
+const StockIndicator = ({
+  product,
+  isRTL,
   t,
-  getProductStockStatus 
-}: { 
+  getProductStockStatus,
+}: {
   product: Product | undefined;
-  isRTL: boolean; 
+  isRTL: boolean;
   t: TranslateFn;
-  getProductStockStatus: (product: Product) => { message: string; type: 'success' | 'warning' | 'error' };
+  getProductStockStatus: (product: Product) => {
+    message: string;
+    type: "success" | "warning" | "error";
+  };
 }) => {
   if (!product) {
     return (
-      <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : "flex-row"}`}>
+      <div
+        className={`flex items-center gap-2 ${isRTL ? "flex-row" : "flex-row"}`}
+      >
         <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
         <span className="text-sm font-medium text-gray-500">Loading...</span>
       </div>
@@ -303,25 +308,33 @@ const StockIndicator = ({
   }
 
   const stockStatus = getProductStockStatus(product);
-  const colorClass = 
-    stockStatus.type === 'error' 
-      ? 'text-red-600' 
-      : stockStatus.type === 'warning' 
-      ? 'text-orange-600' 
-      : 'text-green-600';
-  
-  const dotClass = 
-    stockStatus.type === 'error' 
-      ? 'bg-red-500' 
-      : stockStatus.type === 'warning' 
-      ? 'bg-orange-500' 
-      : 'bg-green-500';
+  const colorClass =
+    stockStatus.type === "error"
+      ? "text-red-600"
+      : stockStatus.type === "warning"
+      ? "text-orange-600"
+      : "text-green-600";
+
+  const dotClass =
+    stockStatus.type === "error"
+      ? "bg-red-500"
+      : stockStatus.type === "warning"
+      ? "bg-orange-500"
+      : "bg-green-500";
 
   return (
-    <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : "flex-row"}`}>
-      <div className={`w-3 h-3 ${dotClass} rounded-full ${stockStatus.type === 'success' ? 'animate-pulse' : ''}`}></div>
-      <span className={`text-sm font-medium ${colorClass}`}>{stockStatus.message}</span>
-      {stockStatus.type === 'success' && (
+    <div
+      className={`flex items-center gap-2 ${isRTL ? "flex-row" : "flex-row"}`}
+    >
+      <div
+        className={`w-3 h-3 ${dotClass} rounded-full ${
+          stockStatus.type === "success" ? "animate-pulse" : ""
+        }`}
+      ></div>
+      <span className={`text-sm font-medium ${colorClass}`}>
+        {stockStatus.message}
+      </span>
+      {stockStatus.type === "success" && (
         <span className="text-sm text-gray-500">- {t("readyToShip")}</span>
       )}
     </div>
@@ -371,16 +384,16 @@ export default function ProductDetails() {
   // Remove direct API add; rely on enhanced cart hook to decide (guest vs API)
 
   // Use Redux hook for local cart state with stock validation
-  const { 
-    items, 
-    addToCart, 
-    removeFromCart, 
-    updateQuantity, 
+  const {
+    items,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
     loading,
     canAddToCart,
     canIncreaseQuantity,
     isProductOutOfStock,
-    getProductStockStatus
+    getProductStockStatus,
   } = useStockAwareCart();
 
   // Use favourites/wishlist hook
@@ -874,10 +887,10 @@ export default function ProductDetails() {
 
             {/* Stock Status */}
             <div className="mt-3">
-              <StockIndicator 
-                product={product} 
-                isRTL={isRTL} 
-                t={t} 
+              <StockIndicator
+                product={product}
+                isRTL={isRTL}
+                t={t}
                 getProductStockStatus={getProductStockStatus}
               />
             </div>
@@ -965,7 +978,11 @@ export default function ProductDetails() {
               {!isInCart ? (
                 <Button
                   onClick={handleAddToCart}
-                  disabled={loading || isProductOutOfStock(product) || !canAddToCart(product)}
+                  disabled={
+                    loading ||
+                    isProductOutOfStock(product) ||
+                    !canAddToCart(product)
+                  }
                   className={`w-full h-12 flex items-center justify-center gap-2 text-sm font-medium bg-primary text-white disabled:bg-gray-400 disabled:cursor-not-allowed ${
                     isRTL ? "flex-row" : "flex-row"
                   }`}
@@ -976,12 +993,20 @@ export default function ProductDetails() {
                   ) : isRTL ? (
                     <>
                       <ShoppingCart size={16} />
-                      <span>{isProductOutOfStock(product) ? t("outOfStock") : t("addToCart")}</span>
+                      <span>
+                        {isProductOutOfStock(product)
+                          ? t("outOfStock")
+                          : t("addToCart")}
+                      </span>
                     </>
                   ) : (
                     <>
                       <ShoppingCart size={16} />
-                      <span>{isProductOutOfStock(product) ? t("outOfStock") : t("addToCart")}</span>
+                      <span>
+                        {isProductOutOfStock(product)
+                          ? t("outOfStock")
+                          : t("addToCart")}
+                      </span>
                     </>
                   )}
                 </Button>

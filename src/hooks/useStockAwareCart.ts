@@ -1,13 +1,13 @@
 import { useCallback } from "react";
 import { useEnhancedCart } from "./useEnhancedCart";
 import { Product } from "@/services/api/types";
-import { 
-  validateStock, 
-  validateStockForUpdate, 
-  getMaxAddableQuantity, 
-  isOutOfStock, 
+import {
+  validateStock,
+  validateStockForUpdate,
+  getMaxAddableQuantity,
+  isOutOfStock,
   canAddOneMore,
-  getStockStatusMessage 
+  getStockStatusMessage,
 } from "@/utils/stockValidation";
 import { showError } from "@/lib/toast";
 import { useTranslation } from "react-i18next";
@@ -25,27 +25,30 @@ export const useStockAwareCart = () => {
    */
   const addToCartWithStock = useCallback(
     async (product: Product) => {
-      const currentItem = cart.items.find(item => item.id === product.id);
+      const currentItem = cart.items.find((item) => item.id === product.id);
       const currentQuantity = currentItem?.quantity || 0;
 
       // Validate stock
       const validation = validateStock(product, 1, currentQuantity);
-      
+
       if (!validation.isValid) {
         showError(t("errors.stockExceeded", { stock: product.stock }));
         return false;
       }
 
       // Call the original addToCart function
-      await cart.addToCart({
-        id: product.id,
-        title: product.name || "Product",
-        price: Number(product.final_price) || Number(product.price) || 0,
-        image: product.primary_image || "",
-        category: product.category?.name || "Unknown Category",
-        description: product.description || "",
-        stock: product.stock,
-      }, { stock: product.stock });
+      await cart.addToCart(
+        {
+          id: product.id,
+          title: product.name || "Product",
+          price: Number(product.final_price) || Number(product.price) || 0,
+          image: product.primary_image || "",
+          category: product.category?.name || "Unknown Category",
+          description: product.description || "",
+          stock: product.stock,
+        },
+        { stock: product.stock }
+      );
 
       return true;
     },
@@ -65,7 +68,7 @@ export const useStockAwareCart = () => {
 
       // Validate stock for update
       const validation = validateStockForUpdate(product, newQuantity);
-      
+
       if (!validation.isValid) {
         showError(t("errors.stockExceeded", { stock: product.stock }));
         return false;
@@ -83,10 +86,14 @@ export const useStockAwareCart = () => {
    */
   const increaseQuantityWithStock = useCallback(
     async (product: Product) => {
-      const currentItem = cart.items.find(item => item.id === product.id);
+      const currentItem = cart.items.find((item) => item.id === product.id);
       const currentQuantity = currentItem?.quantity || 0;
-      
-      return await updateQuantityWithStock(product.id, currentQuantity + 1, product);
+
+      return await updateQuantityWithStock(
+        product.id,
+        currentQuantity + 1,
+        product
+      );
     },
     [updateQuantityWithStock, cart.items]
   );
@@ -96,16 +103,20 @@ export const useStockAwareCart = () => {
    */
   const decreaseQuantityWithStock = useCallback(
     async (product: Product) => {
-      const currentItem = cart.items.find(item => item.id === product.id);
+      const currentItem = cart.items.find((item) => item.id === product.id);
       const currentQuantity = currentItem?.quantity || 0;
-      
+
       if (currentQuantity <= 1) {
         // Remove from cart
         await cart.removeFromCart(product.id);
         return true;
       } else {
         // Decrease quantity
-        await cart.updateQuantity(product.id, currentQuantity - 1, product.stock);
+        await cart.updateQuantity(
+          product.id,
+          currentQuantity - 1,
+          product.stock
+        );
         return true;
       }
     },
@@ -121,14 +132,16 @@ export const useStockAwareCart = () => {
         return false;
       }
 
-      const currentItem = cart.items.find(item => item.id === product.id);
+      const currentItem = cart.items.find((item) => item.id === product.id);
       const currentQuantity = currentItem?.quantity || 0;
-      
+
       // If already in cart, check if we can add one more
       if (currentQuantity > 0) {
-        return typeof product.stock === 'number' ? currentQuantity < product.stock : true;
+        return typeof product.stock === "number"
+          ? currentQuantity < product.stock
+          : true;
       }
-      
+
       // If not in cart yet, check if stock is available
       return canAddOneMore(product, currentQuantity);
     },
@@ -144,14 +157,17 @@ export const useStockAwareCart = () => {
         return false;
       }
 
-      const currentItem = cart.items.find(item => item.id === product.id);
+      const currentItem = cart.items.find((item) => item.id === product.id);
       const currentQuantity = currentItem?.quantity || 0;
-      
+
       // Check if current quantity is already at or above stock limit
-      if (typeof product.stock === 'number' && currentQuantity >= product.stock) {
+      if (
+        typeof product.stock === "number" &&
+        currentQuantity >= product.stock
+      ) {
         return false;
       }
-      
+
       return canAddOneMore(product, currentQuantity);
     },
     [cart.items]
@@ -162,9 +178,9 @@ export const useStockAwareCart = () => {
    */
   const getMaxQuantity = useCallback(
     (product: Product): number => {
-      const currentItem = cart.items.find(item => item.id === product.id);
+      const currentItem = cart.items.find((item) => item.id === product.id);
       const currentQuantity = currentItem?.quantity || 0;
-      
+
       return getMaxAddableQuantity(product, currentQuantity) + currentQuantity;
     },
     [cart.items]
@@ -175,9 +191,9 @@ export const useStockAwareCart = () => {
    */
   const getProductStockStatus = useCallback(
     (product: Product) => {
-      const currentItem = cart.items.find(item => item.id === product.id);
+      const currentItem = cart.items.find((item) => item.id === product.id);
       const currentQuantity = currentItem?.quantity || 0;
-      
+
       return getStockStatusMessage(product, currentQuantity);
     },
     [cart.items]
@@ -186,23 +202,20 @@ export const useStockAwareCart = () => {
   /**
    * Check if product is out of stock
    */
-  const isProductOutOfStock = useCallback(
-    (product: Product): boolean => {
-      return isOutOfStock(product);
-    },
-    []
-  );
+  const isProductOutOfStock = useCallback((product: Product): boolean => {
+    return isOutOfStock(product);
+  }, []);
 
   return {
     // Original cart functions and state
     ...cart,
-    
+
     // Stock-aware functions (override the original ones)
     addToCart: addToCartWithStock,
     updateQuantity: updateQuantityWithStock,
     increaseQuantity: increaseQuantityWithStock,
     decreaseQuantity: decreaseQuantityWithStock,
-    
+
     // Stock validation utilities
     canAddToCart,
     canIncreaseQuantity,

@@ -15,7 +15,7 @@ export const validateStock = (
 } => {
   const availableStock = product.stock || 0;
   const maxCanAdd = Math.max(0, availableStock - currentCartQuantity);
-  
+
   // If no stock information is available, allow the operation
   if (availableStock === 0 && product.stock === undefined) {
     return {
@@ -54,7 +54,7 @@ export const validateStockForUpdate = (
   errorMessage?: string;
 } => {
   const availableStock = product.stock || 0;
-  
+
   // If no stock information is available, allow the operation
   if (availableStock === 0 && product.stock === undefined) {
     return {
@@ -85,7 +85,7 @@ export const getMaxAddableQuantity = (
   currentCartQuantity: number = 0
 ): number => {
   const availableStock = product.stock || 0;
-  
+
   // If no stock information is available, return a reasonable default
   if (availableStock === 0 && product.stock === undefined) {
     return 999; // Default max quantity when stock is unknown
@@ -99,12 +99,12 @@ export const getMaxAddableQuantity = (
  */
 export const isOutOfStock = (product: Product): boolean => {
   const stock = product.stock;
-  
+
   // If stock is undefined, assume it's available
   if (stock === undefined) {
     return false;
   }
-  
+
   return stock <= 0;
 };
 
@@ -116,7 +116,7 @@ export const canAddOneMore = (
   currentCartQuantity: number = 0
 ): boolean => {
   const availableStock = product.stock || 0;
-  
+
   // If no stock information is available, allow adding
   if (availableStock === 0 && product.stock === undefined) {
     return true;
@@ -133,7 +133,7 @@ export const getStockStatusMessage = (
   currentCartQuantity: number = 0
 ): {
   message: string;
-  type: 'success' | 'warning' | 'error';
+  type: "success" | "warning" | "error";
 } => {
   const availableStock = product.stock || 0;
   const remaining = availableStock - currentCartQuantity;
@@ -141,34 +141,34 @@ export const getStockStatusMessage = (
   // If no stock information is available
   if (availableStock === 0 && product.stock === undefined) {
     return {
-      message: 'In Stock',
-      type: 'success',
+      message: "In Stock",
+      type: "success",
     };
   }
 
   if (remaining <= 0) {
     return {
-      message: 'Out of Stock',
-      type: 'error',
+      message: "Out of Stock",
+      type: "error",
     };
   }
 
   if (remaining <= 5) {
     return {
       message: `Only ${remaining} left in stock`,
-      type: 'warning',
+      type: "warning",
     };
   }
 
   if (remaining <= 10) {
     return {
       message: `${remaining} in stock`,
-      type: 'warning',
+      type: "warning",
     };
   }
 
   return {
-    message: 'In Stock',
-    type: 'success',
+    message: "In Stock",
+    type: "success",
   };
 };

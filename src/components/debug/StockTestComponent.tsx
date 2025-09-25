@@ -1,8 +1,8 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Plus, Minus, ShoppingCart, Trash } from 'lucide-react';
-import { useStockAwareCart } from '@/hooks/useStockAwareCart';
-import { Product } from '@/services/api/types';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Plus, Minus, ShoppingCart, Trash } from "lucide-react";
+import { useStockAwareCart } from "@/hooks/useStockAwareCart";
+import { Product } from "@/services/api/types";
 
 interface StockTestComponentProps {
   product: Product;
@@ -12,7 +12,9 @@ interface StockTestComponentProps {
  * Test component to demonstrate and verify stock validation
  * Shows real-time stock validation feedback
  */
-export const StockTestComponent: React.FC<StockTestComponentProps> = ({ product }) => {
+export const StockTestComponent: React.FC<StockTestComponentProps> = ({
+  product,
+}) => {
   const {
     items,
     addToCart,
@@ -22,10 +24,10 @@ export const StockTestComponent: React.FC<StockTestComponentProps> = ({ product 
     canIncreaseQuantity,
     isProductOutOfStock,
     getProductStockStatus,
-    isItemLoading
+    isItemLoading,
   } = useStockAwareCart();
 
-  const cartItem = items.find(item => item.id === product.id);
+  const cartItem = items.find((item) => item.id === product.id);
   const currentQuantity = cartItem?.quantity || 0;
   const isInCart = currentQuantity > 0;
   const stockStatus = getProductStockStatus(product);
@@ -69,24 +71,34 @@ export const StockTestComponent: React.FC<StockTestComponentProps> = ({ product 
           </div>
           <div>
             <span className="text-gray-600">Can Add:</span>
-            <span className={`ml-2 font-medium ${canAddToCart(product) ? 'text-green-600' : 'text-red-600'}`}>
-              {canAddToCart(product) ? 'Yes' : 'No'}
+            <span
+              className={`ml-2 font-medium ${
+                canAddToCart(product) ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              {canAddToCart(product) ? "Yes" : "No"}
             </span>
           </div>
           <div>
             <span className="text-gray-600">Can Increase:</span>
-            <span className={`ml-2 font-medium ${canIncreaseQuantity(product) ? 'text-green-600' : 'text-red-600'}`}>
-              {canIncreaseQuantity(product) ? 'Yes' : 'No'}
+            <span
+              className={`ml-2 font-medium ${
+                canIncreaseQuantity(product) ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              {canIncreaseQuantity(product) ? "Yes" : "No"}
             </span>
           </div>
         </div>
-        <div className={`text-sm font-medium ${
-          stockStatus.type === 'error' 
-            ? 'text-red-600' 
-            : stockStatus.type === 'warning' 
-            ? 'text-orange-600' 
-            : 'text-green-600'
-        }`}>
+        <div
+          className={`text-sm font-medium ${
+            stockStatus.type === "error"
+              ? "text-red-600"
+              : stockStatus.type === "warning"
+              ? "text-orange-600"
+              : "text-green-600"
+          }`}
+        >
           Status: {stockStatus.message}
         </div>
       </div>
@@ -96,7 +108,11 @@ export const StockTestComponent: React.FC<StockTestComponentProps> = ({ product 
         {!isInCart ? (
           <Button
             onClick={handleAddToCart}
-            disabled={isItemLoading(product.id) || isProductOutOfStock(product) || !canAddToCart(product)}
+            disabled={
+              isItemLoading(product.id) ||
+              isProductOutOfStock(product) ||
+              !canAddToCart(product)
+            }
             className="w-full flex items-center justify-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             {isItemLoading(product.id) ? (
@@ -105,7 +121,7 @@ export const StockTestComponent: React.FC<StockTestComponentProps> = ({ product 
               <ShoppingCart size={16} />
             )}
             <span>
-              {isProductOutOfStock(product) ? 'Out of Stock' : 'Add to Cart'}
+              {isProductOutOfStock(product) ? "Out of Stock" : "Add to Cart"}
             </span>
           </Button>
         ) : (
@@ -134,7 +150,9 @@ export const StockTestComponent: React.FC<StockTestComponentProps> = ({ product 
               onClick={handleIncrease}
               size="sm"
               variant="outline"
-              disabled={isItemLoading(product.id) || !canIncreaseQuantity(product)}
+              disabled={
+                isItemLoading(product.id) || !canIncreaseQuantity(product)
+              }
               className="w-10 h-10 p-0 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
             >
               {isItemLoading(product.id) ? (
@@ -148,15 +166,21 @@ export const StockTestComponent: React.FC<StockTestComponentProps> = ({ product 
       </div>
 
       {/* Debug Information */}
-      {process.env.NODE_ENV === 'development' && (
+      {process.env.NODE_ENV === "development" && (
         <div className="bg-yellow-50 border border-yellow-200 p-3 rounded-lg text-xs">
           <h5 className="font-semibold text-yellow-800 mb-2">Debug Info</h5>
           <div className="space-y-1 text-yellow-700">
             <div>Current Quantity: {currentQuantity}</div>
             <div>Product Stock: {product.stock}</div>
-            <div>Is Out of Stock: {isProductOutOfStock(product) ? 'true' : 'false'}</div>
-            <div>Can Add to Cart: {canAddToCart(product) ? 'true' : 'false'}</div>
-            <div>Can Increase: {canIncreaseQuantity(product) ? 'true' : 'false'}</div>
+            <div>
+              Is Out of Stock: {isProductOutOfStock(product) ? "true" : "false"}
+            </div>
+            <div>
+              Can Add to Cart: {canAddToCart(product) ? "true" : "false"}
+            </div>
+            <div>
+              Can Increase: {canIncreaseQuantity(product) ? "true" : "false"}
+            </div>
             <div>Remaining Stock: {(product.stock || 0) - currentQuantity}</div>
           </div>
         </div>

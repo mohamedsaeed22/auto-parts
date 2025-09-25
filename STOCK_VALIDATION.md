@@ -5,6 +5,7 @@ This document describes the stock validation system implemented to prevent users
 ## Overview
 
 The system prevents users from:
+
 - Adding out-of-stock products to cart
 - Adding more items than available in stock
 - Increasing cart quantity beyond stock limits
@@ -62,9 +63,9 @@ Added optional `stock?: number` field to CartItem interface for reference.
 ### Basic Stock Validation
 
 ```typescript
-import { validateStock } from '@/utils/stockValidation';
+import { validateStock } from "@/utils/stockValidation";
 
-const product = { stock: 10, /* other product fields */ };
+const product = { stock: 10 /* other product fields */ };
 const currentCartQuantity = 5;
 
 const validation = validateStock(product, 2, currentCartQuantity);
@@ -76,14 +77,14 @@ if (!validation.isValid) {
 ### Using Stock-Aware Cart
 
 ```typescript
-import { useStockAwareCart } from '@/hooks/useStockAwareCart';
+import { useStockAwareCart } from "@/hooks/useStockAwareCart";
 
 function ProductComponent({ product }) {
-  const { 
-    addToCart, 
-    canAddToCart, 
+  const {
+    addToCart,
+    canAddToCart,
     isProductOutOfStock,
-    getProductStockStatus 
+    getProductStockStatus,
   } = useStockAwareCart();
 
   const handleAdd = async () => {
@@ -93,13 +94,10 @@ function ProductComponent({ product }) {
   };
 
   const stockStatus = getProductStockStatus(product);
-  
+
   return (
-    <button 
-      onClick={handleAdd}
-      disabled={!canAddToCart(product)}
-    >
-      {isProductOutOfStock(product) ? 'Out of Stock' : 'Add to Cart'}
+    <button onClick={handleAdd} disabled={!canAddToCart(product)}>
+      {isProductOutOfStock(product) ? "Out of Stock" : "Add to Cart"}
     </button>
   );
 }
@@ -115,7 +113,7 @@ The system expects the API to return product objects with a `stock` field:
   "name": "Product Name",
   "stock": 35,
   "price": "4800.00",
-  "final_price": 4224,
+  "final_price": 4224
   // ... other fields
 }
 ```
@@ -142,6 +140,7 @@ A debug component is available at `src/components/debug/StockValidationTest.tsx`
 ## Future Enhancements
 
 Potential improvements:
+
 - Real-time stock updates via WebSocket
 - Reservation system for cart items
 - Stock alerts for low inventory

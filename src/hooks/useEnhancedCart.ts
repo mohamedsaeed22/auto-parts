@@ -148,13 +148,15 @@ export const useEnhancedCart = () => {
         dispatch(setLoading(true));
 
         // Check if product stock is provided and validate
-        if (product && typeof product.stock === 'number') {
-          const currentItem = items.find(cartItem => cartItem.id === item.id);
+        if (product && typeof product.stock === "number") {
+          const currentItem = items.find((cartItem) => cartItem.id === item.id);
           const currentQuantity = currentItem?.quantity || 0;
-          
+
           // Check if adding one more would exceed stock
           if (currentQuantity + 1 > product.stock) {
-            showError(`Only ${product.stock} items available in stock. You already have ${currentQuantity} in your cart.`);
+            showError(
+              `Only ${product.stock} items available in stock. You already have ${currentQuantity} in your cart.`
+            );
             return;
           }
         }
@@ -201,7 +203,7 @@ export const useEnhancedCart = () => {
         dispatch(setItemLoading({ id, loading: true }));
 
         // Check stock validation if productStock is provided
-        if (typeof productStock === 'number' && quantity > productStock) {
+        if (typeof productStock === "number" && quantity > productStock) {
           showError(`Only ${productStock} items available in stock.`);
           return;
         }
