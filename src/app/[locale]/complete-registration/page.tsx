@@ -50,7 +50,7 @@ export default function CompleteRegistrationPage() {
     defaultValues: {
       name: "",
       email: "",
-      type: undefined, // No pre-selected value
+      type: undefined,
       manager_name: "",
       address: "",
       city: "",
@@ -65,24 +65,8 @@ export default function CompleteRegistrationPage() {
   // Watch latitude and longitude to determine if location is selected
   const latitude = watch("latitude");
   const longitude = watch("longitude");
-
-  // Strict validation for location selection
-  const isLocationSelected = Boolean(
-    latitude &&
-      longitude &&
-      !isNaN(Number(latitude)) &&
-      !isNaN(Number(longitude)) &&
-      latitude.trim() !== "" &&
-      longitude.trim() !== ""
-  );
-
+  const isLocationSelected = Boolean(latitude && longitude);
   const hasLocationError = Boolean(errors.latitude || errors.longitude);
-
-  // Location is always required now
-  const isLocationRequired = !isLocationSelected;
-
-  // Show error if location is not selected
-  const shouldShowLocationError = !isLocationSelected;
 
   // State for file uploads and previews
   const [commercialRegisterPreview, setCommercialRegisterPreview] = useState<
@@ -95,21 +79,23 @@ export default function CompleteRegistrationPage() {
     Array<{ key: string; value: string[] }>
   >([]);
 
+  // Debug: Log apiErrors changes
+  console.log("Current apiErrors state:", apiErrors);
+
   // Check if user has already completed registration
   const hasRedirectedRef = useRef(false);
 
   // Handle location selection from the map
   const handleLocationSelect = (locationData: LocationData) => {
-    // Store coordinates as strings (required by schema)
+    // Store coordinates (required)
     setValue("latitude", locationData.lat.toString());
     setValue("longitude", locationData.lng.toString());
 
     // Auto-fill other fields if available, but allow user to edit
-    if (locationData.address) setValue("address", locationData.address.trim());
-    if (locationData.city) setValue("city", locationData.city.trim());
-    if (locationData.state) setValue("state", locationData.state.trim());
-    if (locationData.postal_code)
-      setValue("zip", locationData.postal_code.trim());
+    if (locationData.address) setValue("address", locationData.address);
+    if (locationData.city) setValue("city", locationData.city);
+    if (locationData.state) setValue("state", locationData.state);
+    if (locationData.postal_code) setValue("zip", locationData.postal_code);
 
     // Clear location-related errors
     clearErrors(["latitude", "longitude", "address", "city", "state", "zip"]);
@@ -239,70 +225,20 @@ export default function CompleteRegistrationPage() {
       // Clear any previous errors
       setApiErrors([]);
 
-      // First check: Location must be selected
-      if (!isLocationSelected) {
-        showError(t("validation.locationRequired"));
-        // Scroll to the map section
-        const mapSection = document.querySelector(".location-picker-section");
-        if (mapSection) {
-          mapSection.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-        return;
+      // Send the request to the API - the API mutation will handle FormData creation
+      console.log("About to call completeRegistration mutation");
+      const mutationResult = await completeRegistration(data);
+      console.log("Mutation result:", mutationResult);
+
+      // Check if there's an error in the mutation result
+      if ("error" in mutationResult) {
+        console.log("Mutation returned an error:", mutationResult.error);
+        throw mutationResult.error;
       }
 
-      // Validate location only if coordinates are provided but invalid
-      if (
-        (data.latitude && isNaN(Number(data.latitude))) ||
-        (data.longitude && isNaN(Number(data.longitude)))
-      ) {
-        setApiErrors([
-          {
-            key: "location",
-            value: [
-              t(
-                "validation.locationInvalid",
-                isRTL
-                  ? "إحداثيات الموقع غير صحيحة"
-                  : "Invalid location coordinates"
-              ),
-            ],
-          },
-        ]);
-        return;
-      }
+      const result = mutationResult.data;
 
-      // Handle file uploads by getting files from the DOM inputs
-      const commercialRegisterInput = document.getElementById(
-        "commercial_register"
-      ) as HTMLInputElement;
-      const avatarInput = document.getElementById("avatar") as HTMLInputElement;
-
-      const commercialRegisterFile = commercialRegisterInput?.files?.[0];
-      const avatarFile = avatarInput?.files?.[0];
-
-      console.log("Commercial register file:", commercialRegisterFile);
-      console.log("Avatar file:", avatarFile);
-
-      // Prepare the data object for the API service
-      const registrationData = {
-        ...data,
-        commercial_register: commercialRegisterFile,
-        avatar: avatarFile,
-      };
-
-      // Send the request to the API - let the API service handle FormData creation
-      type RegistrationResponse = { data?: { user: unknown } };
-      const mutationResult = await (
-        completeRegistration as unknown as (body: unknown) => Promise<unknown>
-      )(registrationData);
-      const result: RegistrationResponse =
-        typeof (mutationResult as { unwrap?: unknown }).unwrap === "function"
-          ? await (
-              mutationResult as { unwrap: () => Promise<RegistrationResponse> }
-            ).unwrap()
-          : (mutationResult as RegistrationResponse);
-
-      if (result.data) {
+      if (result && result.data) {
         // Update only the user data while preserving the existing token
         const baseUser: Record<string, unknown> =
           result.data &&
@@ -358,25 +294,63 @@ export default function CompleteRegistrationPage() {
         }
       }
     } catch (error: unknown) {
-      console.log(
-        "----------------------------Error7777777777777777777777777777777777777:",
-        error
-      );
-      // Handle API validation errors - simple approach
-      if (error && typeof error === "object" && "data" in error) {
-        const errorData = error.data as {
+      console.error("Error completing registration:", error);
+      console.log("Full error object:", JSON.stringify(error, null, 2));
+
+      // Handle RTK Query error structure
+      let errorData: any = null;
+
+      // Check for RTK Query error structure
+      if (error && typeof error === "object") {
+        if ("data" in error) {
+          errorData = error.data;
+        } else if ("status" in error && "data" in (error as any)) {
+          errorData = (error as any).data;
+        }
+      }
+
+      console.log("Extracted error data:", errorData);
+
+      if (errorData) {
+        const responseData = errorData as {
+          code?: number;
+          message?: string;
           errors?: Array<{ key: string; value: string[] }>;
         };
 
-        if (errorData.errors && errorData.errors.length > 0) {
-          setApiErrors(errorData.errors);
-          window.scrollTo({ top: 0, behavior: "smooth" });
+        console.log("Response data:", responseData);
+        console.log("Response data has errors array:", responseData.errors);
+        console.log("Is errors array:", Array.isArray(responseData.errors));
+
+        if (responseData.errors && Array.isArray(responseData.errors)) {
+          console.log("Setting API errors:", responseData.errors);
+          setApiErrors(responseData.errors);
+
+          // Small delay to ensure state is updated before scrolling
+          setTimeout(() => {
+            const errorElement = document.getElementById("api-errors-section");
+            console.log("Error element found:", errorElement);
+            if (errorElement) {
+              errorElement.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+              });
+            } else {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+          }, 100);
+          return;
+        }
+
+        // Show general error message if no specific field errors
+        if (responseData.message) {
+          console.log("Showing general error message:", responseData.message);
+          showError(responseData.message);
           return;
         }
       }
 
-      // If we get here, show generic error
-      console.log("No specific error handling matched, showing generic error");
+      console.log("Showing fallback error message");
       showError(t("toasts.registrationFailed"));
     }
   };
@@ -435,45 +409,11 @@ export default function CompleteRegistrationPage() {
         {/* Registration Form */}
         <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
           <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-            {/* API Error Messages */}
-            {apiErrors.length > 0 && (
-              <div className="p-4 bg-red-50 border-b border-red-100">
-                <h4 className="text-sm font-semibold text-red-800 mb-3">
-                  {t("errors.validationErrors", "Validation Errors")}
-                </h4>
-                <div className="space-y-2">
-                  {apiErrors.map((error, index) => (
-                    <div key={index}>
-                      {error.value.map((message, messageIndex) => (
-                        <div
-                          key={messageIndex}
-                          className="flex items-start gap-2 text-sm text-red-700 mb-1"
-                        >
-                          <span className="text-red-500 mt-1">•</span>
-                          <span>{message}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* Location Selection Section - FIRST STEP */}
-            <div className="bg-logo-gold/5 border-b border-gray-200 p-6 location-picker-section">
+            <div className="bg-logo-gold/5 border-b border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-logo-black flex items-center">
-                  <MapPin
-                    className={`w-5 h-5 mr-2 ${
-                      shouldShowLocationError
-                        ? "text-red-500"
-                        : isLocationSelected
-                        ? "text-green-500"
-                        : isLocationRequired
-                        ? "text-amber-500"
-                        : "text-logo-gold"
-                    }`}
-                  />
+                  <MapPin className="w-5 h-5 mr-2 text-logo-gold" />
                   {t("labels.selectLocation")}{" "}
                   <span className="text-red-500 ml-1">*</span>
                 </h3>
@@ -497,23 +437,19 @@ export default function CompleteRegistrationPage() {
               <div
                 className={
                   "rounded-lg overflow-hidden " +
-                  (shouldShowLocationError
-                    ? "border-2 border-red-500 ring-2 ring-red-200"
-                    : isLocationSelected
-                    ? "border-2 border-green-500 ring-2 ring-green-200"
-                    : isLocationRequired
-                    ? "border-2 border-amber-500 ring-2 ring-amber-200"
-                    : "border-2 border-gray-300 ring-2 ring-gray-100")
+                  (hasLocationError
+                    ? "border border-red-500 ring-2 ring-red-200"
+                    : "border border-gray-200")
                 }
-                aria-invalid={shouldShowLocationError || undefined}
+                aria-invalid={hasLocationError || undefined}
               >
                 <LocationPicker
                   onLocationSelect={handleLocationSelect}
                   initialLocation={
-                    isLocationSelected
+                    watch("latitude") && watch("longitude")
                       ? {
-                          lat: Number(latitude),
-                          lng: Number(longitude),
+                          lat: parseFloat(watch("latitude")),
+                          lng: parseFloat(watch("longitude")),
                         }
                       : {
                           lat: 24.7136, // Default to Riyadh, Saudi Arabia
@@ -521,83 +457,28 @@ export default function CompleteRegistrationPage() {
                         }
                   }
                   className="w-full h-96"
-                  error={
-                    shouldShowLocationError
-                      ? t(
-                          "validation.locationRequired",
-                          isRTL ? "الموقع مطلوب" : "Location is required"
-                        )
-                      : undefined
-                  }
+                  error={undefined}
                 />
               </div>
 
-              {/* Location Status Message */}
-              <div className="mt-3">
-                {isLocationRequired ? (
-                  <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg shadow-sm">
-                    <div className="flex items-center gap-3">
-                      <div className="flex-shrink-0">
-                        <MapPin className="w-5 h-5 text-amber-500" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-amber-800">
-                          {t(
-                            "location.requiredInstruction",
-                            isRTL
-                              ? "يجب تحديد موقعك على الخريطة لإكمال التسجيل"
-                              : "Please select your business location on the map to complete registration"
-                          )}
-                        </p>
-                        <p className="text-xs text-amber-600 mt-1">
-                          {t(
-                            "location.requiredHelp",
-                            isRTL
-                              ? ""
-                              : "This helps customers find your business easily"
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ) : shouldShowLocationError ? (
-                  <div className="p-4 bg-red-50 border-2 border-red-200 rounded-lg shadow-sm">
-                    <div className="flex items-center gap-3">
-                      <div className="flex-shrink-0">
-                        <MapPin className="w-5 h-5 text-red-500" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-red-800">
-                          {t(
-                            "validation.locationRequired",
-                            isRTL
-                              ? "الموقع مطلوب لإكمال التسجيل"
-                              : "Location is required to complete registration"
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ) : isLocationSelected ? (
-                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg shadow-sm">
-                    <div className="flex items-center gap-3">
-                      <div className="flex-shrink-0">
-                        <MapPin className="w-5 h-5 text-green-500" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-green-800">
-                          {t(
-                            "location.selectedSuccess",
-                            isRTL
-                              ? "تم تحديد الموقع بنجاح!"
-                              : "Location selected successfully!"
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ) : null}
-              </div>
+              {hasLocationError && (
+                <p className="text-sm text-red-500 mt-2 font-medium">
+                  {t(
+                    "validation.locationRequired",
+                    isRTL ? "الموقع مطلوب" : "Location is required"
+                  )}
+                </p>
+              )}
+
+              {/* Show simple instruction text when no location is selected */}
+              {!isLocationSelected && (
+                <p className="text-sm text-gray-600 mt-2 text-center">
+                  {t(
+                    "location.simpleInstruction",
+                    "Please select a location on the map above"
+                  )}
+                </p>
+              )}
 
               {/* {isLocationSelected && locationDetails && (
                 <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
@@ -778,7 +659,6 @@ export default function CompleteRegistrationPage() {
                   <input
                     type="file"
                     id="commercial_register"
-                    name="commercial_register"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       handleFileChange(file, "commercial_register");
@@ -868,7 +748,6 @@ export default function CompleteRegistrationPage() {
                   <input
                     type="file"
                     id="avatar"
-                    name="avatar"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       handleFileChange(file, "avatar");
@@ -948,51 +827,71 @@ export default function CompleteRegistrationPage() {
               </div>
             </div>
 
-            {/* Error Messages and Submit Button */}
-            <div className="border-t border-gray-200 bg-white p-6 md:p-8">
-              {/* API Error Messages */}
-              {apiErrors.length > 0 && (
-                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <h4 className="text-sm font-semibold text-red-800 mb-3">
-                    {t("errors.validationErrors", "Validation Errors")}
-                  </h4>
-                  <div className="space-y-2">
-                    {apiErrors.map((error, index) => (
-                      <div key={index}>
-                        {error.value.map((message, messageIndex) => (
+            {/* API Error Messages - Above Submit Button */}
+            {/* Debug: Show current apiErrors length */}
+            {console.log("Rendering form, apiErrors.length:", apiErrors.length)}
+            {apiErrors.length > 0 && (
+              <div
+                id="api-errors-section"
+                className="border-t border-gray-200 bg-red-50 p-6 md:p-8"
+              >
+                <div className="max-w-4xl mx-auto">
+                  <div className="flex items-start gap-3 mb-4">
+                   
+                    <div className="flex-1">
+                      <div className="space-y-3">
+                        {apiErrors.map((error, index) => (
                           <div
-                            key={messageIndex}
-                            className="flex items-start gap-2 text-sm text-red-700 mb-1"
+                            key={index}
+                            className="bg-white rounded-lg p-4 border border-red-200"
                           >
-                            <span className="text-red-500 mt-1">•</span>
-                            <span>{message}</span>
+                            <div className="flex items-start gap-3">
+                              <div className="flex-shrink-0 mt-0.5">
+                                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                              </div>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-red-900 mb-1">
+                                  {t(`labels.${error.key}`, error.key)}
+                                </p>
+                                <div className="space-y-1">
+                                  {error.value.map((message, messageIndex) => (
+                                    <p
+                                      key={messageIndex}
+                                      className="text-sm text-red-700 leading-relaxed"
+                                    >
+                                      {message}
+                                    </p>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         ))}
                       </div>
-                    ))}
+                    </div>
                   </div>
                 </div>
-              )}
-
-              {/* Submit Button */}
-              <div className="text-center">
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                  variant="gold"
-                  size="lg"
-                  className="px-8 py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? (
-                    <>
-                      <div className="w-5 h-5 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      {t("actions.submitting")}
-                    </>
-                  ) : (
-                    t("actions.submit")
-                  )}
-                </Button>
               </div>
+            )}
+
+            {/* Submit Button */}
+            <div className="border-t border-gray-200 bg-white p-6 md:p-8 text-center">
+              <Button
+                type="submit"
+                disabled={isLoading}
+                variant="gold"
+                size="lg"
+                className="px-8 py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-5 h-5 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    {t("actions.submitting")}
+                  </>
+                ) : (
+                  t("actions.submit")
+                )}
+              </Button>
             </div>
           </form>
         </div>
