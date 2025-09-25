@@ -76,17 +76,12 @@ export default function CompleteRegistrationPage() {
   // Determine if location validation should be shown
   const shouldShowLocationError = hasLocationError && !isLocationSelected;
 
-  // Debug: Watch all form values
-  const allFormValues = watch();
-  console.log("All form values:", allFormValues);
-
-  // Debug function to manually check form values
-  const debugFormValues = () => {
-    console.log("=== MANUAL FORM DEBUG ===");
-    console.log("All form values:", allFormValues);
-    console.log("Form errors:", errors);
-    console.log("Form is valid:", Object.keys(errors).length === 0);
-  };
+  // Check if location is required (no lat/lng values)
+  const isLocationRequired =
+    !latitude ||
+    !longitude ||
+    latitude.trim() === "" ||
+    longitude.trim() === "";
 
   // State for file uploads and previews
   const [commercialRegisterPreview, setCommercialRegisterPreview] = useState<
@@ -98,6 +93,26 @@ export default function CompleteRegistrationPage() {
   const [apiErrors, setApiErrors] = useState<
     Array<{ key: string; value: string[] }>
   >([]);
+
+  // Debug: Watch all form values
+  const allFormValues = watch();
+
+  // Debug function to manually check form values
+  const debugFormValues = () => {
+    console.log("=== MANUAL FORM DEBUG ===");
+    console.log("All form values:", allFormValues);
+    console.log("Form errors:", errors);
+    console.log("Form is valid:", Object.keys(errors).length === 0);
+    console.log("API Errors:", apiErrors);
+
+    // Test setting API errors manually
+    setApiErrors([
+      {
+        key: "test",
+        value: ["This is a test error message"],
+      },
+    ]);
+  };
 
   // Check if user has already completed registration
   const hasRedirectedRef = useRef(false);
@@ -264,32 +279,6 @@ export default function CompleteRegistrationPage() {
         return;
       }
 
-      // Debug: Log the form data before processing
-      console.log("=== FORM SUBMISSION DEBUG ===");
-      console.log("Form data received:", data);
-      console.log("Form data type:", typeof data);
-      console.log("Form data entries:", Object.entries(data));
-      console.log("Form data keys:", Object.keys(data));
-      console.log("Form data values:", Object.values(data));
-
-      // Debug each field individually
-      console.log("Individual field values:");
-      console.log("- name:", data.name, typeof data.name);
-      console.log("- email:", data.email, typeof data.email);
-      console.log("- type:", data.type, typeof data.type);
-      console.log(
-        "- manager_name:",
-        data.manager_name,
-        typeof data.manager_name
-      );
-      console.log("- address:", data.address, typeof data.address);
-      console.log("- city:", data.city, typeof data.city);
-      console.log("- zip:", data.zip, typeof data.zip);
-      console.log("- state:", data.state, typeof data.state);
-      console.log("- tax_number:", data.tax_number, typeof data.tax_number);
-      console.log("- latitude:", data.latitude, typeof data.latitude);
-      console.log("- longitude:", data.longitude, typeof data.longitude);
-
       // Handle file uploads by getting files from the DOM inputs
       const commercialRegisterInput = document.getElementById(
         "commercial_register"
@@ -381,6 +370,13 @@ export default function CompleteRegistrationPage() {
     } catch (error: unknown) {
       console.error("Error completing registration:", error);
       console.log("Full error object:", JSON.stringify(error, null, 2));
+      console.log("Error type:", typeof error);
+      console.log(
+        "Error keys:",
+        error && typeof error === "object"
+          ? Object.keys(error)
+          : "Not an object"
+      );
 
       // Handle API validation errors
       if (error && typeof error === "object" && "data" in error) {
@@ -390,6 +386,9 @@ export default function CompleteRegistrationPage() {
           errors?: Array<{ key: string; value: string[] }>;
         };
         console.log("Error data:", errorData);
+        console.log("Error data code:", errorData.code);
+        console.log("Error data errors:", errorData.errors);
+        console.log("Is errors array?", Array.isArray(errorData.errors));
 
         // Check if it's a 422 validation error with the specific format
         if (
@@ -406,12 +405,15 @@ export default function CompleteRegistrationPage() {
 
         // Handle other error formats
         if (errorData.errors && Array.isArray(errorData.errors)) {
+          console.log("Setting API errors:", errorData.errors);
           setApiErrors(errorData.errors);
           window.scrollTo({ top: 0, behavior: "smooth" });
           return;
         }
       }
 
+      // If we get here, show generic error
+      console.log("No specific error handling matched, showing generic error");
       showError(t("toasts.registrationFailed"));
     }
   };
@@ -501,6 +503,8 @@ export default function CompleteRegistrationPage() {
                         ? "text-red-500"
                         : isLocationSelected
                         ? "text-green-500"
+                        : isLocationRequired
+                        ? "text-amber-500"
                         : "text-logo-gold"
                     }`}
                   />
@@ -531,6 +535,8 @@ export default function CompleteRegistrationPage() {
                     ? "border-2 border-red-500 ring-2 ring-red-200"
                     : isLocationSelected
                     ? "border-2 border-green-500 ring-2 ring-green-200"
+                    : isLocationRequired
+                    ? "border-2 border-amber-500 ring-2 ring-amber-200"
                     : "border-2 border-gray-300 ring-2 ring-gray-100")
                 }
                 aria-invalid={shouldShowLocationError || undefined}
@@ -561,7 +567,7 @@ export default function CompleteRegistrationPage() {
               </div>
 
               {/* Location Status Message */}
-              {!isLocationSelected ? (
+              {isLocationRequired ? (
                 <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                   <div className="flex items-center justify-center gap-2">
                     <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
@@ -585,7 +591,7 @@ export default function CompleteRegistrationPage() {
                     </p>
                   </div>
                 </div>
-              ) : (
+              ) : isLocationSelected ? (
                 <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
                   <div className="flex items-center justify-center gap-2">
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
@@ -597,7 +603,7 @@ export default function CompleteRegistrationPage() {
                     </p>
                   </div>
                 </div>
-              )}
+              ) : null}
 
               {/* {isLocationSelected && locationDetails && (
                 <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
@@ -953,93 +959,23 @@ export default function CompleteRegistrationPage() {
               {/* API Error Messages */}
               {apiErrors.length > 0 && (
                 <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg
-                        className="w-3 h-3 text-white"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="text-sm font-semibold text-red-800 mb-2">
-                        {t("errors.validationErrors", "Validation Errors")}
-                      </h4>
-                      <div className="space-y-3">
-                        {apiErrors.map((error, index) => (
+                  <h4 className="text-sm font-semibold text-red-800 mb-3">
+                    {t("errors.validationErrors", "Validation Errors")}
+                  </h4>
+                  <div className="space-y-2">
+                    {apiErrors.map((error, index) => (
+                      <div key={index}>
+                        {error.value.map((message, messageIndex) => (
                           <div
-                            key={index}
-                            className="bg-white rounded-md p-3 border border-red-200"
+                            key={messageIndex}
+                            className="flex items-start gap-2 text-sm text-red-700 mb-1"
                           >
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="text-xs font-medium text-red-700 bg-red-100 px-2 py-1 rounded">
-                                {error.key === "avatar" &&
-                                  t("labels.avatar", "Profile Image")}
-                                {error.key === "commercial_register" &&
-                                  t(
-                                    "labels.commercialRegister",
-                                    "Commercial Register"
-                                  )}
-                                {error.key === "name" &&
-                                  t("labels.name", "Name")}
-                                {error.key === "email" &&
-                                  t("labels.email", "Email")}
-                                {error.key === "type" &&
-                                  t("labels.type", "Business Type")}
-                                {error.key === "manager_name" &&
-                                  t("labels.managerName", "Manager Name")}
-                                {error.key === "address" &&
-                                  t("labels.address", "Address")}
-                                {error.key === "city" &&
-                                  t("labels.city", "City")}
-                                {error.key === "state" &&
-                                  t("labels.state", "State")}
-                                {error.key === "zip" &&
-                                  t("labels.zip", "ZIP Code")}
-                                {error.key === "tax_number" &&
-                                  t("labels.taxNumber", "Tax Number")}
-                                {error.key === "latitude" &&
-                                  t("labels.latitude", "Latitude")}
-                                {error.key === "longitude" &&
-                                  t("labels.longitude", "Longitude")}
-                                {![
-                                  "avatar",
-                                  "commercial_register",
-                                  "name",
-                                  "email",
-                                  "type",
-                                  "manager_name",
-                                  "address",
-                                  "city",
-                                  "state",
-                                  "zip",
-                                  "tax_number",
-                                  "latitude",
-                                  "longitude",
-                                ].includes(error.key) && error.key}
-                              </span>
-                            </div>
-                            <div className="space-y-1">
-                              {error.value.map((message, messageIndex) => (
-                                <div
-                                  key={messageIndex}
-                                  className="flex items-start gap-2 text-sm text-red-700"
-                                >
-                                  <span className="text-red-500 mt-1">•</span>
-                                  <span>{message}</span>
-                                </div>
-                              ))}
-                            </div>
+                            <span className="text-red-500 mt-1">•</span>
+                            <span>{message}</span>
                           </div>
                         ))}
                       </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               )}
