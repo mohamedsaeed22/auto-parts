@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/hooks/useLocale";
 import { storage } from "@/lib/storage";
@@ -58,24 +58,41 @@ export function useUnifiedPricingForm(userType?: "shop" | "workshop" | null) {
   // Check if user is authenticated
   const isAuthenticated = storage.isAuthenticated();
 
+  // Get the actual user type from storage to ensure it's available immediately
+  const getEffectiveUserType = useCallback(() => {
+    if (!isAuthenticated) {
+      return "workshop"; // Default for unauthenticated users
+    }
+    
+    // Try to get from parameter first, then from storage
+    const effectiveUserType = userType || getUserTypeFromStorage();
+    return effectiveUserType === "shop" ? "store" : "workshop";
+  }, [isAuthenticated, userType]);
+
   const form = useForm<UserPricingFormData, object, UserPricingFormData>({
     resolver: zodResolver(userPricingSchema),
     defaultValues: {
       ...defaultValues,
-      // Set userType based on authentication status
-      // For authenticated users with complete registration, use their profile type
-      // For unauthenticated users, default to "workshop" to show the selector
-      userType:
-        isAuthenticated && userType
-          ? userType === "shop"
-            ? "store"
-            : "workshop"
-          : "workshop",
+      // Set userType based on authentication status and actual user type
+      userType: getEffectiveUserType(),
       // Set user code from storage if available
       userCode: getUserCodeFromStorage(),
     },
     mode: "onChange",
   });
+
+  // Update form userType when the user type from auth context changes
+  useEffect(() => {
+    const newUserType = getEffectiveUserType();
+    const currentUserType = form.getValues("userType");
+    
+    // Only update if the user type has actually changed
+    if (currentUserType !== newUserType) {
+      form.setValue("userType", newUserType);
+      // Also update the user code when user type changes
+      form.setValue("userCode", getUserCodeFromStorage());
+    }
+  }, [userType, isAuthenticated, form, getEffectiveUserType]); // Re-run when userType or auth status changes
 
   // Check authentication status
   const checkAuthStatus = () => {
