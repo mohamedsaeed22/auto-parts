@@ -22,8 +22,11 @@ import {
   Clock as ClockIcon,
   HeadphonesIcon,
   Globe,
+  Mail,
+  ExternalLink,
+  MapPin,
+  Phone,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -74,7 +77,8 @@ const CompanyProfile = ({
   <div className="py-16 bg-[var(--muted)]">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <div className={`space-y-6 ${isRTL ? "lg:order-2" : ""}`}>
+        {/* Company Info Section */}
+        <div className={`space-y-6 ${isRTL ? "lg:order-1" : "lg:order-2"}`}>
           <div>
             <Badge variant="outline" className="mb-4">
               {t("profile.badge")}
@@ -132,7 +136,8 @@ const CompanyProfile = ({
           </div>
         </div>
 
-        <div className={`${isRTL ? "lg:order-1" : ""}`}>
+        {/* Contact Info Section */}
+        <div className={`${isRTL ? "lg:order-1" : "lg:order-2"}`}>
           <div className="bg-gradient-to-br from-logo-gold to-amber-600 rounded-2xl p-8 text-white">
             <div className="text-center space-y-6">
               <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto">
@@ -143,36 +148,36 @@ const CompanyProfile = ({
               </h3>
               <div className="space-y-4 text-left">
                 <div className="flex items-center gap-3">
-                  <div className="text-white/80 font-medium">
-                    {t("profile.contact.location")}
-                  </div>
+                  <MapPin className="h-5 w-5 text-white/80" />
                   <div className="text-white">
                     {t("profile.contact.locationValue")}
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="text-white/80 font-medium">
-                    {t("profile.contact.mobile")}
-                  </div>
+                  <Phone className="h-5 w-5 text-white/80" />
                   <div className="text-white">
                     {t("profile.contact.mobileValue")}
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="text-white/80 font-medium">
-                    {t("profile.contact.email")}
-                  </div>
-                  <div className="text-white">
-                    {t("profile.contact.emailValue")}
-                  </div>
+                  <Mail className="h-5 w-5 text-white/80" />
+                  <a
+                    href={`mailto:${t("profile.contact.emailValue")}`}
+                    className="flex items-center gap-2 text-white hover:text-white/80 transition-colors cursor-pointer"
+                  >
+                    <span>{t("profile.contact.emailValue")}</span>
+                  </a>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="text-white/80 font-medium">
-                    {t("profile.contact.website")}
-                  </div>
-                  <div className="text-white">
-                    {t("profile.contact.websiteValue")}
-                  </div>
+                  <Globe className="h-5 w-5 text-white/80" />
+                  <a
+                    href={`https://${t("profile.contact.websiteValue")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-white hover:text-white/80 transition-colors cursor-pointer"
+                  >
+                     <span>{t("profile.contact.websiteValue")}</span>
+                  </a>
                 </div>
               </div>
             </div>
@@ -428,7 +433,7 @@ const ContactCTA = ({ t }: { t: (key: string) => string }) => (
       <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
         {t("cta.subtitle")}
       </p>
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      {/* <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <Button
           size="lg"
           variant="secondary"
@@ -439,11 +444,11 @@ const ContactCTA = ({ t }: { t: (key: string) => string }) => (
         <Button
           size="lg"
           variant="outline"
-          className="border-white text-white hover:bg-white hover:text-logo-gold"
+          className="border-white text-white   text-logo-gold"
         >
           {t("cta.learnMore")}
         </Button>
-      </div>
+      </div> */}
       <div className="mt-8 text-white/80">
         <p className="mb-2">{t("cta.contactInfo")}</p>
         <p>{t("cta.location")}</p>
@@ -467,7 +472,7 @@ export default function AboutPage({
   useScrollToTop();
 
   const handleGoBack = () => {
-    router.back();
+    router.push("/");
   };
 
   return (
@@ -495,30 +500,6 @@ export default function AboutPage({
       />
 
       <HeroSection t={t} />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Breadcrumb */}
-        <nav
-          className={`flex items-center gap-2 text-sm text-[var(--muted-foreground)] mb-8 ${
-            isRTL ? "flex-row-reverse" : ""
-          }`}
-        >
-          <button
-            onClick={handleGoBack}
-            className={`flex items-center gap-1 hover:text-[var(--foreground)] transition-colors ${
-              isRTL ? "flex-row-reverse" : ""
-            }`}
-          >
-            <ArrowLeft
-              size={16}
-              className={isRTL ? "transform rotate-180" : ""}
-            />
-            <span>{t("backButton")}</span>
-          </button>
-          <span>/</span>
-          <span className="text-[var(--foreground)]">{t("about")}</span>
-        </nav>
-      </div>
 
       <CompanyProfile isRTL={isRTL} t={t} />
       <MissionVision t={t} />

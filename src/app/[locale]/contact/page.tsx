@@ -530,7 +530,7 @@ export default function ContactPage() {
   useScrollToTop();
 
   const handleGoBack = () => {
-    router.back();
+    router.push("/");
   };
 
   return (

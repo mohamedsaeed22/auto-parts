@@ -179,7 +179,7 @@ const Footer = () => {
                   />
                 </svg>
                 <a
-                  href="mailto:info@falfuture.com"
+                  href="mailto:parts@falfuture.com"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
                   {t("sections.contactSupport.email")}

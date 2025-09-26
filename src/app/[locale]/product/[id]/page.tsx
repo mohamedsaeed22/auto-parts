@@ -531,7 +531,7 @@ export default function ProductDetails() {
   };
 
   const handleGoBack = () => {
-    router.back();
+    router.push("/");
   };
 
   // Enhanced toggle functions with conditional visual feedback

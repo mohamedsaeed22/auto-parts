@@ -521,7 +521,7 @@ export function ContactPageClient({ locale }: { locale: string }) {
   useScrollToTop();
 
   const handleGoBack = () => {
-    router.back();
+    router.push("/");
   };
 
   return (

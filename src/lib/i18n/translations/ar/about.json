@@ -2,15 +2,15 @@
   "backButton": "رجوع",
   "about": "من نحن",
   "hero": {
-    "badge": "منظومة عمل متكاملة | Integrated Work System",
-    "title": "فال الغربية | Fal Al-Gharbia",
-    "subtitle": "شركة سعودية رائدة في مجال بيع قطع غيار السيارات | Leading Saudi company specializing in automotive spare parts",
-    "location": "Jeddah | جدة",
-    "brands": "Multiple Brands | علامات متعددة",
-    "quality": "Original & Commercial | أصلي وتجاري"
+    "badge": "منظومة عمل متكاملة",
+    "title": "فال الغربية",
+    "subtitle": "شركة سعودية رائدة في مجال بيع قطع غيار السيارات",
+    "location": "جدة",
+    "brands": "علامات متعددة",
+    "quality": "أصلي وتجاري"
   },
   "profile": {
-    "badge": "نبذة عن الشركة | Company Profile",
+    "badge": "نبذة عن الشركة",
     "title": "شركة فال الغربية هي شركة سعودية رائدة",
     "subtitle": "شركة فال الغربية هي شركة سعودية رائدة في مجال بيع قطع غيار السيارات، مقرها في مدينة جدة. تتمتع الشركة بخبرة واسعة في توريد وتوفير قطع الغيار الأصلية والمعتمدة لجميع أنواع السيارات، مع التركيز على جودة المنتجات وسرعة التوريد لتلبية احتياجات عملائنا.",
     "experience": {
@@ -28,11 +28,11 @@
     "contact": {
       "title": "معلومات التواصل",
       "location": "الموقع:",
-      "locationValue": "المملكة العربية السعودية - جدة",
+      "locationValue": "شارع الأمير محمد بن عبد العزيز، حي الفيصلية، جدة",
       "mobile": "الجوال:",
-      "mobileValue": "054 377 7569",
+      "mobileValue": "966543777569",
       "email": "الإيميل:",
-      "emailValue": "info@falfuture.com",
+      "emailValue": "parts@falfuture.com",
       "website": "الموقع الإلكتروني:",
       "websiteValue": "www.falfuture.com"
     }
@@ -113,7 +113,7 @@
     "subtitle": "انضم إلى آلاف العملاء الراضين الذين يثقون بنا في احتياجاتهم من قطع غيار السيارات",
     "contact": "اتصل بنا",
     "learnMore": "تعرف على المزيد",
-    "contactInfo": "www.falfuture.com | info@falfuture.com",
-    "location": "054 377 7569 | جدة - المملكة العربية السعودية"
+    "contactInfo": "www.falfuture.com | parts@falfuture.com",
+    "location": "966543777569 | شارع الأمير محمد بن عبد العزيز، حي الفيصلية، جدة"
   }
 }

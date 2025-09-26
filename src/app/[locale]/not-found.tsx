@@ -80,7 +80,7 @@ export default function NotFound() {
   };
 
   const handleGoBack = () => {
-    router.back();
+    router.push("/");
   };
 
   const handleRefresh = () => {

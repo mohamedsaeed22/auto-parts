@@ -2,92 +2,92 @@
   "backButton": "Back",
   "about": "About",
   "hero": {
-    "badge": "منظومة عمل متكاملة | Integrated Work System",
-    "title": "فال الغربية | Fal Al-Gharbia",
-    "subtitle": "شركة سعودية رائدة في مجال بيع قطع غيار السيارات | Leading Saudi company specializing in automotive spare parts",
-    "location": "Jeddah | جدة",
-    "brands": "Multiple Brands | علامات متعددة",
-    "quality": "Original & Commercial | أصلي وتجاري"
+    "badge": "Integrated Work System",
+    "title": "Fal Al-Gharbia",
+    "subtitle": "Leading Saudi company specializing in automotive spare parts",
+    "location": "Jeddah",
+    "brands": "Multiple Brands",
+    "quality": "Original & Commercial"
   },
   "profile": {
-    "badge": "نبذة عن الشركة | Company Profile",
-    "title": "شركة فال الغربية هي شركة سعودية رائدة",
-    "subtitle": "شركة فال الغربية هي شركة سعودية رائدة في مجال بيع قطع غيار السيارات، مقرها في مدينة جدة. تتمتع الشركة بخبرة واسعة في توريد وتوفير قطع الغيار الأصلية والمعتمدة لجميع أنواع السيارات، مع التركيز على جودة المنتجات وسرعة التوريد لتلبية احتياجات عملائنا.",
+    "badge": "Company Profile",
+    "title": "Fal Al-Gharbia Company is a Leading Saudi Company",
+    "subtitle": "Fal Al-Gharbia Company is a leading Saudi company specializing in the sale of automotive spare parts, headquartered in Jeddah. The company has extensive experience in supplying and providing genuine and certified spare parts for all types of vehicles, with a focus on product quality and fast delivery to meet our customers' needs.",
     "experience": {
-      "title": "خبرة واسعة",
-      "desc": "نمتلك فريقًا متخصصًا ومدربًا جيدًا لتقديم خدمات التسعير والتوريد بأعلى معايير الجودة"
+      "title": "Extensive Experience",
+      "desc": "Our highly specialized and trained team provides pricing and supply services with the highest quality standards"
     },
     "brands": {
-      "title": "العلامات التجارية المتنوعة",
-      "desc": "القدرة على التعامل مع مختلف الماركات المحلية والعالمية"
+      "title": "Various Brands",
+      "desc": "Capable of handling various local and international brands"
     },
     "supplier": {
-      "title": "أكبر الموردين",
-      "desc": "مجموعة فال الغربية احد أكبر موردين قطع غيار السيارات الصينية الأصلي والتجاري بالمملكة"
+      "title": "Major Supplier",
+      "desc": "Fal Al-Gharbia Group is one of the largest suppliers of original and commercial Chinese car spare parts in the Kingdom"
     },
     "contact": {
-      "title": "معلومات التواصل",
-      "location": "الموقع:",
-      "locationValue": "المملكة العربية السعودية - جدة",
-      "mobile": "الجوال:",
-      "mobileValue": "054 377 7569",
-      "email": "الإيميل:",
-      "emailValue": "info@falfuture.com",
-      "website": "الموقع الإلكتروني:",
+      "title": "Contact Information",
+      "location": "Location:",
+      "locationValue": "Saudi Arabia - Jeddah",
+      "mobile": "Mobile:",
+      "mobileValue": "966543777569",
+      "email": "Email:",
+      "emailValue": "parts@falfuture.com",
+      "website": "Website:",
       "websiteValue": "www.falfuture.com"
     }
   },
   "mission": {
-    "title": "رؤيتنا ورسالتنا",
-    "subtitle": "نحو مستقبل أفضل في صناعة قطع غيار السيارات",
+    "title": "Our Vision & Mission",
+    "subtitle": "Towards a better future in the automotive spare parts industry",
     "vision": {
-      "title": "رؤيتنا",
-      "desc": "أن نكون الشركة السعودية الأولى في مجال توريد قطع الغيار من حيث الجودة والخدمة المميزة وأن نوسع حضورنا في السوق المحلي والخليجي."
+      "title": "Our Vision",
+      "desc": "To become the leading Saudi company in spare parts supply in terms of quality and exceptional service, while expanding our presence in the local and Gulf markets."
     },
     "mission": {
-      "title": "رسالتنا",
-      "desc": "تقديم أفضل حلول قطع الغيار التي تلبي احتياجات السوق بأعلى جودة وأفضل الأسعار مع الالتزام بالسرعة والموثوقية"
+      "title": "Our Mission",
+      "desc": "To provide the best spare parts solutions that meet market needs with the highest quality and most competitive prices, while maintaining speed and reliability."
     }
   },
   "services": {
-    "title": "خدماتنا",
-    "subtitle": "نقدم مجموعة شاملة من الخدمات المتخصصة",
+    "title": "Our Services",
+    "subtitle": "We provide a comprehensive range of specialized services",
     "genuine": {
-      "title": "قطع غيار أصلية ومعتمدة",
-      "desc": "توفير قطع غيار أصلية ومعتمدة لجميع أنواع السيارات"
+      "title": "Genuine and Certified Parts",
+      "desc": "Supplying genuine and certified spare parts for all types of vehicles"
     },
     "global": {
-      "title": "ماركات عالمية",
-      "desc": "توفير قطع غيار ماركات عالمية ومعتمدة لجميع انواع السيارات"
+      "title": "Global Brands",
+      "desc": "Providing spare parts for globally recognized brands for all vehicle types"
     },
     "pricing": {
-      "title": "تسعير فوري",
-      "desc": "خدمة التسعير الفورية بناءً على متطلبات العملاء"
+      "title": "Instant Pricing",
+      "desc": "Offering instant pricing based on customer requirements"
     },
     "delivery": {
-      "title": "توريد سريع",
-      "desc": "توريد القطع بأسرع وقت ممكن مع ضمان الجودة"
+      "title": "Fast Delivery",
+      "desc": "Delivering parts in the shortest possible time with guaranteed quality"
     },
     "support": {
-      "title": "دعم فني",
-      "desc": "دعم فني واستشارات متخصصة للعملاء لضمان اختيار القطعة المناسبة"
+      "title": "Technical Support",
+      "desc": "Providing professional technical support and specialized consultations"
     },
     "customer": {
-      "title": "خدمة العملاء",
-      "desc": "جميع موظفينا بخدمتكم"
+      "title": "Customer Service",
+      "desc": "All our employees are at your service"
     }
   },
   "categories": {
-    "title": "فئات المنتجات",
-    "subtitle": "نوفر جميع احتياجات السيارات من قطع الغيار",
-    "engine": "احتياجات المحرك",
-    "transmission": "احتياجات ناقل الحركة",
-    "suspension": "احتياجات التعليق والمساعدات",
-    "electrical": "المستلزمات الكهربائية"
+    "title": "Product Categories",
+    "subtitle": "We provide all automotive spare parts needs",
+    "engine": "Engine Needs",
+    "transmission": "Transmission Needs",
+    "suspension": "Suspension Requirements",
+    "electrical": "Electrical Supplies"
   },
   "brands": {
-    "title": "العلامات التجارية المدعومة",
-    "subtitle": "نتعامل مع أفضل العلامات التجارية العالمية",
+    "title": "Supported Brands",
+    "subtitle": "We work with the best global brands",
     "supportedBrands": [
       "GEELY",
       "CHANGAN",
@@ -101,19 +101,19 @@
     ]
   },
   "team": {
-    "title": "فريق العمل",
-    "subtitle": "يمتلك فريق شركة فال الغربية خبرة كبيرة في مجال قطع الغيار، حيث يعمل بخبرة تمتد لسنوات في التسعير والتوريد مع التزام كامل بخدمة العملاء وتلبية متطلباتهم بأعلى كفاءة.",
+    "title": "Our Team",
+    "subtitle": "Fal Al-Gharbia's team possesses extensive expertise in the spare parts sector, with many years of experience in pricing and supply. We are fully committed to customer service and meeting their requirements with the highest efficiency.",
     "service": {
-      "title": "جميع موظفينا بخدمتكم",
-      "desc": "نلتزم بتقديم أفضل خدمة للعملاء مع فريق متخصص ومدرب على أعلى مستوى"
+      "title": "All Our Employees Are at Your Service",
+      "desc": "We are committed to providing the best customer service with a specialized team trained to the highest level"
     }
   },
   "cta": {
-    "title": "هل أنت مستعد لتجربة فال الغربية؟",
-    "subtitle": "انضم إلى آلاف العملاء الراضين الذين يثقون بنا في احتياجاتهم من قطع غيار السيارات",
-    "contact": "اتصل بنا",
-    "learnMore": "تعرف على المزيد",
-    "contactInfo": "www.falfuture.com | info@falfuture.com",
-    "location": "054 377 7569 | جدة - المملكة العربية السعودية"
+    "title": "Ready to Experience Fal Al-Gharbia?",
+    "subtitle": "Join thousands of satisfied customers who trust us for their automotive spare parts needs",
+    "contact": "Contact Us",
+    "learnMore": "Learn More",
+    "contactInfo": "www.falfuture.com | parts@falfuture.com",
+    "location": "966543777569 | Jeddah - Saudi Arabia"
   }
 }

@@ -334,7 +334,7 @@ export default function CategoriesPage({
   );
 
   const handleGoBack = () => {
-    router.back();
+    router.push("/");
   };
 
   const handleCategoryClick = (categoryId: number) => {

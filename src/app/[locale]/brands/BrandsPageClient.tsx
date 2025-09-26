@@ -273,7 +273,7 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
   const pagination = brandsResponse?.data?.pagination;
 
   const handleGoBack = () => {
-    router.back();
+    router.push("/");
   };
 
   const handleViewBrand = (brandId: number) => {

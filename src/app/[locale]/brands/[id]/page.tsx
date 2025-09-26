@@ -237,7 +237,7 @@ export default function BrandPage() {
   }, [brandId, getProducts]);
 
   const handleGoBack = () => {
-    router.back();
+    router.push("/");
   };
 
   // Handle loading state
