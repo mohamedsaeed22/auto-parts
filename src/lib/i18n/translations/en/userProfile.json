@@ -74,6 +74,8 @@
     "copyCode": "Copy code",
     "selectLocation": "Select Location on Map",
     "locationHelp": "Pick your exact location; address fields will auto-fill.",
+    "locationRequired": "Location selection is required",
+    "locationRequiredHelp": "Please select your location on the map to continue",
     "viewFile": "View File"
   },
   "validation": {

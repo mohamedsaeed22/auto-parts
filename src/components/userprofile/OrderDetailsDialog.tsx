@@ -54,23 +54,20 @@ export default function OrderDetailsDialog({
   const orderDetails = orderDetailsResponse?.data?.order;
 
   const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat(isCurrentRTL ? "ar-SA" : "en-US", {
+    return new Intl.NumberFormat(  "en-US", {
       style: "currency",
       currency: currency || "USD",
     }).format(amount);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(
-      isCurrentRTL ? "ar-SA" : "en-US",
-      {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }
-    );
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   // Get status icon and color
@@ -258,7 +255,7 @@ export default function OrderDetailsDialog({
                   </span>
                   <span className="text-xl font-bold text-[#b3984a]">
                     {formatCurrency(
-                      orderDetails.pricing.grand_total,
+                      orderDetails.pricing.total,
                       orderDetails.pricing.currency
                     )}
                   </span>

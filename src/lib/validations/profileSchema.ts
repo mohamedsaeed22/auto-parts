@@ -81,9 +81,21 @@ export const profileUpdateSchema = z.object({
 
   tax_number: z.string().optional(),
 
-  latitude: z.string().optional(),
+  latitude: z
+    .string()
+    .min(1, "validation.location.required")
+    .refine((val) => {
+      const num = parseFloat(val);
+      return !isNaN(num) && num >= -90 && num <= 90;
+    }, "validation.location.latitudeInvalid"),
 
-  longitude: z.string().optional(),
+  longitude: z
+    .string()
+    .min(1, "validation.location.required")
+    .refine((val) => {
+      const num = parseFloat(val);
+      return !isNaN(num) && num >= -180 && num <= 180;
+    }, "validation.location.longitudeInvalid"),
 
   avatar: avatarSchema,
 });

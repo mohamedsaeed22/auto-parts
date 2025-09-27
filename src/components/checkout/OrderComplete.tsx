@@ -107,7 +107,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString(i18n.language === "ar" ? "ar-SA" : "en-US", {
+    return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",

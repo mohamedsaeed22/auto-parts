@@ -74,6 +74,8 @@
     "copyCode": "نسخ الرمز",
     "selectLocation": "اختر الموقع على الخريطة",
     "locationHelp": "اختر موقعك الدقيق؛ ستتم ملء حقول العنوان تلقائياً.",
+    "locationRequired": "اختيار الموقع مطلوب",
+    "locationRequiredHelp": "يرجى اختيار موقعك على الخريطة للمتابعة",
     "viewFile": "عرض الملف"
   },
   "validation": {

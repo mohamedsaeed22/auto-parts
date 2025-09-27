@@ -148,6 +148,30 @@ export default function ProfilePage() {
   const onSubmit = async (data: ProfileUpdateFormData) => {
     if (!profile) return;
 
+    // Check if location is required (no existing coordinates)
+    const hasExistingLocation =
+      profile.latitude &&
+      profile.longitude &&
+      profile.latitude !== "" &&
+      profile.longitude !== "";
+
+    // If no existing location, require new location selection
+    if (
+      !hasExistingLocation &&
+      (!data.latitude ||
+        !data.longitude ||
+        data.latitude === "" ||
+        data.longitude === "")
+    ) {
+      showError(
+        t(
+          "profile.locationRequired",
+          "Please select your location on the map to continue"
+        )
+      );
+      return;
+    }
+
     try {
       const updatePayload = {
         name: data.name || undefined,
@@ -205,10 +229,36 @@ export default function ProfilePage() {
       setIsEditing(false);
 
       showSuccess(t("profile.updateSuccess", "Profile updated successfully!"));
-    } catch {
-      showError(
-        t("profile.updateError", "Failed to update profile. Please try again.")
-      );
+    } catch (error: unknown) {
+      // Handle backend validation errors
+      const errorData = error as {
+        data?: {
+          errors?: Array<{ key: string; value: string[] }>;
+          message?: string;
+        };
+      };
+
+      if (errorData?.data?.errors && Array.isArray(errorData.data.errors)) {
+        // Show each validation error as a separate toast
+        errorData.data.errors.forEach((validationError) => {
+          if (validationError.value && Array.isArray(validationError.value)) {
+            validationError.value.forEach((message: string) => {
+              showError(message);
+            });
+          }
+        });
+      } else if (errorData?.data?.message) {
+        // Show general error message
+        showError(errorData.data.message);
+      } else {
+        // Fallback error message
+        showError(
+          t(
+            "profile.updateError",
+            "Failed to update profile. Please try again."
+          )
+        );
+      }
     }
   };
 
@@ -266,13 +316,36 @@ export default function ProfilePage() {
           "Language changed successfully!"
         )
       );
-    } catch {
-      showError(
-        t(
-          "settings.language.changeFailed",
-          "Failed to change language. Please try again."
-        )
-      );
+    } catch (error: unknown) {
+      // Handle backend validation errors
+      const errorData = error as {
+        data?: {
+          errors?: Array<{ key: string; value: string[] }>;
+          message?: string;
+        };
+      };
+
+      if (errorData?.data?.errors && Array.isArray(errorData.data.errors)) {
+        // Show each validation error as a separate toast
+        errorData.data.errors.forEach((validationError) => {
+          if (validationError.value && Array.isArray(validationError.value)) {
+            validationError.value.forEach((message: string) => {
+              showError(message);
+            });
+          }
+        });
+      } else if (errorData?.data?.message) {
+        // Show general error message
+        showError(errorData.data.message);
+      } else {
+        // Fallback error message
+        showError(
+          t(
+            "settings.language.changeFailed",
+            "Failed to change language. Please try again."
+          )
+        );
+      }
     }
   };
 
@@ -809,8 +882,52 @@ export default function ProfilePage() {
             <MapPin size={18} />
             <h3 className="font-medium">
               {t("profile.selectLocation", "Select Location on Map")}
+              <span className="text-red-500 ml-1">*</span>
             </h3>
           </div>
+
+          {/* Check if location is required */}
+          {(() => {
+            const hasExistingLocation =
+              profile?.latitude &&
+              profile?.longitude &&
+              profile.latitude !== "" &&
+              profile.longitude !== "";
+            const hasNewLocation =
+              watch("latitude") &&
+              watch("longitude") &&
+              watch("latitude") !== "" &&
+              watch("longitude") !== "";
+
+            return !hasExistingLocation && !hasNewLocation;
+          })() && (
+            <div className="mb-3 p-3 bg-amber-50 border border-amber-200 rounded-md">
+              <div
+                className={`flex items-center gap-2 text-amber-700 ${
+                  isRTL ? "flex-row" : ""
+                }`}
+              >
+                <MapPin size={16} />
+                <span className="text-sm font-medium">
+                  {t(
+                    "profile.locationRequired",
+                    "Location selection is required"
+                  )}
+                </span>
+              </div>
+              <p
+                className={`text-xs text-amber-600 mt-1 ${
+                  isRTL ? "text-right" : "text-left"
+                }`}
+              >
+                {t(
+                  "profile.locationRequiredHelp",
+                  "Please select your location on the map to continue"
+                )}
+              </p>
+            </div>
+          )}
+
           <LocationPicker
             onLocationSelect={handleLocationSelect}
             className="w-full h-96"

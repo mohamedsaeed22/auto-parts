@@ -168,7 +168,7 @@ export default function OrdersPage() {
 
   // Format date
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(isRTL ? "ar-SA" : "en-US", {
+    return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -177,7 +177,7 @@ export default function OrdersPage() {
 
   // Format currency
   const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat(isRTL ? "ar-SA" : "en-US", {
+    return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: currency || "USD",
     }).format(amount);
@@ -477,7 +477,7 @@ export default function OrdersPage() {
                         </div>
                         <div className="font-medium text-lg text-blue-600">
                           {formatCurrency(
-                            order.pricing.grand_total,
+                            order.pricing.total,
                             order.pricing.currency
                           )}
                         </div>
