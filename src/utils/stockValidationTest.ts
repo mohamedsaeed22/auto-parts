@@ -60,19 +60,8 @@ testScenarios.forEach((scenario) => {
   // Simulate the logic from canIncreaseQuantity
   const canIncrease = scenario.cartQuantity < testProduct.stock;
   const canAdd = scenario.cartQuantity < testProduct.stock;
-
-  console.log(`Scenario: ${scenario.name}`);
-  console.log(`  Cart Quantity: ${scenario.cartQuantity}`);
-  console.log(
-    `  Can Add More: ${canAdd} (Expected: ${scenario.expectedCanAdd}) ${
-      canAdd === scenario.expectedCanAdd ? "✅" : "❌"
-    }`
-  );
-  console.log(
-    `  Can Increase: ${canIncrease} (Expected: ${
-      scenario.expectedCanIncrease
-    }) ${canIncrease === scenario.expectedCanIncrease ? "✅" : "❌"}`
-  );
+ 
+ 
   console.log("");
 });
 

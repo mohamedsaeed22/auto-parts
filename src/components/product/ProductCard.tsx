@@ -569,7 +569,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                         onClick={handleIncreaseQuantity}
                         size="sm"
                         variant="ghost"
-                         className="h-8 w-8 p-0 hover:bg-green-50 text-green-600 hover:text-green-700 rounded-none border-l border-primary/10 transition-colors duration-200 disabled:text-gray-400 disabled:cursor-not-allowed"
+                        className="h-8 w-8 p-0 hover:bg-green-50 text-green-600 hover:text-green-700 rounded-none border-l border-primary/10 transition-colors duration-200 disabled:text-gray-400 disabled:cursor-not-allowed"
                         disabled={
                           isItemLoading(product.id) ||
                           !canIncreaseQuantity(product)
@@ -791,55 +791,23 @@ const ProductCard: React.FC<ProductCardProps> = ({
               </span>
             </h3>
 
-            {/* Stock Status */}
-            <div className="mb-2">
-              {(() => {
-                const stockStatus = getProductStockStatus(product);
-                const currentQuantity = cartItem?.quantity || 0;
-                const showDebugInfo = process.env.NODE_ENV === "development";
-
-                return (
-                  <div className="space-y-1">
-                    <span
-                      className={`text-xs font-medium ${
-                        stockStatus.type === "error"
-                          ? "text-red-600"
-                          : stockStatus.type === "warning"
-                          ? "text-orange-600"
-                          : "text-green-600"
-                      }`}
-                    >
-                      {stockStatus.message}
-                    </span>
-                    {showDebugInfo && currentQuantity > 0 && (
-                      <div className="text-xs text-gray-500">
-                        In cart: {currentQuantity} | Stock: {product.stock} |
-                        Can increase:{" "}
-                        {canIncreaseQuantity(product) ? "Yes" : "No"}
-                      </div>
-                    )}
-                  </div>
-                );
-              })()}
-            </div>
-
             {/* Price and Add to Cart Section */}
             <div className="mt-auto">
               <div className={`flex items-center justify-between flex-row`}>
                 {/* Price Section */}
-                <div className={`flex items-center gap-2 flex-row`}>
-                  {hasDiscount && (
-                    <span className="text-sm text-neutral-500 line-through">
-                      {isRTL
-                        ? `${productPrice} ${t("currency")} `
-                        : `${productPrice} ${t("currency")}`}
-                    </span>
-                  )}
+                <div className={`flex flex-col gap-1`}>
                   <span className="text-sm font-bold text-neutral-900">
                     {isRTL
                       ? `${productFinalPrice} ${t("currency")} `
                       : `${productFinalPrice} ${t("currency")}`}
                   </span>
+                  {hasDiscount && (
+                    <span className="text-xs text-neutral-500 line-through">
+                      {isRTL
+                        ? `${productPrice} ${t("currency")} `
+                        : `${productPrice} ${t("currency")}`}
+                    </span>
+                  )}
                 </div>
 
                 {!isInCart ? (

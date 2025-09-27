@@ -8,7 +8,7 @@ const WhatsAppButton = () => {
 
   const handleWhatsAppClick = () => {
     // You can customize the phone number and message
-    const phoneNumber = "1234567890"; // Replace with your actual WhatsApp number
+    const phoneNumber = "966543777569"; // Replace with your actual WhatsApp number
     const message = t("message");
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
       message
