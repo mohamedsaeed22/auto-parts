@@ -60,7 +60,7 @@ export const seoConfig = {
     },
     contact: {
       phone: "+966-XXX-XXXX",
-      email: "info@falparts.sa",
+      email: "parts@falfuture.com",
       address: {
         en: "Saudi Arabia",
         ar: "المملكة العربية السعودية",
@@ -304,7 +304,7 @@ export const seoConfig = {
       description: "Auto parts and automotive accessories supplier",
       url: process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa",
       telephone: "+966-XXX-XXXX",
-      email: "info@falparts.sa",
+      email: "parts@falfuture.com",
       address: {
         "@type": "PostalAddress",
         addressCountry: "SA",

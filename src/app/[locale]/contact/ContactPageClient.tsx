@@ -288,8 +288,7 @@ const ContactInfo = ({ t }: { t: (key: string) => string }) => (
               <h3 className="font-semibold text-gray-900 mb-1">
                 {t("contactInfo.email") || "Email"}
               </h3>
-              <p className="text-gray-600 mb-2">info@falparts.sa</p>
-              <p className="text-gray-600 mb-2">support@falparts.sa</p>
+              <p className="text-gray-600 mb-2">parts@falfuture.com</p>
               <p className="text-sm text-gray-500">
                 {t("contactInfo.emailResponse") ||
                   "We'll respond within 24 hours"}
@@ -313,7 +312,7 @@ const ContactInfo = ({ t }: { t: (key: string) => string }) => (
               <p className="text-gray-600 mb-2">+966 50 123 4567</p>
               <p className="text-gray-600 mb-2">+966 11 234 5678</p>
               <p className="text-sm text-gray-500">
-                {t("contactInfo.phoneHours") || "Mon-Fri 8AM-6PM"}
+                {t("contactInfo.phoneHours") || "Sun-Fri8:00 AM - 6:00 PM"}
               </p>
             </div>
           </div>
@@ -335,7 +334,8 @@ const ContactInfo = ({ t }: { t: (key: string) => string }) => (
                 {t("contactInfo.addressLine1") || "Fal Parts Building"}
               </p>
               <p className="text-gray-600 mb-2">
-                {t("contactInfo.addressLine2") || "King Fahd Road, Riyadh"}
+                {t("contactInfo.addressLine2") ||
+                  "Prince Mohammed Bin Abdulaziz St"}
               </p>
               <p className="text-gray-600 mb-2">
                 {t("contactInfo.addressLine3") || "Saudi Arabia"}
@@ -359,7 +359,7 @@ const ContactInfo = ({ t }: { t: (key: string) => string }) => (
               <div className="space-y-1 text-sm text-gray-600">
                 <p>
                   <span className="font-medium">
-                    {t("contactInfo.weekdays") || "Monday - Friday"}:
+                    {t("contactInfo.weekdays") || "Sun-Fri "}:
                   </span>{" "}
                   8:00 AM - 6:00 PM
                 </p>
