@@ -3,19 +3,19 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslation } from "react-i18next";
-import PdfDialog from "./PdfDialog";
+import ImageDialog from "./ImageDialog";
 
 const Footer = () => {
   const { t } = useTranslation("footer");
-  const [isCommercePdfOpen, setIsCommercePdfOpen] = useState(false);
-  const [isVatPdfOpen, setIsVatPdfOpen] = useState(false);
+  const [isCommerceImageOpen, setIsCommerceImageOpen] = useState(false);
+  const [isVatImageOpen, setIsVatImageOpen] = useState(false);
 
   const handleCommerceClick = () => {
-    setIsCommercePdfOpen(true);
+    setIsCommerceImageOpen(true);
   };
 
   const handleVatClick = () => {
-    setIsVatPdfOpen(true);
+    setIsVatImageOpen(true);
   };
 
   const handleValidateClick = () => {
@@ -335,19 +335,21 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* PDF Dialogs */}
-      <PdfDialog
-        isOpen={isCommercePdfOpen}
-        onClose={() => setIsCommercePdfOpen(false)}
-        pdfUrl="/commerce.pdf"
+      {/* Image Dialogs */}
+      <ImageDialog
+        isOpen={isCommerceImageOpen}
+        onClose={() => setIsCommerceImageOpen(false)}
+        imageUrl="/commerce-image.jpg"
         title="Commerce Certificate"
+        alt="Commerce Certificate"
       />
 
-      <PdfDialog
-        isOpen={isVatPdfOpen}
-        onClose={() => setIsVatPdfOpen(false)}
-        pdfUrl="/vat.pdf"
+      <ImageDialog
+        isOpen={isVatImageOpen}
+        onClose={() => setIsVatImageOpen(false)}
+        imageUrl="/vat-image.jpg"
         title="VAT Certificate"
+        alt="VAT Certificate"
       />
     </footer>
   );
