@@ -557,33 +557,7 @@ export function ContactPageClient({ locale }: { locale: string }) {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Breadcrumb */}
-        <nav
-          className={`flex items-center gap-2 text-sm text-gray-500 mb-8 ${
-            isRTL ? "flex-row" : ""
-          }`}
-        >
-          <button
-            onClick={handleGoBack}
-            className={`flex items-center gap-1 hover:text-gray-700 transition-colors ${
-              isRTL ? "flex-row" : ""
-            }`}
-          >
-            {isRTL ? (
-              <>
-                <span>{t("backButton") || "Back"}</span>
-                <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
-              </>
-            ) : (
-              <>
-                <ArrowLeft size={16} className={isRTL ? "rotate-180" : ""} />
-                <span>{t("backButton") || "Back"}</span>
-              </>
-            )}
-          </button>
-          <span>/</span>
-          <span className="text-gray-900">{t("contact") || "Contact"}</span>
-        </nav>
+       
 
         {/* Contact Form and Info Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
