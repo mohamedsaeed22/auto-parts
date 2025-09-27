@@ -1,10 +1,26 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useTranslation } from "react-i18next";
+import PdfDialog from "./PdfDialog";
 
 const Footer = () => {
   const { t } = useTranslation("footer");
+  const [isCommercePdfOpen, setIsCommercePdfOpen] = useState(false);
+  const [isVatPdfOpen, setIsVatPdfOpen] = useState(false);
+
+  const handleCommerceClick = () => {
+    setIsCommercePdfOpen(true);
+  };
+
+  const handleVatClick = () => {
+    setIsVatPdfOpen(true);
+  };
+
+  const handleValidateClick = () => {
+    window.open("https://business.sa/", "_blank");
+  };
 
   return (
     <footer className="bg-gray-900 text-white py-16">
@@ -15,7 +31,7 @@ const Footer = () => {
             <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
               {t("sections.mainNavigation.title")}
             </h3>
-            <ul className="space-y-3 list-disc list-inside">
+            <ul className="space-y-6 list-disc list-inside">
               <li>
                 <Link
                   href="/about"
@@ -64,7 +80,7 @@ const Footer = () => {
             <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
               {t("sections.shoppingServices.title")}
             </h3>
-            <ul className="space-y-3 list-disc list-inside">
+            <ul className="space-y-6 list-disc list-inside">
               <li>
                 <Link
                   href="/products"
@@ -113,7 +129,7 @@ const Footer = () => {
             <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
               {t("sections.autoPartsCategories.title")}
             </h3>
-            <ul className="space-y-3 list-disc list-inside">
+            <ul className="space-y-6 list-disc list-inside">
               <li>
                 <Link
                   href="/categories"
@@ -232,11 +248,85 @@ const Footer = () => {
                 </span>
               </div>
             </div>
+
+            {/* Business Certificates Section */}
+            <div className="mt-6 pt-6 border-t border-gray-700">
+              <div className="text-center">
+                <div className="flex justify-start items-center space-x-4 flex-wrap gap-2">
+                  {/* Commerce Certificate */}
+                  <div
+                    className="cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={handleCommerceClick}
+                    title={t("certificates.commerce.tooltip")}
+                  >
+                    <Image
+                      src="/commerce.png"
+                      alt={t("certificates.commerce.title")}
+                      width={40}
+                      height={40}
+                      className="rounded shadow-sm hover:shadow-md transition-shadow"
+                    />
+                  </div>
+
+                  {/* VAT Certificate */}
+                  <div className="flex items-center ms-5 space-x-3">
+                    <div
+                      className="cursor-pointer hover:opacity-80 transition-opacity"
+                      onClick={handleVatClick}
+                      title={t("certificates.vat.tooltip")}
+                    >
+                      <Image
+                        src="/vat.png"
+                        alt={t("certificates.vat.title")}
+                        width={40}
+                        height={40}
+                        className="rounded shadow-sm hover:shadow-md transition-shadow"
+                      />
+                    </div>
+
+                    {/* Tax Number Info */}
+                    <div className="text-right text-white">
+                      <div className="text-xs font-medium text-gray-300 mb-1">
+                        {t("certificates.taxNumber")}
+                      </div>
+                      <div className="text-sm font-bold text-[#b9974d]">
+                        7039446120
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Validate Certificate */}
+                  <div
+                    className="cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={handleValidateClick}
+                    title={t("certificates.validate.tooltip")}
+                  >
+                    <Image
+                      src="/validate.jpg"
+                      alt={t("certificates.validate.title")}
+                      width={70}
+                      height={60}
+                      className="rounded shadow-sm hover:shadow-md transition-shadow"
+                    />
+                  </div>
+
+                  {/* Bank IBAN Info */}
+                  <div className="text-right text-white">
+                    <div className="text-xs font-medium text-gray-300 mb-1">
+                      {t("certificates.bankAccount")}
+                    </div>
+                    <div className="text-sm font-bold text-[#b9974d]">
+                      SA2310000061700000871701
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Bottom border */}
-        <div className="border-t border-gray-700 mt-12 pt-8">
+        <div className="border-t border-gray-700 mt-8 pt-8">
           <div className="text-center text-gray-400">
             <p>
               &copy; 2025 {t("companyName")}. {t("copyright")}
@@ -244,6 +334,21 @@ const Footer = () => {
           </div>
         </div>
       </div>
+
+      {/* PDF Dialogs */}
+      <PdfDialog
+        isOpen={isCommercePdfOpen}
+        onClose={() => setIsCommercePdfOpen(false)}
+        pdfUrl="/commerce.pdf"
+        title="Commerce Certificate"
+      />
+
+      <PdfDialog
+        isOpen={isVatPdfOpen}
+        onClose={() => setIsVatPdfOpen(false)}
+        pdfUrl="/vat.pdf"
+        title="VAT Certificate"
+      />
     </footer>
   );
 };

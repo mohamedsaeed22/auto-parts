@@ -37,6 +37,22 @@
       "address": "Riyadh, Saudi Arabia"
     }
   },
+  "certificates": {
+    "commerce": {
+      "title": "Commerce Certificate",
+      "tooltip": "Commerce Certificate"
+    },
+    "vat": {
+      "title": "VAT Certificate",
+      "tooltip": "Value Added Tax Certificate"
+    },
+    "validate": {
+      "title": "Business Validation",
+      "tooltip": "Validate Business"
+    },
+    "taxNumber": "Tax Number",
+    "bankAccount": "Bank Account Number"
+  },
   "companyName": "Fal Future Auto Parts",
   "copyright": "All rights reserved"
 }
