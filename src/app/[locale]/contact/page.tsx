@@ -1,10 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { showSuccess, showError } from "@/lib/toast";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import {
   ArrowLeft,
   Mail as MailIcon,
@@ -13,8 +16,6 @@ import {
   Clock as ClockIcon,
   MessageSquare as MessageSquareIcon,
   Send as SendIcon,
-  CheckCircle as CheckCircleIcon,
-  AlertCircle as AlertCircleIcon,
   Users as UsersIcon,
   Truck as TruckIcon,
   Shield as ShieldIcon,
@@ -45,6 +46,46 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+// Define contact form schema with Zod
+const createContactSchema = (t: (key: string) => string, lang: string) =>
+  z.object({
+    name: z.string().min(1, lang === "ar" ? "الاسم مطلوب" : "Name is required"),
+    email: z
+      .string()
+      .min(1, lang === "ar" ? "البريد الإلكتروني مطلوب" : "Email is required")
+      .email(
+        lang === "ar" ? "البريد الإلكتروني غير صحيح" : "Invalid email address"
+      ),
+    phone: z
+      .string()
+      .min(1, lang === "ar" ? "رقم الهاتف مطلوب" : "Phone number is required")
+      .regex(
+        /^05\d{8}$/,
+        lang === "ar"
+          ? "رقم الهاتف يجب أن يبدأ بـ 05 ويتكون من 10 أرقام"
+          : "Phone number must start with 05 and have 10 digits"
+      ),
+    subject: z
+      .string()
+      .min(1, lang === "ar" ? "الموضوع مطلوب" : "Subject is required"),
+    message: z
+      .string()
+      .min(
+        10,
+        lang === "ar"
+          ? "الرسالة يجب أن تحتوي على 10 أحرف على الأقل"
+          : "Message must be at least 10 characters"
+      ),
+    inquiryType: z
+      .string()
+      .min(
+        1,
+        lang === "ar" ? "نوع الاستفسار مطلوب" : "Inquiry type is required"
+      ),
+  });
+
+type ContactFormData = z.infer<ReturnType<typeof createContactSchema>>;
+
 // Contact Form Component
 const ContactForm = ({
   t,
@@ -53,97 +94,79 @@ const ContactForm = ({
   t: (key: string) => string;
   i18n: { language: string };
 }) => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    subject: "",
-    message: "",
-    inquiryType: "",
+  const contactSchema = createContactSchema(t, i18n.language);
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ContactFormData>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      subject: "",
+      message: "",
+      inquiryType: "",
+    },
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<
-    "idle" | "success" | "error"
-  >("idle");
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSelectChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, inquiryType: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    setIsSubmitting(true);
-    setSubmitStatus("idle");
+  const onSubmit = async (data: ContactFormData) => {
+    console.log("🚀 === FORM SUBMIT STARTED ===");
+    console.log("📝 Form data:", data);
 
     try {
-      // Validate form data before sending
-      if (
-        !formData.name ||
-        !formData.email ||
-        !formData.subject ||
-        !formData.message
-      ) {
-        setSubmitStatus("error");
-        setIsSubmitting(false);
-        return;
-      }
+      console.log("📤 Sending POST request to /api/contact...");
 
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(data),
       });
 
-      const data = await response.json();
+      console.log("📥 Response status:", response.status);
+      console.log("📥 Response OK:", response.ok);
+
+      const result = await response.json();
+      console.log("📄 Response data:", result);
 
       if (!response.ok) {
-        const errorMessage = data.error || "Failed to send message";
+        const errorMessage = result.error || "Failed to send message";
+        console.error("❌ Server error:", errorMessage);
         throw new Error(errorMessage);
       }
 
-      setSubmitStatus("success");
+      console.log("✅ Email sent successfully!");
 
       // Show success toast
       showSuccess(
-        t("form.successMessage") ||
-          "تم إرسال الرسالة بنجاح! سنتواصل معك قريباً."
+        i18n.language === "ar"
+          ? "تم إرسال الرسالة بنجاح! سنتواصل معك قريباً."
+          : "Message sent successfully! We will contact you soon."
       );
 
-      // Clear form on success
-      setTimeout(() => {
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          subject: "",
-          message: "",
-          inquiryType: "",
-        });
-        setSubmitStatus("idle");
-      }, 100);
+      // Reset form after successful submission
+      console.log("🔄 Resetting form...");
+      reset();
     } catch (error) {
-      setSubmitStatus("error");
+      console.error("❌ Error submitting form:", error);
 
       // Show error toast
       const errorMessage =
         error instanceof Error ? error.message : "Failed to send message";
+
       showError(
-        t("form.errorMessage") ||
-          `عذراً، حدث خطأ أثناء إرسال رسالتك: ${errorMessage}. يرجى المحاولة مرة أخرى.`
+        i18n.language === "ar"
+          ? `عذراً، حدث خطأ أثناء إرسال رسالتك: ${errorMessage}. يرجى المحاولة مرة أخرى.`
+          : `Sorry, there was an error sending your message: ${errorMessage}. Please try again.`
       );
     } finally {
-      setIsSubmitting(false);
+      console.log("🏁 === FORM SUBMIT COMPLETED ===");
     }
   };
 
@@ -159,22 +182,24 @@ const ContactForm = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">{t("form.name") || "Full Name"} *</Label>
               <Input
                 id="name"
-                name="name"
                 type="text"
-                value={formData.name}
-                onChange={handleInputChange}
-                required
                 placeholder={
                   t("form.namePlaceholder") || "Enter your full name"
                 }
-                className="w-full"
+                className={`w-full ${errors.name ? "border-red-500" : ""}`}
+                {...register("name")}
               />
+              {errors.name && (
+                <p className="text-sm text-red-600 mt-1">
+                  {errors.name.message}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">
@@ -182,65 +207,93 @@ const ContactForm = ({
               </Label>
               <Input
                 id="email"
-                name="email"
                 type="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
                 placeholder={t("form.emailPlaceholder") || "Enter your email"}
-                className="w-full"
+                className={`w-full ${errors.email ? "border-red-500" : ""}`}
+                {...register("email")}
               />
+              {errors.email && (
+                <p className="text-sm text-red-600 mt-1">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="phone">{t("form.phone") || "Phone Number"}</Label>
+              <Label htmlFor="phone">
+                {t("form.phone") || "Phone Number"} *
+              </Label>
               <Input
                 id="phone"
-                name="phone"
                 type="tel"
-                value={formData.phone}
-                onChange={handleInputChange}
-                placeholder={t("form.phonePlaceholder") || "+966 50 123 4567"}
-                className="w-full"
+                placeholder={"0543777569"}
+                className={`w-full ${errors.phone ? "border-red-500" : ""}`}
+                {...register("phone")}
               />
+              {errors.phone && (
+                <p className="text-sm text-red-600 mt-1">
+                  {errors.phone.message}
+                </p>
+              )}
+              {/* <p className="text-xs text-gray-500 mt-1">
+                {i18n.language === "ar"
+                  ? "يجب أن يبدأ بـ 05 ويتكون من 10 أرقام"
+                  : "Must start with 05 and have 10 digits"}
+              </p> */}
             </div>
             <div className="space-y-2">
               <Label htmlFor="inquiryType">
-                {t("form.inquiryType") || "Inquiry Type"}
+                {t("form.inquiryType") || "Inquiry Type"} *
               </Label>
-              <Select
-                onValueChange={handleSelectChange}
-                value={formData.inquiryType}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue
-                    placeholder={
-                      t("form.selectInquiry") || "Select inquiry type"
-                    }
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="general">
-                    {i18n.language === "ar" ? "استفسار عام" : "General Inquiry"}
-                  </SelectItem>
-                  <SelectItem value="parts">
-                    {i18n.language === "ar"
-                      ? "استفسار قطع غيار"
-                      : "Parts Inquiry"}
-                  </SelectItem>
-                  <SelectItem value="support">
-                    {i18n.language === "ar" ? "دعم فني" : "Technical Support"}
-                  </SelectItem>
-                  <SelectItem value="partnership">
-                    {i18n.language === "ar" ? "شراكة" : "Partnership"}
-                  </SelectItem>
-                  <SelectItem value="complaint">
-                    {i18n.language === "ar" ? "شكوى" : "Complaint"}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+              <Controller
+                name="inquiryType"
+                control={control}
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger
+                      className={`w-full ${
+                        errors.inquiryType ? "border-red-500" : ""
+                      }`}
+                    >
+                      <SelectValue
+                        placeholder={
+                          t("form.selectInquiry") || "Select inquiry type"
+                        }
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="general">
+                        {i18n.language === "ar"
+                          ? "استفسار عام"
+                          : "General Inquiry"}
+                      </SelectItem>
+                      <SelectItem value="parts">
+                        {i18n.language === "ar"
+                          ? "استفسار قطع غيار"
+                          : "Parts Inquiry"}
+                      </SelectItem>
+                      <SelectItem value="support">
+                        {i18n.language === "ar"
+                          ? "دعم فني"
+                          : "Technical Support"}
+                      </SelectItem>
+                      <SelectItem value="partnership">
+                        {i18n.language === "ar" ? "شراكة" : "Partnership"}
+                      </SelectItem>
+                      <SelectItem value="complaint">
+                        {i18n.language === "ar" ? "شكوى" : "Complaint"}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.inquiryType && (
+                <p className="text-sm text-red-600 mt-1">
+                  {errors.inquiryType.message}
+                </p>
+              )}
             </div>
           </div>
 
@@ -248,35 +301,42 @@ const ContactForm = ({
             <Label htmlFor="subject">{t("form.subject") || "Subject"} *</Label>
             <Input
               id="subject"
-              name="subject"
               type="text"
-              value={formData.subject}
-              onChange={handleInputChange}
-              required
               placeholder={t("form.subjectPlaceholder") || "Brief subject line"}
-              className="w-full"
+              className={`w-full ${errors.subject ? "border-red-500" : ""}`}
+              {...register("subject")}
             />
+            {errors.subject && (
+              <p className="text-sm text-red-600 mt-1">
+                {errors.subject.message}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="message">{t("form.message") || "Message"} *</Label>
             <Textarea
               id="message"
-              name="message"
-              value={formData.message}
-              onChange={handleInputChange}
-              required
               placeholder={
                 t("form.messagePlaceholder") ||
                 "Please provide details about your inquiry..."
               }
-              className="w-full min-h-[120px] resize-none"
+              className={`w-full min-h-[120px] resize-none ${
+                errors.message ? "border-red-500" : ""
+              }`}
+              {...register("message")}
             />
+            {errors.message && (
+              <p className="text-sm text-red-600 mt-1">
+                {errors.message.message}
+              </p>
+            )}
           </div>
 
           <Button
             type="submit"
             disabled={isSubmitting}
+            onClick={() => console.log("🔘 Submit button clicked!")}
             className="w-full bg-logo-gold hover:bg-amber-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
           >
             {isSubmitting ? (
@@ -291,27 +351,6 @@ const ContactForm = ({
               </>
             )}
           </Button>
-
-          {/* Success/Error Messages */}
-          {submitStatus === "success" && (
-            <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
-              <CheckCircleIcon className="h-5 w-5 text-green-600" />
-              <span className="text-green-800 text-sm">
-                {t("form.successMessage") ||
-                  "تم إرسال الرسالة بنجاح! سنتواصل معك قريباً."}
-              </span>
-            </div>
-          )}
-
-          {submitStatus === "error" && (
-            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
-              <AlertCircleIcon className="h-5 w-5 text-red-600" />
-              <span className="text-red-800 text-sm">
-                {t("form.errorMessage") ||
-                  "عذراً، حدث خطأ أثناء إرسال رسالتك. يرجى المحاولة مرة أخرى."}
-              </span>
-            </div>
-          )}
         </form>
       </CardContent>
     </Card>
@@ -366,7 +405,7 @@ const ContactInfo = ({ t }: { t: (key: string) => string }) => (
               </h3>
               <p className="text-gray-600 mb-2">0543777569</p>
               <p className="text-sm text-gray-500">
-                {t("contactInfo.phoneHours") || "Sun-Fri8:00 AM - 6:00 PM"}
+                {t("contactInfo.phoneHours") || "Sat-Thu 9:00 AM - 9:00 PM"}
               </p>
             </div>
           </div>
@@ -406,10 +445,7 @@ const ContactInfo = ({ t }: { t: (key: string) => string }) => (
               </h3>
               <div className="space-y-1 text-sm text-gray-600">
                 <p>
-                  <span className="font-medium">
-                    {t("contactInfo.weekdays") || "Sun-Fri "}:
-                  </span>{" "}
-                  8:00 AM - 6:00 PM
+                  {t("contactInfo.phoneHours") || "Sat-Thu 9:00 AM - 9:00 PM"}
                 </p>
               </div>
             </div>
