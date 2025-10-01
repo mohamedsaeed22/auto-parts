@@ -182,26 +182,31 @@ const UserAgreementPage = () => {
                     defaultValue: null,
                   });
                   const contentKey = `${section.key}.content`;
-                  
+
                   // Don't render if content is null or equals the key itself (not translated)
-                  if (content === null || (typeof content === 'string' && content === contentKey)) {
+                  if (
+                    content === null ||
+                    (typeof content === "string" && content === contentKey)
+                  ) {
                     return null;
                   }
-                  
+
                   return (
                     <>
                       {Array.isArray(content) ? (
-                        (content as string[]).map((item: string, index: number) => (
-                          <div
-                            key={index}
-                            className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg"
-                          >
-                            <CheckCircle className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
-                            <p className="text-gray-700 leading-relaxed">
-                              {item}
-                            </p>
-                          </div>
-                        ))
+                        (content as string[]).map(
+                          (item: string, index: number) => (
+                            <div
+                              key={index}
+                              className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg"
+                            >
+                              <CheckCircle className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+                              <p className="text-gray-700 leading-relaxed">
+                                {item}
+                              </p>
+                            </div>
+                          )
+                        )
                       ) : (
                         <p className="text-gray-700 leading-relaxed">
                           {String(content)}
