@@ -20,6 +20,13 @@
         "wishlist": "Wishlist"
       }
     },
+    "policies": {
+      "title": "Policies & Terms",
+      "links": {
+        "returnExchange": "Return & Exchange Policy",
+        "userAgreement": "User Agreement"
+      }
+    },
     "autoPartsCategories": {
       "title": "Auto Parts Categories",
       "links": {
@@ -38,6 +45,7 @@
     }
   },
   "certificates": {
+    "title": "Business Certificates",
     "commerce": {
       "title": "Commerce Certificate",
       "tooltip": "Commerce Certificate"

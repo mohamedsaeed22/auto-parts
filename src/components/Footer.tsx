@@ -76,7 +76,32 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Column 3 - Contact & Support */}
+          {/* Column 3 - Policies & Terms */}
+          <div>
+            <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
+              {t("sections.policies.title")}
+            </h3>
+            <ul className="space-y-6 list-disc list-inside">
+              <li>
+                <Link
+                  href="/return-exchange-policy"
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
+                  {t("sections.policies.links.returnExchange")}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/user-agreement"
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
+                  {t("sections.policies.links.userAgreement")}
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4 - Contact & Support */}
           <div>
             <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
               {t("sections.contactSupport.title")}
@@ -151,78 +176,77 @@ const Footer = () => {
                 </span>
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Business Certificates Section */}
-            <div className="mt-6 pt-6 border-t border-gray-700">
-              <div className="text-center">
-                <div className="flex justify-start items-center space-x-4 flex-wrap gap-2">
-                  {/* Commerce Certificate */}
-                  <div
-                    className="cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={handleCommerceClick}
-                    title={t("certificates.commerce.tooltip")}
-                  >
-                    <Image
-                      src="/commerce.png"
-                      alt={t("certificates.commerce.title")}
-                      width={40}
-                      height={40}
-                      className="rounded shadow-sm hover:shadow-md transition-shadow"
-                    />
-                  </div>
+        {/* Business Certificates Section - Full Width Row */}
+        <div className="mt-12 pt-8 border-t border-gray-700">
+          <h3 className="font-bold text-lg mb-6 text-[#b9974d] text-center">
+            {t("certificates.title")}
+          </h3>
+          <div className="flex flex-wrap justify-center items-center gap-6 md:gap-8">
+            {/* Commerce Certificate */}
+            <div
+              className="cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={handleCommerceClick}
+              title={t("certificates.commerce.tooltip")}
+            >
+              <Image
+                src="/commerce.png"
+                alt={t("certificates.commerce.title")}
+                width={50}
+                height={50}
+                className="rounded shadow-sm hover:shadow-md transition-shadow"
+              />
+            </div>
 
-                  {/* VAT Certificate */}
-                  <div className="flex items-center ms-5 space-x-3">
-                    <div
-                      className="cursor-pointer hover:opacity-80 transition-opacity"
-                      onClick={handleVatClick}
-                      title={t("certificates.vat.tooltip")}
-                    >
-                      <Image
-                        src="/vat.png"
-                        alt={t("certificates.vat.title")}
-                        width={40}
-                        height={40}
-                        className="rounded shadow-sm hover:shadow-md transition-shadow"
-                      />
-                    </div>
-
-                    {/* Tax Number Info */}
-                    <div className="text-right text-white">
-                      <div className="text-xs font-medium text-gray-300 mb-1">
-                        {t("certificates.taxNumber")}
-                      </div>
-                      <div className="text-sm font-bold text-[#b9974d]">
-                        7039446120
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Validate Certificate */}
-                  <div
-                    className="cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={handleValidateClick}
-                    title={t("certificates.validate.tooltip")}
-                  >
-                    <Image
-                      src="/validate.jpg"
-                      alt={t("certificates.validate.title")}
-                      width={70}
-                      height={60}
-                      className="rounded shadow-sm hover:shadow-md transition-shadow"
-                    />
-                  </div>
-
-                  {/* Bank IBAN Info */}
-                  <div className="text-right text-white">
-                    <div className="text-xs font-medium text-gray-300 mb-1">
-                      {t("certificates.bankAccount")}
-                    </div>
-                    <div className="text-sm font-bold text-[#b9974d]">
-                      SA2310000061700000871701
-                    </div>
-                  </div>
+            {/* VAT Certificate with Tax Number */}
+            <div className="flex items-center gap-3">
+              <div
+                className="cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={handleVatClick}
+                title={t("certificates.vat.tooltip")}
+              >
+                <Image
+                  src="/vat.png"
+                  alt={t("certificates.vat.title")}
+                  width={50}
+                  height={50}
+                  className="rounded shadow-sm hover:shadow-md transition-shadow"
+                />
+              </div>
+              <div className="text-white">
+                <div className="text-xs font-medium text-gray-300">
+                  {t("certificates.taxNumber")}
                 </div>
+                <div className="text-sm font-bold text-[#b9974d]">
+                  7039446120
+                </div>
+              </div>
+            </div>
+
+            {/* Validate Certificate */}
+            <div
+              className="cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={handleValidateClick}
+              title={t("certificates.validate.tooltip")}
+            >
+              <Image
+                src="/validate.jpg"
+                alt={t("certificates.validate.title")}
+                width={70}
+                height={60}
+                className="rounded shadow-sm hover:shadow-md transition-shadow"
+              />
+            </div>
+
+            {/* Bank IBAN Info */}
+            <div className="text-white">
+              <div className="text-xs font-medium text-gray-300">
+                {t("certificates.bankAccount")}
+              </div>
+              <div className="text-sm font-bold text-[#b9974d]">
+                SA2310000061700000871701
               </div>
             </div>
           </div>

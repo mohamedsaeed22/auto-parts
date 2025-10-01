@@ -20,6 +20,13 @@
         "wishlist": "قائمة الرغبات"
       }
     },
+    "policies": {
+      "title": "السياسات والشروط",
+      "links": {
+        "returnExchange": "سياسة الاستبدال والاسترجاع",
+        "userAgreement": "اتفاقية المستخدم"
+      }
+    },
     "autoPartsCategories": {
       "title": "فئات قطع السيارات",
       "links": {
@@ -38,6 +45,7 @@
     }
   },
   "certificates": {
+    "title": "الشهادات التجارية",
     "commerce": {
       "title": "شهادة السجل التجاري",
       "tooltip": "شهادة السجل التجاري"
