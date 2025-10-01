@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import { useCreateOrderMutation } from "@/services/api/ordersApi";
 import { Address } from "@/services/api/types";
 import { showSuccess, showError } from "@/lib/toast";
+import OrderPdfViewer from "@/components/orders/OrderPdfViewer";
 
 interface OrderReviewStepProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -43,6 +44,7 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
   const { t, i18n } = useTranslation("checkout");
   const isRTL = i18n.language === "ar";
   const [notes, setNotes] = useState("");
+  const [isPdfViewerOpen, setIsPdfViewerOpen] = useState(false);
   const [createOrder, { isLoading: isCreatingOrder }] =
     useCreateOrderMutation();
 
@@ -87,7 +89,9 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
         // Clear coupon from localStorage on successful order
         try {
           localStorage.removeItem("auto_parts_coupon_code");
-        } catch (error) {}
+        } catch {
+          // Ignore localStorage errors
+        }
 
         onPlaceOrder(result.data.order);
       } else {
@@ -98,7 +102,7 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
         );
         return;
       }
-    } catch (error) {
+    } catch {
       showError(
         t("orderReview.orderError", {
           defaultValue: "Failed to create order. Please try again.",
@@ -304,6 +308,35 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
           </div>
         )}
 
+        {/* Preview Order PDF Button */}
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl p-4 border border-blue-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-500/20 rounded-lg">
+                <FileText className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-logo-black">
+                  {isRTL ? "معاينة الفاتورة" : "Preview Invoice"}
+                </h4>
+                <p className="text-sm text-gray-600">
+                  {isRTL
+                    ? "اضغط لمعاينة وتحميل الفاتورة بصيغة PDF"
+                    : "Click to preview and download your invoice as PDF"}
+                </p>
+              </div>
+            </div>
+            <Button
+              onClick={() => setIsPdfViewerOpen(true)}
+              variant="outline"
+              className="border-blue-500 text-blue-600 hover:bg-blue-50 hover:text-blue-700 transition-all duration-200 font-medium"
+            >
+              <FileText className="w-4 h-4 mx-2" />
+              {isRTL ? "عرض الفاتورة" : "View Invoice"}
+            </Button>
+          </div>
+        </div>
+
         <div className="flex gap-3 pt-4">
           <Button
             variant="outline"
@@ -346,6 +379,12 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
           </Button>
         </div>
       </div>
+
+      {/* PDF Viewer Dialog */}
+      <OrderPdfViewer
+        isOpen={isPdfViewerOpen}
+        onClose={() => setIsPdfViewerOpen(false)}
+      />
     </div>
   );
 };
