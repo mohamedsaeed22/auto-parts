@@ -267,6 +267,7 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
     refetch,
   } = useGetBrandsQuery({
     page: currentPage,
+    per_page: 12,
   });
 
   const brands = brandsResponse?.data?.items || [];
