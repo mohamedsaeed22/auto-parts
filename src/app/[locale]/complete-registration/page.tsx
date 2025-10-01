@@ -481,7 +481,7 @@ export default function CompleteRegistrationPage() {
                           lng: parseFloat(watch("longitude")),
                         }
                       : {
-                          lat: 24.7136, // Default to Riyadh, Saudi Arabia
+                          lat: 24.7136, // Default to Prince Mohammed Bin Abdulaziz St
                           lng: 46.6753,
                         }
                   }

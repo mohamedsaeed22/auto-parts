@@ -34,7 +34,7 @@ declare global {
 }
 
 // Default location (Cairo, Egypt)
-const DEFAULT_LOCATION = { lat: 24.7136, lng: 46.6753 }; // Riyadh, Saudi Arabia
+const DEFAULT_LOCATION = { lat: 24.7136, lng: 46.6753 }; // Prince Mohammed Bin Abdulaziz St
 
 export default function LocationPicker({
   onLocationSelect,
@@ -234,13 +234,10 @@ export default function LocationPicker({
             if (status === "OK" && results?.[0]) {
               resolve(results[0]);
             } else if (status === "REQUEST_DENIED") {
-             
               resolve(null);
             } else if (status === "OVER_QUERY_LIMIT") {
-             
               resolve(null);
             } else {
-            
               resolve(null);
             }
           }
