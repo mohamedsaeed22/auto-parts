@@ -81,7 +81,7 @@
     "confirmOrder": "تأكيد الطلب",
     "processing": "جاري معالجة الطلب...",
     "securePayment": "دفع آمن ومشفر 256-bit SSL",
-    "returnPolicy": "إمكانية الإرجاع خلال 30 يوماً",
+    "returnPolicy": "إمكانية الإرجاع خلال 14 يوماً",
     "customerSupport": "دعم عملاء على مدار الساعة"
   },
   "orderReview": {

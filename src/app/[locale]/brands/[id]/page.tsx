@@ -179,7 +179,7 @@ const BrandFeatures = ({
           {t("easyReturns") || "Easy Returns"}
         </p>
         <p className="text-sm text-gray-500">
-          {t("easyReturnsDesc") || "30 day return policy"}
+          {t("easyReturnsDesc") || "14 day return policy"}
         </p>
       </div>
     </div>

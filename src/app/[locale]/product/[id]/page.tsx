@@ -179,11 +179,12 @@ const ProductActions = ({
     </Button>
   </div>
 );
-
 const ProductFeatures = ({ isRTL, t }: { isRTL: boolean; t: TranslateFn }) => (
-  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 bg-gray-50 rounded-lg">
+  <div className="flex flex-wrap p-6 bg-gray-50 rounded-lg">
     <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row" : "flex-row"}`}
+      className={`w-1/2 flex items-center gap-3 ${
+        isRTL ? "flex-row" : "flex-row"
+      }`}
     >
       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
         <Truck size={20} className="text-blue-600" />
@@ -193,19 +194,11 @@ const ProductFeatures = ({ isRTL, t }: { isRTL: boolean; t: TranslateFn }) => (
         <p className="text-sm text-gray-500">{t("freeShippingDesc")}</p>
       </div>
     </div>
+
     <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row" : "flex-row"}`}
-    >
-      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-        <Shield size={20} className="text-green-600" />
-      </div>
-      <div className={isRTL ? "text-right" : "text-left"}>
-        <p className="font-medium text-gray-900">{t("warranty")}</p>
-        <p className="text-sm text-gray-500">{t("warrantyDesc")}</p>
-      </div>
-    </div>
-    <div
-      className={`flex items-center gap-3 ${isRTL ? "flex-row" : "flex-row"}`}
+      className={`w-1/2 flex items-center gap-3 ${
+        isRTL ? "flex-row" : "flex-row"
+      }`}
     >
       <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
         <RotateCcw size={20} className="text-purple-600" />

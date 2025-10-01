@@ -54,7 +54,7 @@ export default function OrderDetailsDialog({
   const orderDetails = orderDetailsResponse?.data?.order;
 
   const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat(  "en-US", {
+    return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: currency || "USD",
     }).format(amount);

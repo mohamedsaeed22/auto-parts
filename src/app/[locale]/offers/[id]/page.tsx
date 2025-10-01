@@ -193,7 +193,7 @@ const ProductFeatures = ({
           {t("returns") || "Easy Returns"}
         </p>
         <p className="text-sm text-gray-500">
-          {t("returnsDesc") || "30 day policy"}
+          {t("returnsDesc") || "14 day policy"}
         </p>
       </div>
     </div>
