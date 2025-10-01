@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import { showSuccess, showError } from "@/lib/toast";
 import {
   ArrowLeft,
   Mail as MailIcon,
@@ -45,46 +46,105 @@ import {
 } from "@/components/ui/card";
 
 // Contact Form Component
-const ContactForm = ({ t }: { t: (key: string) => string }) => {
+const ContactForm = ({
+  t,
+  i18n,
+}: {
+  t: (key: string) => string;
+  i18n: { language: string };
+}) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     subject: "",
     message: "",
-    department: "",
+    inquiryType: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSelectChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, inquiryType: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    e.stopPropagation();
+
     setIsSubmitting(true);
+    setSubmitStatus("idle");
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      // Validate form data before sending
+      if (
+        !formData.name ||
+        !formData.email ||
+        !formData.subject ||
+        !formData.message
+      ) {
+        setSubmitStatus("error");
+        setIsSubmitting(false);
+        return;
+      }
 
-    setSubmitStatus("success");
-    setIsSubmitting(false);
-
-    // Reset form after success
-    setTimeout(() => {
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        subject: "",
-        message: "",
-        department: "",
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
       });
-      setSubmitStatus("idle");
-    }, 3000);
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        const errorMessage = data.error || "Failed to send message";
+        throw new Error(errorMessage);
+      }
+
+      setSubmitStatus("success");
+
+      // Show success toast
+      showSuccess(
+        t("form.successMessage") ||
+          "تم إرسال الرسالة بنجاح! سنتواصل معك قريباً."
+      );
+
+      // Clear form on success
+      setTimeout(() => {
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          subject: "",
+          message: "",
+          inquiryType: "",
+        });
+        setSubmitStatus("idle");
+      }, 100);
+    } catch (error) {
+      setSubmitStatus("error");
+
+      // Show error toast
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to send message";
+      showError(
+        t("form.errorMessage") ||
+          `عذراً، حدث خطأ أثناء إرسال رسالتك: ${errorMessage}. يرجى المحاولة مرة أخرى.`
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -100,21 +160,16 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Name and Email Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label
-                htmlFor="name"
-                className="text-sm font-medium text-gray-700"
-              >
-                {t("form.name") || "Full Name"} *
-              </Label>
+              <Label htmlFor="name">{t("form.name") || "Full Name"} *</Label>
               <Input
                 id="name"
+                name="name"
                 type="text"
-                required
                 value={formData.name}
-                onChange={(e) => handleInputChange("name", e.target.value)}
+                onChange={handleInputChange}
+                required
                 placeholder={
                   t("form.namePlaceholder") || "Enter your full name"
                 }
@@ -122,58 +177,44 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
               />
             </div>
             <div className="space-y-2">
-              <Label
-                htmlFor="email"
-                className="text-sm font-medium text-gray-700"
-              >
+              <Label htmlFor="email">
                 {t("form.email") || "Email Address"} *
               </Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
-                required
                 value={formData.email}
-                onChange={(e) => handleInputChange("email", e.target.value)}
+                onChange={handleInputChange}
+                required
                 placeholder={t("form.emailPlaceholder") || "Enter your email"}
                 className="w-full"
               />
             </div>
           </div>
 
-          {/* Phone and Department Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label
-                htmlFor="phone"
-                className="text-sm font-medium text-gray-700"
-              >
-                {t("form.phone") || "Phone Number"}
-              </Label>
+              <Label htmlFor="phone">{t("form.phone") || "Phone Number"}</Label>
               <Input
                 id="phone"
+                name="phone"
                 type="tel"
                 value={formData.phone}
-                onChange={(e) => handleInputChange("phone", e.target.value)}
-                placeholder={
-                  t("form.phonePlaceholder") || "Enter your phone number"
-                }
+                onChange={handleInputChange}
+                placeholder={t("form.phonePlaceholder") || "+966 50 123 4567"}
                 className="w-full"
               />
             </div>
             <div className="space-y-2">
-              <Label
-                htmlFor="department"
-                className="text-sm font-medium text-gray-700"
-              >
+              <Label htmlFor="inquiryType">
                 {t("form.inquiryType") || "Inquiry Type"}
               </Label>
               <Select
-                value={formData.department}
-                onValueChange={(value) =>
-                  handleInputChange("department", value)
-                }
+                onValueChange={handleSelectChange}
+                value={formData.inquiryType}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue
                     placeholder={
                       t("form.selectInquiry") || "Select inquiry type"
@@ -181,69 +222,73 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
                   />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="sales">Sales</SelectItem>
-                  <SelectItem value="support">Customer Support</SelectItem>
-                  <SelectItem value="technical">Technical Support</SelectItem>
-                  <SelectItem value="billing">Billing</SelectItem>
-                  <SelectItem value="general">General Inquiry</SelectItem>
+                  <SelectItem value="general">
+                    {i18n.language === "ar" ? "استفسار عام" : "General Inquiry"}
+                  </SelectItem>
+                  <SelectItem value="parts">
+                    {i18n.language === "ar"
+                      ? "استفسار قطع غيار"
+                      : "Parts Inquiry"}
+                  </SelectItem>
+                  <SelectItem value="support">
+                    {i18n.language === "ar" ? "دعم فني" : "Technical Support"}
+                  </SelectItem>
+                  <SelectItem value="partnership">
+                    {i18n.language === "ar" ? "شراكة" : "Partnership"}
+                  </SelectItem>
+                  <SelectItem value="complaint">
+                    {i18n.language === "ar" ? "شكوى" : "Complaint"}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
-          {/* Subject */}
           <div className="space-y-2">
-            <Label
-              htmlFor="subject"
-              className="text-sm font-medium text-gray-700"
-            >
-              {t("form.subject") || "Subject"} *
-            </Label>
+            <Label htmlFor="subject">{t("form.subject") || "Subject"} *</Label>
             <Input
               id="subject"
+              name="subject"
               type="text"
-              required
               value={formData.subject}
-              onChange={(e) => handleInputChange("subject", e.target.value)}
-              placeholder={t("form.subjectPlaceholder") || "Enter subject"}
+              onChange={handleInputChange}
+              required
+              placeholder={t("form.subjectPlaceholder") || "Brief subject line"}
               className="w-full"
             />
           </div>
 
-          {/* Message */}
           <div className="space-y-2">
-            <Label
-              htmlFor="message"
-              className="text-sm font-medium text-gray-700"
-            >
-              {t("form.message") || "Message"} *
-            </Label>
+            <Label htmlFor="message">{t("form.message") || "Message"} *</Label>
             <Textarea
               id="message"
-              required
+              name="message"
               value={formData.message}
-              onChange={(e) => handleInputChange("message", e.target.value)}
-              placeholder={t("form.messagePlaceholder") || "Enter your message"}
+              onChange={handleInputChange}
+              required
+              placeholder={
+                t("form.messagePlaceholder") ||
+                "Please provide details about your inquiry..."
+              }
               className="w-full min-h-[120px] resize-none"
             />
           </div>
 
-          {/* Submit Button */}
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-logo-gold hover:bg-amber-600 text-black py-3"
+            className="w-full bg-logo-gold hover:bg-amber-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
           >
             {isSubmitting ? (
-              <div className="flex items-center gap-2 text-white">
-                <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                {t("form.sending") || "Sending..."}
-              </div>
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>{t("form.sending") || "Sending..."}</span>
+              </>
             ) : (
-              <div className="flex items-center gap-2 text-white">
-                <SendIcon className="h-4 w-4 " />
-                {t("form.sendMessage") || "Send Message"}
-              </div>
+              <>
+                <SendIcon className="h-4 w-4" />
+                <span>{t("form.sendMessage") || "Send Message"}</span>
+              </>
             )}
           </Button>
 
@@ -253,7 +298,7 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
               <CheckCircleIcon className="h-5 w-5 text-green-600" />
               <span className="text-green-800 text-sm">
                 {t("form.successMessage") ||
-                  "Message sent successfully! We'll get back to you soon."}
+                  "تم إرسال الرسالة بنجاح! سنتواصل معك قريباً."}
               </span>
             </div>
           )}
@@ -263,7 +308,7 @@ const ContactForm = ({ t }: { t: (key: string) => string }) => {
               <AlertCircleIcon className="h-5 w-5 text-red-600" />
               <span className="text-red-800 text-sm">
                 {t("form.errorMessage") ||
-                  "Something went wrong. Please try again."}
+                  "عذراً، حدث خطأ أثناء إرسال رسالتك. يرجى المحاولة مرة أخرى."}
               </span>
             </div>
           )}
@@ -319,7 +364,7 @@ const ContactInfo = ({ t }: { t: (key: string) => string }) => (
               <h3 className="font-semibold text-gray-900 mb-1">
                 {t("contactInfo.phone") || "Phone"}
               </h3>
-              <p className="text-gray-600 mb-2">966543777569</p>
+              <p className="text-gray-600 mb-2">0543777569</p>
               <p className="text-sm text-gray-500">
                 {t("contactInfo.phoneHours") || "Sun-Fri8:00 AM - 6:00 PM"}
               </p>
@@ -573,7 +618,7 @@ export default function ContactPage() {
 
         {/* Contact Form and Info Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-          <ContactForm t={t} />
+          <ContactForm t={t} i18n={i18n} />
           <ContactInfo t={t} />
         </div>
 
