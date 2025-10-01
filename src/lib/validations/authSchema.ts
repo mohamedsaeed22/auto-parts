@@ -36,7 +36,7 @@ const locationSchema = z.object({
   formattedAddress: z.string().min(1, "validation.location.formattedAddress"),
 });
 
-// Login schema (phone number: Saudi format - 00966501234568, 966501234568, or 0501234568)
+// Login schema (phone number: Saudi format - 0550123456, 966501234568, or 0501234568)
 export const loginSchema = z.object({
   phoneNumber: z
     .string({ message: "validation.phone.required" })

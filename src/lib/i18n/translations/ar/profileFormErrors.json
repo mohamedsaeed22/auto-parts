@@ -7,7 +7,7 @@
   "validation.managerName.maxLength": "اسم المدير يجب ألا يتجاوز 100 حرف",
   "validation.phone.required": "رقم الهاتف مطلوب",
   "validation.phone.length": "رقم الهاتف يجب أن يكون 10-14 رقمًا",
-  "validation.phone.invalid": "أدخل رقم هاتف سعودي صحيح يبدأ بـ 05 (مثال: 00966501234568)",
+  "validation.phone.invalid": "أدخل رقم هاتف سعودي صحيح يبدأ بـ 05 (مثال: 0550123456)",
   "validation.email.invalid": "يرجى إدخال بريد إلكتروني صحيح",
   "validation.address.required": "العنوان مطلوب",
   "validation.address.minLength": "العنوان يجب أن يكون 5 أحرف على الأقل",

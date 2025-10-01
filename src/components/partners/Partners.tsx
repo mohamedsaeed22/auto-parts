@@ -19,6 +19,16 @@ const Partners = () => {
   // Extract partners from response
   const partners = partnersResponse?.data?.partners || [];
 
+  // Create enough duplicates for seamless scrolling
+  const getRepeatedPartners = () => {
+    if (partners.length === 0) return [];
+    // Repeat partners at least 6 times to ensure smooth infinite scroll
+    const repeats = Math.max(6, Math.ceil(20 / partners.length));
+    return Array(repeats).fill(partners).flat();
+  };
+
+  const repeatedPartners = getRepeatedPartners();
+
   // Auto-scroll effect
   useEffect(() => {
     if (!containerRef.current || isHovered || partners.length === 0) return;
@@ -28,11 +38,11 @@ const Partners = () => {
     let animationId: number;
 
     const scroll = () => {
-      if (
-        container.scrollLeft >=
-        container.scrollWidth - container.clientWidth
-      ) {
-        // Reset to beginning when reaching the end
+      // Calculate the width of one set of partners
+      const singleSetWidth = (container.scrollWidth / repeatedPartners.length) * partners.length;
+      
+      if (container.scrollLeft >= singleSetWidth) {
+        // Reset to beginning for seamless loop
         container.scrollLeft = 0;
       } else {
         container.scrollLeft += scrollSpeed;
@@ -47,7 +57,7 @@ const Partners = () => {
         cancelAnimationFrame(animationId);
       }
     };
-  }, [isHovered, partners.length]);
+  }, [isHovered, partners.length, repeatedPartners.length]);
 
   // Loading component
   if (isLoading) {
@@ -166,13 +176,13 @@ const Partners = () => {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          {/* Duplicate partners for seamless loop */}
-          {[...partners, ...partners].map((partner, index) => (
-            <div key={`${partner}-${index}`} className="flex-shrink-0 group">
+          {/* Repeated partners for seamless infinite loop */}
+          {repeatedPartners.map((partner, index) => (
+            <div key={`partner-${index}`} className="flex-shrink-0 group">
               <div className="relative w-32 h-16 md:w-40 md:h-20 lg:w-48 lg:h-24 bg-white rounded-lg shadow-sm border border-neutral-200 flex items-center justify-center p-4 transition-all duration-300 hover:shadow-md hover:scale-105 hover:border-primary-200">
                 <Image
                   src={partner}
-                  alt={`Partner ${index + 1}`}
+                  alt={`Partner ${(index % partners.length) + 1}`}
                   width={120}
                   height={60}
                   className="max-w-full max-h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"

@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -9,11 +8,9 @@ import {
 } from "@/components/ui/tooltip";
 import { useTranslation } from "react-i18next";
 import { useDirection } from "@/hooks/use-direction";
-
 const WhatsAppButton = () => {
   const { t } = useTranslation("whatsapp");
   const { isRTL } = useDirection();
-
   const handleWhatsAppClick = () => {
     // You can customize the phone number and message
     const phoneNumber = "0543777569"; // Replace with your actual WhatsApp number
@@ -23,7 +20,6 @@ const WhatsAppButton = () => {
     )}`;
     window.open(whatsappUrl, "_blank");
   };
-
   return (
     <TooltipProvider>
       <Tooltip open={true} delayDuration={0}>
@@ -49,7 +45,7 @@ const WhatsAppButton = () => {
         </TooltipTrigger>
         <TooltipContent
           side={isRTL ? "left" : "right"}
-          className={`font-medium bg-primary text-primary-foreground border-primary shadow-lg ${
+          className={`hidden md:block font-medium bg-primary text-primary-foreground border-primary shadow-lg ${
             isRTL ? "animate-slide-left" : "animate-slide-right"
           }`}
         >
@@ -59,5 +55,4 @@ const WhatsAppButton = () => {
     </TooltipProvider>
   );
 };
-
 export default WhatsAppButton;
