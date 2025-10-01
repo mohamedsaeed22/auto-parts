@@ -339,3 +339,33 @@ body {
 .leaflet-control-zoom {
   display: none !important;
 }
+
+/* ============= WhatsApp Tooltip Animations ============= */
+
+@keyframes slide-right {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes slide-left {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-5px);
+  }
+}
+
+.animate-slide-right {
+  animation: slide-right 2s ease-in-out infinite;
+}
+
+.animate-slide-left {
+  animation: slide-left 2s ease-in-out infinite;
+}

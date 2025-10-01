@@ -26,11 +26,11 @@ const WhatsAppButton = () => {
 
   return (
     <TooltipProvider>
-      <Tooltip>
+      <Tooltip open={true} delayDuration={0}>
         <TooltipTrigger asChild>
           <Button
             onClick={handleWhatsAppClick}
-            className={`fixed bottom-18 sm:bottom-6 z-40 h-14 w-14 rounded-full bg-green-500 hover:bg-green-600 shadow-lg hover:shadow-xl transition-all duration-300 ${
+            className={`fixed bottom-18 cursor-pointer sm:bottom-6 z-40 h-14 w-14 rounded-full bg-green-500 hover:bg-green-600 shadow-lg hover:shadow-xl transition-all duration-300 ${
               isRTL ? "right-6" : "left-6"
             }`}
             size="icon"
@@ -47,7 +47,12 @@ const WhatsAppButton = () => {
             </svg>
           </Button>
         </TooltipTrigger>
-        <TooltipContent side={isRTL ? "left" : "right"} className="font-medium">
+        <TooltipContent
+          side={isRTL ? "left" : "right"}
+          className={`font-medium bg-primary text-primary-foreground border-primary shadow-lg ${
+            isRTL ? "animate-slide-left" : "animate-slide-right"
+          }`}
+        >
           {t("tooltip")}
         </TooltipContent>
       </Tooltip>
