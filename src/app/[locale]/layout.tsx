@@ -106,6 +106,7 @@ export default async function LocaleLayout({
     "registration",
     "profileFormErrors",
     "notifications",
+    "returnExchangePolicy",
   ];
   const { resources } = await serverSideTranslation(locale, ns);
   const direction = getDirection(locale);
