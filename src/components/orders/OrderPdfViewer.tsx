@@ -47,12 +47,13 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
 
   // Default fake data
   const defaultOrderData = {
-    date: "٢٠٢٥/١٠/٠١",
+    // the data and time format should be in Arabic
+    date: "25 أكتوبر 2025 - AM 14:30",
     orderNumber: "ORD-2025-001234",
     clientName: "أحمد محمد علي",
-    vat: "123456789",
+    vat: "7039446120",
     address: "شارع الجمهورية، المنصورة، الدقهلية، مصر",
-    phone: "+20 123 456 7890",
+    phone: "0543777569",
     products: [
       {
         id: 1,
@@ -98,7 +99,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
 
   // Generate QR Code whenever data changes
   React.useEffect(() => {
-    const qrData = `رقم الطلب: ${data.orderNumber}\nالعميل: ${data.clientName}\nالمجموع: ${data.totalAfterVat} جنيه`;
+    const qrData = `رقم الطلب: ${data.orderNumber}\nالعميل: ${data.clientName}\nالمجموع: ${data.totalAfterVat} ريال`;
     QRCode.toDataURL(qrData, {
       width: 160,
       margin: 1,
@@ -204,7 +205,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                   فاتورة طلب
                 </h1>
                 <p className="font-semibold text-lg text-logo-gold">
-                  متجر قطع غيار السيارات
+                  فال بارتس - متجر قطع غيار السيارات
                 </p>
               </div>
               <div className="text-left">
@@ -212,7 +213,12 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                   className="w-32 h-32 rounded-lg flex items-center justify-center"
                   style={{ backgroundColor: "rgba(179, 152, 74, 0.1)" }}
                 >
-                  <FileText className="w-16 h-16 text-logo-gold" />
+                  {/* put logo here   */}
+                  <img
+                    src="./logo.png"
+                    alt="Logo"
+                    className="w-26 h-26 object-contain"
+                  />
                 </div>
               </div>
             </div>
@@ -306,7 +312,6 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                 <p
                   className="text-base font-medium"
                   style={{ color: "#1a1a1a" }}
-                  dir="ltr"
                 >
                   {data.phone}
                 </p>
@@ -409,7 +414,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                         className="p-3 text-center font-medium"
                         style={{ border: "1px solid #d1d5db" }}
                       >
-                        {product.price.toFixed(2)} جنيه
+                        {product.price.toFixed(2)} ريال
                       </td>
                       <td
                         className="p-3 text-center font-semibold"
@@ -418,7 +423,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                           color: "#1a1a1a",
                         }}
                       >
-                        {product.total.toFixed(2)} جنيه
+                        {product.total.toFixed(2)} ريال
                       </td>
                     </tr>
                   ))}
@@ -429,6 +434,101 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
 
           {/* Third Row - QR Code and Totals */}
           <div className="grid grid-cols-2 gap-6">
+            {/* Totals - Right */}
+            <div
+              className="space-y-2 rounded-lg p-5"
+              style={{
+                background:
+                  "linear-gradient(to bottom right, rgba(212, 175, 55, 0.05), rgba(212, 175, 55, 0.1))",
+                border: "2px solid rgba(212, 175, 55, 0.2)",
+              }}
+            >
+              <div
+                className="flex justify-between items-center pb-2"
+                style={{ borderBottom: "1px solid #d1d5db" }}
+              >
+                <span
+                  className="text-sm font-medium"
+                  style={{ color: "#374151" }}
+                >
+                  الإجمالي
+                </span>
+                <span
+                  className="text-base font-semibold"
+                  style={{ color: "#1a1a1a" }}
+                >
+                  {data.subtotal.toFixed(2)} ريال
+                </span>
+              </div>
+              <div
+                className="flex justify-between items-center pb-2"
+                style={{ borderBottom: "1px solid #d1d5db" }}
+              >
+                <span
+                  className="text-sm font-medium"
+                  style={{ color: "#374151" }}
+                >
+                  إجمالي الخصم
+                </span>
+                <span
+                  className="text-base font-semibold"
+                  style={{ color: "#dc2626" }}
+                >
+                  - {(0).toFixed(2)} ريال
+                </span>
+              </div>
+              <div
+                className="flex justify-between items-center pb-2"
+                style={{ borderBottom: "1px solid #d1d5db" }}
+              >
+                <span
+                  className="text-sm font-medium"
+                  style={{ color: "#374151" }}
+                >
+                  الإجمالي قبل الضريبة
+                </span>
+                <span
+                  className="text-base font-semibold"
+                  style={{ color: "#1a1a1a" }}
+                >
+                  {data.totalBeforeVat.toFixed(2)} ريال
+                </span>
+              </div>
+              <div
+                className="flex justify-between items-center pb-2"
+                style={{ borderBottom: "1px solid #d1d5db" }}
+              >
+                <span
+                  className="text-sm font-medium"
+                  style={{ color: "#374151" }}
+                >
+                  إجمالي ضريبة القيمة المضافة (15%)
+                </span>
+                <span
+                  className="text-base font-semibold"
+                  style={{ color: "#D4AF37" }}
+                >
+                  {data.vatAmount.toFixed(2)} ريال
+                </span>
+              </div>
+              <div
+                className="flex justify-between items-center pt-2 px-5 py-3 -mx-5 -mb-5 rounded-b-lg"
+                style={{ backgroundColor: "rgba(212, 175, 55, 0.2)" }}
+              >
+                <span
+                  className="text-lg font-bold"
+                  style={{ color: "#1a1a1a" }}
+                >
+                  الإجمالي شامل الضريبة
+                </span>
+                <span
+                  className="text-xl font-bold"
+                  style={{ color: "#D4AF37" }}
+                >
+                  {data.totalAfterVat.toFixed(2)} ريال
+                </span>
+              </div>
+            </div>
             {/* QR Code - Left */}
             <div
               className="flex items-center justify-center rounded-lg p-6"
@@ -468,90 +568,6 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                 </div>
               )}
             </div>
-
-            {/* Totals - Right */}
-            <div
-              className="space-y-3 rounded-lg p-6"
-              style={{
-                background:
-                  "linear-gradient(to bottom right, rgba(212, 175, 55, 0.05), rgba(212, 175, 55, 0.1))",
-                border: "2px solid rgba(212, 175, 55, 0.2)",
-              }}
-            >
-              <div
-                className="flex justify-between items-center pb-3"
-                style={{ borderBottom: "1px solid #d1d5db" }}
-              >
-                <span className="font-medium" style={{ color: "#374151" }}>
-                  المجموع الفرعي
-                </span>
-                <span
-                  className="text-lg font-semibold"
-                  style={{ color: "#1a1a1a" }}
-                >
-                  {data.subtotal.toFixed(2)} جنيه
-                </span>
-              </div>
-              <div
-                className="flex justify-between items-center pb-3"
-                style={{ borderBottom: "1px solid #d1d5db" }}
-              >
-                <span className="font-medium" style={{ color: "#374151" }}>
-                  المجموع قبل الضريبة
-                </span>
-                <span
-                  className="text-lg font-semibold"
-                  style={{ color: "#1a1a1a" }}
-                >
-                  {data.totalBeforeVat.toFixed(2)} جنيه
-                </span>
-              </div>
-              <div
-                className="flex justify-between items-center pb-3"
-                style={{ borderBottom: "1px solid #d1d5db" }}
-              >
-                <span className="font-medium" style={{ color: "#374151" }}>
-                  ضريبة القيمة المضافة (15%)
-                </span>
-                <span
-                  className="text-lg font-semibold"
-                  style={{ color: "#D4AF37" }}
-                >
-                  {data.vatAmount.toFixed(2)} جنيه
-                </span>
-              </div>
-              <div
-                className="flex justify-between items-center pb-3"
-                style={{ borderBottom: "1px solid #d1d5db" }}
-              >
-                <span className="font-medium" style={{ color: "#374151" }}>
-                  المجموع بعد الضريبة
-                </span>
-                <span
-                  className="text-lg font-semibold"
-                  style={{ color: "#1a1a1a" }}
-                >
-                  {data.totalAfterVat.toFixed(2)} جنيه
-                </span>
-              </div>
-              <div
-                className="flex justify-between items-center pt-3 px-6 py-4 -mx-6 -mb-6 rounded-b-lg"
-                style={{ backgroundColor: "rgba(212, 175, 55, 0.2)" }}
-              >
-                <span
-                  className="text-xl font-bold"
-                  style={{ color: "#1a1a1a" }}
-                >
-                  الإجمالي النهائي
-                </span>
-                <span
-                  className="text-2xl font-bold"
-                  style={{ color: "#D4AF37" }}
-                >
-                  {data.total.toFixed(2)} جنيه
-                </span>
-              </div>
-            </div>
           </div>
 
           {/* Footer */}
@@ -563,7 +579,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
               شكراً لتعاملكم معنا • نتمنى لكم تجربة تسوق ممتعة
             </p>
             <p className="text-xs mt-2" style={{ color: "#6b7280" }}>
-              للاستفسارات: info@autoparts.com | +20 123 456 7890
+              للاستفسارات: parts@falfuture.com | 0543777569
             </p>
           </div>
         </div>
