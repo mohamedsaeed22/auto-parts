@@ -1,0 +1,110 @@
+{
+  "title": "User Agreement",
+  "subtitle": "Terms and conditions governing the use of our online store",
+  "introduction": {
+    "title": "Introduction",
+    "content": [
+      "Welcome to our online store. This agreement outlines the terms and conditions governing your use of the store and all services provided through it.",
+      "Your access to the platform or use of any of its services or products constitutes explicit consent to all provisions contained in this agreement, and an acknowledgment of your full legal, regulatory, and legal capacity to comply with its terms.",
+      "This agreement becomes effective upon your acceptance and registration in the store, in accordance with Article 10 of the Saudi Electronic Transactions Law."
+    ]
+  },
+  "definitions": {
+    "title": "Definitions",
+    "points": [
+      "Store: Includes all forms of the store on the Internet, whether it is a website, smart application, or commercial premises.",
+      "Consumer: Any person who uses the store for the purpose of purchasing products or benefiting from services.",
+      "Agreement: These terms and conditions that govern the relationship between the store and the consumer."
+    ]
+  },
+  "eligibility": {
+    "title": "Consumer Eligibility",
+    "content": [
+      "The consumer acknowledges that they have the legal and legitimate capacity to deal with the store, or that they have reached at least 18 years of age.",
+      "In case of violation of this condition, the consumer alone bears all legal consequences towards third parties."
+    ]
+  },
+  "storeCommitment": {
+    "title": "Nature of Store Commitment",
+    "content": [
+      "The store is committed to providing products or services available through its electronic platform.",
+      "The store may provide additional services such as after-sales services, depending on the nature of the product or service."
+    ]
+  },
+  "usageGuidelines": {
+    "title": "Usage Guidelines",
+    "content": [
+      "The consumer is committed to using the platform in accordance with the regulations in force in the Kingdom of Saudi Arabia and in a manner that does not violate public morals.",
+      "It is prohibited to use products or services provided by the store for any purposes that violate regulations or Sharia law."
+    ]
+  },
+  "accounts": {
+    "title": "Accounts and Registration",
+    "content": "When registering an account in the store, the consumer commits to the following:",
+    "points": [
+      "Maintaining the confidentiality of account data and password.",
+      "Immediately notifying the store in case of any unauthorized use of the account.",
+      "Using the account personally and not allowing others to use it except with explicit authorization.",
+      "Providing accurate and updated information upon registration.",
+      "Updating information when needed.",
+      "The store's commitment to maintaining the confidentiality of consumer data.",
+      "In case of proven submission of misleading or violating information, the store has the right to suspend or cancel the account without prior notice."
+    ]
+  },
+  "communications": {
+    "title": "Official Communications",
+    "content": [
+      "Communication is made through the email registered on the platform.",
+      "All notifications and agreements sent electronically are considered approved and have legal authority.",
+      "The store has the right to send general or specific notifications to consumers through the platform."
+    ]
+  },
+  "modifications": {
+    "title": "Modifications and Fees",
+    "content": [
+      "Cancellation of any article or clause does not affect the rest of the agreement.",
+      "The store reserves the right to modify this agreement whenever necessary.",
+      "Fees may be imposed on some services or products, according to regulations or the nature of the service.",
+      "The store has the right to modify or add fees at any time."
+    ]
+  },
+  "payment": {
+    "title": "Payment",
+    "content": [
+      "The store provides several payment options online or any other means it announces.",
+      "The store is committed to determining prices according to the recognized market value.",
+      "All financial specifications are displayed according to accounting standards."
+    ]
+  },
+  "intellectualProperty": {
+    "title": "Intellectual Property",
+    "content": "All intellectual property rights of the store (name, trademark, logos, symbols and content) are fully owned by the store, and their use is prohibited without official permission."
+  },
+  "storeResponsibility": {
+    "title": "Store Responsibility",
+    "content": [
+      "The store is committed to working in accordance with the regulations in force in the Kingdom.",
+      "The store does not bear any responsibility for damages resulting from errors or negligence by the consumer or third parties (such as shipping companies).",
+      "The store guarantees that the products and services offered are legitimate and authorized."
+    ]
+  },
+  "membershipRestriction": {
+    "title": "Membership Restriction",
+    "content": "The store has the right to suspend or cancel the consumer's membership or restrict their access to services at any time without prior notice."
+  },
+  "applicableLaw": {
+    "title": "Applicable Law",
+    "content": "This agreement is subject to the regulations and legislation in force in the Kingdom of Saudi Arabia."
+  },
+  "generalProvisions": {
+    "title": "General Provisions",
+    "points": [
+      "The Arabic language is the primary reference for interpreting this agreement.",
+      "Prices are subject to change according to market conditions.",
+      "Promotional offers are temporary and the store has the right to modify or cancel them at any time.",
+      "Both parties are committed not to violate laws and regulations in their transactions.",
+      "This agreement is not canceled except by a decision from the store management."
+    ]
+  },
+  "footerNote": "By using our services, you acknowledge that you have read, understood, and agreed to be bound by these terms and conditions."
+}
