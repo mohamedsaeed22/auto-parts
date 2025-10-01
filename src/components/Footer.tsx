@@ -48,30 +48,6 @@ const Footer = () => {
                   {t("sections.mainNavigation.links.contact")}
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/categories"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  {t("sections.mainNavigation.links.categories")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/brands"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  {t("sections.mainNavigation.links.brands")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/offers"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  {t("sections.mainNavigation.links.offers")}
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -81,22 +57,6 @@ const Footer = () => {
               {t("sections.shoppingServices.title")}
             </h3>
             <ul className="space-y-6 list-disc list-inside">
-              <li>
-                <Link
-                  href="/products"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  {t("sections.shoppingServices.links.products")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/userPricing"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  {t("sections.shoppingServices.links.userPricing")}
-                </Link>
-              </li>
               <li>
                 <Link
                   href="/checkout"
@@ -113,67 +73,10 @@ const Footer = () => {
                   {t("sections.shoppingServices.links.favourites")}
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/wishlist"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  {t("sections.shoppingServices.links.wishlist")}
-                </Link>
-              </li>
             </ul>
           </div>
 
-          {/* Column 3 - Auto Parts Categories */}
-          <div>
-            <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
-              {t("sections.autoPartsCategories.title")}
-            </h3>
-            <ul className="space-y-6 list-disc list-inside">
-              <li>
-                <Link
-                  href="/categories"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  {t("sections.autoPartsCategories.links.spareParts")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/categories"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  {t("sections.autoPartsCategories.links.accessories")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/categories"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  {t("sections.autoPartsCategories.links.oils")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/categories"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  {t("sections.autoPartsCategories.links.carCare")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/categories"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  {t("sections.autoPartsCategories.links.tiresBatteries")}
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 4 - Contact & Support */}
+          {/* Column 3 - Contact & Support */}
           <div>
             <h3 className="font-bold text-lg mb-6 text-[#b9974d]">
               {t("sections.contactSupport.title")}
