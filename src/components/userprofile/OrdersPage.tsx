@@ -195,14 +195,6 @@ export default function OrdersPage() {
     });
   };
 
-  // Format currency
-  const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency || "USD",
-    }).format(amount);
-  };
-
   // Handle view order details
   const handleViewDetails = (order: Order) => {
     setSelectedOrder(order);
@@ -495,11 +487,8 @@ export default function OrdersPage() {
                         <div className="text-sm text-gray-600 mb-1">
                           {t("orders.total")}
                         </div>
-                        <div className="font-medium text-lg text-blue-600">
-                          {formatCurrency(
-                            order.pricing.total,
-                            order.pricing.currency
-                          )}
+                        <div className="font-medium text-md text-blue-600">
+                          {order.pricing.total} {isRTL ? "ر.س" : "SAR"}
                         </div>
                       </div>
                       <div>

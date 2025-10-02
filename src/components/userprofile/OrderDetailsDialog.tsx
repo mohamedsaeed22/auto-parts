@@ -53,13 +53,6 @@ export default function OrderDetailsDialog({
 
   const orderDetails = orderDetailsResponse?.data?.order;
 
-  const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency || "USD",
-    }).format(amount);
-  };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -205,10 +198,8 @@ export default function OrderDetailsDialog({
                 <div className="flex justify-between items-center py-2 border-b border-gray-100">
                   <span className="text-gray-600">{t("orders.subtotal")}</span>
                   <span className="font-medium text-[#272627]">
-                    {formatCurrency(
-                      orderDetails.pricing.subtotal,
-                      orderDetails.pricing.currency
-                    )}
+                    {orderDetails.pricing.subtotal}{" "}
+                    {isCurrentRTL ? "ر.س" : "SAR"}
                   </span>
                 </div>
 
@@ -218,11 +209,8 @@ export default function OrderDetailsDialog({
                       {t("orders.discount")}
                     </span>
                     <span className="font-medium text-green-600">
-                      -
-                      {formatCurrency(
-                        orderDetails.pricing.discount_amount,
-                        orderDetails.pricing.currency
-                      )}
+                      -{orderDetails.pricing.discount_amount}{" "}
+                      {isCurrentRTL ? "ر.س" : "SAR"}
                     </span>
                   </div>
                 )}
@@ -230,10 +218,8 @@ export default function OrderDetailsDialog({
                 <div className="flex justify-between items-center py-2 border-b border-gray-100">
                   <span className="text-gray-600">{t("orders.shipping")}</span>
                   <span className="font-medium text-[#272627]">
-                    {formatCurrency(
-                      orderDetails.pricing.shipping_cost,
-                      orderDetails.pricing.currency
-                    )}
+                    {orderDetails.pricing.shipping_cost}{" "}
+                    {isCurrentRTL ? "ر.س" : "SAR"}
                   </span>
                 </div>
 
@@ -241,10 +227,8 @@ export default function OrderDetailsDialog({
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
                     <span className="text-gray-600">{t("orders.tax")}</span>
                     <span className="font-medium text-[#272627]">
-                      {formatCurrency(
-                        orderDetails.pricing.tax_amount,
-                        orderDetails.pricing.currency
-                      )}
+                      {orderDetails.pricing.tax_amount}{" "}
+                      {isCurrentRTL ? "ر.س" : "SAR"}
                     </span>
                   </div>
                 )}
@@ -254,10 +238,7 @@ export default function OrderDetailsDialog({
                     {t("orders.total")}
                   </span>
                   <span className="text-xl font-bold text-[#b3984a]">
-                    {formatCurrency(
-                      orderDetails.pricing.total,
-                      orderDetails.pricing.currency
-                    )}
+                    {orderDetails.pricing.total} {isCurrentRTL ? "ر.س" : "SAR"}
                   </span>
                 </div>
               </div>
@@ -276,11 +257,8 @@ export default function OrderDetailsDialog({
                       </span>
                     </div>
                     <span className="text-sm font-bold text-green-700">
-                      -
-                      {formatCurrency(
-                        orderDetails.coupon.discount,
-                        orderDetails.pricing.currency
-                      )}
+                      -{orderDetails.coupon.discount}{" "}
+                      {isCurrentRTL ? "ر.س" : "SAR"}
                     </span>
                   </div>
                 </div>
@@ -369,28 +347,20 @@ export default function OrderDetailsDialog({
                           </span>
                           <span>
                             <span className="font-medium">Price:</span>{" "}
-                            {formatCurrency(
-                              product.final_unit_price,
-                              orderDetails.pricing.currency
-                            )}
+                            {product.final_unit_price}{" "}
+                            {isCurrentRTL ? "ر.س" : "SAR"}
                           </span>
                           {product.discount_amount > 0 && (
                             <span className="text-green-600 font-medium">
-                              -
-                              {formatCurrency(
-                                product.discount_amount,
-                                orderDetails.pricing.currency
-                              )}
+                              -{product.discount_amount}{" "}
+                              {isCurrentRTL ? "ر.س" : "SAR"}
                             </span>
                           )}
                         </div>
                       </div>
                       <div className="text-right">
                         <div className="text-lg font-bold text-[#b3984a]">
-                          {formatCurrency(
-                            product.total,
-                            orderDetails.pricing.currency
-                          )}
+                          {product.total} {isCurrentRTL ? "ر.س" : "SAR"}
                         </div>
                       </div>
                     </div>

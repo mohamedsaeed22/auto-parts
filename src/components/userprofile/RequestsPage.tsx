@@ -540,8 +540,8 @@ export default function RequestsPage() {
                   <div className="flex items-center gap-2">
                     <DollarSign size={16} className="text-gray-400" />
                     <span className="text-sm text-gray-600">
-                      {t("requests.totalPrice", "Total Price")}: $
-                      {request.price}
+                      {t("requests.totalPrice", "Total Price")}: {request.price}{" "}
+                      {isRTL ? "ر.س" : "SAR"}
                     </span>
                   </div>
                 )}
@@ -678,7 +678,7 @@ export default function RequestsPage() {
                                   {t("requests.items.unitPrice", "Unit Price")}
                                 </span>
                                 <span className="text-sm font-medium text-green-800">
-                                  ${item.price}
+                                  {item.price} {isRTL ? "ر.س" : "SAR"}
                                 </span>
                               </div>
                             </div>
@@ -804,7 +804,7 @@ export default function RequestsPage() {
                       </div>
                       <div className="text-right">
                         <div className="text-2xl font-bold text-green-800">
-                          ${request.price}
+                          {request.price} {isRTL ? "ر.س" : "SAR"}
                         </div>
                         <div className="text-xs text-green-600">
                           {t("requests.priceSummary.total", "Total Amount")}
