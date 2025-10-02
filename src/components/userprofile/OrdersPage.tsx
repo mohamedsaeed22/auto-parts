@@ -10,13 +10,13 @@ import {
   Filter,
   CreditCard,
   X,
-  ChevronLeft,
-  ChevronRight,
   Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import FormSelect from "@/components/ui/FormSelect";
+import { CustomPagination } from "@/components/ui/custom-pagination";
+import { useQueryState, parseAsInteger } from "nuqs";
 import { useTranslation } from "react-i18next";
 import {
   useGetOrdersQuery,
@@ -33,6 +33,12 @@ export default function OrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
 
+  // Use nuqs to manage page state from URL
+  const [currentPage, setCurrentPage] = useQueryState(
+    "page",
+    parseAsInteger.withDefault(1)
+  );
+
   // Default filters for comparison
   const defaultFilters: OrdersRequest = {
     status: "all",
@@ -48,13 +54,13 @@ export default function OrdersPage() {
   // Filters state
   const [filters, setFilters] = useState<OrdersRequest>(defaultFilters);
 
-  // Get orders data
+  // Get orders data - merge filters with currentPage from URL
   const {
     data: ordersResponse,
     isLoading,
     error,
     refetch,
-  } = useGetOrdersQuery(filters);
+  } = useGetOrdersQuery({ ...filters, page: currentPage });
 
   // Get orders statistics
   const {
@@ -73,6 +79,8 @@ export default function OrdersPage() {
       [key]: value,
       page: 1, // Reset to first page when filters change
     }));
+    // Reset page in URL to 1 when filters change
+    setCurrentPage(1);
   };
 
   // Check if filters have changed from default
@@ -91,17 +99,16 @@ export default function OrdersPage() {
   // Clear all filters
   const clearFilters = () => {
     setFilters(defaultFilters);
-  };
-
-  // Handle pagination
-  const handlePageChange = (page: number) => {
-    setFilters((prev) => ({ ...prev, page }));
+    // Reset page in URL to 1 when clearing filters
+    setCurrentPage(1);
   };
 
   // Handle per page change
   const handlePerPageChange = (value: string) => {
     const perPage = parseInt(value);
     setFilters((prev) => ({ ...prev, per_page: perPage, page: 1 }));
+    // Reset page in URL to 1 when per_page changes
+    setCurrentPage(1);
   };
 
   // Get status info for styling
@@ -525,47 +532,11 @@ export default function OrdersPage() {
 
       {/* Pagination */}
       {pagination && pagination.last_page > 1 && (
-        <div className="mt-8 flex justify-center">
-          <div className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handlePageChange(pagination.current_page - 1)}
-              disabled={pagination.current_page === 1}
-            >
-              <ChevronLeft size={16} />
-              {t("orders.pagination.previous")}
-            </Button>
-
-            <div className="flex items-center gap-1">
-              {Array.from(
-                { length: pagination.last_page },
-                (_, i) => i + 1
-              ).map((page) => (
-                <Button
-                  key={page}
-                  variant={
-                    page === pagination.current_page ? "default" : "outline"
-                  }
-                  size="sm"
-                  onClick={() => handlePageChange(page)}
-                  className="w-10 h-10"
-                >
-                  {page}
-                </Button>
-              ))}
-            </div>
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handlePageChange(pagination.current_page + 1)}
-              disabled={pagination.current_page === pagination.last_page}
-            >
-              {t("orders.pagination.next")}
-              <ChevronRight size={16} />
-            </Button>
-          </div>
+        <div className="mt-8">
+          <CustomPagination
+            totalItems={pagination.total}
+            itemsPerPage={pagination.per_page}
+          />
         </div>
       )}
 
