@@ -93,7 +93,12 @@
     "cashOnDelivery": "Cash on Delivery",
     "back": "Back to Payment",
     "processing": "Processing...",
-    "confirmOrder": "Confirm Order"
+    "confirmOrder": "Confirm Order",
+    "redirectingToPayment": "Redirecting to payment gateway...",
+    "orderCreated": "Order created successfully!",
+    "orderError": "Failed to create order. Please try again.",
+    "selectAddressFirst": "Please select a shipping address first",
+    "selectPaymentFirst": "Please select a payment method first"
   },
   "orderComplete": {
     "title": "Order Confirmed!",

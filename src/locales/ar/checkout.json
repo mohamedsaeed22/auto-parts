@@ -93,7 +93,12 @@
     "cashOnDelivery": "الدفع عند الاستلام",
     "back": "العودة للدفع",
     "processing": "جاري المعالجة...",
-    "confirmOrder": "تأكيد الطلب"
+    "confirmOrder": "تأكيد الطلب",
+    "redirectingToPayment": "جاري التحويل إلى بوابة الدفع...",
+    "orderCreated": "تم إنشاء الطلب بنجاح!",
+    "orderError": "فشل إنشاء الطلب. يرجى المحاولة مرة أخرى.",
+    "selectAddressFirst": "يرجى اختيار عنوان الشحن أولاً",
+    "selectPaymentFirst": "يرجى اختيار طريقة الدفع أولاً"
   },
   "orderComplete": {
     "title": "تم تأكيد الطلب!",

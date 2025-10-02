@@ -262,7 +262,7 @@ export interface OrdersStatisticsResponse {
 export const ordersApi = api.injectEndpoints({
   endpoints: (builder) => ({
     createOrder: builder.mutation<
-      ApiResponse<{ order: Order }>,
+      ApiResponse<{ order: Order; payment_url?: string }>,
       | FormData
       | {
           payment_method: string;

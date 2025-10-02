@@ -75,6 +75,26 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
         notes: notes || "",
       }).unwrap();
 
+      // Check if payment URL is provided (for credit card payments)
+      if (result && result.data && result.data.payment_url) {
+        showSuccess(
+          t("orderReview.redirectingToPayment", {
+            defaultValue: "Redirecting to payment gateway...",
+          })
+        );
+
+        // Clear coupon from localStorage before redirecting
+        // try {
+        //   localStorage.removeItem("auto_parts_coupon_code");
+        // } catch {
+        //   // Ignore localStorage errors
+        // }
+
+        // Redirect to payment URL
+        window.location.href = result.data.payment_url;
+        return;
+      }
+
       showSuccess(
         t("orderReview.orderCreated", {
           defaultValue: "Order created successfully!",
@@ -82,7 +102,7 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
       );
 
       // Call the original onPlaceOrder callback with created order
-      // result is ApiResponse<{ order: Order }>
+      // result is ApiResponse<{ order: Order; payment_url?: string }>
       if (result && result.data && result.data.order) {
         // Clear coupon from localStorage on successful order
         try {
