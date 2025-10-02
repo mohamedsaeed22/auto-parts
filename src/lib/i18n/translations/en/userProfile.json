@@ -209,7 +209,9 @@
       "description": "Are you sure you want to reject this request? This action cannot be undone.",
       "warning": "Once rejected, you will need to create a new request if you want to proceed with this order.",
       "cancel": "Cancel",
-      "confirm": "Yes, Reject"
+      "confirm": "Yes, Reject",
+      "successMessage": "Request rejected successfully",
+      "errorMessage": "Failed to reject request. Please try again"
     },
     "acceptDialog": {
       "step1": "Address",
@@ -224,7 +226,9 @@
       "creditCardNote": "You will be redirected to a secure payment page to complete your transaction.",
       "next": "Next",
       "back": "Back",
-      "confirm": "Accept Request"
+      "confirm": "Accept Request",
+      "successMessage": "Request accepted successfully",
+      "errorMessage": "Failed to accept request. Please try again"
     }
   },
   "settings": {

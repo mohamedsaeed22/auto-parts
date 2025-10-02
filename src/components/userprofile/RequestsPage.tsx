@@ -35,6 +35,7 @@ import Image from "next/image";
 import AcceptRequestDialog from "./AcceptRequestDialog";
 import RejectConfirmDialog from "./RejectConfirmDialog";
 import type { ApproveRequestRequest } from "@/services/api/requestsApi";
+import { showSuccess, showError } from "@/lib/toast";
 
 const statusColors = {
   draft: "bg-gray-100 text-gray-800 border-gray-200",
@@ -280,10 +281,27 @@ export default function RequestsPage() {
         response?.data?.payment_url
       ) {
         window.location.href = response.data.payment_url;
+      } else {
+        // Show success toast for cash payment
+        if (response?.code === 200) {
+          const successMessage = isRTL
+            ? "تم قبول الطلب بنجاح"
+            : t(
+                "requests.acceptDialog.successMessage",
+                "Request accepted successfully"
+              );
+          showSuccess(successMessage);
+        }
       }
-      // If cash payment, dialog closes and request is accepted (query auto-refetches)
     } catch {
-      // Error is handled by the mutation
+      // Show error toast
+      const errorMessage = isRTL
+        ? "فشل قبول الطلب. يرجى المحاولة مرة أخرى"
+        : t(
+            "requests.acceptDialog.errorMessage",
+            "Failed to accept request. Please try again"
+          );
+      showError(errorMessage);
     }
   };
 
@@ -291,7 +309,7 @@ export default function RequestsPage() {
     if (!pendingRequestId) return;
 
     try {
-      await approveRequest({
+      const response = await approveRequest({
         requestId: pendingRequestId,
         data: { status: "rejected" },
       }).unwrap();
@@ -299,8 +317,26 @@ export default function RequestsPage() {
       // Close dialog
       setIsRejectDialogOpen(false);
       setPendingRequestId(null);
+
+      // Show success toast based on status code
+      if (response?.code === 200) {
+        const successMessage = isRTL
+          ? "تم رفض الطلب بنجاح"
+          : t(
+              "requests.rejectDialog.successMessage",
+              "Request rejected successfully"
+            );
+        showSuccess(successMessage);
+      }
     } catch {
-      // Error is handled by the mutation
+      // Show error toast
+      const errorMessage = isRTL
+        ? "فشل رفض الطلب. يرجى المحاولة مرة أخرى"
+        : t(
+            "requests.rejectDialog.errorMessage",
+            "Failed to reject request. Please try again"
+          );
+      showError(errorMessage);
     }
   };
 
