@@ -15,7 +15,7 @@
     "returnPolicy": {
       "title": "Return & Exchange Policy",
       "policies": {
-        "sevenDays": "Customers have the right to exchange or return parts within 7 days of receipt, bearing all costs associated with the process (except in case of manufacturing defect, damage, or missing accessories). No requests will be accepted after the specified period.",
+        "sevenDays": "Customers have the right to exchange or return parts within 14 days of receipt, bearing all costs associated with the process (except in case of manufacturing defect, damage, or missing accessories). No requests will be accepted after the specified period.",
         "originalCondition": "The part must be in its original condition: unused, sealed in its packaging, and free from any damage. The store reserves the right to inspect the part before approving the exchange or return.",
         "defectiveItems": "In case of receiving a defective part (damage, manufacturing defect, or missing accessories), customer service must be notified within 24 hours of receipt, and the part will be exchanged or returned without any additional fees or shipping costs.",
         "shippingCosts": "In regular cases, the customer bears the shipping costs, while in cases of manufacturing defects or store errors, the store bears all costs."
