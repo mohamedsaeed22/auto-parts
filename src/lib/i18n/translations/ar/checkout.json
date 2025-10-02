@@ -82,7 +82,13 @@
     "processing": "جاري معالجة الطلب...",
     "securePayment": "دفع آمن ومشفر 256-bit SSL",
     "returnPolicy": "إمكانية الإرجاع خلال 14 يوماً",
-    "customerSupport": "دعم عملاء على مدار الساعة"
+    "customerSupport": "دعم عملاء على مدار الساعة",
+    "couponRequired": "يرجى إدخال كود القسيمة",
+    "invalidCoupon": "هذه القسيمة غير صالحة",
+    "applyError": "فشل في تطبيق القسيمة",
+    "cartError": "فشل في تحميل بيانات السلة",
+    "couponApplied": "تم تطبيق القسيمة",
+    "off": "خصم"
   },
   "orderReview": {
     "title": "مراجعة الطلب النهائية",

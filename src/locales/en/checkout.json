@@ -202,6 +202,8 @@
     "tax": "Tax (15%)",
     "discount": "Discount",
     "total": "Total",
+    "couponApplied": "Coupon Applied",
+    "off": "off",
     "processing": "Processing...",
     "confirmOrder": "Confirm Order",
     "securePayment": "Secure Payment",

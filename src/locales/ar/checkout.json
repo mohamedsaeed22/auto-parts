@@ -202,6 +202,8 @@
     "tax": "الضريبة (15%)",
     "discount": "الخصم",
     "total": "المجموع الكلي",
+    "couponApplied": "تم تطبيق القسيمة",
+    "off": "خصم",
     "processing": "جاري المعالجة...",
     "confirmOrder": "تأكيد الطلب",
     "securePayment": "دفع آمن",

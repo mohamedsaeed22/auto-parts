@@ -82,7 +82,13 @@
     "processing": "Processing order...",
     "securePayment": "Secure 256-bit SSL encrypted payment",
     "returnPolicy": "14-day return policy",
-    "customerSupport": "24/7 customer support"
+    "customerSupport": "24/7 customer support",
+    "couponRequired": "Please enter a coupon code",
+    "invalidCoupon": "This coupon is not valid",
+    "applyError": "Failed to apply coupon",
+    "cartError": "Failed to load cart data",
+    "couponApplied": "Coupon Applied",
+    "off": "off"
   },
   "orderReview": {
     "title": "Final Order Review",
