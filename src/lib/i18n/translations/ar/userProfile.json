@@ -138,7 +138,8 @@
       "clear": "مسح الفلتر",
       "apply": "تطبيق الفلتر",
       "loading": "جاري التحميل...",
-      "results": "عرض {{from}}-{{to}} من {{total}} نتيجة"
+      "results": "عرض {{from}}-{{to}} من {{total}} نتيجة",
+      "active": "نشط"
     },
     "status": {
       "draft": "مسودة",

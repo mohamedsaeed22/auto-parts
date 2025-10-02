@@ -19,6 +19,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import FormSelect from "@/components/ui/FormSelect";
 import { CustomPagination } from "@/components/ui/custom-pagination";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { useQueryState, parseAsInteger } from "nuqs";
 import { useGetRequestsQuery, useApproveRequestMutation } from "@/services/api";
 import { Loader2 } from "lucide-react";
@@ -412,42 +418,56 @@ export default function RequestsPage() {
     <div className="p-4 sm:p-6 lg:p-8" dir={isRTL ? "rtl" : "ltr"}>
       {/* Header */}
       <div
-        className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6  `}
+        className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 ${
+          isRTL ? "sm:flex-row" : ""
+        }`}
       >
-        <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-            {t("requests.title", "Requests")}
-          </h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+          {t("requests.title", "Requests")}
+        </h2>
+        {/* Filter Actions */}
+        <div className={`flex gap-2 items-center`}>
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              clearFilters();
+            }}
+            variant="secondary"
+            size="sm"
+            disabled={!hasFiltersChanged()}
+          >
+            {t("requests.filters.clear", "Clear Filters")}
+          </Button>
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 mb-6">
-        <div
-          className={`flex items-center justify-between mb-4 ${
-            isRTL ? "flex-row" : ""
-          }`}
-        >
-          <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
-            <Filter size={20} className="text-gray-600" />
-            <h3 className="font-medium text-gray-900">
-              {t("requests.filters.title", "Filters")}
-            </h3>
-          </div>
+      {/* Filters - Accordion */}
+      <Accordion
+        type="single"
+        collapsible
+        className="bg-white border border-gray-200 rounded-lg mb-6"
+      >
+        <AccordionItem value="filters" className="border-0">
+          <AccordionTrigger className="px-4 sm:px-6 hover:no-underline">
+            <div className="flex items-center justify-between w-full">
+              <div
+                className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}
+              >
+                <Filter size={20} className="text-gray-600" />
+                <h3 className="font-medium text-gray-900">
+                  {t("requests.filters.title", "Filters")}
+                </h3>
+                {hasFiltersChanged() && (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                    {t("requests.filters.active", "Active")}
+                  </span>
+                )}
+              </div>
+            </div>
+          </AccordionTrigger>
 
-          {/* Filter Actions */}
-          <div className={`flex gap-2 ${isRTL ? "flex-row" : ""}`}>
-            <Button
-              onClick={clearFilters}
-              variant="secondary"
-              disabled={!hasFiltersChanged()}
-            >
-              {t("requests.filters.clear", "Clear Filters")}
-            </Button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <AccordionContent className="px-4 sm:px-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Status Filter */}
           <FormSelect
             label={t("requests.filters.status", "Status")}
@@ -531,7 +551,9 @@ export default function RequestsPage() {
             ]}
           />
         </div>
-      </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
       {/* Requests List */}
       {requests.length === 0 ? (

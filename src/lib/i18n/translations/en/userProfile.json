@@ -138,7 +138,8 @@
       "clear": "Clear Filters",
       "apply": "Apply Filters",
       "loading": "Loading...",
-      "results": "Showing {{from}}-{{to}} of {{total}} results"
+      "results": "Showing {{from}}-{{to}} of {{total}} results",
+      "active": "Active"
     },
     "status": {
       "draft": "Draft",
