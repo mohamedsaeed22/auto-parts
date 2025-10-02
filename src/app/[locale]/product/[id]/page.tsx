@@ -9,8 +9,6 @@ import {
   Heart,
   Bookmark,
   Share2,
-  Truck,
-  Shield,
   RotateCcw,
   Info,
   Home,
@@ -35,7 +33,7 @@ import { Product } from "@/services/api/types";
 // Loading Component
 
 // Enhanced Features Components
-type TranslateFn = (key: string) => string;
+type TranslateFn = (key: string, options?: Record<string, unknown>) => string;
 type ProductForBadges = {
   offer?: { discount_info?: string } | null;
   discount_info?: string | null;
@@ -217,6 +215,8 @@ type ProductForPrice = {
   price: number | string;
   final_price: number;
   discount_info?: string | null;
+  tax?: number;
+  price_without_tax?: number;
 };
 const PriceSection = ({
   product,
@@ -237,14 +237,12 @@ const PriceSection = ({
         {hasDiscount && (
           <span className="text-xl text-gray-500 line-through">
             {isRTL
-              ? `${t("currency")} ${Number(originalPrice)}`
-              : `${Number(originalPrice)} ${t("currency")}`}
+              ? `${Number(originalPrice)} ر.س`
+              : `${Number(originalPrice)} SAR`}
           </span>
         )}
         <span className="text-3xl font-bold text-gray-900">
-          {isRTL
-            ? `${t("currency")} ${finalPrice}`
-            : `${finalPrice} ${t("currency")}`}
+          {isRTL ? `${finalPrice} ر.س` : `${finalPrice} SAR`}
         </span>
       </div>
 
@@ -253,9 +251,61 @@ const PriceSection = ({
         className={`flex items-center gap-2 ${isRTL ? "flex-row" : "flex-row"}`}
       >
         <span className="text-sm text-gray-600 font-medium">
-          {t("priceIncludesVat")}
+          ({t("priceIncludesVat")})
         </span>
       </div>
+
+      {/* VAT and amount without tax */}
+      {(typeof (
+        product as Product & { tax?: number; price_without_tax?: number }
+      ).tax !== "undefined" ||
+        typeof (
+          product as Product & { tax?: number; price_without_tax?: number }
+        ).price_without_tax !== "undefined") && (
+        <div className="mt-1 grid grid-cols-1 gap-1">
+          {typeof (product as Product & { tax?: number }).tax !==
+            "undefined" && (
+            <div
+              className={`flex items-center justify-between ${
+                isRTL ? "flex-row" : "flex-row"
+              }`}
+            >
+              <span className="text-sm text-gray-600">{t("vat")}:</span>
+              <span className="text-sm font-semibold">
+                {(() => {
+                  const vat = (product as Product & { tax?: number })
+                    .tax as number;
+                  return isRTL
+                    ? `${Number(vat).toFixed(2)} ر.س`
+                    : `${Number(vat).toFixed(2)} SAR`;
+                })()}
+              </span>
+            </div>
+          )}
+          {typeof (product as Product & { price_without_tax?: number })
+            .price_without_tax !== "undefined" && (
+            <div
+              className={`flex items-center justify-between ${
+                isRTL ? "flex-row" : "flex-row"
+              }`}
+            >
+              <span className="text-sm text-gray-600">
+                {t("amountWithoutTax")}:
+              </span>
+              <span className="text-sm font-semibold">
+                {(() => {
+                  const base = (
+                    product as Product & { price_without_tax?: number }
+                  ).price_without_tax as number;
+                  return isRTL
+                    ? `${Number(base).toFixed(2)} ر.س`
+                    : `${Number(base).toFixed(2)} SAR`;
+                })()}
+              </span>
+            </div>
+          )}
+        </div>
+      )}
 
       {product.discount_info && (
         <div
@@ -310,6 +360,20 @@ const StockIndicator = ({
   }
 
   const stockStatus = getProductStockStatus(product);
+  const translatedMessage = (() => {
+    const msg = stockStatus.message;
+    if (msg === "In Stock") return t("inStock");
+    if (msg === "Out of Stock") return t("outOfStock");
+    const onlyLeft = msg.match(/^Only\s+(\d+)\s+left in stock$/);
+    if (onlyLeft) {
+      return t("onlyXLeft", { count: Number(onlyLeft[1]) });
+    }
+    const nIn = msg.match(/^(\d+)\s+in stock$/);
+    if (nIn) {
+      return t("nInStock", { count: Number(nIn[1]) });
+    }
+    return msg;
+  })();
   const colorClass =
     stockStatus.type === "error"
       ? "text-red-600"
@@ -334,7 +398,7 @@ const StockIndicator = ({
         }`}
       ></div>
       <span className={`text-sm font-medium ${colorClass}`}>
-        {stockStatus.message}
+        {translatedMessage}
       </span>
       {stockStatus.type === "success" && (
         <span className="text-sm text-gray-500">- {t("readyToShip")}</span>
@@ -359,7 +423,7 @@ export default function ProductDetails() {
         throw new Error("Invalid product ID format");
       }
       return parsed;
-    } catch (error) {
+    } catch {
       return null;
     }
   })();
@@ -551,7 +615,7 @@ export default function ProductDetails() {
         if (typeof next === "boolean") {
           setLocalFavouriteState(next);
         }
-      } catch (error) {
+      } catch {
         // Revert local state if API call fails
         setLocalFavouriteState(!newFavouriteState);
       }
@@ -579,7 +643,7 @@ export default function ProductDetails() {
         if (typeof next === "boolean") {
           setLocalWishlistState(next);
         }
-      } catch (error) {
+      } catch {
         // Revert local state if API call fails
         setLocalWishlistState(!newWishlistState);
       }
@@ -606,12 +670,12 @@ export default function ProductDetails() {
         await navigator.clipboard.writeText(window.location.href);
         showSuccess(t("linkCopied"));
       }
-    } catch (error) {
+    } catch {
       // Fallback: copy to clipboard
       try {
         await navigator.clipboard.writeText(window.location.href);
         showSuccess(t("linkCopied"));
-      } catch (clipboardError) {
+      } catch {
         showError(t("shareError"));
       }
     }

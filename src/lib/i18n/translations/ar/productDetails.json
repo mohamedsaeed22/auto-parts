@@ -12,7 +12,10 @@
   "returnsDesc": "سياسة 14 يوم",
   "youSave": "توفر",
   "inStock": "متوفر في المخزن",
+  "outOfStock": "غير متوفر في المخزون",
   "readyToShip": "جاهز للشحن",
+  "onlyXLeft": "متبقي فقط {{count}} في المخزون",
+  "nInStock": "{{count}} في المخزون",
   "description": "الوصف",
   "specialOffer": "عرض خاص!",
   "discount": "خصم",
@@ -34,5 +37,8 @@
   "home": "الرئيسية",
   "loadingProductDetails": "جاري تحميل تفاصيل المنتج...",
   "failedToLoadProductDetails": "فشل في تحميل تفاصيل المنتج",
-  "invalidProductId": "معرف المنتج غير صالح"
+  "invalidProductId": "معرف المنتج غير صالح",
+  "priceIncludesVat": "السعر شامل الضريبة",
+  "vat": "ضريبة القيمة المضافة",
+  "amountWithoutTax": "المبلغ بدون ضريبة"
 }

@@ -13,6 +13,8 @@
   "youSave": "You save",
   "inStock": "In Stock",
   "readyToShip": "Ready to ship",
+  "onlyXLeft": "Only {{count}} left in stock",
+  "nInStock": "{{count}} in stock",
   "description": "Description",
   "specialOffer": "Special Offer!",
   "discount": "discount",
@@ -34,5 +36,9 @@
   "home": "Home",
   "loadingProductDetails": "Loading product details...",
   "failedToLoadProductDetails": "Failed to load product details",
-  "invalidProductId": "Invalid product ID"
+  "invalidProductId": "Invalid product ID",
+  "priceIncludesVat": "Price includes VAT",
+  "vat": "VAT",
+  "amountWithoutTax": "Amount without tax",
+  "outOfStock": "Out of Stock"
 }
