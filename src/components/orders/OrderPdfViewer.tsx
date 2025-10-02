@@ -99,7 +99,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
 
   // Generate QR Code whenever data changes
   React.useEffect(() => {
-    const qrData = `رقم الطلب: ${data.orderNumber}\nالعميل: ${data.clientName}\nالمجموع: ${data.totalAfterVat} ريال`;
+    const qrData = `رقم الطلب: ${data.orderNumber}\nالعميل: ${data.clientName}\nالمجموع: ${data.totalAfterVat} ر.س`;
     QRCode.toDataURL(qrData, {
       width: 160,
       margin: 1,
@@ -414,7 +414,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                         className="p-3 text-center font-medium"
                         style={{ border: "1px solid #d1d5db" }}
                       >
-                        {product.price.toFixed(2)} ريال
+                        {product.price.toFixed(2)} ر.س
                       </td>
                       <td
                         className="p-3 text-center font-semibold"
@@ -423,7 +423,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                           color: "#1a1a1a",
                         }}
                       >
-                        {product.total.toFixed(2)} ريال
+                        {product.total.toFixed(2)} ر.س
                       </td>
                     </tr>
                   ))}
@@ -457,7 +457,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                   className="text-base font-semibold"
                   style={{ color: "#1a1a1a" }}
                 >
-                  {data.subtotal.toFixed(2)} ريال
+                  {data.subtotal.toFixed(2)} ر.س
                 </span>
               </div>
               <div
@@ -474,7 +474,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                   className="text-base font-semibold"
                   style={{ color: "#dc2626" }}
                 >
-                  - {(0).toFixed(2)} ريال
+                  - {(0).toFixed(2)} ر.س
                 </span>
               </div>
               <div
@@ -491,7 +491,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                   className="text-base font-semibold"
                   style={{ color: "#1a1a1a" }}
                 >
-                  {data.totalBeforeVat.toFixed(2)} ريال
+                  {data.totalBeforeVat.toFixed(2)} ر.س
                 </span>
               </div>
               <div
@@ -508,7 +508,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                   className="text-base font-semibold"
                   style={{ color: "#D4AF37" }}
                 >
-                  {data.vatAmount.toFixed(2)} ريال
+                  {data.vatAmount.toFixed(2)} ر.س
                 </span>
               </div>
               <div
@@ -525,7 +525,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                   className="text-xl font-bold"
                   style={{ color: "#D4AF37" }}
                 >
-                  {data.totalAfterVat.toFixed(2)} ريال
+                  {data.totalAfterVat.toFixed(2)} ر.س
                 </span>
               </div>
             </div>

@@ -10,7 +10,6 @@ import {
   Clock,
   Truck,
   Hash,
-  Download,
   Phone,
   CheckCircle2,
   XCircle,
@@ -42,7 +41,9 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
   useEffect(() => {
     try {
       localStorage.removeItem("auto_parts_coupon_code");
-    } catch (error) {}
+    } catch {
+      // Ignore errors when removing coupon
+    }
   }, []);
 
   const getStatusColor = (status: string) => {
@@ -385,12 +386,12 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                                 {product.discount_amount > 0 && (
                                   <div className="text-xs text-gray-400 line-through">
                                     {product.price.toFixed(2)}{" "}
-                                    {order.pricing.currency}
+                                    {isRTL ? "ر.س" : "SAR"}
                                   </div>
                                 )}
                                 <div className="font-semibold text-logo-black text-sm sm:text-base">
                                   {product.final_unit_price.toFixed(2)}{" "}
-                                  {order.pricing.currency}
+                                  {isRTL ? "ر.س" : "SAR"}
                                 </div>
                               </div>
                             </div>
@@ -403,7 +404,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                               </div>
                               <div className="font-semibold text-logo-black">
                                 {product.line_total.toFixed(2)}{" "}
-                                {order.pricing.currency}
+                                {isRTL ? "ر.س" : "SAR"}
                               </div>
                             </div>
 
@@ -416,7 +417,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                                 </div>
                                 <div className="font-semibold text-green-600">
                                   {product.discount_amount.toFixed(2)}{" "}
-                                  {order.pricing.currency}
+                                  {isRTL ? "ر.س" : "SAR"}
                                 </div>
                               </div>
                             )}
@@ -551,7 +552,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                         </span>
                         <span className="font-medium text-logo-black">
                           {order.pricing.subtotal.toFixed(2)}{" "}
-                          {order.pricing.currency}
+                          {isRTL ? "ر.س" : "SAR"}
                         </span>
                       </div>
 
@@ -561,7 +562,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                         </span>
                         <span className="font-medium text-logo-black">
                           {order.pricing.shipping_cost.toFixed(2)}{" "}
-                          {order.pricing.currency}
+                          {isRTL ? "ر.س" : "SAR"}
                         </span>
                       </div>
 
@@ -572,7 +573,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                           </span>
                           <span className="font-medium text-logo-black">
                             {order.pricing.tax_amount.toFixed(2)}{" "}
-                            {order.pricing.currency}
+                            {isRTL ? "ر.س" : "SAR"}
                           </span>
                         </div>
                       )}
@@ -584,7 +585,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                           </span>
                           <span className="font-medium text-green-600">
                             -{order.pricing.discount_amount.toFixed(2)}{" "}
-                            {order.pricing.currency}
+                            {isRTL ? "ر.س" : "SAR"}
                           </span>
                         </div>
                       )}
@@ -599,7 +600,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                           </span>
                           <span className="font-medium text-green-700">
                             -{order.coupon.discount.toFixed(2)}{" "}
-                            {order.pricing.currency}
+                            {isRTL ? "ر.س" : "SAR"}
                           </span>
                         </div>
                       )}
@@ -614,7 +615,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                         </span>
                         <span className="font-bold text-xl text-logo-gold">
                           {order.pricing.total.toFixed(2)}{" "}
-                          {order.pricing.currency}
+                          {isRTL ? "ر.س" : "SAR"}
                         </span>
                       </div>
 

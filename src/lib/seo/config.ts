@@ -94,7 +94,7 @@ export const seoConfig = {
       },
       description: {
         en: "Browse our extensive collection of auto parts and car accessories. Quality parts for all vehicle makes and models with fast delivery and competitive prices. Free shipping on orders over 500 SAR.",
-        ar: "تصفح مجموعتنا الواسعة من قطع غيار السيارات والإكسسوارات. قطع عالية الجودة لجميع ماركات وموديلات المركبات مع توصيل سريع وأسعار تنافسية. شحن مجاني للطلبات أكثر من 500 ريال.",
+        ar: "تصفح مجموعتنا الواسعة من قطع غيار السيارات والإكسسوارات. قطع عالية الجودة لجميع ماركات وموديلات المركبات مع توصيل سريع وأسعار تنافسية. شحن مجاني للطلبات أكثر من 500 ر.س.",
       },
     },
     categories: {

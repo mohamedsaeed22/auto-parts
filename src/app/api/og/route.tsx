@@ -155,7 +155,7 @@ export async function GET(request: NextRequest) {
                     textShadow: "0 1px 2px rgba(0,0,0,0.3)",
                   }}
                 >
-                  {price} {isArabic ? "ريال" : "SAR"}
+                  {price} {isArabic ? "ر.س" : "SAR"}
                 </div>
               </div>
             )}

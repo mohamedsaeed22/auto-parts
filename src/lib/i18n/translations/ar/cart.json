@@ -9,7 +9,7 @@
   "items": {
     "quantity": "الكمية",
     "total": "المجموع",
-    "price": "ريال",
+    "price": "ر.س",
     "remove": "إزالة المنتج",
     "itemTotal": "المجموع"
   },
