@@ -76,6 +76,7 @@
     "shipping": "الشحن",
     "free": "مجاناً",
     "tax": "الضريبة المضافة",
+    "amountWithoutTax": "المبلغ بدون ضريبة",
     "discount": "الخصم",
     "total": "المجموع الكلي",
     "confirmOrder": "تأكيد الطلب",

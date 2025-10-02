@@ -200,6 +200,7 @@
     "shipping": "الشحن",
     "free": "مجاني",
     "tax": "الضريبة (15%)",
+    "amountWithoutTax": "المبلغ بدون ضريبة",
     "discount": "الخصم",
     "total": "المجموع الكلي",
     "couponApplied": "تم تطبيق القسيمة",
