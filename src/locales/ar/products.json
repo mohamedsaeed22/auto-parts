@@ -76,5 +76,6 @@
   "showingResults": "عرض {{start}} إلى {{end}} من {{total}} نتيجة",
   "shareSuccess": "تم مشاركة المنتج بنجاح!",
   "linkCopied": "تم نسخ الرابط إلى الحافظة!",
-  "shareError": "فشل في مشاركة أو نسخ الرابط"
+  "shareError": "فشل في مشاركة أو نسخ الرابط",
+  "priceIncludesVat": "(السعر يشمل ضريبة القيمة المضافة)"
 }

@@ -248,6 +248,15 @@ const PriceSection = ({
         </span>
       </div>
 
+      {/* Price includes VAT text */}
+      <div
+        className={`flex items-center gap-2 ${isRTL ? "flex-row" : "flex-row"}`}
+      >
+        <span className="text-sm text-gray-600 font-medium">
+          {t("priceIncludesVat")}
+        </span>
+      </div>
+
       {product.discount_info && (
         <div
           className={`inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium ${

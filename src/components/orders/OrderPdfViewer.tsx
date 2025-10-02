@@ -480,7 +480,6 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
 
             {/* Third Row - QR Code and Totals */}
             <div className="grid grid-cols-2 gap-6">
-              {/* Totals - Right */}
               <div
                 className="space-y-2 rounded-lg p-5"
                 style={{
@@ -489,6 +488,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                   border: "2px solid rgba(212, 175, 55, 0.2)",
                 }}
               >
+                {/* Subtotal */}
                 <div
                   className="flex justify-between items-center pb-2"
                   style={{ borderBottom: "1px solid #d1d5db" }}
@@ -506,6 +506,8 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                     {data.subtotal.toFixed(2)} ر.س
                   </span>
                 </div>
+
+                {/* Discounts */}
                 {data.discountAmount > 0 && (
                   <div
                     className="flex justify-between items-center pb-2"
@@ -522,26 +524,6 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                       style={{ color: "#dc2626" }}
                     >
                       - {data.discountAmount.toFixed(2)} ر.س
-                    </span>
-                  </div>
-                )}
-
-                {data.shippingCost > 0 && (
-                  <div
-                    className="flex justify-between items-center pb-2"
-                    style={{ borderBottom: "1px solid #d1d5db" }}
-                  >
-                    <span
-                      className="text-sm font-medium"
-                      style={{ color: "#374151" }}
-                    >
-                      تكلفة الشحن
-                    </span>
-                    <span
-                      className="text-base font-semibold"
-                      style={{ color: "#1a1a1a" }}
-                    >
-                      {data.shippingCost.toFixed(2)} ر.س
                     </span>
                   </div>
                 )}
@@ -565,6 +547,29 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                     </span>
                   </div>
                 )}
+
+                {/* Shipping */}
+                {data.shippingCost > 0 && (
+                  <div
+                    className="flex justify-between items-center pb-2"
+                    style={{ borderBottom: "1px solid #d1d5db" }}
+                  >
+                    <span
+                      className="text-sm font-medium"
+                      style={{ color: "#374151" }}
+                    >
+                      تكلفة الشحن
+                    </span>
+                    <span
+                      className="text-base font-semibold"
+                      style={{ color: "#1a1a1a" }}
+                    >
+                      {data.shippingCost.toFixed(2)} ر.س
+                    </span>
+                  </div>
+                )}
+
+                {/* Before VAT */}
                 <div
                   className="flex justify-between items-center pb-2"
                   style={{ borderBottom: "1px solid #d1d5db" }}
@@ -582,6 +587,8 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                     {data.totalBeforeVat.toFixed(2)} ر.س
                   </span>
                 </div>
+
+                {/* VAT */}
                 <div
                   className="flex justify-between items-center pb-2"
                   style={{ borderBottom: "1px solid #d1d5db" }}
@@ -599,6 +606,8 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                     {data.vatAmount.toFixed(2)} ر.س
                   </span>
                 </div>
+
+                {/* Grand Total */}
                 <div
                   className="flex justify-between items-center pt-2 px-5 py-3 -mx-5 -mb-5 rounded-b-lg"
                   style={{ backgroundColor: "rgba(212, 175, 55, 0.2)" }}
@@ -617,6 +626,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                   </span>
                 </div>
               </div>
+
               {/* QR Code - Left */}
               <div
                 className="flex items-center justify-center rounded-lg p-6"

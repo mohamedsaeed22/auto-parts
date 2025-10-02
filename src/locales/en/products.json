@@ -76,5 +76,6 @@
   "showingResults": "Showing {{start}} to {{end}} of {{total}} results",
   "shareSuccess": "Product shared successfully!",
   "linkCopied": "Link copied to clipboard!",
-  "shareError": "Failed to share or copy link"
+  "shareError": "Failed to share or copy link",
+  "priceIncludesVat": "(Price includes VAT)"
 }
