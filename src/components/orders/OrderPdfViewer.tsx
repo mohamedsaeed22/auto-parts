@@ -314,7 +314,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                     className="text-base font-medium"
                     style={{ color: "#1a1a1a" }}
                   >
-                    {data.address}
+                    {"شارع الأمير محمد بن عبد العزيز، حي الفيصلية، جدة"}
                   </p>
                 </div>
               </div>
@@ -358,7 +358,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                     className="text-base font-medium"
                     style={{ color: "#1a1a1a" }}
                   >
-                    {data.phone}
+                    0543777569
                   </p>
                 </div>
               </div>
