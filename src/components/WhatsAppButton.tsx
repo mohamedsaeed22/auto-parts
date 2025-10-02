@@ -11,15 +11,20 @@ import { useDirection } from "@/hooks/use-direction";
 const WhatsAppButton = () => {
   const { t } = useTranslation("whatsapp");
   const { isRTL } = useDirection();
+
+  // Phone number and message
+  const phoneNumber = "+966543777569"; // Replace with your actual WhatsApp number
+  const message = t("message");
+  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
+    message
+  )}`;
+
   const handleWhatsAppClick = () => {
-    // You can customize the phone number and message
-    const phoneNumber = "+966543777569"; // Replace with your actual WhatsApp number
-    const message = t("message");
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
-      message
-    )}`;
-    window.open(whatsappUrl, "_blank");
+    // Use window.location.href for better iOS/iPhone Safari compatibility
+    // This works more reliably than window.open() on mobile devices
+    window.location.href = whatsappUrl;
   };
+
   return (
     <TooltipProvider>
       <Tooltip open={true} delayDuration={0}>
