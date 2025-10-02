@@ -110,6 +110,36 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
       .filter(Boolean)
       .join(", ");
 
+    // Compute tax and price without tax from products when available
+    const computedTotals = order.products.reduce(
+      (acc, p) => {
+        const quantity = p.quantity || 1;
+        const productTax = (p as any)?.product?.tax ?? 0;
+        const productPriceWithoutTax =
+          (p as any)?.product?.price_without_tax ?? 0;
+        return {
+          totalAmountWithoutTax:
+            acc.totalAmountWithoutTax + productPriceWithoutTax * quantity,
+          totalTax: acc.totalTax + productTax * quantity,
+        };
+      },
+      { totalAmountWithoutTax: 0, totalTax: 0 }
+    );
+
+    // Fallbacks if product fields are not available
+    const fallbackTotalAmountWithoutTax = Math.max(
+      0,
+      (order.pricing?.subtotal || 0) - (order.pricing?.tax_amount || 0)
+    );
+    const fallbackTotalTax = order.pricing?.tax_amount || 0;
+
+    const totalAmountWithoutTax =
+      computedTotals.totalAmountWithoutTax || fallbackTotalAmountWithoutTax;
+    const totalTax = computedTotals.totalTax || fallbackTotalTax;
+    const totalBeforeDiscount = totalAmountWithoutTax + totalTax;
+    const totalDiscount = order.pricing?.discount_amount || 0;
+    const cartTotal = (order.pricing?.subtotal || 0) - totalDiscount;
+
     return {
       date: formatDate(order.created_at),
       orderNumber: order.order_number,
@@ -126,11 +156,14 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
         total: product.line_total,
       })),
       subtotal: order.pricing.subtotal,
-      totalBeforeVat: order.pricing.subtotal - order.pricing.discount_amount,
-      vatAmount: order.pricing.tax_amount,
+      // Detailed breakdown to mirror checkout
+      totalAmountWithoutTax,
+      vatAmount: totalTax,
+      totalBeforeVat: totalBeforeDiscount,
+      cartTotal,
       totalAfterVat: order.pricing.total,
       total: order.pricing.total,
-      discountAmount: order.pricing.discount_amount,
+      discountAmount: totalDiscount,
       shippingCost: order.pricing.shipping_cost,
       couponCode: order.coupon.code,
       couponDiscount: order.coupon.discount,
@@ -488,7 +521,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                   border: "2px solid rgba(212, 175, 55, 0.2)",
                 }}
               >
-                {/* Subtotal */}
+                {/* 1. Total Amount Without Tax */}
                 <div
                   className="flex justify-between items-center pb-2"
                   style={{ borderBottom: "1px solid #d1d5db" }}
@@ -497,17 +530,57 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                     className="text-sm font-medium"
                     style={{ color: "#374151" }}
                   >
-                    الإجمالي
+                    الإجمالي بدون الضريبة
                   </span>
                   <span
                     className="text-base font-semibold"
                     style={{ color: "#1a1a1a" }}
                   >
-                    {data.subtotal.toFixed(2)} ر.س
+                    {data.totalAmountWithoutTax.toFixed(2)} ر.س
                   </span>
                 </div>
 
-                {/* Discounts */}
+                {/* 2. Total Tax */}
+                {data.vatAmount > 0 && (
+                  <div
+                    className="flex justify-between items-center pb-2"
+                    style={{ borderBottom: "1px solid #d1d5db" }}
+                  >
+                    <span
+                      className="text-sm font-medium"
+                      style={{ color: "#374151" }}
+                    >
+                      الضريبة
+                    </span>
+                    <span
+                      className="text-base font-semibold"
+                      style={{ color: "#1a1a1a" }}
+                    >
+                      {data.vatAmount.toFixed(2)} ر.س
+                    </span>
+                  </div>
+                )}
+
+                {/* 3. Total Including VAT */}
+                <div
+                  className="flex justify-between items-center pb-2"
+                  style={{ borderBottom: "1px solid #d1d5db" }}
+                >
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: "#374151" }}
+                  >
+                    الإجمالي شامل الضريبة
+                  </span>
+                  <span
+                    className="text-base font-semibold"
+                    style={{ color: "#1a1a1a" }}
+                  >
+                    {data.totalBeforeVat.toFixed(2)} ر.س
+                  </span>
+                </div>
+
+                {/* 4. Total Discount */}
                 {data.discountAmount > 0 && (
                   <div
                     className="flex justify-between items-center pb-2"
@@ -528,6 +601,26 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                   </div>
                 )}
 
+                {/* 5. Cart Total */}
+                <div
+                  className="flex justify-between items-center pb-2"
+                  style={{ borderBottom: "1px solid #d1d5db" }}
+                >
+                  <span
+                    className="text-sm font-semibold"
+                    style={{ color: "#374151" }}
+                  >
+                    إجمالي السلة
+                  </span>
+                  <span
+                    className="text-base font-semibold"
+                    style={{ color: "#1a1a1a" }}
+                  >
+                    {data.cartTotal.toFixed(2)} ر.س
+                  </span>
+                </div>
+
+                {/* 6. Coupon Discount */}
                 {data.couponCode && data.couponDiscount > 0 && (
                   <div
                     className="flex justify-between items-center pb-2"
@@ -537,39 +630,18 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                       className="text-sm font-medium"
                       style={{ color: "#374151" }}
                     >
-                      كوبون ({data.couponCode})
+                      خصم القسيمة
                     </span>
                     <span
                       className="text-base font-semibold"
-                      style={{ color: "#dc2626" }}
+                      style={{ color: "#D4AF37" }}
                     >
                       - {data.couponDiscount.toFixed(2)} ر.س
                     </span>
                   </div>
                 )}
 
-                {/* Shipping */}
-                {data.shippingCost > 0 && (
-                  <div
-                    className="flex justify-between items-center pb-2"
-                    style={{ borderBottom: "1px solid #d1d5db" }}
-                  >
-                    <span
-                      className="text-sm font-medium"
-                      style={{ color: "#374151" }}
-                    >
-                      تكلفة الشحن
-                    </span>
-                    <span
-                      className="text-base font-semibold"
-                      style={{ color: "#1a1a1a" }}
-                    >
-                      {data.shippingCost.toFixed(2)} ر.س
-                    </span>
-                  </div>
-                )}
-
-                {/* Before VAT */}
+                {/* 7. Shipping */}
                 <div
                   className="flex justify-between items-center pb-2"
                   style={{ borderBottom: "1px solid #d1d5db" }}
@@ -578,36 +650,19 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                     className="text-sm font-medium"
                     style={{ color: "#374151" }}
                   >
-                    الإجمالي قبل الضريبة
+                    الشحن
                   </span>
                   <span
                     className="text-base font-semibold"
                     style={{ color: "#1a1a1a" }}
                   >
-                    {data.totalBeforeVat.toFixed(2)} ر.س
+                    {data.shippingCost > 0
+                      ? `${data.shippingCost.toFixed(2)} ر.س`
+                      : "مجاناً"}
                   </span>
                 </div>
 
-                {/* VAT */}
-                <div
-                  className="flex justify-between items-center pb-2"
-                  style={{ borderBottom: "1px solid #d1d5db" }}
-                >
-                  <span
-                    className="text-sm font-medium"
-                    style={{ color: "#374151" }}
-                  >
-                    إجمالي ضريبة القيمة المضافة (15%)
-                  </span>
-                  <span
-                    className="text-base font-semibold"
-                    style={{ color: "#D4AF37" }}
-                  >
-                    {data.vatAmount.toFixed(2)} ر.س
-                  </span>
-                </div>
-
-                {/* Grand Total */}
+                {/* 8. Final Total */}
                 <div
                   className="flex justify-between items-center pt-2 px-5 py-3 -mx-5 -mb-5 rounded-b-lg"
                   style={{ backgroundColor: "rgba(212, 175, 55, 0.2)" }}
@@ -616,7 +671,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                     className="text-lg font-bold"
                     style={{ color: "#1a1a1a" }}
                   >
-                    الإجمالي شامل الضريبة
+                    الإجمالي النهائي
                   </span>
                   <span
                     className="text-xl font-bold"
