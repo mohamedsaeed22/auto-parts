@@ -35,6 +35,7 @@
     "images": {
       "title": "الصور المطلوبة",
       "required": "مطلوب",
+      "optional": "اختياري",
       "partImage": "صورة القطعة",
       "requestImage": "صورة الطلب",
       "formImage": "صورة النموذج"

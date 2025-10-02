@@ -198,37 +198,39 @@ export function PricingForm({
           {/* Image Uploads - Only for Workshop */}
           {currentUserType === "workshop" && (
             <div className="space-y-4">
-              <h3 className="text-lg font-medium text-gray-900">
-                {t("form.images.title")} ({t("form.images.required")})
-              </h3>
-
-              {/* Part Image Upload */}
+              {/* Part Image Upload - Optional */}
               <ImageUpload
                 ref={partImageInputRef}
                 id="partImage"
-                label={t("form.images.partImage")}
+                label={`${t("form.images.partImage")} (${t(
+                  "form.images.optional"
+                )})`}
                 preview={partImagePreview}
                 onImageChange={(file) => onImageChange(file, "partImage")}
                 onRemoveImage={() => onRemoveImage("partImage")}
                 error={errors.partImage?.message}
               />
 
-              {/* Request Image Upload */}
+              {/* Request Image Upload - Optional */}
               <ImageUpload
                 ref={requestImageInputRef}
                 id="requestImage"
-                label={t("form.images.requestImage")}
+                label={`${t("form.images.requestImage")} (${t(
+                  "form.images.optional"
+                )})`}
                 preview={requestImagePreview}
                 onImageChange={(file) => onImageChange(file, "requestImage")}
                 onRemoveImage={() => onRemoveImage("requestImage")}
                 error={errors.requestImage?.message}
               />
 
-              {/* Form Image Upload */}
+              {/* Form Image Upload - Required */}
               <ImageUpload
                 ref={formImageInputRef}
                 id="formImage"
-                label={t("form.images.formImage")}
+                label={`${t("form.images.formImage")} (${t(
+                  "form.images.required"
+                )})`}
                 preview={formImagePreview}
                 onImageChange={(file) => onImageChange(file, "formImage")}
                 onRemoveImage={() => onRemoveImage("formImage")}

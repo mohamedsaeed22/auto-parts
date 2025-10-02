@@ -35,6 +35,7 @@
     "images": {
       "title": "Required Images",
       "required": "Required",
+      "optional": "Optional",
       "partImage": "Part Image",
       "requestImage": "Request Image",
       "formImage": "Form Image"

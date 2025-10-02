@@ -53,7 +53,7 @@ const baseSchema = z.object({
     }, "userPricing:validation.quantity.positive"),
 });
 
-// Workshop-specific schema (images REQUIRED)
+// Workshop-specific schema (partImage and requestImage OPTIONAL, formImage REQUIRED)
 const workshopSchema = baseSchema.extend({
   userType: z.literal("workshop"),
   userCode: z
@@ -63,8 +63,8 @@ const workshopSchema = baseSchema.extend({
     .max(20, "userPricing:validation.userCode.maxLength"),
   chassisNumber: z.string().optional(),
 
-  partImage: requiredFileSchema,
-  requestImage: requiredFileSchema,
+  partImage: optionalFileSchema,
+  requestImage: optionalFileSchema,
   formImage: requiredFileSchema,
 });
 

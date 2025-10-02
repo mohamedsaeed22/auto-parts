@@ -66,7 +66,7 @@ export function SavedFormItem({ form, index, onDelete }: SavedFormItemProps) {
         </div>
       )}
 
-      {/* Optional Fields */}
+      {/* Chassis Number - Only show if entered */}
       {form.userType === "workshop" && form.chassisNumber && (
         <div className="bg-gray-50 rounded p-2 mt-2">
           <span className="text-xs text-gray-500">
@@ -76,38 +76,41 @@ export function SavedFormItem({ form, index, onDelete }: SavedFormItemProps) {
         </div>
       )}
 
-      {/* Images (only for workshop) */}
-      {form.userType === "workshop" && (
-        <div className="grid grid-cols-3 gap-2 mt-3">
-          {form.partImagePreview && (
-            <Image
-              src={form.partImagePreview}
-              alt={t("savedForms.imageAlts.partImage")}
-              className="w-full h-16 object-cover rounded border"
-              width={80}
-              height={64}
-            />
-          )}
-          {form.requestImagePreview && (
-            <Image
-              src={form.requestImagePreview}
-              alt={t("savedForms.imageAlts.requestImage")}
-              className="w-full h-16 object-cover rounded border"
-              width={80}
-              height={64}
-            />
-          )}
-          {form.formImagePreview && (
-            <Image
-              src={form.formImagePreview}
-              alt={t("savedForms.imageAlts.formImage")}
-              className="w-full h-16 object-cover rounded border"
-              width={80}
-              height={64}
-            />
-          )}
-        </div>
-      )}
+      {/* Images (only for workshop) - Only show if at least one image exists */}
+      {form.userType === "workshop" &&
+        (form.partImagePreview ||
+          form.requestImagePreview ||
+          form.formImagePreview) && (
+          <div className="grid grid-cols-3 gap-2 mt-3">
+            {form.partImagePreview && (
+              <Image
+                src={form.partImagePreview}
+                alt={t("savedForms.imageAlts.partImage")}
+                className="w-full h-16 object-cover rounded border"
+                width={80}
+                height={64}
+              />
+            )}
+            {form.requestImagePreview && (
+              <Image
+                src={form.requestImagePreview}
+                alt={t("savedForms.imageAlts.requestImage")}
+                className="w-full h-16 object-cover rounded border"
+                width={80}
+                height={64}
+              />
+            )}
+            {form.formImagePreview && (
+              <Image
+                src={form.formImagePreview}
+                alt={t("savedForms.imageAlts.formImage")}
+                className="w-full h-16 object-cover rounded border"
+                width={80}
+                height={64}
+              />
+            )}
+          </div>
+        )}
 
       {/* Footer */}
       <p className="text-xs text-gray-400 mt-3">
