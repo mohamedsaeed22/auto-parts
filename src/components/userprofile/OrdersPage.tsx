@@ -11,6 +11,7 @@ import {
   CreditCard,
   X,
   Loader2,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +25,7 @@ import {
 } from "@/services/api/ordersApi";
 import type { Order, OrdersRequest } from "@/services/api/ordersApi";
 import OrderDetailsDialog from "./OrderDetailsDialog";
+import OrderPdfViewer from "@/components/orders/OrderPdfViewer";
 
 export default function OrdersPage() {
   const { t, i18n } = useTranslation("userProfile");
@@ -32,6 +34,11 @@ export default function OrdersPage() {
   // State for order details dialog
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
+
+  // State for invoice dialog
+  const [selectedOrderForInvoice, setSelectedOrderForInvoice] =
+    useState<Order | null>(null);
+  const [isInvoiceDialogOpen, setIsInvoiceDialogOpen] = useState(false);
 
   // Use nuqs to manage page state from URL
   const [currentPage, setCurrentPage] = useQueryState(
@@ -199,6 +206,12 @@ export default function OrdersPage() {
   const handleViewDetails = (order: Order) => {
     setSelectedOrder(order);
     setIsDetailsDialogOpen(true);
+  };
+
+  // Handle view invoice
+  const handleViewInvoice = (order: Order) => {
+    setSelectedOrderForInvoice(order);
+    setIsInvoiceDialogOpen(true);
   };
 
   const orders = ordersResponse?.data?.items || [];
@@ -515,6 +528,15 @@ export default function OrdersPage() {
                       <Eye size={14} />
                       {t("orders.viewDetails")}
                     </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleViewInvoice(order)}
+                      className="flex items-center gap-2 min-w-[100px] border-blue-500 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                    >
+                      <FileText size={14} />
+                      {isRTL ? "تحميل الفاتورة" : "Download Invoice"}
+                    </Button>
                     {/* <Button
                       size="sm"
                       variant="outline"
@@ -566,6 +588,16 @@ export default function OrdersPage() {
           setSelectedOrder(null);
         }}
         isRTL={isRTL}
+      />
+
+      {/* Invoice PDF Viewer Dialog */}
+      <OrderPdfViewer
+        isOpen={isInvoiceDialogOpen}
+        onClose={() => {
+          setIsInvoiceDialogOpen(false);
+          setSelectedOrderForInvoice(null);
+        }}
+        orderData={selectedOrderForInvoice}
       />
     </div>
   );
