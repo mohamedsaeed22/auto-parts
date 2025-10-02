@@ -56,7 +56,7 @@ export default function RejectConfirmDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="py-4">
+        {/* <div className="py-4">
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
             <p
               className={`text-sm text-red-800 ${
@@ -69,7 +69,7 @@ export default function RejectConfirmDialog({
               )}
             </p>
           </div>
-        </div>
+        </div> */}
 
         <DialogFooter
           className={`flex gap-2 ${isRTL ? "flex-row-reverse" : "flex-row"}`}

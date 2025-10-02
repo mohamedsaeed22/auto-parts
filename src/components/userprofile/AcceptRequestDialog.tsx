@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -50,13 +53,115 @@ interface NewAddressForm {
   last_name: string;
   phone: string;
   address: string;
-  apartment: string;
+  apartment?: string;
   city: string;
-  state: string;
+  state?: string;
   country: string;
   zip_code: string;
-  notes: string;
+  notes?: string;
 }
+
+// Zod schema for address validation
+const createAddressSchema = (t: (key: string, fallback: string) => string, isRTL: boolean) => {
+  return z.object({
+    first_name: z
+      .string()
+      .min(1, {
+        message: isRTL
+          ? "الاسم الأول مطلوب"
+          : t("addressSelection:validation.firstName.required", "First name is required"),
+      })
+      .min(2, {
+        message: isRTL
+          ? "الاسم الأول يجب أن يكون على الأقل حرفين"
+          : t(
+              "addressSelection:validation.firstName.minLength",
+              "First name must be at least 2 characters"
+            ),
+      }),
+    last_name: z
+      .string()
+      .min(1, {
+        message: isRTL
+          ? "الاسم الأخير مطلوب"
+          : t("addressSelection:validation.lastName.required", "Last name is required"),
+      })
+      .min(2, {
+        message: isRTL
+          ? "الاسم الأخير يجب أن يكون على الأقل حرفين"
+          : t(
+              "addressSelection:validation.lastName.minLength",
+              "Last name must be at least 2 characters"
+            ),
+      }),
+    phone: z
+      .string()
+      .min(1, {
+        message: isRTL
+          ? "رقم الهاتف مطلوب"
+          : t("addressSelection:validation.phone.required", "Phone number is required"),
+      })
+      .regex(/^05\d{8}$/, {
+        message: isRTL
+          ? "رقم الهاتف يجب أن يبدأ بـ 05 ويتكون من 10 أرقام (مثال: 0543777569)"
+          : t(
+              "addressSelection:validation.phone.invalid",
+              "Phone must start with 05 and be 10 digits (e.g., 0543777569)"
+            ),
+      }),
+    address: z
+      .string()
+      .min(1, {
+        message: isRTL
+          ? "العنوان مطلوب"
+          : t("addressSelection:validation.address.required", "Address is required"),
+      })
+      .min(5, {
+        message: isRTL
+          ? "العنوان يجب أن يكون على الأقل 5 أحرف"
+          : t("addressSelection:validation.address.minLength", "Address must be at least 5 characters"),
+      }),
+    apartment: z.string().optional(),
+    city: z
+      .string()
+      .min(1, {
+        message: isRTL
+          ? "المدينة مطلوبة"
+          : t("addressSelection:validation.city.required", "City is required"),
+      })
+      .min(2, {
+        message: isRTL
+          ? "المدينة يجب أن تكون على الأقل حرفين"
+          : t("addressSelection:validation.city.minLength", "City must be at least 2 characters"),
+      }),
+    state: z.string().optional(),
+    country: z
+      .string()
+      .min(1, {
+        message: isRTL
+          ? "الدولة مطلوبة"
+          : t("addressSelection:validation.country.required", "Country is required"),
+      })
+      .min(2, {
+        message: isRTL
+          ? "الدولة يجب أن تكون على الأقل حرفين"
+          : t("addressSelection:validation.country.minLength", "Country must be at least 2 characters"),
+      }),
+    zip_code: z
+      .string()
+      .min(1, {
+        message: isRTL
+          ? "الرمز البريدي مطلوب"
+          : t("addressSelection:validation.zipCode.required", "ZIP code is required"),
+      })
+      .regex(/^\d{5}$/, {
+        message: isRTL
+          ? "الرمز البريدي يجب أن يكون 5 أرقام"
+          : t("addressSelection:validation.zipCode.invalid", "ZIP code must be 5 digits"),
+      }),
+    notes: z.string().optional(),
+  });
+};
 
 export default function AcceptRequestDialog({
   isOpen,
@@ -75,37 +180,17 @@ export default function AcceptRequestDialog({
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "credit_card">(
     "cash"
   );
-  const [newAddressForm, setNewAddressForm] = useState<NewAddressForm>({
-    first_name: "",
-    last_name: "",
-    phone: "",
-    address: "",
-    apartment: "",
-    city: "",
-    state: "",
-    country: "",
-    zip_code: "",
-    notes: "",
-  });
 
-  const { data: addressesResponse, isLoading: isLoadingAddresses } =
-    useGetAddressesQuery();
-
-  const addresses: Address[] = addressesResponse?.data?.addresses || [];
-
-  const handleInputChange = (field: keyof NewAddressForm, value: string) => {
-    setNewAddressForm((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const resetForm = () => {
-    setStep(1);
-    setSelectedAddressId(null);
-    setShowNewAddressForm(false);
-    setPaymentMethod("cash");
-    setNewAddressForm({
+  // React Hook Form with Zod validation
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<NewAddressForm>({
+    resolver: zodResolver(createAddressSchema(t, isRTL)),
+    mode: "onChange",
+    defaultValues: {
       first_name: "",
       last_name: "",
       phone: "",
@@ -116,7 +201,27 @@ export default function AcceptRequestDialog({
       country: "",
       zip_code: "",
       notes: "",
-    });
+    },
+  });
+
+  // Reset form when dialog closes or switches back
+  useEffect(() => {
+    if (!isOpen || !showNewAddressForm) {
+      reset();
+    }
+  }, [isOpen, showNewAddressForm, reset]);
+
+  const { data: addressesResponse, isLoading: isLoadingAddresses } =
+    useGetAddressesQuery();
+
+  const addresses: Address[] = addressesResponse?.data?.addresses || [];
+
+  const resetForm = () => {
+    setStep(1);
+    setSelectedAddressId(null);
+    setShowNewAddressForm(false);
+    setPaymentMethod("cash");
+    reset();
   };
 
   const handleClose = () => {
@@ -126,49 +231,45 @@ export default function AcceptRequestDialog({
 
   const isStep1Valid = () => {
     if (showNewAddressForm) {
-      return (
-        newAddressForm.first_name &&
-        newAddressForm.last_name &&
-        newAddressForm.phone &&
-        newAddressForm.address &&
-        newAddressForm.city &&
-        newAddressForm.country &&
-        newAddressForm.zip_code
-      );
+      // Form is valid when there are no errors and all required fields have values
+      return Object.keys(errors).length === 0;
     }
     return selectedAddressId !== null;
   };
 
   const handleNextStep = () => {
-    if (step === 1 && isStep1Valid()) {
-      setStep(2);
+    if (step === 1) {
+      if (showNewAddressForm) {
+        // Trigger form validation
+        handleSubmit(() => {
+          setStep(2);
+        })();
+      } else if (selectedAddressId) {
+        setStep(2);
+      }
     }
   };
 
-  const handleConfirm = () => {
+  const onFormSubmit = (formData: NewAddressForm) => {
     const data: Parameters<typeof onConfirm>[0] = {
       payment_method: paymentMethod,
+      ...formData,
     };
 
-    if (showNewAddressForm) {
-      // Add all new address fields
-      Object.assign(data, {
-        first_name: newAddressForm.first_name,
-        last_name: newAddressForm.last_name,
-        phone: newAddressForm.phone,
-        address: newAddressForm.address,
-        apartment: newAddressForm.apartment,
-        city: newAddressForm.city,
-        state: newAddressForm.state,
-        country: newAddressForm.country,
-        zip_code: newAddressForm.zip_code,
-        notes: newAddressForm.notes,
-      });
-    } else if (selectedAddressId) {
-      data.address_id = selectedAddressId;
-    }
-
     onConfirm(data);
+  };
+
+  const handleConfirm = () => {
+    if (showNewAddressForm) {
+      // Submit the form which will trigger validation and onFormSubmit if valid
+      handleSubmit(onFormSubmit)();
+    } else if (selectedAddressId) {
+      const data: Parameters<typeof onConfirm>[0] = {
+        payment_method: paymentMethod,
+        address_id: selectedAddressId,
+      };
+      onConfirm(data);
+    }
   };
 
   return (
@@ -413,16 +514,18 @@ export default function AcceptRequestDialog({
                         {t("addressSelection:firstName", "First Name")} *
                       </label>
                       <Input
-                        value={newAddressForm.first_name}
-                        onChange={(e) =>
-                          handleInputChange("first_name", e.target.value)
-                        }
+                        {...register("first_name")}
                         placeholder={t(
                           "addressSelection:firstNamePlaceholder",
                           "Enter first name"
                         )}
-                        className="h-12"
+                        className={`h-12 ${errors.first_name ? "border-red-500" : ""}`}
                       />
+                      {errors.first_name && (
+                        <p className={`text-sm text-red-600 ${isRTL ? "text-right" : "text-left"}`}>
+                          {errors.first_name.message}
+                        </p>
+                      )}
                     </div>
 
                     <div className="space-y-2">
@@ -434,16 +537,18 @@ export default function AcceptRequestDialog({
                         {t("addressSelection:lastName", "Last Name")} *
                       </label>
                       <Input
-                        value={newAddressForm.last_name}
-                        onChange={(e) =>
-                          handleInputChange("last_name", e.target.value)
-                        }
+                        {...register("last_name")}
                         placeholder={t(
                           "addressSelection:lastNamePlaceholder",
                           "Enter last name"
                         )}
-                        className="h-12"
+                        className={`h-12 ${errors.last_name ? "border-red-500" : ""}`}
                       />
+                      {errors.last_name && (
+                        <p className={`text-sm text-red-600 ${isRTL ? "text-right" : "text-left"}`}>
+                          {errors.last_name.message}
+                        </p>
+                      )}
                     </div>
 
                     <div className="space-y-2">
@@ -455,16 +560,16 @@ export default function AcceptRequestDialog({
                         {t("addressSelection:phone", "Phone")} *
                       </label>
                       <Input
-                        value={newAddressForm.phone}
-                        onChange={(e) =>
-                          handleInputChange("phone", e.target.value)
-                        }
-                        placeholder={t(
-                          "addressSelection:phonePlaceholder",
-                          "Enter phone number"
-                        )}
-                        className="h-12"
+                        {...register("phone")}
+                        placeholder="0543777569"
+                        className={`h-12 ${errors.phone ? "border-red-500" : ""}`}
+                        dir="ltr"
                       />
+                      {errors.phone && (
+                        <p className={`text-sm text-red-600 ${isRTL ? "text-right" : "text-left"}`}>
+                          {errors.phone.message}
+                        </p>
+                      )}
                     </div>
 
                     <div className="space-y-2">
@@ -476,16 +581,18 @@ export default function AcceptRequestDialog({
                         {t("addressSelection:zipCode", "ZIP Code")} *
                       </label>
                       <Input
-                        value={newAddressForm.zip_code}
-                        onChange={(e) =>
-                          handleInputChange("zip_code", e.target.value)
-                        }
+                        {...register("zip_code")}
                         placeholder={t(
                           "addressSelection:zipCodePlaceholder",
                           "Enter ZIP code"
                         )}
-                        className="h-12"
+                        className={`h-12 ${errors.zip_code ? "border-red-500" : ""}`}
                       />
+                      {errors.zip_code && (
+                        <p className={`text-sm text-red-600 ${isRTL ? "text-right" : "text-left"}`}>
+                          {errors.zip_code.message}
+                        </p>
+                      )}
                     </div>
 
                     <div className="space-y-2 md:col-span-2">
@@ -497,16 +604,18 @@ export default function AcceptRequestDialog({
                         {t("addressSelection:address", "Address")} *
                       </label>
                       <Input
-                        value={newAddressForm.address}
-                        onChange={(e) =>
-                          handleInputChange("address", e.target.value)
-                        }
+                        {...register("address")}
                         placeholder={t(
                           "addressSelection:addressPlaceholder",
                           "Enter street address"
                         )}
-                        className="h-12"
+                        className={`h-12 ${errors.address ? "border-red-500" : ""}`}
                       />
+                      {errors.address && (
+                        <p className={`text-sm text-red-600 ${isRTL ? "text-right" : "text-left"}`}>
+                          {errors.address.message}
+                        </p>
+                      )}
                     </div>
 
                     <div className="space-y-2">
@@ -518,10 +627,7 @@ export default function AcceptRequestDialog({
                         {t("addressSelection:apartment", "Apartment")}
                       </label>
                       <Input
-                        value={newAddressForm.apartment}
-                        onChange={(e) =>
-                          handleInputChange("apartment", e.target.value)
-                        }
+                        {...register("apartment")}
                         placeholder={t(
                           "addressSelection:apartmentPlaceholder",
                           "Apartment, suite, etc."
@@ -539,16 +645,18 @@ export default function AcceptRequestDialog({
                         {t("addressSelection:city", "City")} *
                       </label>
                       <Input
-                        value={newAddressForm.city}
-                        onChange={(e) =>
-                          handleInputChange("city", e.target.value)
-                        }
+                        {...register("city")}
                         placeholder={t(
                           "addressSelection:cityPlaceholder",
                           "Enter city"
                         )}
-                        className="h-12"
+                        className={`h-12 ${errors.city ? "border-red-500" : ""}`}
                       />
+                      {errors.city && (
+                        <p className={`text-sm text-red-600 ${isRTL ? "text-right" : "text-left"}`}>
+                          {errors.city.message}
+                        </p>
+                      )}
                     </div>
 
                     <div className="space-y-2">
@@ -560,10 +668,7 @@ export default function AcceptRequestDialog({
                         {t("addressSelection:state", "State")}
                       </label>
                       <Input
-                        value={newAddressForm.state}
-                        onChange={(e) =>
-                          handleInputChange("state", e.target.value)
-                        }
+                        {...register("state")}
                         placeholder={t(
                           "addressSelection:statePlaceholder",
                           "Enter state"
@@ -581,16 +686,18 @@ export default function AcceptRequestDialog({
                         {t("addressSelection:country", "Country")} *
                       </label>
                       <Input
-                        value={newAddressForm.country}
-                        onChange={(e) =>
-                          handleInputChange("country", e.target.value)
-                        }
+                        {...register("country")}
                         placeholder={t(
                           "addressSelection:countryPlaceholder",
                           "Enter country"
                         )}
-                        className="h-12"
+                        className={`h-12 ${errors.country ? "border-red-500" : ""}`}
                       />
+                      {errors.country && (
+                        <p className={`text-sm text-red-600 ${isRTL ? "text-right" : "text-left"}`}>
+                          {errors.country.message}
+                        </p>
+                      )}
                     </div>
 
                     <div className="space-y-2 md:col-span-2">
@@ -602,10 +709,7 @@ export default function AcceptRequestDialog({
                         {t("addressSelection:notes", "Notes")}
                       </label>
                       <Input
-                        value={newAddressForm.notes}
-                        onChange={(e) =>
-                          handleInputChange("notes", e.target.value)
-                        }
+                        {...register("notes")}
                         placeholder={t(
                           "addressSelection:notesPlaceholder",
                           "Additional delivery instructions"
