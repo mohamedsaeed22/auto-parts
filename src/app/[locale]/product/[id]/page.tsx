@@ -181,7 +181,7 @@ const ProductActions = ({
 );
 const ProductFeatures = ({ isRTL, t }: { isRTL: boolean; t: TranslateFn }) => (
   <div className="flex flex-wrap p-6 bg-gray-50 rounded-lg">
-    <div
+    {/* <div
       className={`w-1/2 flex items-center gap-3 ${
         isRTL ? "flex-row" : "flex-row"
       }`}
@@ -193,7 +193,7 @@ const ProductFeatures = ({ isRTL, t }: { isRTL: boolean; t: TranslateFn }) => (
         <p className="font-medium text-gray-900">{t("freeShipping")}</p>
         <p className="text-sm text-gray-500">{t("freeShippingDesc")}</p>
       </div>
-    </div>
+    </div> */}
 
     <div
       className={`w-1/2 flex items-center gap-3 ${

@@ -241,12 +241,21 @@ const Footer = () => {
             </div>
 
             {/* Bank IBAN Info */}
-            <div className="text-white">
-              <div className="text-xs font-medium text-gray-300">
-                {t("certificates.bankAccount")}
-              </div>
-              <div className="text-sm font-bold text-[#b9974d]">
-                SA2310000061700000871701
+            <div className="text-white flex gap-3">
+              <Image
+                src="/snb.png"
+                alt="SNB Bank"
+                width={80}
+                height={170}
+                className="rounded shadow-sm"
+              />
+              <div>
+                <div className="text-xs font-medium text-gray-300">
+                  {t("certificates.bankAccount")}
+                </div>
+                <div className="flex items-center gap-3 text-sm font-bold text-[#b9974d]">
+                  <span>SA2310000061700000871701</span>
+                </div>
               </div>
             </div>
           </div>
