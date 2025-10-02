@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FileText,
   Filter,
@@ -9,8 +9,6 @@ import {
   Package,
   Car,
   DollarSign,
-  ChevronLeft,
-  ChevronRight,
   CheckCircle,
   XCircle,
   PlayCircle,
@@ -20,6 +18,8 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import FormSelect from "@/components/ui/FormSelect";
+import { CustomPagination } from "@/components/ui/custom-pagination";
+import { useQueryState, parseAsInteger } from "nuqs";
 import { useGetRequestsQuery, useApproveRequestMutation } from "@/services/api";
 import { Loader2 } from "lucide-react";
 import type {
@@ -60,13 +60,32 @@ export default function RequestsPage() {
   const { isRegistrationComplete } = useAuthContext();
   const router = useRouter();
   const { currentLocale } = useLocale();
+
+  // Use nuqs to manage page state from URL
+  const [currentPage, setCurrentPage] = useQueryState(
+    "page",
+    parseAsInteger.withDefault(1)
+  );
+
+  // Remove page query param from URL on initial mount and cleanup on unmount
+  useEffect(() => {
+    if (currentPage === 1) {
+      setCurrentPage(null);
+    }
+
+    // Cleanup: remove page param when component unmounts
+    return () => {
+      setCurrentPage(null);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Default filters for comparison
   const defaultFilters = {
     status: "all" as const,
     date_from: "",
     date_to: "",
     per_page: 10,
-    page: 1,
   };
 
   const [filters, setFilters] = useState<{
@@ -81,15 +100,20 @@ export default function RequestsPage() {
     date_from: string;
     date_to: string;
     per_page: number;
-    page: number;
   }>(defaultFilters);
+
+  // Get requests data - merge filters with currentPage from URL
+  const queryParams = { ...filters, page: currentPage };
+  console.log("RequestsPage - Query Params:", queryParams);
+  console.log("RequestsPage - currentPage:", currentPage);
+  console.log("RequestsPage - filters:", filters);
 
   const {
     data: requestsResponse,
     isLoading,
     error,
     refetch,
-  } = useGetRequestsQuery(filters);
+  } = useGetRequestsQuery(queryParams);
 
   const [approveRequest, { isLoading: isApproving }] =
     useApproveRequestMutation();
@@ -98,8 +122,15 @@ export default function RequestsPage() {
   const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
   const [pendingRequestId, setPendingRequestId] = useState<number | null>(null);
 
+  console.log("RequestsPage - Response:", requestsResponse);
+  console.log("RequestsPage - Error:", error);
+  console.log("RequestsPage - isLoading:", isLoading);
+
   const requests: RequestResponse[] = requestsResponse?.data?.requests || [];
   const pagination = requestsResponse?.data?.pagination;
+
+  console.log("RequestsPage - Requests:", requests);
+  console.log("RequestsPage - Pagination:", pagination);
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters((prev) => ({
@@ -115,23 +146,18 @@ export default function RequestsPage() {
               | "rejected"
               | "completed")
           : value,
-      page: 1, // Reset to first page when filters change
     }));
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setFilters((prev) => ({
-      ...prev,
-      page: newPage,
-    }));
+    // Reset page in URL to 1 when filters change
+    setCurrentPage(1);
   };
 
   const handlePerPageChange = (newPerPage: string) => {
     setFilters((prev) => ({
       ...prev,
       per_page: parseInt(newPerPage),
-      page: 1, // Reset to first page when per_page changes
     }));
+    // Reset page in URL to 1 when per_page changes
+    setCurrentPage(1);
   };
 
   // Check if filters have changed from default
@@ -146,6 +172,8 @@ export default function RequestsPage() {
 
   const clearFilters = () => {
     setFilters(defaultFilters);
+    // Reset page in URL to 1 when clearing filters
+    setCurrentPage(1);
   };
 
   const formatDate = (dateString: string) => {
@@ -208,7 +236,9 @@ export default function RequestsPage() {
         data: requestData,
       }).unwrap();
       // The query will automatically refetch due to invalidatesTags
-    } catch (error) {}
+    } catch {
+      // Error is handled by the mutation
+    }
   };
 
   const handleAcceptRequest = (requestId: number) => {
@@ -387,9 +417,7 @@ export default function RequestsPage() {
               type="date"
               value={filters.date_from}
               onChange={(e) => handleFilterChange("date_from", e.target.value)}
-              className={`w-full h-12 px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors ${
-                isRTL ? "text-right" : "text-left"
-              }`}
+              className={`w-full `}
             />
           </div>
 
@@ -406,9 +434,7 @@ export default function RequestsPage() {
               type="date"
               value={filters.date_to}
               onChange={(e) => handleFilterChange("date_to", e.target.value)}
-              className={`w-full h-12 px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors ${
-                isRTL ? "text-right" : "text-left"
-              }`}
+              className={`w-full`}
             />
           </div>
 
@@ -794,60 +820,27 @@ export default function RequestsPage() {
       )}
 
       {/* Pagination */}
-      {pagination && pagination.last_page > 1 && (
-        <div className="flex items-center justify-between mt-8">
-          <div className="text-sm text-gray-500">
-            {t(
-              "requests.pagination.showing",
-              "Showing {{from}}-{{to}} of {{total}} results",
-              {
-                from: pagination.from,
-                to: pagination.to,
-                total: pagination.total,
-              }
-            )}
-          </div>
+      {pagination && (
+        <div className="mt-8">
+          <CustomPagination
+            totalItems={pagination.total}
+            itemsPerPage={pagination.per_page}
+          />
+        </div>
+      )}
 
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handlePageChange(pagination.current_page - 1)}
-              disabled={pagination.current_page <= 1}
-            >
-              <ChevronLeft size={16} />
-              {t("requests.pagination.previous", "Previous")}
-            </Button>
-
-            <div className="flex items-center gap-1">
-              {Array.from(
-                { length: pagination.last_page },
-                (_, i) => i + 1
-              ).map((page) => (
-                <Button
-                  key={page}
-                  variant={
-                    page === pagination.current_page ? "default" : "outline"
-                  }
-                  size="sm"
-                  onClick={() => handlePageChange(page)}
-                  className="w-10 h-10"
-                >
-                  {page}
-                </Button>
-              ))}
-            </div>
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handlePageChange(pagination.current_page + 1)}
-              disabled={pagination.current_page >= pagination.last_page}
-            >
-              {t("requests.pagination.next", "Next")}
-              <ChevronRight size={16} />
-            </Button>
-          </div>
+      {/* Pagination Info */}
+      {pagination && (
+        <div className="  mt-4 text-sm text-gray-600">
+          {t(
+            "requests.pagination.showing",
+            "Showing {{from}}-{{to}} of {{total}} results",
+            {
+              from: pagination.from,
+              to: pagination.to,
+              total: pagination.total,
+            }
+          )}
         </div>
       )}
 

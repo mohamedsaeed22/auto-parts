@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Package,
   Truck,
@@ -38,6 +38,19 @@ export default function OrdersPage() {
     "page",
     parseAsInteger.withDefault(1)
   );
+
+  // Remove page query param from URL on initial mount and cleanup on unmount
+  useEffect(() => {
+    if (currentPage === 1) {
+      setCurrentPage(null);
+    }
+    
+    // Cleanup: remove page param when component unmounts
+    return () => {
+      setCurrentPage(null);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Default filters for comparison
   const defaultFilters: OrdersRequest = {
@@ -531,7 +544,7 @@ export default function OrdersPage() {
       )}
 
       {/* Pagination */}
-      {pagination && pagination.last_page > 1 && (
+      {pagination && (
         <div className="mt-8">
           <CustomPagination
             totalItems={pagination.total}
