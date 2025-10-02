@@ -17,6 +17,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import FormSelect from "@/components/ui/FormSelect";
 import { CustomPagination } from "@/components/ui/custom-pagination";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { useQueryState, parseAsInteger } from "nuqs";
 import { useTranslation } from "react-i18next";
 import {
@@ -231,142 +237,182 @@ export default function OrdersPage() {
         </h2>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 mb-6">
-        <div
-          className={`flex items-center justify-between mb-4 ${
-            isRTL ? "flex-row" : ""
-          }`}
-        >
-          <div className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}>
-            <Filter size={20} className="text-gray-600" />
-            <h3 className="font-medium text-gray-900">
-              {t("orders.filters.title")}
-            </h3>
-          </div>
+      {/* Filters - Accordion */}
+      <Accordion
+        type="single"
+        collapsible
+        className="bg-white border border-gray-200 rounded-lg mb-6"
+      >
+        <AccordionItem value="filters" className="border-0">
+          <AccordionTrigger className="px-4 sm:px-6 hover:no-underline">
+            <div className="flex items-center justify-between w-full">
+              <div
+                className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}
+              >
+                <Filter size={20} className="text-gray-600" />
+                <h3 className="font-medium text-gray-900">
+                  {t("orders.filters.title")}
+                </h3>
+                {hasFiltersChanged() && (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                    {t("orders.filters.active", "Active")}
+                  </span>
+                )}
+              </div>
 
-          {/* Filter Actions */}
-          <div className={`flex gap-2 ${isRTL ? "flex-row" : ""}`}>
-            <Button
-              onClick={clearFilters}
-              variant="secondary"
-              disabled={!hasFiltersChanged()}
-            >
-              {t("orders.filters.clear")}
-            </Button>
-          </div>
-        </div>
+              {/* Filter Actions */}
+              <div
+                className={`flex gap-2 items-center ${
+                  isRTL ? "flex-row ml-12" : "mr-12"
+                }`}
+              >
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    clearFilters();
+                  }}
+                  variant="secondary"
+                  size="sm"
+                  disabled={!hasFiltersChanged()}
+                >
+                  {t("orders.filters.clear")}
+                </Button>
+              </div>
+            </div>
+          </AccordionTrigger>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Status Filter */}
-          <FormSelect
-            label={t("orders.filters.status")}
-            value={filters.status}
-            onValueChange={(value: string) =>
-              handleFilterChange("status", value)
-            }
-            options={[
-              { value: "all", label: t("orders.filters.allStatuses") },
-              { value: "pending", label: t("orders.statuses.pending") },
-              { value: "paid", label: t("orders.statuses.paid") },
-              { value: "processing", label: t("orders.statuses.processing") },
-              { value: "shipped", label: t("orders.statuses.shipped") },
-              { value: "completed", label: t("orders.statuses.completed") },
-              { value: "cancelled", label: t("orders.statuses.cancelled") },
-              { value: "refunded", label: t("orders.statuses.refunded") },
-            ]}
-          />
+          <AccordionContent className="px-4 sm:px-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Status Filter */}
+              <FormSelect
+                label={t("orders.filters.status")}
+                value={filters.status}
+                onValueChange={(value: string) =>
+                  handleFilterChange("status", value)
+                }
+                options={[
+                  { value: "all", label: t("orders.filters.allStatuses") },
+                  { value: "pending", label: t("orders.statuses.pending") },
+                  { value: "paid", label: t("orders.statuses.paid") },
+                  {
+                    value: "processing",
+                    label: t("orders.statuses.processing"),
+                  },
+                  { value: "shipped", label: t("orders.statuses.shipped") },
+                  { value: "completed", label: t("orders.statuses.completed") },
+                  { value: "cancelled", label: t("orders.statuses.cancelled") },
+                  { value: "refunded", label: t("orders.statuses.refunded") },
+                ]}
+              />
 
-          {/* Payment Status Filter */}
-          <FormSelect
-            label={t("orders.filters.paymentStatus")}
-            value={filters.payment_status}
-            onValueChange={(value: string) =>
-              handleFilterChange("payment_status", value)
-            }
-            options={[
-              { value: "all", label: t("orders.filters.allPaymentStatuses") },
-              { value: "pending", label: t("orders.paymentStatuses.pending") },
-              { value: "paid", label: t("orders.paymentStatuses.paid") },
-              { value: "failed", label: t("orders.paymentStatuses.failed") },
-              {
-                value: "refunded",
-                label: t("orders.paymentStatuses.refunded"),
-              },
-            ]}
-          />
+              {/* Payment Status Filter */}
+              <FormSelect
+                label={t("orders.filters.paymentStatus")}
+                value={filters.payment_status}
+                onValueChange={(value: string) =>
+                  handleFilterChange("payment_status", value)
+                }
+                options={[
+                  {
+                    value: "all",
+                    label: t("orders.filters.allPaymentStatuses"),
+                  },
+                  {
+                    value: "pending",
+                    label: t("orders.paymentStatuses.pending"),
+                  },
+                  { value: "paid", label: t("orders.paymentStatuses.paid") },
+                  {
+                    value: "failed",
+                    label: t("orders.paymentStatuses.failed"),
+                  },
+                  {
+                    value: "refunded",
+                    label: t("orders.paymentStatuses.refunded"),
+                  },
+                ]}
+              />
 
-          {/* Date From Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t("orders.filters.dateFrom")}
-            </label>
-            <Input
-              type="date"
-              value={filters.date_from}
-              onChange={(e) => handleFilterChange("date_from", e.target.value)}
-              className="w-full"
-            />
-          </div>
+              {/* Date From Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t("orders.filters.dateFrom")}
+                </label>
+                <Input
+                  type="date"
+                  value={filters.date_from}
+                  onChange={(e) =>
+                    handleFilterChange("date_from", e.target.value)
+                  }
+                  className="w-full"
+                />
+              </div>
 
-          {/* Date To Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t("orders.filters.dateTo")}
-            </label>
-            <Input
-              type="date"
-              value={filters.date_to}
-              onChange={(e) => handleFilterChange("date_to", e.target.value)}
-              className="w-full"
-            />
-          </div>
-        </div>
+              {/* Date To Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t("orders.filters.dateTo")}
+                </label>
+                <Input
+                  type="date"
+                  value={filters.date_to}
+                  onChange={(e) =>
+                    handleFilterChange("date_to", e.target.value)
+                  }
+                  className="w-full"
+                />
+              </div>
+            </div>
 
-        {/* Sort and Per Page */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-          {/* Sort By */}
-          <FormSelect
-            label={t("orders.filters.sortBy")}
-            value={filters.sort_by}
-            onValueChange={(value: string) =>
-              handleFilterChange("sort_by", value)
-            }
-            options={[
-              { value: "created_at", label: t("orders.filters.createdAt") },
-              { value: "order_number", label: t("orders.filters.orderNumber") },
-              { value: "total", label: t("orders.filters.total") },
-              { value: "status", label: t("orders.filters.status") },
-            ]}
-          />
+            {/* Sort and Per Page */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+              {/* Sort By */}
+              <FormSelect
+                label={t("orders.filters.sortBy")}
+                value={filters.sort_by}
+                onValueChange={(value: string) =>
+                  handleFilterChange("sort_by", value)
+                }
+                options={[
+                  { value: "created_at", label: t("orders.filters.createdAt") },
+                  {
+                    value: "order_number",
+                    label: t("orders.filters.orderNumber"),
+                  },
+                  { value: "total", label: t("orders.filters.total") },
+                  { value: "status", label: t("orders.filters.status") },
+                ]}
+              />
 
-          {/* Sort Direction */}
-          <FormSelect
-            label={t("orders.filters.sortDirection")}
-            value={filters.sort_direction}
-            onValueChange={(value: string) =>
-              handleFilterChange("sort_direction", value)
-            }
-            options={[
-              { value: "desc", label: t("orders.filters.descending") },
-              { value: "asc", label: t("orders.filters.ascending") },
-            ]}
-          />
+              {/* Sort Direction */}
+              <FormSelect
+                label={t("orders.filters.sortDirection")}
+                value={filters.sort_direction}
+                onValueChange={(value: string) =>
+                  handleFilterChange("sort_direction", value)
+                }
+                options={[
+                  { value: "desc", label: t("orders.filters.descending") },
+                  { value: "asc", label: t("orders.filters.ascending") },
+                ]}
+              />
 
-          {/* Per Page */}
-          <FormSelect
-            label={t("orders.filters.perPage")}
-            value={filters.per_page?.toString()}
-            onValueChange={handlePerPageChange}
-            options={[
-              { value: "5", label: "5" },
-              { value: "10", label: "10" },
-              { value: "20", label: "20" },
-              { value: "50", label: "50" },
-            ]}
-          />
-        </div>
-      </div>
+              {/* Per Page */}
+              <FormSelect
+                label={t("orders.filters.perPage")}
+                value={filters.per_page?.toString()}
+                onValueChange={handlePerPageChange}
+                options={[
+                  { value: "5", label: "5" },
+                  { value: "10", label: "10" },
+                  { value: "20", label: "20" },
+                  { value: "50", label: "50" },
+                ]}
+              />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
       {/* Order Stats */}
       {statistics && (
