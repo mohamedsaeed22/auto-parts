@@ -52,6 +52,7 @@
       "maxLength": "Address must be less than 200 characters"
     },
     "apartment": {
+      "required": "Apartment is required",
       "maxLength": "Apartment must be less than 100 characters"
     },
     "city": {

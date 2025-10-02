@@ -43,7 +43,6 @@ interface AcceptRequestDialogProps {
     state?: string;
     country?: string;
     zip_code?: string;
-    notes?: string;
   }) => void;
   isLoading?: boolean;
 }
@@ -53,12 +52,11 @@ interface NewAddressForm {
   last_name: string;
   phone: string;
   address: string;
-  apartment?: string;
+  apartment: string;
   city: string;
-  state?: string;
+  state: string;
   country: string;
   zip_code: string;
-  notes?: string;
 }
 
 // Zod schema for address validation
@@ -139,7 +137,14 @@ const createAddressSchema = (
               "Address must be at least 5 characters"
             ),
       }),
-    apartment: z.string().optional(),
+    apartment: z.string().min(1, {
+      message: isRTL
+        ? "الشقة مطلوبة"
+        : t(
+            "addressSelection:validation.apartment.required",
+            "Apartment is required"
+          ),
+    }),
     city: z
       .string()
       .min(1, {
@@ -155,7 +160,24 @@ const createAddressSchema = (
               "City must be at least 2 characters"
             ),
       }),
-    state: z.string().optional(),
+    state: z
+      .string()
+      .min(1, {
+        message: isRTL
+          ? "المحافظة مطلوبة"
+          : t(
+              "addressSelection:validation.state.required",
+              "State is required"
+            ),
+      })
+      .min(2, {
+        message: isRTL
+          ? "المحافظة يجب أن تكون على الأقل حرفين"
+          : t(
+              "addressSelection:validation.state.minLength",
+              "State must be at least 2 characters"
+            ),
+      }),
     country: z
       .string()
       .min(1, {
@@ -192,7 +214,6 @@ const createAddressSchema = (
               "ZIP code must be 5 digits"
             ),
       }),
-    notes: z.string().optional(),
   });
 };
 
@@ -233,16 +254,27 @@ export default function AcceptRequestDialog({
       state: "",
       country: "",
       zip_code: "",
-      notes: "",
     },
   });
 
-  // Reset form when dialog closes or switches back
+  // Reset form and step when dialog closes
   useEffect(() => {
-    if (!isOpen || !showNewAddressForm) {
+    if (!isOpen) {
+      // Reset everything when dialog closes
+      setStep(1);
+      setSelectedAddressId(null);
+      setShowNewAddressForm(false);
+      setPaymentMethod("cash");
       reset();
     }
-  }, [isOpen, showNewAddressForm, reset]);
+  }, [isOpen, reset]);
+
+  // Reset form when switching back from new address form
+  useEffect(() => {
+    if (!showNewAddressForm) {
+      reset();
+    }
+  }, [showNewAddressForm, reset]);
 
   const { data: addressesResponse, isLoading: isLoadingAddresses } =
     useGetAddressesQuery();
@@ -685,7 +717,7 @@ export default function AcceptRequestDialog({
                           isRTL ? "text-right" : "text-left"
                         }`}
                       >
-                        {t("addressSelection:apartment", "Apartment")}
+                        {t("addressSelection:apartment", "Apartment")} *
                       </label>
                       <Input
                         {...register("apartment")}
@@ -693,8 +725,19 @@ export default function AcceptRequestDialog({
                           "addressSelection:apartmentPlaceholder",
                           "Apartment, suite, etc."
                         )}
-                        className="h-12"
+                        className={`h-12 ${
+                          errors.apartment ? "border-red-500" : ""
+                        }`}
                       />
+                      {errors.apartment && (
+                        <p
+                          className={`text-sm text-red-600 ${
+                            isRTL ? "text-right" : "text-left"
+                          }`}
+                        >
+                          {errors.apartment.message}
+                        </p>
+                      )}
                     </div>
 
                     <div className="space-y-2">
@@ -732,7 +775,7 @@ export default function AcceptRequestDialog({
                           isRTL ? "text-right" : "text-left"
                         }`}
                       >
-                        {t("addressSelection:state", "State")}
+                        {t("addressSelection:state", "State")} *
                       </label>
                       <Input
                         {...register("state")}
@@ -740,8 +783,19 @@ export default function AcceptRequestDialog({
                           "addressSelection:statePlaceholder",
                           "Enter state"
                         )}
-                        className="h-12"
+                        className={`h-12 ${
+                          errors.state ? "border-red-500" : ""
+                        }`}
                       />
+                      {errors.state && (
+                        <p
+                          className={`text-sm text-red-600 ${
+                            isRTL ? "text-right" : "text-left"
+                          }`}
+                        >
+                          {errors.state.message}
+                        </p>
+                      )}
                     </div>
 
                     <div className="space-y-2">
@@ -771,24 +825,6 @@ export default function AcceptRequestDialog({
                           {errors.country.message}
                         </p>
                       )}
-                    </div>
-
-                    <div className="space-y-2 md:col-span-2">
-                      <label
-                        className={`block text-sm font-medium text-gray-700 ${
-                          isRTL ? "text-right" : "text-left"
-                        }`}
-                      >
-                        {t("addressSelection:notes", "Notes")}
-                      </label>
-                      <Input
-                        {...register("notes")}
-                        placeholder={t(
-                          "addressSelection:notesPlaceholder",
-                          "Additional delivery instructions"
-                        )}
-                        className="h-12"
-                      />
                     </div>
                   </div>
                 </div>

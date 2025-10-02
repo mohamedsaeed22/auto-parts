@@ -262,7 +262,6 @@ export default function RequestsPage() {
           state: data.state,
           country: data.country,
           zip_code: data.zip_code,
-          notes: data.notes,
         });
       }
 
