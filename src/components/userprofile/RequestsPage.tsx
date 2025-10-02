@@ -468,89 +468,96 @@ export default function RequestsPage() {
 
           <AccordionContent className="px-4 sm:px-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Status Filter */}
-          <FormSelect
-            label={t("requests.filters.status", "Status")}
-            value={filters.status}
-            onValueChange={(value: string) =>
-              handleFilterChange("status", value)
-            }
-            options={[
-              {
-                value: "all",
-                label: t("requests.filters.allStatuses", "All Statuses"),
-              },
-              { value: "draft", label: t("requests.status.draft", "Draft") },
-              {
-                value: "pending",
-                label: t("requests.status.pending", "Pending"),
-              },
-              {
-                value: "submitted",
-                label: t("requests.status.submitted", "Submitted"),
-              },
-              {
-                value: "accepted",
-                label: t("requests.status.accepted", "Accepted"),
-              },
-              {
-                value: "rejected",
-                label: t("requests.status.rejected", "Rejected"),
-              },
-              {
-                value: "completed",
-                label: t("requests.status.completed", "Completed"),
-              },
-            ]}
-          />
+              {/* Status Filter */}
+              <FormSelect
+                label={t("requests.filters.status", "Status")}
+                value={filters.status}
+                onValueChange={(value: string) =>
+                  handleFilterChange("status", value)
+                }
+                options={[
+                  {
+                    value: "all",
+                    label: t("requests.filters.allStatuses", "All Statuses"),
+                  },
+                  {
+                    value: "draft",
+                    label: t("requests.status.draft", "Draft"),
+                  },
+                  {
+                    value: "pending",
+                    label: t("requests.status.pending", "Pending"),
+                  },
+                  {
+                    value: "submitted",
+                    label: t("requests.status.submitted", "Submitted"),
+                  },
+                  {
+                    value: "accepted",
+                    label: t("requests.status.accepted", "Accepted"),
+                  },
+                  {
+                    value: "rejected",
+                    label: t("requests.status.rejected", "Rejected"),
+                  },
+                  {
+                    value: "completed",
+                    label: t("requests.status.completed", "Completed"),
+                  },
+                ]}
+              />
 
-          {/* Date From Filter */}
-          <div className="space-y-2">
-            <label
-              className={`block text-sm font-medium text-gray-700 ${
-                isRTL ? "text-right" : "text-left"
-              }`}
-            >
-              {t("requests.filters.dateFrom", "Date From")}
-            </label>
-            <Input
-              type="date"
-              value={filters.date_from}
-              onChange={(e) => handleFilterChange("date_from", e.target.value)}
-              className={`w-full `}
-            />
-          </div>
+              {/* Date From Filter */}
+              <div className="space-y-2">
+                <label
+                  className={`block text-sm font-medium text-gray-700 ${
+                    isRTL ? "text-right" : "text-left"
+                  }`}
+                >
+                  {t("requests.filters.dateFrom", "Date From")}
+                </label>
+                <Input
+                  type="date"
+                  value={filters.date_from}
+                  onChange={(e) =>
+                    handleFilterChange("date_from", e.target.value)
+                  }
+                  className={`w-full `}
+                />
+              </div>
 
-          {/* Date To Filter */}
-          <div className="space-y-2">
-            <label
-              className={`block text-sm font-medium text-gray-700 ${
-                isRTL ? "text-right" : "text-left"
-              }`}
-            >
-              {t("requests.filters.dateTo", "Date To")}
-            </label>
-            <Input
-              type="date"
-              value={filters.date_to}
-              onChange={(e) => handleFilterChange("date_to", e.target.value)}
-              className={`w-full`}
-            />
-          </div>
+              {/* Date To Filter */}
+              <div className="space-y-2">
+                <label
+                  className={`block text-sm font-medium text-gray-700 ${
+                    isRTL ? "text-right" : "text-left"
+                  }`}
+                >
+                  {t("requests.filters.dateTo", "Date To")}
+                </label>
+                <Input
+                  type="date"
+                  value={filters.date_to}
+                  onChange={(e) =>
+                    handleFilterChange("date_to", e.target.value)
+                  }
+                  className={`w-full`}
+                />
+              </div>
 
-          {/* Per Page Filter */}
-          <FormSelect
-            label={t("requests.filters.perPage", "Per Page")}
-            value={filters.per_page.toString()}
-            onValueChange={handlePerPageChange}
-            options={[
-              { value: "10", label: "10" },
-              { value: "25", label: "25" },
-              { value: "50", label: "50" },
-              { value: "100", label: "100" },
-            ]}
-          />
-        </div>
+              {/* Per Page Filter */}
+              <FormSelect
+                label={t("requests.filters.perPage", "Per Page")}
+                value={filters.per_page.toString()}
+                onValueChange={handlePerPageChange}
+                options={[
+                  { value: "10", label: "10" },
+                  { value: "25", label: "25" },
+                  { value: "50", label: "50" },
+                  { value: "100", label: "100" },
+                ]}
+              />
+            </div>
           </AccordionContent>
         </AccordionItem>
       </Accordion>
