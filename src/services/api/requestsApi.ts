@@ -82,6 +82,7 @@ export interface RequestsResponse {
 // Approve/Reject request interface
 export interface ApproveRequestRequest {
   status: "accepted" | "rejected";
+  payment_method?: "cash" | "credit_card";
   address_id?: number;
   address?: string;
   first_name?: string;
@@ -100,6 +101,7 @@ export interface ApproveRequestResponse {
   id: number;
   status: string;
   message: string;
+  payment_url?: string;
 }
 
 export const requestsApi = api.injectEndpoints({

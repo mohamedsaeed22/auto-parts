@@ -32,7 +32,8 @@ import { useRouter } from "next/navigation";
 import { useLocale } from "@/hooks/useLocale";
 import { redirectToCompleteRegistration } from "@/lib/registrationRedirect";
 import Image from "next/image";
-import AddressSelectionDialog from "./AddressSelectionDialog";
+import AcceptRequestDialog from "./AcceptRequestDialog";
+import RejectConfirmDialog from "./RejectConfirmDialog";
 import type { ApproveRequestRequest } from "@/services/api/requestsApi";
 
 const statusColors = {
@@ -118,8 +119,9 @@ export default function RequestsPage() {
   const [approveRequest, { isLoading: isApproving }] =
     useApproveRequestMutation();
 
-  // Address selection dialog state
-  const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
+  // Dialog state
+  const [isAcceptDialogOpen, setIsAcceptDialogOpen] = useState(false);
+  const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
   const [pendingRequestId, setPendingRequestId] = useState<number | null>(null);
 
   console.log("RequestsPage - Response:", requestsResponse);
@@ -213,51 +215,94 @@ export default function RequestsPage() {
   const userType = getUserType();
   const isWorkshop = userType === "workshop";
 
-  const handleApproveRequest = async (
-    requestId: number,
-    status: "accepted" | "rejected",
-    addressData?: Omit<ApproveRequestRequest, "status">
-  ) => {
-    try {
-      const requestData: ApproveRequestRequest = { status };
+  const handleAcceptRequest = (requestId: number) => {
+    setPendingRequestId(requestId);
+    setIsAcceptDialogOpen(true);
+  };
 
-      // Add address data if provided
-      if (addressData) {
-        if (addressData.address_id) {
-          requestData.address_id = addressData.address_id;
-        } else {
-          // Add all address fields for new address
-          Object.assign(requestData, addressData);
-        }
+  const handleRejectRequest = (requestId: number) => {
+    setPendingRequestId(requestId);
+    setIsRejectDialogOpen(true);
+  };
+
+  const handleAcceptConfirm = async (data: {
+    address_id?: number;
+    payment_method: "cash" | "credit_card";
+    first_name?: string;
+    last_name?: string;
+    phone?: string;
+    address?: string;
+    apartment?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    zip_code?: string;
+    notes?: string;
+  }) => {
+    if (!pendingRequestId) return;
+
+    try {
+      const requestData: ApproveRequestRequest = {
+        status: "accepted",
+        payment_method: data.payment_method,
+      };
+
+      // Add address data
+      if (data.address_id) {
+        requestData.address_id = data.address_id;
+      } else {
+        // Add all new address fields
+        Object.assign(requestData, {
+          first_name: data.first_name,
+          last_name: data.last_name,
+          phone: data.phone,
+          address: data.address,
+          apartment: data.apartment,
+          city: data.city,
+          state: data.state,
+          country: data.country,
+          zip_code: data.zip_code,
+          notes: data.notes,
+        });
       }
 
-      await approveRequest({
-        requestId,
+      const response = await approveRequest({
+        requestId: pendingRequestId,
         data: requestData,
       }).unwrap();
-      // The query will automatically refetch due to invalidatesTags
+
+      // Close dialog
+      setIsAcceptDialogOpen(false);
+      setPendingRequestId(null);
+
+      // If payment method is credit_card and we got a payment URL, redirect to it
+      if (
+        data.payment_method === "credit_card" &&
+        response?.data?.payment_url
+      ) {
+        window.location.href = response.data.payment_url;
+      }
+      // If cash payment, dialog closes and request is accepted (query auto-refetches)
     } catch {
       // Error is handled by the mutation
     }
   };
 
-  const handleAcceptRequest = (requestId: number) => {
-    setPendingRequestId(requestId);
-    setIsAddressDialogOpen(true);
-  };
+  const handleRejectConfirm = async () => {
+    if (!pendingRequestId) return;
 
-  const handleAddressSelected = (
-    addressData: Omit<ApproveRequestRequest, "status">
-  ) => {
-    if (pendingRequestId) {
-      handleApproveRequest(pendingRequestId, "accepted", addressData);
+    try {
+      await approveRequest({
+        requestId: pendingRequestId,
+        data: { status: "rejected" },
+      }).unwrap();
+
+      // Close dialog
+      setIsRejectDialogOpen(false);
+      setPendingRequestId(null);
+    } catch {
+      // Error is handled by the mutation
     }
-    setIsAddressDialogOpen(false);
-    setPendingRequestId(null);
-  };
-
-  const handleRejectRequest = (requestId: number) => {
-    handleApproveRequest(requestId, "rejected");
   };
 
   const handleCompleteRegistration = () => {
@@ -844,14 +889,25 @@ export default function RequestsPage() {
         </div>
       )}
 
-      {/* Address Selection Dialog */}
-      <AddressSelectionDialog
-        isOpen={isAddressDialogOpen}
+      {/* Accept Request Dialog */}
+      <AcceptRequestDialog
+        isOpen={isAcceptDialogOpen}
         onClose={() => {
-          setIsAddressDialogOpen(false);
+          setIsAcceptDialogOpen(false);
           setPendingRequestId(null);
         }}
-        onSelectAddress={handleAddressSelected}
+        onConfirm={handleAcceptConfirm}
+        isLoading={isApproving}
+      />
+
+      {/* Reject Confirmation Dialog */}
+      <RejectConfirmDialog
+        isOpen={isRejectDialogOpen}
+        onClose={() => {
+          setIsRejectDialogOpen(false);
+          setPendingRequestId(null);
+        }}
+        onConfirm={handleRejectConfirm}
         isLoading={isApproving}
       />
     </div>

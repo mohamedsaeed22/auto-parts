@@ -203,6 +203,28 @@
       "title": "Complete Registration Required",
       "description": "To access your requests, please complete your registration first.",
       "button": "Complete Registration"
+    },
+    "rejectDialog": {
+      "title": "Reject Request",
+      "description": "Are you sure you want to reject this request? This action cannot be undone.",
+      "warning": "Once rejected, you will need to create a new request if you want to proceed with this order.",
+      "cancel": "Cancel",
+      "confirm": "Yes, Reject"
+    },
+    "acceptDialog": {
+      "step1": "Address",
+      "step2": "Payment",
+      "paymentTitle": "Select Payment Method",
+      "paymentDescription": "Choose how you want to pay for this request.",
+      "choosePayment": "Choose your payment method",
+      "cashPayment": "Cash on Delivery",
+      "cashDescription": "Pay with cash when your order is delivered",
+      "creditCardPayment": "Credit Card",
+      "creditCardDescription": "Pay securely online with your credit card",
+      "creditCardNote": "You will be redirected to a secure payment page to complete your transaction.",
+      "next": "Next",
+      "back": "Back",
+      "confirm": "Accept Request"
     }
   },
   "settings": {
