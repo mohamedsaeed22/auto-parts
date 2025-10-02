@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -17,12 +17,14 @@ import {
   Gift,
   Eye,
   Copy,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
 import type { Order } from "@/services/api/ordersApi";
+import OrderPdfViewer from "@/components/orders/OrderPdfViewer";
 
 interface OrderCompleteProps {
   onBackToShopping: () => void;
@@ -36,6 +38,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
   const { t, i18n } = useTranslation("checkout");
   const router = useRouter();
   const isRTL = i18n.language === "ar";
+  const [isPdfViewerOpen, setIsPdfViewerOpen] = useState(false);
 
   // Remove coupon from localStorage when order is complete
   useEffect(() => {
@@ -665,6 +668,15 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                     })}
                   </Button>
 
+                  <Button
+                    onClick={() => setIsPdfViewerOpen(true)}
+                    variant="outline"
+                    className="w-full border-2 border-blue-500 text-blue-600 hover:bg-blue-50 hover:text-blue-700 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-300"
+                  >
+                    <FileText className="w-4 h-4 mr-2" />
+                    {isRTL ? "تحميل الفاتورة" : "Download Invoice"}
+                  </Button>
+
                   {/* <Button
                     variant="outline"
                     className="w-full border-2 border-neutral-300 text-neutral-700  py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-300"
@@ -716,6 +728,13 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
           </div>
         )}
       </div>
+
+      {/* PDF Viewer Dialog */}
+      <OrderPdfViewer
+        isOpen={isPdfViewerOpen}
+        onClose={() => setIsPdfViewerOpen(false)}
+        orderData={order}
+      />
     </div>
   );
 };
