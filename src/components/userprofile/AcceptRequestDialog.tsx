@@ -62,14 +62,20 @@ interface NewAddressForm {
 }
 
 // Zod schema for address validation
-const createAddressSchema = (t: (key: string, fallback: string) => string, isRTL: boolean) => {
+const createAddressSchema = (
+  t: (key: string, fallback: string) => string,
+  isRTL: boolean
+) => {
   return z.object({
     first_name: z
       .string()
       .min(1, {
         message: isRTL
           ? "الاسم الأول مطلوب"
-          : t("addressSelection:validation.firstName.required", "First name is required"),
+          : t(
+              "addressSelection:validation.firstName.required",
+              "First name is required"
+            ),
       })
       .min(2, {
         message: isRTL
@@ -84,7 +90,10 @@ const createAddressSchema = (t: (key: string, fallback: string) => string, isRTL
       .min(1, {
         message: isRTL
           ? "الاسم الأخير مطلوب"
-          : t("addressSelection:validation.lastName.required", "Last name is required"),
+          : t(
+              "addressSelection:validation.lastName.required",
+              "Last name is required"
+            ),
       })
       .min(2, {
         message: isRTL
@@ -99,7 +108,10 @@ const createAddressSchema = (t: (key: string, fallback: string) => string, isRTL
       .min(1, {
         message: isRTL
           ? "رقم الهاتف مطلوب"
-          : t("addressSelection:validation.phone.required", "Phone number is required"),
+          : t(
+              "addressSelection:validation.phone.required",
+              "Phone number is required"
+            ),
       })
       .regex(/^05\d{8}$/, {
         message: isRTL
@@ -114,12 +126,18 @@ const createAddressSchema = (t: (key: string, fallback: string) => string, isRTL
       .min(1, {
         message: isRTL
           ? "العنوان مطلوب"
-          : t("addressSelection:validation.address.required", "Address is required"),
+          : t(
+              "addressSelection:validation.address.required",
+              "Address is required"
+            ),
       })
       .min(5, {
         message: isRTL
           ? "العنوان يجب أن يكون على الأقل 5 أحرف"
-          : t("addressSelection:validation.address.minLength", "Address must be at least 5 characters"),
+          : t(
+              "addressSelection:validation.address.minLength",
+              "Address must be at least 5 characters"
+            ),
       }),
     apartment: z.string().optional(),
     city: z
@@ -132,7 +150,10 @@ const createAddressSchema = (t: (key: string, fallback: string) => string, isRTL
       .min(2, {
         message: isRTL
           ? "المدينة يجب أن تكون على الأقل حرفين"
-          : t("addressSelection:validation.city.minLength", "City must be at least 2 characters"),
+          : t(
+              "addressSelection:validation.city.minLength",
+              "City must be at least 2 characters"
+            ),
       }),
     state: z.string().optional(),
     country: z
@@ -140,24 +161,36 @@ const createAddressSchema = (t: (key: string, fallback: string) => string, isRTL
       .min(1, {
         message: isRTL
           ? "الدولة مطلوبة"
-          : t("addressSelection:validation.country.required", "Country is required"),
+          : t(
+              "addressSelection:validation.country.required",
+              "Country is required"
+            ),
       })
       .min(2, {
         message: isRTL
           ? "الدولة يجب أن تكون على الأقل حرفين"
-          : t("addressSelection:validation.country.minLength", "Country must be at least 2 characters"),
+          : t(
+              "addressSelection:validation.country.minLength",
+              "Country must be at least 2 characters"
+            ),
       }),
     zip_code: z
       .string()
       .min(1, {
         message: isRTL
           ? "الرمز البريدي مطلوب"
-          : t("addressSelection:validation.zipCode.required", "ZIP code is required"),
+          : t(
+              "addressSelection:validation.zipCode.required",
+              "ZIP code is required"
+            ),
       })
       .regex(/^\d{5}$/, {
         message: isRTL
           ? "الرمز البريدي يجب أن يكون 5 أرقام"
-          : t("addressSelection:validation.zipCode.invalid", "ZIP code must be 5 digits"),
+          : t(
+              "addressSelection:validation.zipCode.invalid",
+              "ZIP code must be 5 digits"
+            ),
       }),
     notes: z.string().optional(),
   });
@@ -428,9 +461,7 @@ export default function AcceptRequestDialog({
                             <div className="flex-1">
                               <div
                                 className={`flex items-center gap-2 mb-2 ${
-                                  isRTL
-                                    ? "flex-row justify-end"
-                                    : "flex-row"
+                                  isRTL ? "flex-row justify-end" : "flex-row"
                                 }`}
                               >
                                 <h4
@@ -519,10 +550,16 @@ export default function AcceptRequestDialog({
                           "addressSelection:firstNamePlaceholder",
                           "Enter first name"
                         )}
-                        className={`h-12 ${errors.first_name ? "border-red-500" : ""}`}
+                        className={`h-12 ${
+                          errors.first_name ? "border-red-500" : ""
+                        }`}
                       />
                       {errors.first_name && (
-                        <p className={`text-sm text-red-600 ${isRTL ? "text-right" : "text-left"}`}>
+                        <p
+                          className={`text-sm text-red-600 ${
+                            isRTL ? "text-right" : "text-left"
+                          }`}
+                        >
                           {errors.first_name.message}
                         </p>
                       )}
@@ -542,10 +579,16 @@ export default function AcceptRequestDialog({
                           "addressSelection:lastNamePlaceholder",
                           "Enter last name"
                         )}
-                        className={`h-12 ${errors.last_name ? "border-red-500" : ""}`}
+                        className={`h-12 ${
+                          errors.last_name ? "border-red-500" : ""
+                        }`}
                       />
                       {errors.last_name && (
-                        <p className={`text-sm text-red-600 ${isRTL ? "text-right" : "text-left"}`}>
+                        <p
+                          className={`text-sm text-red-600 ${
+                            isRTL ? "text-right" : "text-left"
+                          }`}
+                        >
                           {errors.last_name.message}
                         </p>
                       )}
@@ -562,11 +605,17 @@ export default function AcceptRequestDialog({
                       <Input
                         {...register("phone")}
                         placeholder="0543777569"
-                        className={`h-12 ${errors.phone ? "border-red-500" : ""}`}
+                        className={`h-12 ${
+                          errors.phone ? "border-red-500" : ""
+                        }`}
                         dir="ltr"
                       />
                       {errors.phone && (
-                        <p className={`text-sm text-red-600 ${isRTL ? "text-right" : "text-left"}`}>
+                        <p
+                          className={`text-sm text-red-600 ${
+                            isRTL ? "text-right" : "text-left"
+                          }`}
+                        >
                           {errors.phone.message}
                         </p>
                       )}
@@ -586,10 +635,16 @@ export default function AcceptRequestDialog({
                           "addressSelection:zipCodePlaceholder",
                           "Enter ZIP code"
                         )}
-                        className={`h-12 ${errors.zip_code ? "border-red-500" : ""}`}
+                        className={`h-12 ${
+                          errors.zip_code ? "border-red-500" : ""
+                        }`}
                       />
                       {errors.zip_code && (
-                        <p className={`text-sm text-red-600 ${isRTL ? "text-right" : "text-left"}`}>
+                        <p
+                          className={`text-sm text-red-600 ${
+                            isRTL ? "text-right" : "text-left"
+                          }`}
+                        >
                           {errors.zip_code.message}
                         </p>
                       )}
@@ -609,10 +664,16 @@ export default function AcceptRequestDialog({
                           "addressSelection:addressPlaceholder",
                           "Enter street address"
                         )}
-                        className={`h-12 ${errors.address ? "border-red-500" : ""}`}
+                        className={`h-12 ${
+                          errors.address ? "border-red-500" : ""
+                        }`}
                       />
                       {errors.address && (
-                        <p className={`text-sm text-red-600 ${isRTL ? "text-right" : "text-left"}`}>
+                        <p
+                          className={`text-sm text-red-600 ${
+                            isRTL ? "text-right" : "text-left"
+                          }`}
+                        >
                           {errors.address.message}
                         </p>
                       )}
@@ -650,10 +711,16 @@ export default function AcceptRequestDialog({
                           "addressSelection:cityPlaceholder",
                           "Enter city"
                         )}
-                        className={`h-12 ${errors.city ? "border-red-500" : ""}`}
+                        className={`h-12 ${
+                          errors.city ? "border-red-500" : ""
+                        }`}
                       />
                       {errors.city && (
-                        <p className={`text-sm text-red-600 ${isRTL ? "text-right" : "text-left"}`}>
+                        <p
+                          className={`text-sm text-red-600 ${
+                            isRTL ? "text-right" : "text-left"
+                          }`}
+                        >
                           {errors.city.message}
                         </p>
                       )}
@@ -691,10 +758,16 @@ export default function AcceptRequestDialog({
                           "addressSelection:countryPlaceholder",
                           "Enter country"
                         )}
-                        className={`h-12 ${errors.country ? "border-red-500" : ""}`}
+                        className={`h-12 ${
+                          errors.country ? "border-red-500" : ""
+                        }`}
                       />
                       {errors.country && (
-                        <p className={`text-sm text-red-600 ${isRTL ? "text-right" : "text-left"}`}>
+                        <p
+                          className={`text-sm text-red-600 ${
+                            isRTL ? "text-right" : "text-left"
+                          }`}
+                        >
                           {errors.country.message}
                         </p>
                       )}
