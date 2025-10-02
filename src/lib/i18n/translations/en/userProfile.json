@@ -470,6 +470,11 @@
     "viewDetails": "View Details",
     "loading": "Loading orders...",
     "additionalInfo": "Additional Information",
+    "customer": "Customer",
+    "lineTotal": "Line Total",
+    "canBeCancelled": "Can be Cancelled",
+    "cannotBeCancelled": "Cannot be Cancelled",
+    "saved": "Saved",
     "statuses": {
       "pending": "Pending",
       "paid": "Paid",

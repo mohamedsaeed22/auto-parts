@@ -234,7 +234,23 @@ export default function OrdersPage() {
       >
         <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
           {t("orders.title")}
-        </h2>
+        </h2>{" "}
+        {/* Filter Actions */}
+        <div
+          className={`flex gap-2 items-center`}
+        >
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              clearFilters();
+            }}
+            variant="secondary"
+            size="sm"
+            disabled={!hasFiltersChanged()}
+          >
+            {t("orders.filters.clear")}
+          </Button>
+        </div>
       </div>
 
       {/* Filters - Accordion */}
@@ -258,25 +274,6 @@ export default function OrdersPage() {
                     {t("orders.filters.active", "Active")}
                   </span>
                 )}
-              </div>
-
-              {/* Filter Actions */}
-              <div
-                className={`flex gap-2 items-center ${
-                  isRTL ? "flex-row ml-12" : "mr-12"
-                }`}
-              >
-                <Button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    clearFilters();
-                  }}
-                  variant="secondary"
-                  size="sm"
-                  disabled={!hasFiltersChanged()}
-                >
-                  {t("orders.filters.clear")}
-                </Button>
               </div>
             </div>
           </AccordionTrigger>

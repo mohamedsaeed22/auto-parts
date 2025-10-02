@@ -466,6 +466,11 @@
     "viewDetails": "عرض التفاصيل",
     "loading": "جاري تحميل الطلبات...",
     "additionalInfo": "معلومات إضافية",
+    "customer": "العميل",
+    "lineTotal": "الإجمالي الفرعي",
+    "canBeCancelled": "يمكن الإلغاء",
+    "cannotBeCancelled": "لا يمكن الإلغاء",
+    "saved": "وفرت",
     "statuses": {
       "pending": "في الانتظار",
       "paid": "مدفوع",

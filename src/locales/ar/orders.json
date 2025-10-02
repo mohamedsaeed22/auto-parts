@@ -116,5 +116,9 @@
   "couponCode": "رمز الكوبون",
   "savedAmount": "المبلغ المحفوظ",
   "loadingDetails": "جاري تحميل تفاصيل الطلب...",
-  "errorLoadingDetails": "فشل في تحميل تفاصيل الطلب"
+  "errorLoadingDetails": "فشل في تحميل تفاصيل الطلب",
+  "customer": "العميل",
+  "lineTotal": "الإجمالي الفرعي",
+  "canBeCancelled": "يمكن الإلغاء",
+  "cannotBeCancelled": "لا يمكن الإلغاء"
 }

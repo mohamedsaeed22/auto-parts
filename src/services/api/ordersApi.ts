@@ -39,7 +39,7 @@ export interface OrderProduct {
     product_identifier: string;
     in_favorites: boolean;
     in_wishlist: boolean;
-  };
+  } | null; // Product can be null in the orders list response
   created_at: string;
   updated_at: string;
 }
@@ -80,7 +80,7 @@ export interface Order {
     tax_amount: number;
     shipping_cost: number;
     total: number;
-    grand_total: number;
+    grand_total?: number; // Optional - not always present in list response
     currency: string;
   };
   coupon: {
@@ -100,6 +100,7 @@ export interface Order {
   products: OrderProduct[];
   notes: string | null;
   tracking_number: string | null;
+  pdf_label: string | null; // PDF label URL for the order
   total_items: number;
   paid_at: string | null;
   shipped_at: string | null;

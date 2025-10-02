@@ -116,5 +116,9 @@
   "couponCode": "Coupon Code",
   "savedAmount": "Saved Amount",
   "loadingDetails": "Loading order details...",
-  "errorLoadingDetails": "Failed to load order details"
+  "errorLoadingDetails": "Failed to load order details",
+  "customer": "Customer",
+  "lineTotal": "Line Total",
+  "canBeCancelled": "Can be Cancelled",
+  "cannotBeCancelled": "Cannot be Cancelled"
 }

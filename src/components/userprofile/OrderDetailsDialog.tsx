@@ -5,8 +5,6 @@ import {
   MapPin,
   User,
   Phone,
-  Hash,
-  Loader2,
   Package,
   Truck,
   CreditCard,
@@ -23,7 +21,6 @@ import {
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import type { Order } from "@/services/api/ordersApi";
-import { useGetOrderDetailsQuery } from "@/services/api/ordersApi";
 
 interface OrderDetailsDialogProps {
   order: Order | null;
@@ -37,29 +34,20 @@ export default function OrderDetailsDialog({
   order,
   isOpen,
   onClose,
-  width = "max-w-4xl",
+  width = "max-w-5xl",
 }: OrderDetailsDialogProps) {
   const { t, i18n } = useTranslation("userProfile");
   const currentLocale = i18n.language;
   const isCurrentRTL = currentLocale === "ar";
 
-  const {
-    data: orderDetailsResponse,
-    isLoading,
-    error,
-  } = useGetOrderDetailsQuery(order?.order_number || "", {
-    skip: !isOpen || !order?.order_number,
-  });
-
-  const orderDetails = orderDetailsResponse?.data?.order;
+  // Use order data directly from props since it contains all details
+  const orderDetails = order;
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
-      month: "long",
+      month: "short",
       day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
     });
   };
 
@@ -96,272 +84,313 @@ export default function OrderDetailsDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`${width} max-h-[90vh] overflow-y-auto`}>
-        <DialogHeader className="border-b border-gray-200 pb-4">
-          <DialogTitle className="text-2xl font-bold text-[#272627] flex items-center gap-3">
-            <div className="w-2 h-8 bg-[#b3984a] rounded-full"></div>
-            {t("orders.orderDetails")} - {order.order_number}
+      <DialogContent
+        className={`${width} max-h-[90vh] overflow-y-auto`}
+        dir={isCurrentRTL ? "rtl" : "ltr"}
+      >
+        <DialogHeader className="border-b border-gray-200 pb-4 mb-4">
+          <DialogTitle className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+            <Package size={24} className="text-primary" />
+            {t("orders.orderDetails")}
           </DialogTitle>
         </DialogHeader>
 
-        {isLoading ? (
-          <div className="text-center py-16">
-            <Loader2 className="h-12 w-12 animate-spin text-[#b3984a] mx-auto mb-4" />
-            <p className="text-lg text-gray-600">
-              {t("orders.loadingDetails")}
-            </p>
-          </div>
-        ) : error ? (
-          <div className="text-center py-16 text-[#e62626]">
-            <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <X size={24} className="text-[#e62626]" />
-            </div>
-            <p className="text-lg font-semibold mb-2">
-              {t("orders.errorLoadingDetails")}
-            </p>
-            <p className="text-gray-600">
-              {error &&
-              "data" in error &&
-              error.data &&
-              typeof error.data === "object" &&
-              "message" in error.data
-                ? String(error.data.message)
-                : "An error occurred while loading order details"}
-            </p>
-          </div>
-        ) : orderDetails ? (
-          <div className="space-y-6 py-4">
-            {/* Order Header - Simplified */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-[#b3984a] rounded-lg flex items-center justify-center">
-                    <Hash size={20} className="text-white" />
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-500 mb-1">
-                      {t("orders.orderNumber")}
-                    </div>
-                    <div className="text-xl font-bold text-[#272627] font-mono">
-                      {orderDetails.order_number}
-                    </div>
-                  </div>
+        {orderDetails && (
+          <div className="space-y-4">
+            {/* Order Header with Status - Modern Card */}
+            <div className="bg-gradient-to-r from-primary/5 to-primary/10 border-l-4 border-primary rounded-lg p-6">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                {/* Order Number */}
+                <div>
+                  <p className="text-2xl font-bold text-gray-900 font-mono">
+                    {orderDetails.order_number}
+                  </p>
+                  <p className="text-sm text-gray-500 mt-2 flex items-center gap-2">
+                    <Clock size={14} />
+                    {formatDate(orderDetails.created_at)}
+                  </p>
                 </div>
-                <div className="text-sm text-gray-600">
-                  {formatDate(orderDetails.created_at)}
+
+                {/* Status Badges */}
+                <div className="flex flex-wrap gap-2">
+                  {(() => {
+                    const statusInfo = getStatusIcon(orderDetails.status);
+                    const StatusIcon = statusInfo.icon;
+                    return (
+                      <span
+                        className={`${statusInfo.bg} ${statusInfo.color} px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 shadow-sm`}
+                      >
+                        <StatusIcon size={16} />
+                        {t(
+                          `orders.statuses.${orderDetails.status}`,
+                          orderDetails.status
+                        )}
+                      </span>
+                    );
+                  })()}
+
+                  <span className="bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 shadow-sm border border-blue-200">
+                    <CreditCard size={16} />
+                    {t(
+                      `orders.paymentStatuses.${orderDetails.payment_status}`,
+                      orderDetails.payment_status
+                    )}
+                  </span>
+
+                  <span className="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold shadow-sm border border-gray-300">
+                    {t(
+                      `orders.paymentMethods.${orderDetails.payment_method}`,
+                      orderDetails.payment_method
+                    )}
+                  </span>
                 </div>
               </div>
+            </div>
 
-              {/* Status Row - Simplified */}
-              <div className="flex flex-wrap gap-2">
-                {(() => {
-                  const statusInfo = getStatusIcon(orderDetails.status);
-                  const StatusIcon = statusInfo.icon;
-                  return (
-                    <span
-                      className={`${statusInfo.bg} ${statusInfo.color} px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2`}
-                    >
-                      <StatusIcon size={14} />
-                      {t(
-                        `orders.statuses.${orderDetails.status}`,
-                        orderDetails.status
+            {/* Two Column Layout for Address and Summary */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {/* Shipping Address */}
+              <div className="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow">
+                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <MapPin size={20} className="text-primary" />
+                  {t("orders.shippingAddress")}
+                </h3>
+
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <User size={18} className="text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        {t("orders.customer", "Customer")}
+                      </p>
+                      <p className="font-semibold text-gray-900">
+                        {orderDetails.address.first_name}{" "}
+                        {orderDetails.address.last_name}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <Phone size={18} className="text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        {t("orders.phone", "Phone")}
+                      </p>
+                      <p className="font-semibold text-gray-900">
+                        {orderDetails.address.phone}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <MapPin size={18} className="text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        {t("orders.address", "Address")}
+                      </p>
+                      <p className="font-semibold text-gray-900">
+                        {orderDetails.address.address}
+                      </p>
+                      {orderDetails.address.apartment && (
+                        <p className="text-sm text-gray-600">
+                          {t("orders.apartment")}{" "}
+                          {orderDetails.address.apartment}
+                        </p>
                       )}
-                    </span>
-                  );
-                })()}
-
-                <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">
-                  <CreditCard size={14} />
-                  {t(
-                    `orders.paymentStatuses.${orderDetails.payment_status}`,
-                    orderDetails.payment_status
-                  )}
-                </span>
-
-                <span className="bg-gray-50 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">
-                  {t(
-                    `orders.paymentMethods.${orderDetails.payment_method}`,
-                    orderDetails.payment_method
-                  )}
-                </span>
-              </div>
-            </div>
-
-            {/* Order Summary - Simplified */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[#272627] mb-4 flex items-center gap-2">
-                <div className="w-1 h-5 bg-[#b3984a] rounded-full"></div>
-                {t("orders.orderSummary")}
-              </h3>
-
-              <div className="space-y-3">
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-gray-600">{t("orders.subtotal")}</span>
-                  <span className="font-medium text-[#272627]">
-                    {orderDetails.pricing.subtotal}{" "}
-                    {isCurrentRTL ? "ر.س" : "SAR"}
-                  </span>
+                      <p className="text-sm text-gray-600">
+                        {orderDetails.address.city}
+                        {orderDetails.address.state &&
+                          `, ${orderDetails.address.state}`}
+                        {orderDetails.address.country &&
+                          `, ${orderDetails.address.country}`}
+                        {orderDetails.address.zip_code &&
+                          ` - ${orderDetails.address.zip_code}`}
+                      </p>
+                    </div>
+                  </div>
                 </div>
+              </div>
 
-                {orderDetails.pricing.discount_amount > 0 && (
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+              {/* Order Summary */}
+              <div className="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow">
+                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <CreditCard size={20} className="text-primary" />
+                  {t("orders.orderSummary")}
+                </h3>
+
+                <div className="space-y-2.5">
+                  <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-600">
-                      {t("orders.discount")}
+                      {t("orders.subtotal")}
                     </span>
-                    <span className="font-medium text-green-600">
-                      -{orderDetails.pricing.discount_amount}{" "}
+                    <span className="font-semibold text-gray-900">
+                      {orderDetails.pricing.subtotal}{" "}
                       {isCurrentRTL ? "ر.س" : "SAR"}
                     </span>
                   </div>
-                )}
 
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-gray-600">{t("orders.shipping")}</span>
-                  <span className="font-medium text-[#272627]">
-                    {orderDetails.pricing.shipping_cost}{" "}
-                    {isCurrentRTL ? "ر.س" : "SAR"}
-                  </span>
-                </div>
-
-                {orderDetails.pricing.tax_amount > 0 && (
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-gray-600">{t("orders.tax")}</span>
-                    <span className="font-medium text-[#272627]">
-                      {orderDetails.pricing.tax_amount}{" "}
-                      {isCurrentRTL ? "ر.س" : "SAR"}
-                    </span>
-                  </div>
-                )}
-
-                <div className="flex justify-between items-center py-3 bg-[#b3984a]/5 rounded-lg px-4">
-                  <span className="text-lg font-semibold text-[#272627]">
-                    {t("orders.total")}
-                  </span>
-                  <span className="text-xl font-bold text-[#b3984a]">
-                    {orderDetails.pricing.total} {isCurrentRTL ? "ر.س" : "SAR"}
-                  </span>
-                </div>
-              </div>
-
-              {/* Coupon - Simplified */}
-              {orderDetails.coupon?.code && (
-                <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Percent size={16} className="text-green-600" />
-                      <span className="text-sm text-green-700">
-                        {t("orders.couponApplied")}:{" "}
-                        <span className="font-mono font-bold">
-                          {orderDetails.coupon.code}
-                        </span>
+                  {orderDetails.pricing.discount_amount > 0 && (
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">
+                        {t("orders.discount")}
+                      </span>
+                      <span className="font-semibold text-green-600">
+                        -{orderDetails.pricing.discount_amount}{" "}
+                        {isCurrentRTL ? "ر.س" : "SAR"}
                       </span>
                     </div>
-                    <span className="text-sm font-bold text-green-700">
-                      -{orderDetails.coupon.discount}{" "}
+                  )}
+
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-600">
+                      {t("orders.shipping")}
+                    </span>
+                    <span className="font-semibold text-gray-900">
+                      {orderDetails.pricing.shipping_cost}{" "}
                       {isCurrentRTL ? "ر.س" : "SAR"}
                     </span>
                   </div>
-                </div>
-              )}
-            </div>
 
-            {/* Shipping Address - Simplified */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[#272627] mb-4 flex items-center gap-2">
-                <div className="w-1 h-5 bg-[#b3984a] rounded-full"></div>
-                {t("orders.shippingAddress")}
-              </h3>
+                  {orderDetails.pricing.tax_amount > 0 && (
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">{t("orders.tax")}</span>
+                      <span className="font-semibold text-gray-900">
+                        {orderDetails.pricing.tax_amount}{" "}
+                        {isCurrentRTL ? "ر.س" : "SAR"}
+                      </span>
+                    </div>
+                  )}
 
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <User size={16} className="text-[#b3984a]" />
-                  <span className="font-medium text-[#272627]">
-                    {orderDetails.address.first_name}{" "}
-                    {orderDetails.address.last_name}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <Phone size={16} className="text-[#b3984a]" />
-                  <span className="font-medium text-[#272627]">
-                    {orderDetails.address.phone}
-                  </span>
-                </div>
-                <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                  <MapPin size={16} className="text-[#b3984a] mt-1" />
-                  <div className="text-sm text-[#272627]">
-                    <p className="font-medium">
-                      {orderDetails.address.address}
-                    </p>
-                    {orderDetails.address.apartment && (
-                      <p>
-                        {t("orders.apartment")} {orderDetails.address.apartment}
-                      </p>
-                    )}
-                    <p>
-                      {orderDetails.address.city}
-                      {orderDetails.address.state &&
-                        `, ${orderDetails.address.state}`}
-                      {orderDetails.address.country &&
-                        `, ${orderDetails.address.country}`}
-                      {orderDetails.address.zip_code &&
-                        ` ${orderDetails.address.zip_code}`}
-                    </p>
+                  <div className="border-t border-gray-200 pt-3 mt-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-lg font-bold text-gray-900">
+                        {t("orders.total")}
+                      </span>
+                      <span className="text-2xl font-bold text-primary">
+                        {orderDetails.pricing.total}{" "}
+                        {isCurrentRTL ? "ر.س" : "SAR"}
+                      </span>
+                    </div>
                   </div>
                 </div>
+
+                {/* Coupon Badge */}
+                {orderDetails.coupon?.code && (
+                  <div className="mt-4 bg-green-50 border-2 border-green-300 rounded-lg p-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Percent size={18} className="text-green-600" />
+                        <div>
+                          <p className="text-xs text-green-600 font-medium">
+                            {t("orders.couponApplied", "Coupon Applied")}
+                          </p>
+                          <p className="text-sm font-bold text-green-700 font-mono">
+                            {orderDetails.coupon.code}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="text-lg font-bold text-green-700">
+                        -{orderDetails.coupon.discount}{" "}
+                        {isCurrentRTL ? "ر.س" : "SAR"}
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Products - Simplified */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[#272627] mb-4 flex items-center gap-2">
-                <div className="w-1 h-5 bg-[#b3984a] rounded-full"></div>
-                {t("orders.products")} ({orderDetails.products.length})
+            {/* Products Section */}
+            <div className="bg-white border border-gray-200 rounded-lg p-5">
+              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <Package size={20} className="text-primary" />
+                {t("orders.products")} ({orderDetails.total_items}{" "}
+                {t("orders.items", "Items")})
               </h3>
 
               <div className="space-y-3">
-                {orderDetails.products.map((product) => (
+                {orderDetails.products.map((product, index) => (
                   <div
                     key={product.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:border-[#b3984a]/30 transition-colors"
+                    className="border border-gray-200 rounded-lg p-4 hover:border-primary/40 hover:shadow-sm transition-all bg-gray-50/50"
                   >
-                    <div className="flex items-center gap-4">
-                      <Image
-                        src={`https://brave.iseek.name/storage/${product.product_image}`}
-                        alt={product.product_name}
-                        width={60}
-                        height={60}
-                        className="w-15 h-15 object-cover rounded-lg flex-shrink-0 border border-gray-200"
-                      />
+                    <div className="flex items-start gap-4">
+                      {/* Product Image */}
+                      <div className="relative flex-shrink-0">
+                        <Image
+                          src={`https://brave.iseek.name/storage/${product.product_image}`}
+                          alt={product.product_name}
+                          width={80}
+                          height={80}
+                          className="w-20 h-20 object-cover rounded-lg border-2 border-white shadow-sm"
+                        />
+                      </div>
+
+                      {/* Product Details */}
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-[#272627] mb-2 truncate">
+                        <h4 className="font-bold text-gray-900 mb-2 line-clamp-2">
                           {product.product_name}
                         </h4>
-                        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                          <span>
-                            <span className="font-medium">SKU:</span>{" "}
-                            {product.product_sku}
-                          </span>
-                          <span>
-                            <span className="font-medium">Qty:</span>{" "}
-                            {product.quantity}
-                          </span>
-                          <span>
-                            <span className="font-medium">Price:</span>{" "}
-                            {product.final_unit_price}{" "}
-                            {isCurrentRTL ? "ر.س" : "SAR"}
-                          </span>
-                          {product.discount_amount > 0 && (
-                            <span className="text-green-600 font-medium">
-                              -{product.discount_amount}{" "}
+
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-gray-500">
+                              {t("orders.sku", "SKU")}:
+                            </span>
+                            <span className="font-mono text-gray-700 text-xs">
+                              {product.product_sku}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-gray-500">
+                              {t("orders.quantity", "Qty")}:
+                            </span>
+                            <span className="font-semibold text-gray-900">
+                              × {product.quantity}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-gray-500">
+                              {t("orders.unitPrice", "Unit Price")}:
+                            </span>
+                            <span className="font-semibold text-gray-900">
+                              {product.final_unit_price}{" "}
                               {isCurrentRTL ? "ر.س" : "SAR"}
                             </span>
+                          </div>
+
+                          {product.discount_percentage > 0 && (
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-gray-500">
+                                {t("orders.discount")}:
+                              </span>
+                              <span className="font-semibold text-green-600">
+                                {product.discount_percentage}% OFF
+                              </span>
+                            </div>
                           )}
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="text-lg font-bold text-[#b3984a]">
-                          {product.total} {isCurrentRTL ? "ر.س" : "SAR"}
-                        </div>
+
+                      {/* Product Total */}
+                      <div className="text-right flex-shrink-0">
+                        <p className="text-xs text-gray-500 mb-1">
+                          {t("orders.lineTotal", "Total")}
+                        </p>
+                        <p className="text-xl font-bold text-primary">
+                          {product.total}
+                        </p>
+                        <p className="text-sm font-medium text-primary">
+                          {isCurrentRTL ? "ر.س" : "SAR"}
+                        </p>
+                        {product.discount_amount > 0 && (
+                          <p className="text-xs text-green-600 font-semibold mt-1">
+                            {t("orders.saved", "Saved")}{" "}
+                            {product.discount_amount}{" "}
+                            {isCurrentRTL ? "ر.س" : "SAR"}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -369,52 +398,119 @@ export default function OrderDetailsDialog({
               </div>
             </div>
 
-            {/* Additional Info - Simplified */}
-            {(orderDetails.tracking_number || orderDetails.notes) && (
-              <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-[#272627] mb-4 flex items-center gap-2">
-                  <div className="w-1 h-5 bg-[#b3984a] rounded-full"></div>
+            {/* Additional Information */}
+            {(orderDetails.tracking_number ||
+              orderDetails.notes ||
+              orderDetails.can_be_cancelled ||
+              orderDetails.can_be_refunded) && (
+              <div className="bg-white border border-gray-200 rounded-lg p-5">
+                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <Truck size={20} className="text-primary" />
                   {t("orders.additionalInfo", "Additional Information")}
                 </h3>
 
-                <div className="space-y-4">
+                <div className="space-y-3">
+                  {/* Tracking Number */}
                   {orderDetails.tracking_number && (
-                    <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                      <Truck size={16} className="text-blue-600" />
-                      <div>
-                        <span className="text-sm text-blue-600 font-medium">
-                          {t("orders.trackingNumber")}:
-                        </span>
-                        <span className="font-mono text-blue-700 ml-2">
+                    <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                      <Truck
+                        size={20}
+                        className="text-blue-600 flex-shrink-0"
+                      />
+                      <div className="flex-1">
+                        <p className="text-xs text-blue-600 font-semibold uppercase tracking-wide">
+                          {t("orders.trackingNumber", "Tracking Number")}
+                        </p>
+                        <p className="font-mono text-lg font-bold text-blue-900 mt-1">
                           {orderDetails.tracking_number}
-                        </span>
+                        </p>
                       </div>
                     </div>
                   )}
 
+                  {/* Order Notes */}
                   {orderDetails.notes && (
-                    <div className="flex items-start gap-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
-                      <div className="w-4 h-4 bg-amber-200 rounded-full mt-1"></div>
-                      <div>
-                        <span className="text-sm text-amber-600 font-medium">
-                          {t("orders.notes")}:
-                        </span>
-                        <p className="text-amber-800 mt-1">
+                    <div className="flex items-start gap-3 p-4 bg-amber-50 rounded-lg border-l-4 border-amber-500">
+                      <Package
+                        size={20}
+                        className="text-amber-600 flex-shrink-0 mt-0.5"
+                      />
+                      <div className="flex-1">
+                        <p className="text-xs text-amber-600 font-semibold uppercase tracking-wide mb-1">
+                          {t("orders.notes", "Order Notes")}
+                        </p>
+                        <p className="text-sm text-amber-900 leading-relaxed">
                           {orderDetails.notes}
                         </p>
                       </div>
                     </div>
                   )}
+
+                  {/* Order Actions Status */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div
+                      className={`p-3 rounded-lg border-2 ${
+                        orderDetails.can_be_cancelled
+                          ? "bg-red-50 border-red-200"
+                          : "bg-gray-50 border-gray-200"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <X
+                          size={16}
+                          className={
+                            orderDetails.can_be_cancelled
+                              ? "text-red-600"
+                              : "text-gray-400"
+                          }
+                        />
+                        <span
+                          className={`text-sm font-semibold ${
+                            orderDetails.can_be_cancelled
+                              ? "text-red-900"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          {orderDetails.can_be_cancelled
+                            ? t("orders.canBeCancelled", "Can be Cancelled")
+                            : t("orders.cannotBeCancelled", "Cannot Cancel")}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div
+                      className={`p-3 rounded-lg border-2 ${
+                        orderDetails.can_be_refunded
+                          ? "bg-green-50 border-green-200"
+                          : "bg-gray-50 border-gray-200"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <CheckCircle
+                          size={16}
+                          className={
+                            orderDetails.can_be_refunded
+                              ? "text-green-600"
+                              : "text-gray-400"
+                          }
+                        />
+                        <span
+                          className={`text-sm font-semibold ${
+                            orderDetails.can_be_refunded
+                              ? "text-green-900"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          {orderDetails.can_be_refunded
+                            ? t("orders.canBeRefunded", "Can be Refunded")
+                            : t("orders.cannotBeRefunded", "No Refund")}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
-          </div>
-        ) : (
-          <div className="text-center py-16 text-gray-600">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <X size={24} className="text-gray-400" />
-            </div>
-            <p className="text-lg">{t("orders.errorLoadingDetails")}</p>
           </div>
         )}
       </DialogContent>
