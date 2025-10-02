@@ -188,33 +188,33 @@ const Footer = () => {
             {/* Commerce Certificate */}
             <div
               className="cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={handleCommerceClick}
-              title={t("certificates.commerce.tooltip")}
+              onClick={handleVatClick}
+              title={t("certificates.vat.tooltip")}
             >
               <Image
-                src="/commerce.png"
-                alt={t("certificates.commerce.title")}
+                src="/vat.png"
+                alt={t("certificates.vat.title")}
                 width={50}
                 height={50}
                 className="rounded shadow-sm hover:shadow-md transition-shadow"
               />
             </div>
-
             {/* VAT Certificate with Tax Number */}
             <div className="flex items-center gap-3">
               <div
                 className="cursor-pointer hover:opacity-80 transition-opacity"
-                onClick={handleVatClick}
-                title={t("certificates.vat.tooltip")}
+                onClick={handleCommerceClick}
+                title={t("certificates.commerce.tooltip")}
               >
                 <Image
-                  src="/vat.png"
-                  alt={t("certificates.vat.title")}
+                  src="/commerce.png"
+                  alt={t("certificates.commerce.title")}
                   width={50}
                   height={50}
                   className="rounded shadow-sm hover:shadow-md transition-shadow"
                 />
               </div>
+
               <div className="text-white">
                 <div className="text-xs font-medium text-gray-300">
                   {t("certificates.taxNumber")}

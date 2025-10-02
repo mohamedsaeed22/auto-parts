@@ -58,7 +58,7 @@
       "title": "Business Validation",
       "tooltip": "Validate Business"
     },
-    "taxNumber": "Tax Number",
+    "taxNumber": "Tax registration number",
     "bankAccount": "Bank Account Number"
   },
   "companyName": "Fal Future Auto Parts",
