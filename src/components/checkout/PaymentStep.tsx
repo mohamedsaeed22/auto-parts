@@ -1,10 +1,5 @@
 import React, { useEffect } from "react";
-import {
-  CreditCard,
-  Truck,
-  ArrowLeft,
-  ArrowRight,
-} from "lucide-react";
+import { CreditCard, Truck, ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 
