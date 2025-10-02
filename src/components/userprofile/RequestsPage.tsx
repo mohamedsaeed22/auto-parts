@@ -4,15 +4,12 @@ import { useState, useEffect } from "react";
 import {
   FileText,
   Filter,
-  Calendar,
-  Clock,
   Package,
-  Car,
-  DollarSign,
   CheckCircle,
   XCircle,
   PlayCircle,
   Clock as ClockIcon,
+  Loader2,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
@@ -27,17 +24,11 @@ import {
 } from "@/components/ui/accordion";
 import { useQueryState, parseAsInteger } from "nuqs";
 import { useGetRequestsQuery, useApproveRequestMutation } from "@/services/api";
-import { Loader2 } from "lucide-react";
-import type {
-  RequestResponse,
-  RequestItemResponse,
-} from "@/services/api/requestsApi";
-import { useAuth } from "@/hooks/useAuth";
+import type { RequestResponse } from "@/services/api/requestsApi";
 import { useAuthContext } from "@/contexts/auth-context";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/hooks/useLocale";
 import { redirectToCompleteRegistration } from "@/lib/registrationRedirect";
-import Image from "next/image";
 import AcceptRequestDialog from "./AcceptRequestDialog";
 import RejectConfirmDialog from "./RejectConfirmDialog";
 import type { ApproveRequestRequest } from "@/services/api/requestsApi";
@@ -64,7 +55,6 @@ const statusIcons = {
 export default function RequestsPage() {
   const { t, i18n } = useTranslation("userProfile");
   const isRTL = i18n.language === "ar";
-  const { user } = useAuth();
   const { isRegistrationComplete } = useAuthContext();
   const router = useRouter();
   const { currentLocale } = useLocale();
@@ -206,21 +196,6 @@ export default function RequestsPage() {
     };
     return statusLabels[status as keyof typeof statusLabels] || status;
   };
-
-  // Get user type from auth or request data
-  const getUserType = (): "shop" | "workshop" => {
-    if (user?.type) {
-      return user.type as "shop" | "workshop";
-    }
-    // Fallback to first request's user type if available
-    if (requests.length > 0) {
-      return requests[0].user_type;
-    }
-    return "shop"; // Default fallback
-  };
-
-  const userType = getUserType();
-  const isWorkshop = userType === "workshop";
 
   const handleAcceptRequest = (requestId: number) => {
     setPendingRequestId(requestId);
@@ -578,353 +553,301 @@ export default function RequestsPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          {requests.map((request: RequestResponse) => (
-            <div key={request.id} className="bg-white rounded-lg border p-6">
-              {/* Request Header */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-gray-500">
-                      {t("requests.id", "ID")}:
-                    </span>
-                    <span className="font-mono text-gray-900">
-                      #{request.id}
-                    </span>
-                  </div>
-                  {isWorkshop && request.workshop_code && (
+          {requests.map((request: RequestResponse) => {
+            const statusInfo = (() => {
+              const IconComponent =
+                statusIcons[request.status as keyof typeof statusIcons];
+              return {
+                icon: IconComponent || FileText,
+                colorClass:
+                  statusColors[request.status as keyof typeof statusColors] ||
+                  statusColors.draft,
+              };
+            })();
+            const StatusIcon = statusInfo.icon;
+
+            return (
+              <div
+                key={request.id}
+                className="border border-gray-200 rounded-lg p-4 bg-white hover:shadow-md transition-shadow"
+              >
+                {/* Request Header - Simplified */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-gray-500">
-                        {t("requests.workshopCode", "Workshop Code")}:
+                      <StatusIcon
+                        size={16}
+                        className={statusInfo.colorClass.split(" ")[1]}
+                      />
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${statusInfo.colorClass}`}
+                      >
+                        {getStatusLabel(request.status)}
                       </span>
-                      <span className="font-mono text-gray-900 bg-gray-100 px-2 py-1 rounded">
-                        {request.workshop_code}
-                      </span>
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {formatDate(request.created_at)}
+                    </div>
+                  </div>
+                  <div className="text-sm font-mono text-gray-600">
+                    #{request.id}
+                  </div>
+                </div>
+
+                {/* Request Info Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                  <div>
+                    <div className="text-sm text-gray-600 mb-1">
+                      {t("requests.items.title", "Items")}
+                    </div>
+                    <div className="font-medium">
+                      {request.items.length}{" "}
+                      {t("requests.items.title", "Items")}
+                    </div>
+                  </div>
+
+                  {request.price && (
+                    <div>
+                      <div className="text-sm text-gray-600 mb-1">
+                        {t("requests.totalPrice", "Total Price")}
+                      </div>
+                      <div className="font-medium text-md text-blue-600">
+                        {request.price} {isRTL ? "ر.س" : "SAR"}
+                      </div>
+                    </div>
+                  )}
+
+                  {request.payment_method && (
+                    <div>
+                      <div className="text-sm text-gray-600 mb-1">
+                        {t("requests.paymentMethod", "Payment Method")}
+                      </div>
+                      <div className="font-medium capitalize">
+                        {request.payment_method === "cash"
+                          ? t("requests.paymentMethods.cash", "Cash")
+                          : t(
+                              "requests.paymentMethods.creditCard",
+                              "Credit Card"
+                            )}
+                      </div>
+                    </div>
+                  )}
+
+                  {request.payment_status && (
+                    <div>
+                      <div className="text-sm text-gray-600 mb-1">
+                        {t("requests.paymentStatus", "Payment Status")}
+                      </div>
+                      <div className="font-medium capitalize">
+                        {t(
+                          `requests.paymentStatuses.${request.payment_status}`,
+                          request.payment_status
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`px-3 py-1 text-sm font-medium rounded-full border ${
-                      statusColors[request.status as keyof typeof statusColors]
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      {(() => {
-                        const IconComponent =
-                          statusIcons[
-                            request.status as keyof typeof statusIcons
-                          ];
-                        return IconComponent ? (
-                          <IconComponent size={14} />
-                        ) : null;
-                      })()}
-                      {getStatusLabel(request.status)}
-                    </div>
-                  </span>
-                </div>
-              </div>
-
-              {/* Request Details */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div className="flex items-center gap-2">
-                  <Calendar size={16} className="text-gray-400" />
-                  <span className="text-sm text-gray-600">
-                    {t("requests.createdAt", "Created")}:{" "}
-                    {formatDate(request.created_at)}
-                  </span>
-                </div>
-
-                {request.submitted_at && (
-                  <div className="flex items-center gap-2">
-                    <Clock size={16} className="text-gray-400" />
-                    <span className="text-sm text-gray-600">
-                      {t("requests.submittedAt", "Submitted")}:{" "}
-                      {formatDate(request.submitted_at)}
-                    </span>
-                  </div>
-                )}
-
-                {request.price && (
-                  <div className="flex items-center gap-2">
-                    <DollarSign size={16} className="text-gray-400" />
-                    <span className="text-sm text-gray-600">
-                      {t("requests.totalPrice", "Total Price")}: {request.price}{" "}
-                      {isRTL ? "ر.س" : "SAR"}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Action Buttons for Submitted Requests */}
-              {request.status === "submitted" && request.can_be_submitted && (
-                <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <div>
-                        <h4 className="text-sm font-medium text-blue-900">
-                          {t(
-                            "requests.adminPricing.title",
-                            "Admin has priced your request"
-                          )}
-                        </h4>
-                        <p className="text-xs text-blue-700">
-                          {t(
-                            "requests.adminPricing.description",
-                            "Please review and accept or reject the pricing"
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={() => handleRejectRequest(request.id)}
-                        variant="outline"
-                        size="sm"
-                        disabled={isApproving}
-                        className="border-red-300 text-red-700  "
-                      >
-                        {isApproving ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <XCircle className="h-4 w-4" />
-                        )}
-                        {t("requests.actions.reject", "Reject")}
-                      </Button>
-                      <Button
-                        onClick={() => handleAcceptRequest(request.id)}
-                        size="sm"
-                        disabled={isApproving}
-                        className="bg-green-600 hover:bg-green-700 text-white"
-                      >
-                        {isApproving ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <CheckCircle className="h-4 w-4" />
-                        )}
-                        {t("requests.actions.accept", "Accept")}
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Request Items */}
-              <div className="mb-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-1 h-6 bg-[#b3984a] rounded-full"></div>
-                  <h4 className="text-lg font-semibold text-[#272627]">
-                    {t("requests.items.title", "Request Items")}
-                  </h4>
-                  <span className="bg-[#b3984a] text-white text-sm font-medium px-3 py-1 rounded-full">
-                    {request.items.length}
-                  </span>
-                </div>
-
-                <div className="grid gap-4">
-                  {request.items.map(
-                    (item: RequestItemResponse, index: number) => (
-                      <div
-                        key={item.id}
-                        className="bg-gradient-to-r from-white to-gray-50 rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-all duration-200 hover:border-[#b3984a]/30"
-                      >
-                        {/* Item Header */}
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-[#b3984a]/10 rounded-lg flex items-center justify-center">
-                              <Package size={20} className="text-[#b3984a]" />
-                            </div>
-                            <div>
-                              <h5 className="font-semibold text-[#272627] text-base">
-                                {item.part_name}
-                              </h5>
-                              <p className="text-sm text-gray-500">
-                                {t("requests.items.itemNumber", "Item")} #
-                                {index + 1}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-2">
-                            <span className="bg-[#b3984a] text-white text-sm font-medium px-3 py-1 rounded-full">
-                              {t("requests.items.quantity", "Qty")}:{" "}
-                              {item.quantity}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Item Details Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-                          {isWorkshop && item.chassis_number && (
-                            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                              <Car
-                                size={16}
-                                className="text-[#b3984a] flex-shrink-0"
-                              />
-                              <div>
-                                <span className="text-xs text-gray-500 block">
-                                  {t(
-                                    "requests.items.chassisNumber",
-                                    "Chassis Number"
-                                  )}
-                                </span>
-                                <span className="text-sm font-medium text-[#272627]">
-                                  {item.chassis_number}
-                                </span>
-                              </div>
-                            </div>
-                          )}
-
-                          {item.price && (
-                            <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
-                              <DollarSign
-                                size={16}
-                                className="text-green-600 flex-shrink-0"
-                              />
-                              <div>
-                                <span className="text-xs text-green-600 block">
-                                  {t("requests.items.unitPrice", "Unit Price")}
-                                </span>
-                                <span className="text-sm font-medium text-green-800">
-                                  {item.price} {isRTL ? "ر.س" : "SAR"}
-                                </span>
-                              </div>
-                            </div>
-                          )}
-
-                          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                            <Calendar
-                              size={16}
-                              className="text-[#b3984a] flex-shrink-0"
-                            />
-                            <div>
-                              <span className="text-xs text-gray-500 block">
-                                {t("requests.items.created", "Created")}
-                              </span>
-                              <span className="text-sm font-medium text-[#272627]">
-                                {formatDate(item.created_at)}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Item Images - Enhanced display for workshop users */}
-                        {isWorkshop &&
-                          (item.part_image_url ||
-                            item.order_image_url ||
-                            item.form_image_url) && (
-                            <div className="border-t border-gray-200 pt-4">
-                              <h6 className="text-sm font-medium text-[#272627] mb-3 flex items-center gap-2">
-                                <span className="w-2 h-2 bg-[#b3984a] rounded-full"></span>
-                                {t("requests.items.attachments", "Attachments")}
-                              </h6>
-
-                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                {item.part_image_url && (
-                                  <div className="group">
-                                    <div className="flex items-center gap-2 mb-2">
-                                      <span className="text-xs font-medium text-[#b3984a] bg-[#b3984a]/10 px-2 py-1 rounded">
-                                        {t("requests.items.partImage", "Part")}
-                                      </span>
-                                    </div>
-                                    <div className="relative overflow-hidden rounded-lg border-2 border-gray-200 group-hover:border-[#b3984a] transition-colors duration-200">
-                                      <Image
-                                        src={item.part_image_url}
-                                        alt="Part Image"
-                                        width={120}
-                                        height={120}
-                                        className="w-full h-24 object-cover group-hover:scale-105 transition-transform duration-200"
-                                      />
-                                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200"></div>
-                                    </div>
-                                  </div>
-                                )}
-
-                                {item.order_image_url && (
-                                  <div className="group">
-                                    <div className="flex items-center gap-2 mb-2">
-                                      <span className="text-xs font-medium text-[#b3984a] bg-[#b3984a]/10 px-2 py-1 rounded">
-                                        {t(
-                                          "requests.items.orderImage",
-                                          "Order"
-                                        )}
-                                      </span>
-                                    </div>
-                                    <div className="relative overflow-hidden rounded-lg border-2 border-gray-200 group-hover:border-[#b3984a] transition-colors duration-200">
-                                      <Image
-                                        src={item.order_image_url}
-                                        alt="Order Image"
-                                        width={120}
-                                        height={120}
-                                        className="w-full h-24 object-cover group-hover:scale-105 transition-transform duration-200"
-                                      />
-                                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200"></div>
-                                    </div>
-                                  </div>
-                                )}
-
-                                {item.form_image_url && (
-                                  <div className="group">
-                                    <div className="flex items-center gap-2 mb-2">
-                                      <span className="text-xs font-medium text-[#b3984a] bg-[#b3984a]/10 px-2 py-1 rounded">
-                                        {t("requests.items.formImage", "Form")}
-                                      </span>
-                                    </div>
-                                    <div className="relative overflow-hidden rounded-lg border-2 border-gray-200 group-hover:border-[#b3984a] transition-colors duration-200">
-                                      <Image
-                                        src={item.form_image_url}
-                                        alt="Form Image"
-                                        width={120}
-                                        height={120}
-                                        className="w-full h-24 object-cover group-hover:scale-105 transition-transform duration-200"
-                                      />
-                                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200"></div>
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                      </div>
-                    )
-                  )}
-                </div>
-
-                {/* Price Summary for Priced Requests */}
-                {request.price && request.items.some((item) => item.price) && (
-                  <div className="mt-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                          <DollarSign size={16} className="text-green-600" />
-                        </div>
+                {/* Action Buttons for Submitted Requests */}
+                {request.status === "submitted" && request.can_be_submitted && (
+                  <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-center justify-between flex-wrap gap-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                         <div>
-                          <h4 className="text-sm font-medium text-green-900">
-                            {t("requests.priceSummary.title", "Price Summary")}
-                          </h4>
-                          <p className="text-xs text-green-700">
+                          <p className="text-sm font-medium text-blue-900">
                             {t(
-                              "requests.priceSummary.description",
-                              "Total calculated by admin"
+                              "requests.adminPricing.title",
+                              "Admin has priced your request"
+                            )}
+                          </p>
+                          <p className="text-xs text-blue-700">
+                            {t(
+                              "requests.adminPricing.description",
+                              "Please review and accept or reject the pricing"
                             )}
                           </p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-bold text-green-800">
-                          {request.price} {isRTL ? "ر.س" : "SAR"}
-                        </div>
-                        <div className="text-xs text-green-600">
-                          {t("requests.priceSummary.total", "Total Amount")}
-                        </div>
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => handleRejectRequest(request.id)}
+                          variant="outline"
+                          size="sm"
+                          disabled={isApproving}
+                          className="border-red-300 text-red-700"
+                        >
+                          {isApproving ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <XCircle className="h-4 w-4" />
+                          )}
+                          {t("requests.actions.reject", "Reject")}
+                        </Button>
+                        <Button
+                          onClick={() => handleAcceptRequest(request.id)}
+                          size="sm"
+                          disabled={isApproving}
+                          className="bg-green-600 hover:bg-green-700 text-white"
+                        >
+                          {isApproving ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <CheckCircle className="h-4 w-4" />
+                          )}
+                          {t("requests.actions.accept", "Accept")}
+                        </Button>
                       </div>
                     </div>
                   </div>
                 )}
+
+                {/* Address Info for Accepted Requests */}
+                {request.has_address_details && request.formatted_address && (
+                  <div className="mt-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                    <div className="flex items-start gap-2">
+                      <Package size={16} className="text-gray-500 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="text-xs text-gray-600 mb-1">
+                          {t("requests.shippingAddress", "Shipping Address")}
+                        </p>
+                        <p className="text-sm font-medium text-gray-900">
+                          {request.full_name}
+                        </p>
+                        <p className="text-sm text-gray-700">
+                          {request.formatted_address}
+                        </p>
+                        {request.phone && (
+                          <p className="text-sm text-gray-700">
+                            {request.phone}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Request Items Accordion */}
+                {request.items && request.items.length > 0 && (
+                  <div className="mt-3">
+                    <Accordion type="single" collapsible>
+                      <AccordionItem value="items" className="border-0">
+                        <AccordionTrigger className="py-2 px-3 bg-gray-50 hover:bg-gray-100 rounded-lg hover:no-underline">
+                          <div className="flex items-center gap-2">
+                            <Package size={16} className="text-primary" />
+                            <span className="text-sm font-medium text-gray-900">
+                              {t("requests.items.title", "Request Items")} (
+                              {request.items.length})
+                            </span>
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="pt-3 px-1">
+                          <div className="space-y-3">
+                            {request.items.map((item, index) => (
+                              <div
+                                key={item.id}
+                                className="p-3 bg-gray-50 border border-gray-200 rounded-lg hover:border-primary/30 transition-colors"
+                              >
+                                {/* Item Header */}
+                                <div className="flex items-start justify-between mb-2">
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <span className="text-xs font-medium text-gray-500">
+                                        #{index + 1}
+                                      </span>
+                                      <h6 className="text-sm font-semibold text-gray-900">
+                                        {item.part_name}
+                                      </h6>
+                                    </div>
+                                    <div className="flex items-center gap-4 text-xs text-gray-600">
+                                      <span>
+                                        {t("requests.items.quantity", "Qty")}:{" "}
+                                        {item.quantity}
+                                      </span>
+                                      {item.chassis_number && (
+                                        <span>
+                                          {t(
+                                            "requests.items.chassisNumber",
+                                            "Chassis"
+                                          )}
+                                          : {item.chassis_number}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                  {item.price && (
+                                    <div className="text-right">
+                                      <div className="text-sm font-bold text-blue-600">
+                                        {item.price} {isRTL ? "ر.س" : "SAR"}
+                                      </div>
+                                      {item.price_without_tax && (
+                                        <div className="text-xs text-gray-500">
+                                          {t("requests.items.tax", "Tax")}:{" "}
+                                          {item.tax.toFixed(2)}{" "}
+                                          {isRTL ? "ر.س" : "SAR"}
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* Item Images */}
+                                {(item.part_image_url ||
+                                  item.order_image_url ||
+                                  item.form_image_url) && (
+                                  <div className="flex gap-2 mt-2 pt-2 border-t border-gray-200">
+                                    {item.part_image_url && (
+                                      <a
+                                        href={item.part_image_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-xs text-primary hover:underline"
+                                      >
+                                        {t(
+                                          "requests.items.partImage",
+                                          "Part Image"
+                                        )}
+                                      </a>
+                                    )}
+                                    {item.order_image_url && (
+                                      <a
+                                        href={item.order_image_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-xs text-primary hover:underline"
+                                      >
+                                        {t(
+                                          "requests.items.orderImage",
+                                          "Order Image"
+                                        )}
+                                      </a>
+                                    )}
+                                    {item.form_image_url && (
+                                      <a
+                                        href={item.form_image_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-xs text-primary hover:underline"
+                                      >
+                                        {t(
+                                          "requests.items.formImage",
+                                          "Form Image"
+                                        )}
+                                      </a>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

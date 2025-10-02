@@ -22,6 +22,8 @@ export interface RequestItemResponse {
   request_id: number;
   part_name: string;
   quantity: number;
+  price_without_tax: number;
+  tax: number;
   price: string | null;
   chassis_number: string | null;
   part_image_url: string | null;
@@ -48,10 +50,30 @@ export interface RequestResponse {
   submitted_at: string | null;
   workshop_code: string | null;
   price: string | null;
+  address_id: number | null;
+  first_name: string | null;
+  last_name: string | null;
+  full_name: string;
+  phone: string | null;
+  address: string | null;
+  apartment: string | null;
+  city: string | null;
+  state: string | null;
+  country: string | null;
+  zip_code: string | null;
+  formatted_address: string;
+  notes: string | null;
+  tracking_number: string | null;
+  pdf_label: string | null;
+  payment_status: "pending" | "paid" | "failed";
+  shipped_at: string | null;
   created_at: string;
   updated_at: string;
+  address_details: unknown | null;
   items: RequestItemResponse[];
+  calculated_total: number;
   can_be_submitted: boolean;
+  has_address_details: boolean;
 }
 
 // Requests list request interface

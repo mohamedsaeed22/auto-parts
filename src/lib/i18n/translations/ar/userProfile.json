@@ -166,7 +166,8 @@
       "partImage": "صورة القطعة",
       "orderImage": "صورة الطلب",
       "formImage": "صورة الاستمارة",
-      "unitPrice": "سعر الوحدة"
+      "unitPrice": "سعر الوحدة",
+      "tax": "الضريبة"
     },
     "actions": {
       "submit": "إرسال",
@@ -185,6 +186,18 @@
       "title": "ملخص السعر",
       "description": "المجموع المحسوب من قبل المدير",
       "total": "المبلغ الإجمالي"
+    },
+    "paymentMethod": "طريقة الدفع",
+    "paymentStatus": "حالة الدفع",
+    "shippingAddress": "عنوان الشحن",
+    "paymentMethods": {
+      "cash": "الدفع عند الاستلام",
+      "creditCard": "بطاقة ائتمان"
+    },
+    "paymentStatuses": {
+      "pending": "قيد الانتظار",
+      "paid": "مدفوع",
+      "failed": "فشل"
     },
     "pagination": {
       "previous": "السابق",

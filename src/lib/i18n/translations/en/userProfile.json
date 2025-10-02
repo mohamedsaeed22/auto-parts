@@ -166,7 +166,8 @@
       "partImage": "Part Image",
       "orderImage": "Request Image",
       "formImage": "Form Image",
-      "unitPrice": "Unit Price"
+      "unitPrice": "Unit Price",
+      "tax": "Tax"
     },
     "actions": {
       "submit": "Submit",
@@ -185,6 +186,18 @@
       "title": "Price Summary",
       "description": "Total calculated by admin",
       "total": "Total Amount"
+    },
+    "paymentMethod": "Payment Method",
+    "paymentStatus": "Payment Status",
+    "shippingAddress": "Shipping Address",
+    "paymentMethods": {
+      "cash": "Cash on Delivery",
+      "creditCard": "Credit Card"
+    },
+    "paymentStatuses": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "failed": "Failed"
     },
     "pagination": {
       "previous": "Previous",
