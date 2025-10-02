@@ -500,7 +500,6 @@ export default function ProfilePage() {
               onClick={() => handleLanguageChange("ar")}
               className="flex items-center gap-2"
             >
-              <span className="text-lg">ar</span>
               العربية
             </Button>
 
@@ -510,7 +509,6 @@ export default function ProfilePage() {
               onClick={() => handleLanguageChange("en")}
               className="flex items-center gap-2"
             >
-              <span className="text-lg">us</span>
               English
             </Button>
           </div>
@@ -930,6 +928,14 @@ export default function ProfilePage() {
 
           <LocationPicker
             onLocationSelect={handleLocationSelect}
+            initialLocation={{
+              lat: parseFloat(
+                watch("latitude") || profile?.latitude || "24.7136"
+              ),
+              lng: parseFloat(
+                watch("longitude") || profile?.longitude || "46.6753"
+              ),
+            }}
             className="w-full h-96"
           />
           <p className="text-xs text-gray-500 mt-2">

@@ -507,6 +507,27 @@ export default function LocationPicker({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMapLoaded]);
 
+  // Update map center and marker when initialLocation changes
+  useEffect(() => {
+    if (mapInstanceRef.current && markerRef.current && initialLocation) {
+      const newPosition = {
+        lat: initialLocation.lat,
+        lng: initialLocation.lng,
+      };
+
+      // Update marker position
+      markerRef.current.setPosition(newPosition);
+
+      // Center map on new position
+      mapInstanceRef.current.setCenter(newPosition);
+      mapInstanceRef.current.setZoom(15);
+
+      // Reverse geocode to get address for the new position
+      reverseGeocode(initialLocation.lat, initialLocation.lng);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialLocation.lat, initialLocation.lng]);
+
   // Render error state
   if (mapError) {
     return (
