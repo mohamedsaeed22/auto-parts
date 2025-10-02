@@ -406,68 +406,93 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
         {/* Price Breakdown */}
         <div className="space-y-3 text-sm">
-          {/* Original price before discount - show when value > 0 */}
+          {/* 1. Total Amount Without Tax (الإجمالي بدون الضريبة) */}
+          {displayData.total_amount_without_tax > 0 && (
+            <div className="flex justify-between">
+              <span className="text-neutral-600">
+                {t("orderSummary.totalAmountWithoutTax", "Total Without Tax")}
+              </span>
+              <span className="font-medium">
+                {isRTL
+                  ? `${displayData.total_amount_without_tax.toFixed(2)} ر.س`
+                  : `${displayData.total_amount_without_tax.toFixed(2)} SAR`}
+              </span>
+            </div>
+          )}
+
+          {/* 2. Total Tax (الضريبة) */}
+          {displayData.total_tax > 0 && (
+            <div className="flex justify-between">
+              <span className="text-neutral-600">
+                {t("orderSummary.totalTax", "Tax")}
+              </span>
+              <span className="font-medium">
+                {isRTL
+                  ? `${displayData.total_tax.toFixed(2)} ر.س`
+                  : `${displayData.total_tax.toFixed(2)} SAR`}
+              </span>
+            </div>
+          )}
+
+          {/* 3. Total Before Discount (الإجمالي شامل ضريبة القيمة المضافة) */}
           {displayData.total_before_discount > 0 && (
             <div className="flex justify-between">
               <span className="text-neutral-600">
                 {t(
-                  "cartReview.cartTotalBeforeDiscount",
-                  "Cart Total Before Discount"
+                  "orderSummary.totalBeforeDiscount",
+                  "Total Including VAT"
                 )}
               </span>
-              <span className="font-medium line-through text-neutral-500">
-                {displayData.total_before_discount.toFixed(2)} {t("currency")}
-              </span>
-            </div>
-          )}
-
-          {/* Amount without tax - show when tax is applied */}
-          {displayData.total_amount_without_tax > 0 && (
-            <div className="flex justify-between">
-              <span className="text-neutral-600">
-                {t("orderSummary.amountWithoutTax", "Amount without Tax")}
-              </span>
               <span className="font-medium">
-                {displayData.total_amount_without_tax.toFixed(2)}{" "}
-                {t("currency")}
+                {isRTL
+                  ? `${displayData.total_before_discount.toFixed(2)} ر.س`
+                  : `${displayData.total_before_discount.toFixed(2)} SAR`}
               </span>
             </div>
           )}
 
-          {/* Tax amount - show when tax > 0 */}
-          {displayData.total_tax > 0 && (
+          {/* 4. Total Discount (إجمالي الخصم) */}
+          {displayData.total_discount > 0 && (
             <div className="flex justify-between">
               <span className="text-neutral-600">
-                {t("orderSummary.tax", "Tax")}
+                {t("orderSummary.totalDiscount", "Total Discount")}
               </span>
-              <span className="font-medium text-logo-gold">
-                {displayData.total_tax.toFixed(2)} {t("currency")}
+              <span className="font-medium text-red-600">
+                {isRTL
+                  ? `-${displayData.total_discount.toFixed(2)} ر.س`
+                  : `-${displayData.total_discount.toFixed(2)} SAR`}
               </span>
             </div>
           )}
 
-          {/* Subtotal */}
+          {/* 5. Cart Total (الإجمالي شامل الخصم) */}
           <div className="flex justify-between">
-            <span className="text-neutral-600">
-              {t("orderSummary.subtotal")}
+            <span className="text-neutral-600 font-semibold">
+              {t("orderSummary.cartTotal", "Cart Total")}
             </span>
-            <span className="font-medium">
-              {displayData.cart_total.toFixed(2)} {t("currency")}
+            <span className="font-semibold">
+              {isRTL
+                ? `${displayData.cart_total.toFixed(2)} ر.س`
+                : `${displayData.cart_total.toFixed(2)} SAR`}
             </span>
           </div>
 
-          {/* Coupon discount - only show when coupon is applied */}
-          {isCouponApplied && displayData.total_coupon_discount > 0 && (
-            <div className="flex justify-between text-logo-gold">
-              <span>{t("cartReview.totalDiscount")}</span>
-              <span className="font-medium">
-                -{displayData.total_coupon_discount.toFixed(2)} {t("currency")}
+          {/* 6. Total Coupon Discount (خصم الكوبون) */}
+          {displayData.total_coupon_discount > 0 && (
+            <div className="flex justify-between">
+              <span className="text-neutral-600">
+                {t("orderSummary.couponDiscount", "Coupon Discount")}
+              </span>
+              <span className="font-medium text-logo-gold">
+                {isRTL
+                  ? `-${displayData.total_coupon_discount.toFixed(2)} ر.س`
+                  : `-${displayData.total_coupon_discount.toFixed(2)} SAR`}
               </span>
             </div>
           )}
 
           {/* Show applied coupon info */}
-          {isCouponApplied && couponData && (
+          {isCouponApplied && couponData && displayData.total_coupon_discount > 0 && (
             <div className="flex justify-between text-sm text-logo-gold bg-logo-gold/10 p-2 rounded">
               <span>
                 {t("orderSummary.couponApplied", "Coupon Applied")}:{" "}
@@ -479,7 +504,12 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                       "orderSummary.off",
                       "off"
                     )}`
-                  : `${couponData.coupon.value} ${t("currency")} ${t(
+                  : isRTL
+                  ? `${couponData.coupon.value} ر.س ${t(
+                      "orderSummary.off",
+                      "off"
+                    )}`
+                  : `${couponData.coupon.value} SAR ${t(
                       "orderSummary.off",
                       "off"
                     )}`}
@@ -487,25 +517,31 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             </div>
           )}
 
-          {/* Shipping cost */}
+          {/* 7. Delivery Amount (الشحن) */}
           <div className="flex justify-between">
             <span className="text-neutral-600">
-              {t("orderSummary.shipping")}
+              {t("orderSummary.deliveryAmount", "Shipping")}
             </span>
-            <span className="font-medium text-logo-gold">
+            <span className="font-medium">
               {displayData.delivery_amount > 0
-                ? `${displayData.delivery_amount.toFixed(2)} ${t("currency")}`
-                : t("orderSummary.free")}
+                ? isRTL
+                  ? `${displayData.delivery_amount.toFixed(2)} ر.س`
+                  : `${displayData.delivery_amount.toFixed(2)} SAR`
+                : t("orderSummary.free", "Free")}
             </span>
           </div>
         </div>
 
-        {/* Total */}
+        {/* 8. Final Total (الإجمالي النهائي) */}
         <div className="border-t border-logo-gold/30 mt-4 pt-4">
           <div className="flex justify-between text-xl font-bold">
-            <span className="text-logo-black">{t("orderSummary.total")}</span>
+            <span className="text-logo-black">
+              {t("orderSummary.finalTotal", "Final Total")}
+            </span>
             <span className="text-logo-gold">
-              {displayData.final_total.toFixed(2)} {t("currency")}
+              {isRTL
+                ? `${displayData.final_total.toFixed(2)} ر.س`
+                : `${displayData.final_total.toFixed(2)} SAR`}
             </span>
           </div>
         </div>

@@ -34,6 +34,5 @@
   "home": "Home",
   "loadingProductDetails": "Loading product details...",
   "failedToLoadProductDetails": "Failed to load product details",
-  "invalidProductId": "Invalid product ID",
-  "priceIncludesVat": "(Price includes VAT)"
+  "invalidProductId": "Invalid product ID"
 }

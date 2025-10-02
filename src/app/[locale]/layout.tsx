@@ -96,6 +96,7 @@ export default async function LocaleLayout({
     "header",
     "footer",
     "cart",
+    "checkout",
     "userPricing",
     "product",
     "productDetails",
