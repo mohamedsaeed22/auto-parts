@@ -44,7 +44,7 @@ export default function OrdersPage() {
     if (currentPage === 1) {
       setCurrentPage(null);
     }
-    
+
     // Cleanup: remove page param when component unmounts
     return () => {
       setCurrentPage(null);
