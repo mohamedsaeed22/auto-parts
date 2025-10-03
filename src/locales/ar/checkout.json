@@ -150,7 +150,19 @@
     "orderShipped": "تم شحن الطلب",
     "orderDelivered": "تم توصيل الطلب",
     "orderDetails": "تفاصيل الطلب",
-    "orderCapabilities": "إمكانيات الطلب"
+    "orderCapabilities": "إمكانيات الطلب",
+    "loadingOrder": "جاري تحميل تفاصيل الطلب...",
+    "pleaseWait": "يرجى الانتظار بينما نقوم بجلب معلومات طلبك",
+    "errorLoadingOrder": "خطأ في تحميل الطلب",
+    "orderNotFound": "لم نتمكن من العثور على طلبك. يرجى التحقق من رقم الطلب أو الاتصال بالدعم.",
+    "viewMyOrders": "عرض طلباتي",
+    "paymentFailed": "فشل الدفع",
+    "paymentNotCompleted": "لم تتم عملية الدفع بنجاح. يرجى المحاولة مرة أخرى.",
+    "transactionId": "رقم المعاملة",
+    "retryPayment": "إعادة محاولة الدفع",
+    "needHelp": "تحتاج مساعدة؟",
+    "invalidRequest": "طلب غير صالح",
+    "missingParameters": "معلومات الدفع المطلوبة مفقودة. يرجى المحاولة مرة أخرى أو الاتصال بالدعم."
   },
   "orders": {
     "status": "حالة الطلب"

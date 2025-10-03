@@ -150,7 +150,19 @@
     "orderShipped": "Order Shipped",
     "orderDelivered": "Order Delivered",
     "orderDetails": "Order Details",
-    "orderCapabilities": "Order Capabilities"
+    "orderCapabilities": "Order Capabilities",
+    "loadingOrder": "Loading Order Details...",
+    "pleaseWait": "Please wait while we fetch your order information",
+    "errorLoadingOrder": "Error Loading Order",
+    "orderNotFound": "We couldn't find your order. Please check your order ID or contact support.",
+    "viewMyOrders": "View My Orders",
+    "paymentFailed": "Payment Failed",
+    "paymentNotCompleted": "Your payment was not completed successfully. Please try again.",
+    "transactionId": "Transaction ID",
+    "retryPayment": "Retry Payment",
+    "needHelp": "Need help?",
+    "invalidRequest": "Invalid Request",
+    "missingParameters": "Required payment information is missing. Please try again or contact support."
   },
   "orders": {
     "status": "Order Status"
