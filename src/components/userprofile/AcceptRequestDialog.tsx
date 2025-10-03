@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import FormInput from "@/components/ui/FormInput";
 import {
   Dialog,
   DialogContent,
@@ -237,10 +237,11 @@ export default function AcceptRequestDialog({
 
   // React Hook Form with Zod validation
   const {
-    register,
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
+    setValue,
   } = useForm<NewAddressForm>({
     resolver: zodResolver(createAddressSchema(t, isRTL)),
     mode: "onChange",
@@ -568,264 +569,167 @@ export default function AcceptRequestDialog({
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label
-                        className={`block text-sm font-medium text-gray-700 ${
-                          isRTL ? "text-right" : "text-left"
-                        }`}
-                      >
-                        {t("addressSelection:firstName", "First Name")} *
-                      </label>
-                      <Input
-                        {...register("first_name")}
-                        placeholder={t(
-                          "addressSelection:firstNamePlaceholder",
-                          "Enter first name"
-                        )}
-                        className={`h-12 ${
-                          errors.first_name ? "border-red-500" : ""
-                        }`}
-                      />
-                      {errors.first_name && (
-                        <p
-                          className={`text-sm text-red-600 ${
-                            isRTL ? "text-right" : "text-left"
-                          }`}
-                        >
-                          {errors.first_name.message}
-                        </p>
+                    <FormInput
+                      label={t("addressSelection:firstName", "First Name")}
+                      placeholder={t(
+                        "addressSelection:firstNamePlaceholder",
+                        "Enter first name"
                       )}
-                    </div>
+                      value={watch("first_name")}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setValue("first_name", e.target.value, {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        })
+                      }
+                      error={errors.first_name?.message}
+                      required
+                      inputClassName="h-12"
+                    />
 
-                    <div className="space-y-2">
-                      <label
-                        className={`block text-sm font-medium text-gray-700 ${
-                          isRTL ? "text-right" : "text-left"
-                        }`}
-                      >
-                        {t("addressSelection:lastName", "Last Name")} *
-                      </label>
-                      <Input
-                        {...register("last_name")}
-                        placeholder={t(
-                          "addressSelection:lastNamePlaceholder",
-                          "Enter last name"
-                        )}
-                        className={`h-12 ${
-                          errors.last_name ? "border-red-500" : ""
-                        }`}
-                      />
-                      {errors.last_name && (
-                        <p
-                          className={`text-sm text-red-600 ${
-                            isRTL ? "text-right" : "text-left"
-                          }`}
-                        >
-                          {errors.last_name.message}
-                        </p>
+                    <FormInput
+                      label={t("addressSelection:lastName", "Last Name")}
+                      placeholder={t(
+                        "addressSelection:lastNamePlaceholder",
+                        "Enter last name"
                       )}
-                    </div>
+                      value={watch("last_name")}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setValue("last_name", e.target.value, {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        })
+                      }
+                      error={errors.last_name?.message}
+                      required
+                      inputClassName="h-12"
+                    />
 
-                    <div className="space-y-2">
-                      <label
-                        className={`block text-sm font-medium text-gray-700 ${
-                          isRTL ? "text-right" : "text-left"
-                        }`}
-                      >
-                        {t("addressSelection:phone", "Phone")} *
-                      </label>
-                      <Input
-                        {...register("phone")}
-                        placeholder="0543777569"
-                        className={`h-12 ${
-                          errors.phone ? "border-red-500" : ""
-                        }`}
-                        dir="ltr"
-                      />
-                      {errors.phone && (
-                        <p
-                          className={`text-sm text-red-600 ${
-                            isRTL ? "text-right" : "text-left"
-                          }`}
-                        >
-                          {errors.phone.message}
-                        </p>
-                      )}
-                    </div>
+                    <FormInput
+                      label={t("addressSelection:phone", "Phone")}
+                      type="tel"
+                      placeholder="0543777569"
+                      value={watch("phone")}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setValue("phone", e.target.value, {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        })
+                      }
+                      error={errors.phone?.message}
+                      required
+                      inputClassName="h-12"
+                      dir="ltr"
+                    />
 
-                    <div className="space-y-2">
-                      <label
-                        className={`block text-sm font-medium text-gray-700 ${
-                          isRTL ? "text-right" : "text-left"
-                        }`}
-                      >
-                        {t("addressSelection:zipCode", "ZIP Code")} *
-                      </label>
-                      <Input
-                        {...register("zip_code")}
-                        placeholder={t(
-                          "addressSelection:zipCodePlaceholder",
-                          "Enter ZIP code"
-                        )}
-                        className={`h-12 ${
-                          errors.zip_code ? "border-red-500" : ""
-                        }`}
-                      />
-                      {errors.zip_code && (
-                        <p
-                          className={`text-sm text-red-600 ${
-                            isRTL ? "text-right" : "text-left"
-                          }`}
-                        >
-                          {errors.zip_code.message}
-                        </p>
+                    <FormInput
+                      label={t("addressSelection:zipCode", "ZIP Code")}
+                      placeholder={t(
+                        "addressSelection:zipCodePlaceholder",
+                        "Enter ZIP code"
                       )}
-                    </div>
+                      value={watch("zip_code")}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setValue("zip_code", e.target.value, {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        })
+                      }
+                      error={errors.zip_code?.message}
+                      required
+                      inputClassName="h-12"
+                    />
 
-                    <div className="space-y-2 md:col-span-2">
-                      <label
-                        className={`block text-sm font-medium text-gray-700 ${
-                          isRTL ? "text-right" : "text-left"
-                        }`}
-                      >
-                        {t("addressSelection:address", "Address")} *
-                      </label>
-                      <Input
-                        {...register("address")}
-                        placeholder={t(
-                          "addressSelection:addressPlaceholder",
-                          "Enter street address"
-                        )}
-                        className={`h-12 ${
-                          errors.address ? "border-red-500" : ""
-                        }`}
-                      />
-                      {errors.address && (
-                        <p
-                          className={`text-sm text-red-600 ${
-                            isRTL ? "text-right" : "text-left"
-                          }`}
-                        >
-                          {errors.address.message}
-                        </p>
+                    <FormInput
+                      label={t("addressSelection:address", "Address")}
+                      placeholder={t(
+                        "addressSelection:addressPlaceholder",
+                        "Enter street address"
                       )}
-                    </div>
+                      value={watch("address")}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setValue("address", e.target.value, {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        })
+                      }
+                      error={errors.address?.message}
+                      required
+                      inputClassName="h-12"
+                      containerClassName="md:col-span-2"
+                    />
 
-                    <div className="space-y-2">
-                      <label
-                        className={`block text-sm font-medium text-gray-700 ${
-                          isRTL ? "text-right" : "text-left"
-                        }`}
-                      >
-                        {t("addressSelection:apartment", "Apartment")} *
-                      </label>
-                      <Input
-                        {...register("apartment")}
-                        placeholder={t(
-                          "addressSelection:apartmentPlaceholder",
-                          "Apartment, suite, etc."
-                        )}
-                        className={`h-12 ${
-                          errors.apartment ? "border-red-500" : ""
-                        }`}
-                      />
-                      {errors.apartment && (
-                        <p
-                          className={`text-sm text-red-600 ${
-                            isRTL ? "text-right" : "text-left"
-                          }`}
-                        >
-                          {errors.apartment.message}
-                        </p>
+                    <FormInput
+                      label={t("addressSelection:apartment", "Apartment")}
+                      placeholder={t(
+                        "addressSelection:apartmentPlaceholder",
+                        "Apartment, suite, etc."
                       )}
-                    </div>
+                      value={watch("apartment")}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setValue("apartment", e.target.value, {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        })
+                      }
+                      error={errors.apartment?.message}
+                      required
+                      inputClassName="h-12"
+                    />
 
-                    <div className="space-y-2">
-                      <label
-                        className={`block text-sm font-medium text-gray-700 ${
-                          isRTL ? "text-right" : "text-left"
-                        }`}
-                      >
-                        {t("addressSelection:city", "City")} *
-                      </label>
-                      <Input
-                        {...register("city")}
-                        placeholder={t(
-                          "addressSelection:cityPlaceholder",
-                          "Enter city"
-                        )}
-                        className={`h-12 ${
-                          errors.city ? "border-red-500" : ""
-                        }`}
-                      />
-                      {errors.city && (
-                        <p
-                          className={`text-sm text-red-600 ${
-                            isRTL ? "text-right" : "text-left"
-                          }`}
-                        >
-                          {errors.city.message}
-                        </p>
+                    <FormInput
+                      label={t("addressSelection:city", "City")}
+                      placeholder={t(
+                        "addressSelection:cityPlaceholder",
+                        "Enter city"
                       )}
-                    </div>
+                      value={watch("city")}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setValue("city", e.target.value, {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        })
+                      }
+                      error={errors.city?.message}
+                      required
+                      inputClassName="h-12"
+                    />
 
-                    <div className="space-y-2">
-                      <label
-                        className={`block text-sm font-medium text-gray-700 ${
-                          isRTL ? "text-right" : "text-left"
-                        }`}
-                      >
-                        {t("addressSelection:state", "State")} *
-                      </label>
-                      <Input
-                        {...register("state")}
-                        placeholder={t(
-                          "addressSelection:statePlaceholder",
-                          "Enter state"
-                        )}
-                        className={`h-12 ${
-                          errors.state ? "border-red-500" : ""
-                        }`}
-                      />
-                      {errors.state && (
-                        <p
-                          className={`text-sm text-red-600 ${
-                            isRTL ? "text-right" : "text-left"
-                          }`}
-                        >
-                          {errors.state.message}
-                        </p>
+                    <FormInput
+                      label={t("addressSelection:state", "State")}
+                      placeholder={t(
+                        "addressSelection:statePlaceholder",
+                        "Enter state"
                       )}
-                    </div>
+                      value={watch("state")}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setValue("state", e.target.value, {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        })
+                      }
+                      error={errors.state?.message}
+                      required
+                      inputClassName="h-12"
+                    />
 
-                    <div className="space-y-2">
-                      <label
-                        className={`block text-sm font-medium text-gray-700 ${
-                          isRTL ? "text-right" : "text-left"
-                        }`}
-                      >
-                        {t("addressSelection:country", "Country")} *
-                      </label>
-                      <Input
-                        {...register("country")}
-                        placeholder={t(
-                          "addressSelection:countryPlaceholder",
-                          "Enter country"
-                        )}
-                        className={`h-12 ${
-                          errors.country ? "border-red-500" : ""
-                        }`}
-                      />
-                      {errors.country && (
-                        <p
-                          className={`text-sm text-red-600 ${
-                            isRTL ? "text-right" : "text-left"
-                          }`}
-                        >
-                          {errors.country.message}
-                        </p>
+                    <FormInput
+                      label={t("addressSelection:country", "Country")}
+                      placeholder={t(
+                        "addressSelection:countryPlaceholder",
+                        "Enter country"
                       )}
-                    </div>
+                      value={watch("country")}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setValue("country", e.target.value, {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        })
+                      }
+                      error={errors.country?.message}
+                      required
+                      inputClassName="h-12"
+                    />
                   </div>
                 </div>
               )}
