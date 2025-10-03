@@ -4,6 +4,7 @@ export const i18nConfig = {
   locales: ["ar", "en"] as const,
   defaultLocale: "ar" as const,
   prefixDefault: false,
+  localeDetector: false as const, // Disable browser language detection to always use defaultLocale
 };
 
 export const namespaces = [

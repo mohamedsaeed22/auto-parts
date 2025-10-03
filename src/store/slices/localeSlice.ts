@@ -5,7 +5,7 @@ interface LocaleState {
 }
 
 const initialState: LocaleState = {
-  currentLocale: "en", // Default to English
+  currentLocale: "ar", // Default to Arabic
 };
 
 const localeSlice = createSlice({

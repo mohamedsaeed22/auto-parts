@@ -8,6 +8,7 @@ export const i18nConfig = {
   locales: ["ar", "en"],
   defaultLocale: "ar",
   prefixDefault: false,
+  localeDetector: false as const, // Disable browser language detection to always use defaultLocale
 };
 
 interface TranslationOptions {
