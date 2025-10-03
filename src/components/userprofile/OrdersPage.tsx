@@ -236,9 +236,7 @@ export default function OrdersPage() {
           {t("orders.title")}
         </h2>{" "}
         {/* Filter Actions */}
-        <div
-          className={`flex gap-2 items-center`}
-        >
+        <div className={`flex gap-2 items-center`}>
           <Button
             onClick={(e) => {
               e.stopPropagation();
@@ -271,7 +269,7 @@ export default function OrdersPage() {
                 </h3>
                 {hasFiltersChanged() && (
                   <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                    {t("orders.filters.active", "Active")}
+                    {isRTL ? "نشط" : "Active"}
                   </span>
                 )}
               </div>
