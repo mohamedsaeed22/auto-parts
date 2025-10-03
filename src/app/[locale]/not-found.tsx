@@ -76,7 +76,7 @@ export default function NotFound() {
   };
 
   const handleGoHome = () => {
-    router.push(`/${currentLang}`);
+    router.push(`/`);
   };
 
   const handleGoBack = () => {

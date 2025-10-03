@@ -84,6 +84,7 @@ export default function CompleteRegistrationPage() {
 
   // Check if user has already completed registration
   const hasRedirectedRef = useRef(false);
+  const isCompletingRegistrationRef = useRef(false);
 
   // Handle location selection from the map
   const handleLocationSelect = (locationData: LocationData) => {
@@ -101,39 +102,40 @@ export default function CompleteRegistrationPage() {
     clearErrors(["latitude", "longitude", "address", "city", "state", "zip"]);
 
     // Show success message
-    showSuccess(
-      t(
-        "toasts.locationSelected",
-        "Location selected successfully! You can now edit the address details if needed."
-      )
-    );
+    const locationMessage = isRTL
+      ? "تم اختيار الموقع بنجاح! يمكنك الآن تعديل تفاصيل العنوان إذا لزم الأمر."
+      : "Location selected successfully! You can now edit the address details if needed.";
+    showSuccess(locationMessage);
   };
 
   useEffect(() => {
     // Check if user is not authenticated at all
     if (!storage.isAuthenticated() && !hasRedirectedRef.current) {
       hasRedirectedRef.current = true;
-      router.push(`/${currentLocale}`);
+      router.push(`/`);
       return;
     }
 
     // Check if user has already completed registration
+    // But skip this check if we're currently in the process of completing registration
     if (
       authData &&
       authData.user?.is_registration_complete &&
-      !hasRedirectedRef.current
+      !hasRedirectedRef.current &&
+      !isCompletingRegistrationRef.current
     ) {
       hasRedirectedRef.current = true;
 
-      // Only show success message if we're actually on the complete-registration page
-      if (window.location.pathname.includes("/complete-registration")) {
-        showSuccess(t("toasts.registrationAlreadyCompleted"));
-      }
+      // Show "already completed" message when user tries to access the page again
+      const message = isRTL
+        ? "تم إكمال التسجيل مسبقًا!"
+        : "Registration already completed!";
+      showSuccess(message);
 
-      router.push(`/${currentLocale}`);
+      router.push(`/`);
       return;
     }
-  }, [authData, currentLocale, router, t]);
+  }, [authData, currentLocale, router, t, isRTL]);
 
   // File validation function
   const validateFile = (file: File): string | null => {
@@ -226,7 +228,7 @@ export default function CompleteRegistrationPage() {
       const message = isRTL
         ? "يرجى تحديد موقع على الخريطة"
         : "Please select a location on the map";
-      showError(t("validation.locationRequired", message));
+      showError(message);
       const locationSection = document.querySelector(".bg-logo-gold\\/5");
       if (locationSection) {
         locationSection.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -240,6 +242,9 @@ export default function CompleteRegistrationPage() {
   // Handle form submission
   const onSubmit = async (data: RegistrationFormData) => {
     try {
+      // Mark that we're currently completing registration to prevent the useEffect from triggering
+      isCompletingRegistrationRef.current = true;
+
       // Clear any previous errors
       setApiErrors([]);
 
@@ -300,7 +305,10 @@ export default function CompleteRegistrationPage() {
         }
 
         clearRegistrationIncomplete();
-        showSuccess(t("toasts.registrationCompleted"));
+        const successMessage = isRTL
+          ? "تم إكمال التسجيل بنجاح!"
+          : "Registration completed successfully!";
+        showSuccess(successMessage);
 
         // Get the previous page URL and redirect back
         const previousPage = storage.getPreviousPage();
@@ -308,7 +316,7 @@ export default function CompleteRegistrationPage() {
           router.push(previousPage);
         } else {
           // Fallback to home page if no previous page stored
-          router.push(`/${currentLocale}`);
+          router.push(`/`);
         }
       }
     } catch (error: unknown) {
@@ -377,7 +385,10 @@ export default function CompleteRegistrationPage() {
       }
 
       console.log("Showing fallback error message");
-      showError(t("toasts.registrationFailed"));
+      const errorMessage = isRTL
+        ? "فشل إكمال التسجيل. يرجى المحاولة مرة أخرى."
+        : "Failed to complete registration. Please try again.";
+      showError(errorMessage);
     }
   };
 
@@ -406,7 +417,7 @@ export default function CompleteRegistrationPage() {
 
   // Redirect unauthenticated users
   if (!authData.token) {
-    router.push(`/${currentLocale}`);
+    router.push(`/`);
     return null;
   }
 

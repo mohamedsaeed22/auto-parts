@@ -22,5 +22,5 @@ export function redirectToCompleteRegistration(
   }
 
   storage.setPreviousPage(pathWithTab);
-  router.push(`/${currentLocale}/complete-registration`);
+  router.push(`/complete-registration`);
 }

@@ -18,7 +18,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   useEffect(() => {
     if (!isAuthenticated) {
       // Redirect to home page if not authenticated
-      router.push(`/${currentLocale}`);
+      router.push(`/`);
     }
   }, [isAuthenticated, router, currentLocale]);
 

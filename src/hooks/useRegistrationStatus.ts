@@ -54,7 +54,7 @@ export function useRegistrationStatus() {
     storage.setPreviousPage(currentPath);
 
     // Redirect to complete registration page
-    router.push(`/${currentLocale}/complete-registration`);
+    router.push(`/complete-registration`);
   };
 
   const clearRegistrationIncomplete = () => {

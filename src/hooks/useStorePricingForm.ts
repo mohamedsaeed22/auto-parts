@@ -66,7 +66,7 @@ export function useShopPricingForm() {
           "Please complete your registration to access this feature"
       );
       // Navigate to complete registration page
-      router.push(`/${currentLocale}/complete-registration`);
+      router.push(`/complete-registration`);
       return false;
     }
 

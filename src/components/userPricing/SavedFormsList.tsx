@@ -29,11 +29,11 @@ export function SavedFormsList({
   const isRTL = i18n.language === "ar";
 
   const handleLoginClick = () => {
-    router.push(`/${currentLocale}`);
+    router.push(`/`);
   };
 
   const handleCompleteRegistrationClick = () => {
-    router.push(`/${currentLocale}/complete-registration`);
+    router.push(`/complete-registration`);
   };
 
   return (
