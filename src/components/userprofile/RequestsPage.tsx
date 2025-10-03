@@ -12,6 +12,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import FormSelect from "@/components/ui/FormSelect";
@@ -795,18 +796,33 @@ export default function RequestsPage() {
                                 {(item.part_image_url ||
                                   item.order_image_url ||
                                   item.form_image_url) && (
-                                  <div className="flex gap-2 mt-2 pt-2 border-t border-gray-200">
+                                  <div className="flex gap-2 mt-2 mb-4 pt-2 border-t border-gray-200">
                                     {item.part_image_url && (
                                       <a
                                         href={item.part_image_url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="text-xs text-primary hover:underline"
+                                        className="group relative block"
                                       >
-                                        {t(
-                                          "requests.items.partImage",
-                                          "Part Image"
-                                        )}
+                                        <div className="w-20 h-20 rounded-lg overflow-hidden border-2 border-gray-300 hover:border-primary transition-colors">
+                                          <Image
+                                            src={item.part_image_url}
+                                            alt={t(
+                                              "requests.items.partImage",
+                                              "Part Image"
+                                            )}
+                                            width={80}
+                                            height={80}
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                                            unoptimized
+                                          />
+                                        </div>
+                                        <span className="absolute -bottom-5 text-center  text-xs text-gray-600">
+                                          {t(
+                                            "requests.items.partImage",
+                                            "Part Image"
+                                          )}
+                                        </span>
                                       </a>
                                     )}
                                     {item.order_image_url && (
@@ -814,12 +830,27 @@ export default function RequestsPage() {
                                         href={item.order_image_url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="text-xs text-primary hover:underline"
+                                        className="group relative block"
                                       >
-                                        {t(
-                                          "requests.items.orderImage",
-                                          "Order Image"
-                                        )}
+                                        <div className="w-20 h-20 rounded-lg overflow-hidden border-2 border-gray-300 hover:border-primary transition-colors">
+                                          <Image
+                                            src={item.order_image_url}
+                                            alt={t(
+                                              "requests.items.orderImage",
+                                              "Order Image"
+                                            )}
+                                            width={80}
+                                            height={80}
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                                            unoptimized
+                                          />
+                                        </div>
+                                        <span className="absolute -bottom-5 text-center text-xs text-gray-600">
+                                          {t(
+                                            "requests.items.orderImage",
+                                            "Order Image"
+                                          )}
+                                        </span>
                                       </a>
                                     )}
                                     {item.form_image_url && (
@@ -827,12 +858,27 @@ export default function RequestsPage() {
                                         href={item.form_image_url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="text-xs text-primary hover:underline"
+                                        className="group relative block"
                                       >
-                                        {t(
-                                          "requests.items.formImage",
-                                          "Form Image"
-                                        )}
+                                        <div className="w-20 h-20 rounded-lg overflow-hidden border-2 border-gray-300 hover:border-primary transition-colors">
+                                          <Image
+                                            src={item.form_image_url}
+                                            alt={t(
+                                              "requests.items.formImage",
+                                              "Form Image"
+                                            )}
+                                            width={80}
+                                            height={80}
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                                            unoptimized
+                                          />
+                                        </div>
+                                        <span className="absolute -bottom-5 text-center text-xs text-gray-600">
+                                          {t(
+                                            "requests.items.formImage",
+                                            "Form Image"
+                                          )}
+                                        </span>
                                       </a>
                                     )}
                                   </div>
