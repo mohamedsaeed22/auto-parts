@@ -4,11 +4,11 @@ import { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  
+
   // Check if this is a request to the root path without locale
   if (pathname === "/") {
     const localeCookie = request.cookies.get("NEXT_LOCALE")?.value;
-    
+
     // If no cookie exists, set it to Arabic before processing
     if (!localeCookie) {
       const response = i18nRouter(request, i18nConfig);
@@ -20,7 +20,7 @@ export function middleware(request: NextRequest) {
       return response;
     }
   }
-  
+
   return i18nRouter(request, i18nConfig);
 }
 
