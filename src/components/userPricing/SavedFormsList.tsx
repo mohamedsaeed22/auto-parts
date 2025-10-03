@@ -58,14 +58,7 @@ export function SavedFormsList({
                   {t("auth.status.backendLoginRequired")}
                 </p>
               </div>
-              <Button
-                onClick={handleLoginClick}
-                size="sm"
-                className="bg-amber-600 hover:bg-amber-700 text-white text-xs px-2 py-1"
-              >
-                <LogIn size={12} className="mr-1" />
-                {t("auth.buttons.login")}
-              </Button>
+              
             </div>
           ) : !isRegistrationComplete ? (
             <div className="flex items-center gap-2 text-orange-700 bg-orange-50 border-orange-200">
