@@ -322,7 +322,8 @@ export const seoConfig = {
       }/#organization`,
       name: "FalParts",
       alternateName: "Fal Al-Gharbia Company",
-      description: "Leading Saudi company specializing in automotive spare parts. Supplier of genuine and certified spare parts for all types of vehicles.",
+      description:
+        "Leading Saudi company specializing in automotive spare parts. Supplier of genuine and certified spare parts for all types of vehicles.",
       url: process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa",
       telephone: "+966543777569",
       email: "parts@falfuture.com",
@@ -341,7 +342,14 @@ export const seoConfig = {
       },
       openingHours: "Sa-Th 09:00-21:00",
       priceRange: "$$-$$$",
-      paymentAccepted: ["Cash", "Credit Card", "Bank Transfer", "Apple Pay", "STCPay", "Mada"],
+      paymentAccepted: [
+        "Cash",
+        "Credit Card",
+        "Bank Transfer",
+        "Apple Pay",
+        "STCPay",
+        "Mada",
+      ],
       currenciesAccepted: "SAR",
       areaServed: {
         "@type": "Country",

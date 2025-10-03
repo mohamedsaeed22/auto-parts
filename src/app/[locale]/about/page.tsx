@@ -173,7 +173,7 @@ const CompanyProfile = ({
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 text-white hover:text-white/80 transition-colors cursor-pointer"
                   >
-                     <span>{t("profile.contact.websiteValue")}</span>
+                    <span>{t("profile.contact.websiteValue")}</span>
                   </a>
                 </div>
               </div>
