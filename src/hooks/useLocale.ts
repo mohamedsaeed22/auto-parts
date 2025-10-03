@@ -127,14 +127,22 @@ export const useLocale = () => {
 
         // Step 8: Update URL and refresh
         // Compute new path with updated locale
+        // Preserve search parameters and hash
+        const searchParams = typeof window !== "undefined" ? window.location.search : "";
+        const hash = typeof window !== "undefined" ? window.location.hash : "";
+        
+        let newPath = "";
         if (
           currentLocale === i18nConfig.defaultLocale &&
           !i18nConfig.prefixDefault
         ) {
-          router.push("/" + newLocale + pathname);
+          newPath = "/" + newLocale + pathname;
         } else {
-          router.push(pathname.replace(`/${currentLocale}`, `/${newLocale}`));
+          newPath = pathname.replace(`/${currentLocale}`, `/${newLocale}`);
         }
+        
+        // Add search parameters and hash back to the new path
+        router.push(newPath + searchParams + hash);
 
         // Small delay to ensure all updates are processed before refresh
         setTimeout(() => {
