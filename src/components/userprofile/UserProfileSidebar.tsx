@@ -70,7 +70,7 @@ export default function UserProfileSidebar({
     <>
       {/* Desktop Sidebar */}
       <aside
-        className="hidden lg:block bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-8 min-w-[220px]"
+        className="hidden lg:block bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-[120px] self-start min-w-[220px]"
         dir={isRTL ? "rtl" : "ltr"}
       >
         <nav>
