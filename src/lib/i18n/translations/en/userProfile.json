@@ -523,6 +523,7 @@
     "title": "My Wallet",
     "description": "Track your points and redeem them for great rewards",
     "totalPoints": "Total Wallet",
+    "availableBalance": "Available Balance",
     "totalTransactions": "Total Transactions",
     "thisMonth": "This Month",
     "loading": "Loading points...",
