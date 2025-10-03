@@ -57,7 +57,7 @@ const BrandHeader = ({
             priority
             onError={(e) => {
               // Hide the image on error and show fallback
-              (e.target as HTMLImageElement).style.display = 'none';
+              (e.target as HTMLImageElement).style.display = "none";
             }}
           />
         ) : (
@@ -218,11 +218,14 @@ export default function BrandPage() {
     error,
     refetch,
   } = useGetBrandsQuery({ per_page: 1000 }); // Get a large number to ensure we don't miss any brands
-  
+
   console.log("🏷️ Brands API response:", brandsResponse);
   const brands = brandsResponse?.data?.items || [];
-  console.log("📋 Available brands:", brands.map(b => ({ id: b.id, name: b.name })));
-  
+  console.log(
+    "📋 Available brands:",
+    brands.map((b) => ({ id: b.id, name: b.name }))
+  );
+
   const brand = brands.find((b: Brand) => b.id === brandId);
   console.log(`🔍 Looking for brand ID ${brandId}, found:`, brand);
 
@@ -231,7 +234,7 @@ export default function BrandPage() {
     id: brandId,
     name: `Brand ${brandId}`,
     image: undefined,
-    number_of_products: 0
+    number_of_products: 0,
   };
 
   // Products state and API
@@ -253,7 +256,9 @@ export default function BrandPage() {
           console.log("✅ Products API response:", response);
           if (response.data?.items) {
             setProducts(response.data.items);
-            console.log(`📦 Found ${response.data.items.length} products for brand ${brandId}`);
+            console.log(
+              `📦 Found ${response.data.items.length} products for brand ${brandId}`
+            );
           } else {
             console.log("⚠️ No products data in response:", response);
           }
@@ -373,7 +378,8 @@ export default function BrandPage() {
             {t("brandProducts") || "Products by this Brand"}
           </h2>
           <p className="text-gray-600">
-            {t("brandProductsDesc") || `Browse products from ${displayBrand.name}`}
+            {t("brandProductsDesc") ||
+              `Browse products from ${displayBrand.name}`}
           </p>
         </div>
 
