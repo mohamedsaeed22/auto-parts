@@ -1,14 +1,12 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { SEOMetadata } from "@/components/seo/SEOMetadata";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { seoConfig } from "@/lib/seo/config";
 import {
-  ArrowLeft,
   Building2 as Building2Icon,
   Users as UsersIcon,
   Award as AwardIcon,
@@ -23,7 +21,6 @@ import {
   HeadphonesIcon,
   Globe,
   Mail,
-  ExternalLink,
   MapPin,
   Phone,
 } from "lucide-react";
@@ -462,7 +459,6 @@ export default function AboutPage({
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  const router = useRouter();
   const { t, i18n } = useTranslation("about");
   const isRTL = i18n.language === "ar";
   const direction = isRTL ? "rtl" : "ltr";
@@ -470,10 +466,6 @@ export default function AboutPage({
 
   // Scroll to top when component mounts
   useScrollToTop();
-
-  const handleGoBack = () => {
-    router.push("/");
-  };
 
   return (
     <div dir={direction}>

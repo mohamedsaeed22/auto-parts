@@ -202,20 +202,20 @@ export function SEOMetadata({
       <meta name="msapplication-TileImage" content="/mstile-144x144.png" />
 
       {/* SEO Meta Tags */}
-      <meta name="geo.region" content="SA" />
-      <meta name="geo.placename" content="Saudi Arabia" />
-      <meta name="geo.position" content="24.7136;46.6753" />
-      <meta name="ICBM" content="24.7136, 46.6753" />
+      <meta name="geo.region" content="SA-02" />
+      <meta name="geo.placename" content="Jeddah, Saudi Arabia" />
+      <meta name="geo.position" content="21.5433;39.1728" />
+      <meta name="ICBM" content="21.5433, 39.1728" />
       <meta name="DC.title" content={finalTitle} />
       <meta name="DC.description" content={finalDescription} />
       <meta name="DC.language" content={activeLocale} />
       <meta name="DC.creator" content={seoConfig.company.name} />
       <meta name="DC.publisher" content={seoConfig.company.name} />
       <meta name="DC.rights" content="© 2024 FalParts. All rights reserved." />
-      <meta name="DC.coverage" content="Saudi Arabia" />
+      <meta name="DC.coverage" content="Jeddah, Saudi Arabia" />
       <meta
         name="DC.subject"
-        content="Auto Parts, Car Accessories, Automotive Components"
+        content="Auto Parts, Spare Parts, Genuine Parts, Chinese Car Parts, Automotive Components"
       />
 
       {/* Performance and Security */}
@@ -241,12 +241,15 @@ export function SEOMetadata({
       {/* Business/Commerce Tags */}
       <meta
         name="business:contact_data:street_address"
-        content="Saudi Arabia"
+        content="Prince Mohammed Bin Abdulaziz St, Al Faisaliyah"
       />
-      <meta name="business:contact_data:locality" content="Riyadh" />
-      <meta name="business:contact_data:region" content="Saudi Arabia" />
-      <meta name="business:contact_data:postal_code" content="12345" />
+      <meta name="business:contact_data:locality" content="Jeddah" />
+      <meta name="business:contact_data:region" content="Makkah Province" />
+      <meta name="business:contact_data:postal_code" content="23441" />
       <meta name="business:contact_data:country_name" content="Saudi Arabia" />
+      <meta name="business:contact_data:phone_number" content="+966543777569" />
+      <meta name="business:contact_data:email" content="parts@falfuture.com" />
+      <meta name="business:contact_data:website" content="www.falfuture.com" />
 
       {/* App Links */}
       <meta property="al:web:url" content={canonicalUrl} />
