@@ -1,522 +1,348 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  Lock,
-  Shield,
-  Save,
-  X,
   Building,
-  FileText,
   Mail,
   Phone,
   MapPin,
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
+  Globe,
+  FileText,
   Loader2,
+  Image as ImageIcon,
+  TrendingUp,
+  Package,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
-import {
-  useGetCompanySettingsQuery,
-  useGetLegalPagesQuery,
-  useGetTermsOfServiceQuery,
-  useGetPrivacyPolicyQuery,
-  useGetRefundPolicyQuery,
-  useGetShippingPolicyQuery,
-} from "@/services/api";
+import { useGetCompanySettingsQuery } from "@/services/api";
+import Image from "next/image";
 
 export default function SettingsPage() {
   const { t, i18n } = useTranslation("userProfile");
   const isRTL = i18n.language === "ar";
+  const [isRefetching, setIsRefetching] = useState(false);
 
-  const [activeTab, setActiveTab] = useState("company");
-  const [selectedLegalPage, setSelectedLegalPage] = useState<string | null>(
-    null
-  );
-
-  // User Settings State
-  const [userSettings, setUserSettings] = useState({
-    account: {
-      emailNotifications: true,
-      smsNotifications: false,
-      marketingEmails: true,
-      orderUpdates: true,
-      newsletter: false,
-    },
-    privacy: {
-      profileVisibility: "public",
-      showEmail: false,
-      showPhone: false,
-      allowSearch: true,
-    },
-    security: {
-      twoFactorAuth: false,
-      loginAlerts: true,
-      deviceManagement: true,
-    },
-    language: {
-      language: "ar",
-      currency: "SAR",
-      timezone: "Asia/Riyadh",
-    },
-  });
-
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState(userSettings);
-
-  // API Queries
+  // Fetch company settings
   const {
     data: companySettingsResponse,
-    isLoading: isLoadingCompany,
-    refetch: refetchCompany,
+    isLoading,
+    error,
+    refetch,
   } = useGetCompanySettingsQuery();
-  const { data: legalPagesResponse, isLoading: isLoadingLegal } =
-    useGetLegalPagesQuery();
-  const { data: termsResponse, isLoading: isLoadingTerms } =
-    useGetTermsOfServiceQuery();
-  const { data: privacyResponse, isLoading: isLoadingPrivacy } =
-    useGetPrivacyPolicyQuery();
-  const { data: refundResponse, isLoading: isLoadingRefund } =
-    useGetRefundPolicyQuery();
-  const { data: shippingResponse, isLoading: isLoadingShipping } =
-    useGetShippingPolicyQuery();
+
+  // Refetch when language changes
+  useEffect(() => {
+    const refetchData = async () => {
+      setIsRefetching(true);
+      await refetch();
+      setIsRefetching(false);
+    };
+    refetchData();
+  }, [i18n.language, refetch]);
 
   const companySettings = companySettingsResponse?.data;
-  const legalPages = legalPagesResponse?.data;
 
-  const handleSave = () => {
-    setUserSettings(formData);
-    setIsEditing(false);
-  };
-
-  const handleCancel = () => {
-    setFormData(userSettings);
-    setIsEditing(false);
-  };
-
-  const tabs = [
-    { id: "company", labelKey: "settings.tabs.company", icon: Building },
-    { id: "legal", labelKey: "settings.tabs.legal", icon: FileText },
-  ];
-
-  const renderCompanySettings = () => {
-    if (isLoadingCompany) {
-      return (
-        <div className="flex items-center justify-center py-8">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+  // Loading State
+  if (isLoading || isRefetching) {
+    return (
+      <div className="p-4 sm:p-6 lg:p-8" dir={isRTL ? "rtl" : "ltr"}>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">
+          {t("settings.title")}
+        </h2>
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-[#b3984a]" />
+          <span className={`${isRTL ? "mr-3" : "ml-3"} text-gray-600`}>
+            {t("settings.loading")}
+          </span>
         </div>
-      );
-    }
+      </div>
+    );
+  }
 
-    if (!companySettings) {
-      return (
-        <div className="text-center py-8">
-          <div className="text-red-600 mb-2">
-            Failed to load company settings
+  // Error State
+  if (error || !companySettings) {
+    return (
+      <div className="p-4 sm:p-6 lg:p-8" dir={isRTL ? "rtl" : "ltr"}>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">
+          {t("settings.title")}
+        </h2>
+        <div className="text-center py-12">
+          <div className="text-red-600 mb-4 text-lg font-medium">
+            {t("settings.error")}
           </div>
-          <p className="text-gray-600 mb-4">
-            Please try refreshing the page or contact support if the problem
-            persists.
-          </p>
-          <Button onClick={() => refetchCompany()} variant="outline">
-            Retry
+          <Button
+            onClick={() => refetch()}
+            variant="outline"
+            className="border-[#b3984a] text-[#b3984a] hover:bg-[#b3984a] hover:text-white"
+          >
+            {t("settings.retry")}
           </Button>
         </div>
-      );
-    }
+      </div>
+    );
+  }
 
-    return (
-      <div className="space-y-8">
-        {/* Company Information */}
-        <div className={`bg-white ${isRTL ? "text-right" : "text-left"}`}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex items-center gap-3 p-4 border rounded-lg">
-              <Building size={20} className="text-gray-500" />
-              <div>
+  return (
+    <div className="p-4 sm:p-6 lg:p-8" dir={isRTL ? "rtl" : "ltr"}>
+      {/* Header */}
+      <div className="mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+          {t("settings.title")}
+        </h2>
+      </div>
+
+      <div className="space-y-6">
+        {/* Company Information Card */}
+        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <Building className="w-5 h-5 text-[#b3984a]" />
+            {t("settings.company.title")}
+          </h3>
+
+          <div className="space-y-4">
+            {/* Company Logo */}
+            {companySettings.company_info.logo && (
+              <div className="flex items-center gap-3 pb-4 border-b">
+                <ImageIcon className="w-5 h-5 text-gray-500" />
+                <div className="flex-1">
+                  <p className="text-sm text-gray-600 mb-2">
+                    {t("settings.company.logo")}
+                  </p>
+                  <div className="relative w-32 h-16 bg-gray-50 rounded-lg overflow-hidden border">
+                    <Image
+                      src={companySettings.company_info.logo}
+                      alt={companySettings.company_info.name}
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Company Name */}
+            <div className="flex items-center gap-3">
+              <Building className="w-5 h-5 text-gray-500 flex-shrink-0" />
+              <div className="flex-1">
                 <p className="text-sm text-gray-600">
-                  {t("settings.company.name", "Company Name")}
+                  {t("settings.company.name")}
                 </p>
-                <p className="font-medium">
+                <p className="font-medium text-gray-900">
                   {companySettings.company_info.name}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3 p-4 border rounded-lg">
-              <Mail size={20} className="text-gray-500" />
-              <div>
-                <p className="text-sm text-gray-600">
-                  {t("settings.company.email", "Email")}
-                </p>
-                <p className="font-medium">
-                  {companySettings.company_info.email}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-4 border rounded-lg">
-              <Phone size={20} className="text-gray-500" />
-              <div>
-                <p className="text-sm text-gray-600">
-                  {t("settings.company.phone", "Phone")}
-                </p>
-                <p className="font-medium">
-                  {companySettings.company_info.phone}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-4 border rounded-lg">
-              <MapPin size={20} className="text-gray-500" />
-              <div>
-                <p className="text-sm text-gray-600">
-                  {t("settings.company.address", "Address")}
-                </p>
-                <p className="font-medium">
-                  {companySettings.company_info.address ||
-                    t("settings.company.noAddress", "No address")}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        {/* Support Information */}
-        {(companySettings.support_info.email ||
-          companySettings.support_info.phone) && (
-          <div className="bg-white p-6 rounded-lg border">
-            <h3
-              className={`text-lg font-semibold mb-4 ${
-                isRTL ? "text-right" : "text-left"
-              }`}
-            >
-              {t("settings.support.title", "Support Information")}
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {companySettings.support_info.email && (
-                <div className="flex items-center gap-3">
-                  <Mail size={20} className="text-gray-500" />
-                  <div>
-                    <p className="text-sm text-gray-600">
-                      {t("settings.support.email", "Support Email")}
-                    </p>
-                    <p className="font-medium">
-                      {companySettings.support_info.email}
-                    </p>
-                  </div>
-                </div>
-              )}
-              {companySettings.support_info.phone && (
-                <div className="flex items-center gap-3">
-                  <Phone size={20} className="text-gray-500" />
-                  <div>
-                    <p className="text-sm text-gray-600">
-                      {t("settings.support.phone", "Support Phone")}
-                    </p>
-                    <p className="font-medium">
-                      {companySettings.support_info.phone}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Social Media */}
-        {(companySettings.social_media.facebook ||
-          companySettings.social_media.twitter ||
-          companySettings.social_media.instagram ||
-          companySettings.social_media.linkedin) && (
-          <div className="bg-white p-6 rounded-lg border">
-            <h3
-              className={`text-lg font-semibold mb-4 ${
-                isRTL ? "text-right" : "text-left"
-              }`}
-            >
-              {t("settings.social.title", "Social Media")}
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {companySettings.social_media.facebook && (
-                <a
-                  href={companySettings.social_media.facebook}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-blue-600 hover:text-blue-700"
-                >
-                  <Facebook size={20} />
-                  <span>Facebook</span>
-                </a>
-              )}
-              {companySettings.social_media.twitter && (
-                <a
-                  href={companySettings.social_media.twitter}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-blue-400 hover:text-blue-500"
-                >
-                  <Twitter size={20} />
-                  <span>Twitter</span>
-                </a>
-              )}
-              {companySettings.social_media.instagram && (
-                <a
-                  href={companySettings.social_media.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-pink-600 hover:text-pink-700"
-                >
-                  <Instagram size={20} />
-                  <span>Instagram</span>
-                </a>
-              )}
-              {companySettings.social_media.linkedin && (
-                <a
-                  href={companySettings.social_media.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-blue-700 hover:text-blue-800"
-                >
-                  <Linkedin size={20} />
-                  <span>LinkedIn</span>
-                </a>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const renderLegalPages = () => {
-    if (isLoadingLegal) {
-      return (
-        <div className="flex items-center justify-center py-8">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      );
-    }
-
-    if (!legalPages) {
-      return (
-        <div className="text-center py-8">
-          <p className="text-gray-500">Failed to load legal pages.</p>
-        </div>
-      );
-    }
-
-    const legalPageItems = [
-      {
-        key: "terms_of_service",
-        label: t("settings.legal.termsOfService", "Terms of Service"),
-        icon: FileText,
-      },
-      {
-        key: "privacy_policy",
-        label: t("settings.legal.privacyPolicy", "Privacy Policy"),
-        icon: Shield,
-      },
-      {
-        key: "refund_policy",
-        label: t("settings.legal.refundPolicy", "Refund Policy"),
-        icon: Lock,
-      },
-      {
-        key: "shipping_policy",
-        label: t("settings.legal.shippingPolicy", "Shipping Policy"),
-        icon: MapPin,
-      },
-    ];
-
-    return (
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {legalPageItems.map((item) => (
-            <div
-              key={item.key}
-              className={`bg-white p-4 rounded-lg border cursor-pointer hover:border-blue-300 transition-colors ${
-                selectedLegalPage === item.key
-                  ? "border-blue-500 bg-blue-50"
-                  : ""
-              }`}
-              onClick={() =>
-                setSelectedLegalPage(
-                  selectedLegalPage === item.key ? null : item.key
-                )
-              }
-            >
-              <div
-                className={`flex items-center gap-3 ${isRTL ? "flex-row" : ""}`}
-              >
-                <item.icon size={20} className="text-gray-500" />
+            {/* Description */}
+            {companySettings.company_info.description && (
+              <div className="flex items-start gap-3">
+                <FileText className="w-5 h-5 text-gray-500 flex-shrink-0 mt-1" />
                 <div className="flex-1">
-                  <h4 className="font-medium">{item.label}</h4>
+                  <p className="text-sm text-gray-600 mb-1">
+                    {t("settings.company.description")}
+                  </p>
+                  <div
+                    className="text-gray-900 prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{
+                      __html: companySettings.company_info.description,
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Email */}
+            <div className="flex items-center gap-3">
+              <Mail className="w-5 h-5 text-gray-500 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm text-gray-600">
+                  {t("settings.company.email")}
+                </p>
+                <a
+                  href={`mailto:${companySettings.company_info.email}`}
+                  className="font-medium text-[#b3984a] hover:underline"
+                >
+                  {companySettings.company_info.email}
+                </a>
+              </div>
+            </div>
+
+            {/* Phone */}
+            <div className="flex items-center gap-3">
+              <Phone className="w-5 h-5 text-gray-500 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm text-gray-600">
+                  {t("settings.company.phone")}
+                </p>
+                <a
+                  href={`tel:${companySettings.company_info.phone}`}
+                  className="font-medium text-gray-900"
+                  dir="ltr"
+                >
+                  {companySettings.company_info.phone}
+                </a>
+              </div>
+            </div>
+
+            {/* Address */}
+            {companySettings.company_info.address && (
+              <div className="flex items-center gap-3">
+                <MapPin className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                <div className="flex-1">
                   <p className="text-sm text-gray-600">
-                    {legalPages[item.key as keyof typeof legalPages] ||
-                      t("settings.legal.noContent", "No content available")}
+                    {t("settings.company.address")}
+                  </p>
+                  <p className="font-medium text-gray-900">
+                    {companySettings.company_info.address}
                   </p>
                 </div>
               </div>
-            </div>
-          ))}
+            )}
+
+            {/* Website */}
+            {companySettings.company_info.website && (
+              <div className="flex items-center gap-3">
+                <Globe className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm text-gray-600">
+                    {t("settings.company.website")}
+                  </p>
+                  <a
+                    href={companySettings.company_info.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-[#b3984a] hover:underline"
+                  >
+                    {companySettings.company_info.website}
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Legal Page Content */}
-        {selectedLegalPage && (
-          <div className="bg-white p-6 rounded-lg border">
-            <div
-              className={`flex justify-between items-center mb-4 ${
-                isRTL ? "flex-row" : ""
-              }`}
-            >
-              <h3 className="text-lg font-semibold">
-                {
-                  legalPageItems.find((item) => item.key === selectedLegalPage)
-                    ?.label
-                }
-              </h3>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSelectedLegalPage(null)}
-              >
-                <X size={16} />
-              </Button>
-            </div>
-            <div className="prose max-w-none">
-              {selectedLegalPage === "terms_of_service" && (
-                <div>
-                  {isLoadingTerms ? (
-                    <Loader2 className="h-6 w-6 animate-spin mx-auto" />
-                  ) : (
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html:
-                          termsResponse?.data?.content ||
-                          t("settings.legal.noContent", "No content available"),
-                      }}
-                    />
-                  )}
+        {/* Charge Information Card */}
+        {(companySettings.charge_info.company ||
+          companySettings.charge_info.city ||
+          companySettings.charge_info.address ||
+          companySettings.charge_info.phone) && (
+          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Package className="w-5 h-5 text-[#b3984a]" />
+              {t("settings.charge.title")}
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {companySettings.charge_info.company && (
+                <div className="flex items-center gap-3">
+                  <Building className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm text-gray-600">
+                      {t("settings.charge.company")}
+                    </p>
+                    <p className="font-medium text-gray-900">
+                      {companySettings.charge_info.company}
+                    </p>
+                  </div>
                 </div>
               )}
-              {selectedLegalPage === "privacy_policy" && (
-                <div>
-                  {isLoadingPrivacy ? (
-                    <Loader2 className="h-6 w-6 animate-spin mx-auto" />
-                  ) : (
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html:
-                          privacyResponse?.data?.content ||
-                          t("settings.legal.noContent", "No content available"),
-                      }}
-                    />
-                  )}
+
+              {companySettings.charge_info.city && (
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm text-gray-600">
+                      {t("settings.charge.city")}
+                    </p>
+                    <p className="font-medium text-gray-900">
+                      {companySettings.charge_info.city}
+                    </p>
+                  </div>
                 </div>
               )}
-              {selectedLegalPage === "refund_policy" && (
-                <div>
-                  {isLoadingRefund ? (
-                    <Loader2 className="h-6 w-6 animate-spin mx-auto" />
-                  ) : (
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html:
-                          refundResponse?.data?.content ||
-                          t("settings.legal.noContent", "No content available"),
-                      }}
-                    />
-                  )}
+
+              {companySettings.charge_info.address && (
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm text-gray-600">
+                      {t("settings.charge.address")}
+                    </p>
+                    <p className="font-medium text-gray-900">
+                      {companySettings.charge_info.address}
+                    </p>
+                  </div>
                 </div>
               )}
-              {selectedLegalPage === "shipping_policy" && (
-                <div>
-                  {isLoadingShipping ? (
-                    <Loader2 className="h-6 w-6 animate-spin mx-auto" />
-                  ) : (
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html:
-                          shippingResponse?.data?.content ||
-                          t("settings.legal.noContent", "No content available"),
-                      }}
-                    />
-                  )}
+
+              {companySettings.charge_info.phone && (
+                <div className="flex items-center gap-3">
+                  <Phone className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm text-gray-600">
+                      {t("settings.charge.phone")}
+                    </p>
+                    <p className="font-medium text-gray-900" dir="ltr">
+                      {companySettings.charge_info.phone}
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
           </div>
         )}
-      </div>
-    );
-  };
 
-  return (
-    <div className="p-4 sm:p-6 lg:p-8" dir={isRTL ? "rtl" : "ltr"}>
-      <div
-        className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 ${
-          isRTL ? "sm:flex-row" : ""
-        }`}
-      >
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-          {t("settings.title")}
-        </h2>
-        {activeTab === "account" && !isEditing ? (
-          <Button
-            onClick={() => setIsEditing(true)}
-            className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}
-          >
-            <Save size={16} />
-            {t("settings.edit")}
-          </Button>
-        ) : activeTab === "account" && isEditing ? (
-          <div className={`flex gap-2 ${isRTL ? "flex-row" : ""}`}>
-            <Button
-              onClick={handleSave}
-              className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}
-            >
-              <Save size={16} />
-              {t("settings.save")}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleCancel}
-              className={`flex items-center gap-2 ${isRTL ? "flex-row" : ""}`}
-            >
-              <X size={16} />
-              {t("settings.cancel")}
-            </Button>
+        {/* Points & Delivery Settings Card */}
+        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-[#b3984a]" />
+            {t("settings.points.title")}
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Exchange Rate */}
+            <div className="bg-gradient-to-r from-[#b3984a]/10 to-[#d4af37]/10 p-4 rounded-lg border border-[#b3984a]/20">
+              <p className="text-sm text-gray-600 mb-1">
+                {t("settings.points.exchangeRate")}
+              </p>
+              <p className="text-2xl font-bold text-[#b3984a]">
+                {companySettings.points_settings.exchange_rate}
+              </p>
+            </div>
+
+            {/* Request Order Points */}
+            <div className="bg-gradient-to-r from-blue-50 to-blue-100/50 p-4 rounded-lg border border-blue-200">
+              <p className="text-sm text-gray-600 mb-1">
+                {t("settings.points.requestOrderPoints")}
+              </p>
+              <p className="text-2xl font-bold text-blue-600">
+                {companySettings.points_settings.request_order_points}
+              </p>
+            </div>
+
+            {/* Points Per Currency */}
+            <div className="bg-gradient-to-r from-green-50 to-green-100/50 p-4 rounded-lg border border-green-200">
+              <p className="text-sm text-gray-600 mb-1">
+                {t("settings.points.pointsPerCurrency")}
+              </p>
+              <p className="text-2xl font-bold text-green-600">
+                {companySettings.points_settings.points_per_currency}
+              </p>
+            </div>
+
+            {/* Delivery Amount */}
+            <div className="bg-gradient-to-r from-purple-50 to-purple-100/50 p-4 rounded-lg border border-purple-200">
+              <p className="text-sm text-gray-600 mb-1">
+                {t("settings.delivery.amount")}
+              </p>
+              <p className="text-2xl font-bold text-purple-600">
+                {companySettings.delivery_amount}{" "}
+                <span className="text-base">{t("settings.delivery.sar")}</span>
+              </p>
+            </div>
           </div>
-        ) : null}
-      </div>
-
-      {/* Tabs */}
-      <div className="border-b border-gray-200 mb-6">
-        <nav className={`flex space-x-8`}>
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === tab.id
-                    ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                } ${isRTL ? "flex-row" : ""}`}
-              >
-                <Icon size={16} />
-                {t(tab.labelKey)}
-              </button>
-            );
-          })}
-        </nav>
-      </div>
-
-      {/* Tab Content */}
-      <div className="min-h-[400px]">
-        {activeTab === "company" && renderCompanySettings()}
-        {activeTab === "legal" && renderLegalPages()}
+        </div>
       </div>
     </div>
   );

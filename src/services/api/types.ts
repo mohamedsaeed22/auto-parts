@@ -359,6 +359,22 @@ export interface CompanySettings {
   company_info: CompanyInfo;
   support_info: SupportInfo;
   social_media: SocialMedia;
+  charge_info: ChargeInfo;
+  points_settings: PointsSettings;
+  delivery_amount: string;
+}
+
+export interface ChargeInfo {
+  company: string | null;
+  city: string | null;
+  address: string | null;
+  phone: string | null;
+}
+
+export interface PointsSettings {
+  exchange_rate: string;
+  request_order_points: number;
+  points_per_currency: number;
 }
 
 export interface LegalPages {

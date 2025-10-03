@@ -314,15 +314,38 @@
       "address": "Address",
       "website": "Website",
       "description": "Description",
-      "noAddress": "No address"
+      "logo": "Logo",
+      "noAddress": "No address",
+      "noWebsite": "No website",
+      "noLogo": "No logo"
     },
     "support": {
       "title": "Support Information",
       "email": "Support Email",
-      "phone": "Support Phone"
+      "phone": "Support Phone",
+      "noSupport": "No support information available"
     },
     "social": {
-      "title": "Social Media"
+      "title": "Social Media",
+      "noSocial": "No social media links available"
+    },
+    "charge": {
+      "title": "Charge Information",
+      "company": "Company",
+      "city": "City",
+      "address": "Address",
+      "phone": "Phone"
+    },
+    "points": {
+      "title": "Points Settings",
+      "exchangeRate": "Exchange Rate",
+      "requestOrderPoints": "Request Order Points",
+      "pointsPerCurrency": "Points Per Currency"
+    },
+    "delivery": {
+      "title": "Delivery Information",
+      "amount": "Delivery Amount",
+      "sar": "SAR"
     },
     "legal": {
       "termsOfService": "Terms of Service",
@@ -330,7 +353,10 @@
       "refundPolicy": "Refund Policy",
       "shippingPolicy": "Shipping Policy",
       "noContent": "No content available"
-    }
+    },
+    "loading": "Loading settings...",
+    "error": "Failed to load settings",
+    "retry": "Retry"
   },
   "addresses": {
     "title": "Addresses",
