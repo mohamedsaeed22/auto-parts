@@ -102,9 +102,7 @@ export default function PointsPage() {
       <div className="bg-gradient-to-r from-[#b3984a] to-[#d4af37] p-6 rounded-lg text-white mb-6 shadow-md">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm opacity-90 mb-1">
-              {t("points.totalPoints")}
-            </p>
+            <p className="text-sm opacity-90 mb-1">{t("points.totalPoints")}</p>
             <p className="text-3xl font-bold">{totalPoints}</p>
             <p className="text-xs opacity-80 mt-1">
               {t("points.availableBalance", "Available Balance")}
