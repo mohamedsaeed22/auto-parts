@@ -233,7 +233,10 @@ export interface CartItem {
 }
 
 export interface Cart {
-  items: CartItem[];
+  cart_items: CartItem[];
+  items?: CartItem[]; // Legacy support
+  cart_total?: number;
+  item_count?: number;
   subtotal: number;
   discount: number;
   delivery_amount?: number;
