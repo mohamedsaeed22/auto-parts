@@ -9,7 +9,6 @@ import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { Product } from "@/services/api/types";
 import ProductCard from "@/components/product/ProductCard";
 import {
-  ArrowLeft,
   Building2,
   Star,
   CheckCircle,
@@ -22,7 +21,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner, ErrorMessage } from "@/components/ui";
-import { da } from "date-fns/locale";
 
 // Types
 interface Brand {
@@ -50,13 +48,26 @@ const BrandHeader = ({
     >
       {/* Brand Image */}
       <div className="relative aspect-square bg-white rounded-xl overflow-hidden shadow-lg">
-        <Image
-          src={brand.image || "/placeholder-brand.png"}
-          alt={brand.name}
-          fill
-          className="object-contain p-8"
-          priority
-        />
+        {brand.image ? (
+          <Image
+            src={brand.image}
+            alt={brand.name}
+            fill
+            className="object-contain p-8"
+            priority
+            onError={(e) => {
+              // Hide the image on error and show fallback
+              (e.target as HTMLImageElement).style.display = 'none';
+            }}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+            <div className="text-center">
+              <Building2 size={48} className="text-gray-400 mx-auto mb-2" />
+              <p className="text-gray-500 font-medium">{brand.name}</p>
+            </div>
+          </div>
+        )}
         <div
           className={`absolute top-4 ${
             isRTL ? "right-4" : "left-4"
@@ -195,18 +206,33 @@ export default function BrandPage() {
   const isRTL = i18n.language === "ar";
   const direction = isRTL ? "rtl" : "ltr";
 
+  console.log("🚀 BrandPage initialized with:", { brandId, params, isRTL });
+
   // Scroll to top when component mounts or brandId changes
   useScrollToTop([brandId]);
 
-  // API Hooks
+  // API Hooks - Request all brands with high per_page to ensure we get the brand we're looking for
   const {
     data: brandsResponse,
     isLoading,
     error,
     refetch,
-  } = useGetBrandsQuery();
+  } = useGetBrandsQuery({ per_page: 1000 }); // Get a large number to ensure we don't miss any brands
+  
+  console.log("🏷️ Brands API response:", brandsResponse);
   const brands = brandsResponse?.data?.items || [];
+  console.log("📋 Available brands:", brands.map(b => ({ id: b.id, name: b.name })));
+  
   const brand = brands.find((b: Brand) => b.id === brandId);
+  console.log(`🔍 Looking for brand ID ${brandId}, found:`, brand);
+
+  // Create a brand object - either from API or fallback
+  const displayBrand: Brand = brand || {
+    id: brandId,
+    name: `Brand ${brandId}`,
+    image: undefined,
+    number_of_products: 0
+  };
 
   // Products state and API
   const [products, setProducts] = useState<Product[]>([]);
@@ -217,17 +243,23 @@ export default function BrandPage() {
   // Fetch products for this brand
   useEffect(() => {
     if (brandId) {
+      console.log("🔍 Fetching products for brand ID:", brandId);
       setProductsLoading(true);
       setProductsError(null);
 
       getProducts({ brand_id: brandId })
         .unwrap()
         .then((response) => {
+          console.log("✅ Products API response:", response);
           if (response.data?.items) {
             setProducts(response.data.items);
+            console.log(`📦 Found ${response.data.items.length} products for brand ${brandId}`);
+          } else {
+            console.log("⚠️ No products data in response:", response);
           }
         })
         .catch((error) => {
+          console.error("❌ Products API error:", error);
           setProductsError(error.message || "Failed to load products");
         })
         .finally(() => {
@@ -239,6 +271,19 @@ export default function BrandPage() {
   const handleGoBack = () => {
     router.push("/");
   };
+
+  // Validate brandId after hooks
+  if (isNaN(brandId) || brandId <= 0) {
+    console.error("❌ Invalid brand ID:", params.id);
+    return (
+      <div
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+        dir={direction}
+      >
+        <ErrorMessage message={t("invalidBrandId") || "Invalid brand ID"} />
+      </div>
+    );
+  }
 
   // Handle loading state
   if (isLoading) {
@@ -272,18 +317,6 @@ export default function BrandPage() {
         dir={direction}
       >
         <ErrorMessage message={errorMessage} onRetry={refetch} />
-      </div>
-    );
-  }
-
-  // Handle case where brand is not found
-  if (!brand) {
-    return (
-      <div
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
-        dir={direction}
-      >
-        <ErrorMessage message={t("brandNotFound") || "Brand not found"} />
       </div>
     );
   }
@@ -324,11 +357,11 @@ export default function BrandPage() {
           {t("brands")}
         </button>
         <span>/</span>
-        <span className="text-gray-900">{brand.name}</span>
+        <span className="text-gray-900">{displayBrand.name}</span>
       </nav>
 
       {/* Brand Header */}
-      <BrandHeader brand={brand} isRTL={isRTL} t={t} />
+      <BrandHeader brand={displayBrand} isRTL={isRTL} t={t} />
 
       {/* Brand Features */}
       <BrandFeatures isRTL={isRTL} t={t} />
@@ -340,7 +373,7 @@ export default function BrandPage() {
             {t("brandProducts") || "Products by this Brand"}
           </h2>
           <p className="text-gray-600">
-            {t("brandProductsDesc") || `Browse products from ${brand.name}`}
+            {t("brandProductsDesc") || `Browse products from ${displayBrand.name}`}
           </p>
         </div>
 
