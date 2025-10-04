@@ -577,7 +577,7 @@ const formatPrice = (price: number | string) => {
                   <Button
                     onClick={onBackToShopping}
                     variant="outline"
-                    className="w-full border-2 border-neutral-300 text-neutral-700 hover:bg-neutral-50 transition-colors"
+                    className="w-full border-2 border-neutral-300 text-neutral-700  transition-colors"
                   >
                     {t("checkout:requestComplete.continueShopping", {
                       defaultValue: "Continue Shopping",
