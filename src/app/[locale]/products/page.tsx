@@ -386,6 +386,19 @@ export default function ProductsPage({
     getProducts(apiFilters);
   }, [getProducts, apiFilters]);
 
+  // Refetch products on auth change (login/logout)
+  useEffect(() => {
+    const handleAuthChange = () => {
+      getProducts(apiFilters);
+    };
+
+    window.addEventListener("authChange", handleAuthChange);
+
+    return () => {
+      window.removeEventListener("authChange", handleAuthChange);
+    };
+  }, [getProducts, apiFilters]);
+
   const handleGoBack = () => {
     router.push("/");
   };

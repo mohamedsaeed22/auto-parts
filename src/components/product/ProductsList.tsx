@@ -35,6 +35,22 @@ const ProductsList = () => {
     getProducts(filters);
   }, [currentPage, getProducts]);
 
+  // Refetch products on auth change (login/logout)
+  useEffect(() => {
+    const handleAuthChange = () => {
+      const filters = {
+        page: currentPage,
+      };
+      getProducts(filters);
+    };
+
+    window.addEventListener("authChange", handleAuthChange);
+
+    return () => {
+      window.removeEventListener("authChange", handleAuthChange);
+    };
+  }, [currentPage, getProducts]);
+
   // Handle retry
   const handleRetry = () => {
     const currentFilters = {

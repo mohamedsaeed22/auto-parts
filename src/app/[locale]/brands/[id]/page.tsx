@@ -273,6 +273,30 @@ export default function BrandPage() {
     }
   }, [brandId, getProducts]);
 
+  // Refetch products on auth change (login/logout)
+  useEffect(() => {
+    const handleAuthChange = () => {
+      if (brandId) {
+        getProducts({ brand_id: brandId })
+          .unwrap()
+          .then((response) => {
+            if (response.data?.items) {
+              setProducts(response.data.items);
+            }
+          })
+          .catch((error) => {
+            setProductsError(error.message || "Failed to load products");
+          });
+      }
+    };
+
+    window.addEventListener("authChange", handleAuthChange);
+
+    return () => {
+      window.removeEventListener("authChange", handleAuthChange);
+    };
+  }, [brandId, getProducts]);
+
   const handleGoBack = () => {
     router.push("/");
   };
