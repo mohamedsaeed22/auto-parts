@@ -34,7 +34,7 @@ const DEFAULT_OPTIONS: AuthGuardOptions = {
 export function useAuthGuard(options: AuthGuardOptions = {}) {
   const router = useRouter();
   const pathname = usePathname();
-  const { t } = useTranslation("auth");
+  const { t, ready } = useTranslation("auth");
 
   const [authStatus, setAuthStatus] = useState<AuthStatus>({
     isAuthenticated: false,
@@ -87,12 +87,12 @@ export function useAuthGuard(options: AuthGuardOptions = {}) {
       mergedOptions.showToastOnAuthFail &&
       !hasShownToast.current &&
       now - lastToastTime.current > 2000 &&
-      lastRedirectPath.current !== redirectPath;
+      lastRedirectPath.current !== redirectPath &&
+      ready; // Only show toast if i18n is ready
 
     if (shouldShowToast) {
       showError(
         t("errors.loginRequired", {
-          ns: "auth",
           defaultValue: "Please login to access this page",
         })
       );
@@ -112,6 +112,7 @@ export function useAuthGuard(options: AuthGuardOptions = {}) {
     router,
     storePreviousPage,
     t,
+    ready,
   ]);
 
   // Handle incomplete registration
@@ -126,12 +127,12 @@ export function useAuthGuard(options: AuthGuardOptions = {}) {
       mergedOptions.showToastOnIncompleteRegistration &&
       !hasShownToast.current &&
       now - lastToastTime.current > 2000 &&
-      lastRedirectPath.current !== redirectPath;
+      lastRedirectPath.current !== redirectPath &&
+      ready; // Only show toast if i18n is ready
 
     if (shouldShowToast) {
       showError(
         t("errors.completeRegistrationRequired", {
-          ns: "auth",
           defaultValue: "Please complete your registration",
         })
       );
@@ -148,6 +149,7 @@ export function useAuthGuard(options: AuthGuardOptions = {}) {
     mergedOptions.redirectOnIncompleteRegistration,
     router,
     t,
+    ready,
   ]);
 
   // Main guard function

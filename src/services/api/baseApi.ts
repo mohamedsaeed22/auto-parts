@@ -4,7 +4,6 @@ import type {
   FetchArgs,
   FetchBaseQueryError,
 } from "@reduxjs/toolkit/query";
-import type { RootState } from "@/store";
 import { storage } from "@/lib/storage";
 import type { RegistrationIncompleteError } from "./types";
 import { getCurrentLocale } from "@/lib/localeService";
@@ -26,7 +25,7 @@ const baseQueryWithAuth: BaseQueryFn<
 > = async (args, api, extraOptions) => {
   const baseQuery = fetchBaseQuery({
     baseUrl: BASE_URL,
-    prepareHeaders: (headers, { getState }) => {
+    prepareHeaders: (headers) => {
       // Get token from storage utility
       const token = storage.getToken();
 
@@ -57,18 +56,66 @@ const baseQueryWithAuth: BaseQueryFn<
 
   // Handle unauthorized responses (401)
   if (result.error && result.error.status === 401) {
-    // Clear auth data on 401
-    storage.removeAuth();
+    // Import store and persistor for complete cleanup
+    const { store } = await import("@/store");
+    const { persistor } = await import("@/store");
+    const { clearCart, setCartOpen } = await import("@/store/slices/cartSlice");
 
-    // Dispatch auth change event
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new Event("authChange"));
-    }
+    console.log("🔒 401 Unauthorized - Session expired, logging out user");
 
-    // Store current page for redirect after login
-    if (typeof window !== "undefined") {
-      const currentPath = window.location.pathname;
-      storage.setPreviousPage(currentPath);
+    try {
+      // 1. Clear Redux state immediately for instant UI update
+      store.dispatch(clearCart());
+      store.dispatch(setCartOpen(false));
+
+      // 2. Reset all API cache to prevent stale data
+      // Note: API reset will be handled by the auth context when it receives the authChange event
+
+      // 3. Clear backend cart if possible (ignore errors)
+      try {
+        const { CartSyncService } = await import("@/services/cartSyncService");
+        await CartSyncService.clearAllCarts();
+      } catch {
+        // Ignore cart clearing errors on 401
+        console.log("Cart clearing failed during 401 logout (expected)");
+      }
+
+      // 4. Purge persisted storage
+      await persistor.purge();
+      await persistor.flush();
+
+      // 5. Clear localStorage auth data
+      storage.removeAuth();
+
+      // 6. Clear other sensitive localStorage items
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.removeItem("auto_parts_coupon_code");
+          localStorage.removeItem("userProfileActivePage");
+          // Add any other sensitive keys that should be cleared
+        } catch {
+          // Ignore localStorage clearing errors
+        }
+      }
+
+      // 7. Dispatch auth change event for components
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("authChange"));
+
+        // Store current page for redirect after re-login
+        const currentPath = window.location.pathname;
+        storage.setPreviousPage(currentPath);
+      }
+
+      console.log("✅ Session cleanup completed - User logged out due to 401");
+    } catch (cleanupError) {
+      console.error("❌ Error during 401 session cleanup:", cleanupError);
+
+      // Fallback cleanup - at minimum clear auth and dispatch event
+      storage.removeAuth();
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("authChange"));
+      }
     }
   }
 
@@ -87,7 +134,10 @@ const baseQueryWithAuth: BaseQueryFn<
       if (currentAuth && errorData.data.user) {
         const updatedAuth = {
           ...currentAuth,
-          user: errorData.data.user,
+          user: {
+            ...errorData.data.user,
+            points: currentAuth.user.points || 0, // Preserve existing points or default to 0
+          },
           is_registration_complete: false,
         };
         storage.setAuth(updatedAuth);

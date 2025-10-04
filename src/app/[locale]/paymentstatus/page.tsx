@@ -3,19 +3,17 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { XCircle, AlertCircle, Loader2, CreditCard } from "lucide-react";
+import { XCircle, AlertCircle, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import OrderComplete from "@/components/checkout/OrderComplete";
 import RequestComplete from "@/components/checkout/RequestComplete";
 import { useGetOrderDetailsQuery, type Order } from "@/services/api/ordersApi";
-import {
-  useGetRequestDetailsQuery,
-  type RequestResponse,
-} from "@/services/api/requestsApi";
+import { useGetRequestDetailsQuery } from "@/services/api/requestsApi";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { AuthOnlyGuard } from "@/components/auth/AuthGuard";
 
-const PaymentStatusPage = () => {
+const PaymentStatusPageContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { t, i18n } = useTranslation("checkout");
@@ -248,6 +246,14 @@ const PaymentStatusPage = () => {
 
   // Fallback - should not reach here
   return null;
+};
+
+const PaymentStatusPage = () => {
+  return (
+    <AuthOnlyGuard>
+      <PaymentStatusPageContent />
+    </AuthOnlyGuard>
+  );
 };
 
 export default PaymentStatusPage;

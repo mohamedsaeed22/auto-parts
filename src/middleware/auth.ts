@@ -8,6 +8,7 @@ const protectedRoutes = [
   "/orders",
   "/returns",
   "/notifications",
+  "/paymentstatus",
 ];
 
 export function authMiddleware(request: NextRequest) {
@@ -44,7 +45,7 @@ export function authMiddleware(request: NextRequest) {
 
     // Allow access to protected route
     return NextResponse.next();
-  } catch (error) {
+  } catch {
     // Handle any JSON parsing errors or other issues
     return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
   }
