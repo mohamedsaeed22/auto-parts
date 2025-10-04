@@ -200,6 +200,15 @@ export const requestsApi = api.injectEndpoints({
       invalidatesTags: ["Requests"],
     }),
 
+    // Get single request details
+    getRequestDetails: builder.query<
+      ApiResponse<RequestResponse>,
+      string | number
+    >({
+      query: (requestId) => `/requests/${requestId}`,
+      providesTags: (result, error, id) => [{ type: "Requests", id }],
+    }),
+
     // Approve/Reject request
     approveRequest: builder.mutation<
       ApiResponse<ApproveRequestResponse>,
@@ -217,6 +226,7 @@ export const requestsApi = api.injectEndpoints({
 
 export const {
   useGetRequestsQuery,
+  useGetRequestDetailsQuery,
   useCreateRequestMutation,
   useApproveRequestMutation,
 } = requestsApi;

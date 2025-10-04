@@ -7,8 +7,25 @@ import { XCircle, AlertCircle, Loader2, CreditCard } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import OrderComplete from "@/components/checkout/OrderComplete";
 import { useGetOrderDetailsQuery, type Order } from "@/services/api/ordersApi";
+import {
+  useGetRequestDetailsQuery,
+  type RequestResponse,
+} from "@/services/api/requestsApi";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+
+interface AddressDetails {
+  id?: number;
+  name?: string;
+  phone?: string;
+  address?: string | null;
+  apartment?: string | null;
+  city?: string;
+  state?: string | null;
+  country?: string | null;
+  zip_code?: string | null;
+  is_default?: boolean;
+}
 
 const PaymentStatusPage = () => {
   const searchParams = useSearchParams();
@@ -18,36 +35,47 @@ const PaymentStatusPage = () => {
 
   const paymentMethod = searchParams.get("payment_method");
   const transactionId = searchParams.get("transaction_id");
-  const orderId = searchParams.get("order_id");
+  const orderId = searchParams.get("order_number");
+  const orderType = searchParams.get("order_type") || "order"; // Default to "order" if not specified
 
-  const [shouldFetchOrder, setShouldFetchOrder] = useState(false);
+  const [shouldFetchData, setShouldFetchData] = useState(false);
+  const isRequest = orderType === "request";
 
   // Validate URL parameters
   useEffect(() => {
     if (paymentMethod === "success" && transactionId && orderId) {
-      setShouldFetchOrder(true);
+      setShouldFetchData(true);
     }
   }, [paymentMethod, transactionId, orderId]);
 
-  // Fetch order details only if payment is successful
+  // Fetch order details only if payment is successful and type is "order"
   const {
     data: orderData,
-    isLoading,
-    isError,
+    isLoading: isOrderLoading,
+    isError: isOrderError,
   } = useGetOrderDetailsQuery(orderId || "", {
-    skip: !shouldFetchOrder || !orderId,
+    skip: !shouldFetchData || !orderId || isRequest,
   });
+
+  // Fetch request details only if payment is successful and type is "request"
+  const {
+    data: requestData,
+    isLoading: isRequestLoading,
+    isError: isRequestError,
+  } = useGetRequestDetailsQuery(orderId || "", {
+    skip: !shouldFetchData || !orderId || !isRequest,
+  });
+
+  // Combine loading and error states
+  const isLoading = isRequest ? isRequestLoading : isOrderLoading;
+  const isError = isRequest ? isRequestError : isOrderError;
 
   const handleBackToShopping = () => {
     router.push("/");
   };
-
-  const handleRetry = () => {
-    router.push("/checkout");
-  };
-
+ 
   // Loading state
-  if (shouldFetchOrder && isLoading) {
+  if (shouldFetchData && isLoading) {
     return (
       <div
         className="min-h-screen bg-gradient-to-br from-logo-gold/5 via-white to-logo-gold/10 flex items-center justify-center p-4"
@@ -69,7 +97,7 @@ const PaymentStatusPage = () => {
   }
 
   // Error state - Failed to fetch order
-  if (shouldFetchOrder && isError) {
+  if (shouldFetchData && isError) {
     return (
       <div
         className="min-h-screen bg-gradient-to-br from-red-50 via-white to-red-50 flex items-center justify-center p-4"
@@ -148,13 +176,6 @@ const PaymentStatusPage = () => {
               )}
               <div className="w-full space-y-3">
                 <Button
-                  onClick={handleRetry}
-                  className="w-full bg-logo-gold hover:bg-logo-gold/90 text-white"
-                >
-                  <CreditCard className="w-4 h-4 mr-2" />
-                  {t("orderComplete.retryPayment")}
-                </Button>
-                <Button
                   onClick={handleBackToShopping}
                   variant="outline"
                   className="w-full border-2 border-neutral-300 text-neutral-700"
@@ -218,8 +239,98 @@ const PaymentStatusPage = () => {
     );
   }
 
-  // Success state - Show OrderComplete component
-  if (orderData?.data?.order) {
+  // Success state - Show OrderComplete or RequestComplete component
+  if (isRequest && requestData?.data) {
+    // Convert request to order format for display
+    const request = requestData.data;
+    const orderFromRequest: Order = {
+      id: request.id,
+      order_number: request.id.toString(),
+      user_id: request.user_id,
+      status: (request.status === "submitted"
+        ? "pending"
+        : request.status === "accepted"
+        ? "processing"
+        : request.status === "completed"
+        ? "completed"
+        : "pending") as Order["status"],
+      payment_method: request.payment_method as Order["payment_method"],
+      payment_status: request.payment_status,
+      address: (() => {
+        const addrDetails = request.address_details as AddressDetails | null;
+        return {
+          first_name:
+            addrDetails?.name?.split(" ")[0] || request.first_name || "",
+          last_name:
+            addrDetails?.name?.split(" ").slice(1).join(" ") ||
+            request.last_name ||
+            "",
+          phone: addrDetails?.phone || request.phone || "",
+          address: addrDetails?.address || request.address || "",
+          apartment: addrDetails?.apartment || request.apartment,
+          city: addrDetails?.city || request.city || "",
+          state: addrDetails?.state || request.state,
+          country: addrDetails?.country || request.country,
+          zip_code: addrDetails?.zip_code || request.zip_code || "",
+        };
+      })(),
+      pricing: {
+        subtotal: parseFloat(request.price || "0"),
+        discount_amount: 0,
+        tax_amount: request.items.reduce((sum, item) => sum + item.tax, 0),
+        shipping_cost: 0,
+        total: request.calculated_total,
+        currency: "SAR",
+      },
+      coupon: {
+        code: null,
+        discount: 0,
+        details: null,
+      },
+      products: request.items.map((item) => ({
+        id: item.id,
+        product_id: item.id,
+        product_name: item.part_name,
+        product_sku: item.chassis_number || "",
+        product_image:
+          item.part_image_url ||
+          item.order_image_url ||
+          item.form_image_url ||
+          "",
+        price: parseFloat(item.price || "0"),
+        discount_percentage: 0,
+        discount_amount: 0,
+        final_unit_price: parseFloat(item.price || "0") / item.quantity,
+        quantity: item.quantity,
+        total: parseFloat(item.price || "0"),
+        line_total: parseFloat(item.price || "0"),
+        options: [],
+        product: null,
+        created_at: item.created_at,
+        updated_at: item.updated_at,
+      })),
+      notes: request.notes || null,
+      tracking_number: request.tracking_number || null,
+      pdf_label: request.pdf_label || null,
+      total_items: request.items.reduce((sum, item) => sum + item.quantity, 0),
+      paid_at: request.payment_status === "paid" ? request.submitted_at : null,
+      shipped_at: request.shipped_at || null,
+      delivered_at: null,
+      created_at: request.created_at,
+      updated_at: request.updated_at,
+      can_be_cancelled: false,
+      can_be_refunded: false,
+    };
+
+    return (
+      <OrderComplete
+        onBackToShopping={handleBackToShopping}
+        order={orderFromRequest}
+      />
+    );
+  }
+
+  if (!isRequest && orderData?.data?.order) {
     // Cast DetailedOrder to Order type - they are compatible
     const order = orderData.data.order as unknown as Order;
     return (
