@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { XCircle, AlertCircle, Loader2, CreditCard } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import OrderComplete from "@/components/checkout/OrderComplete";
+import RequestComplete from "@/components/checkout/RequestComplete";
 import { useGetOrderDetailsQuery, type Order } from "@/services/api/ordersApi";
 import {
   useGetRequestDetailsQuery,
@@ -13,19 +14,6 @@ import {
 } from "@/services/api/requestsApi";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-
-interface AddressDetails {
-  id?: number;
-  name?: string;
-  phone?: string;
-  address?: string | null;
-  apartment?: string | null;
-  city?: string;
-  state?: string | null;
-  country?: string | null;
-  zip_code?: string | null;
-  is_default?: boolean;
-}
 
 const PaymentStatusPage = () => {
   const searchParams = useSearchParams();
@@ -73,7 +61,7 @@ const PaymentStatusPage = () => {
   const handleBackToShopping = () => {
     router.push("/");
   };
- 
+
   // Loading state
   if (shouldFetchData && isLoading) {
     return (
@@ -241,91 +229,11 @@ const PaymentStatusPage = () => {
 
   // Success state - Show OrderComplete or RequestComplete component
   if (isRequest && requestData?.data) {
-    // Convert request to order format for display
-    const request = requestData.data;
-    const orderFromRequest: Order = {
-      id: request.id,
-      order_number: request.id.toString(),
-      user_id: request.user_id,
-      status: (request.status === "submitted"
-        ? "pending"
-        : request.status === "accepted"
-        ? "processing"
-        : request.status === "completed"
-        ? "completed"
-        : "pending") as Order["status"],
-      payment_method: request.payment_method as Order["payment_method"],
-      payment_status: request.payment_status,
-      address: (() => {
-        const addrDetails = request.address_details as AddressDetails | null;
-        return {
-          first_name:
-            addrDetails?.name?.split(" ")[0] || request.first_name || "",
-          last_name:
-            addrDetails?.name?.split(" ").slice(1).join(" ") ||
-            request.last_name ||
-            "",
-          phone: addrDetails?.phone || request.phone || "",
-          address: addrDetails?.address || request.address || "",
-          apartment: addrDetails?.apartment || request.apartment,
-          city: addrDetails?.city || request.city || "",
-          state: addrDetails?.state || request.state,
-          country: addrDetails?.country || request.country,
-          zip_code: addrDetails?.zip_code || request.zip_code || "",
-        };
-      })(),
-      pricing: {
-        subtotal: parseFloat(request.price || "0"),
-        discount_amount: 0,
-        tax_amount: request.items.reduce((sum, item) => sum + item.tax, 0),
-        shipping_cost: 0,
-        total: request.calculated_total,
-        currency: "SAR",
-      },
-      coupon: {
-        code: null,
-        discount: 0,
-        details: null,
-      },
-      products: request.items.map((item) => ({
-        id: item.id,
-        product_id: item.id,
-        product_name: item.part_name,
-        product_sku: item.chassis_number || "",
-        product_image:
-          item.part_image_url ||
-          item.order_image_url ||
-          item.form_image_url ||
-          "",
-        price: parseFloat(item.price || "0"),
-        discount_percentage: 0,
-        discount_amount: 0,
-        final_unit_price: parseFloat(item.price || "0") / item.quantity,
-        quantity: item.quantity,
-        total: parseFloat(item.price || "0"),
-        line_total: parseFloat(item.price || "0"),
-        options: [],
-        product: null,
-        created_at: item.created_at,
-        updated_at: item.updated_at,
-      })),
-      notes: request.notes || null,
-      tracking_number: request.tracking_number || null,
-      pdf_label: request.pdf_label || null,
-      total_items: request.items.reduce((sum, item) => sum + item.quantity, 0),
-      paid_at: request.payment_status === "paid" ? request.submitted_at : null,
-      shipped_at: request.shipped_at || null,
-      delivered_at: null,
-      created_at: request.created_at,
-      updated_at: request.updated_at,
-      can_be_cancelled: false,
-      can_be_refunded: false,
-    };
-
+    // Show RequestComplete component with request data
     return (
-      <OrderComplete
+      <RequestComplete
         onBackToShopping={handleBackToShopping}
-        order={orderFromRequest}
+        request={requestData.data}
       />
     );
   }

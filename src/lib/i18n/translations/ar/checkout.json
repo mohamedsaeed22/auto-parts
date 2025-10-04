@@ -204,6 +204,34 @@
     "invalidRequest": "طلب غير صالح",
     "missingParameters": "معلومات الدفع المطلوبة مفقودة. يرجى المحاولة مرة أخرى أو الاتصال بالدعم."
   },
+  "requestComplete": {
+    "title": "تم تأكيد الطلب!",
+    "subtitle": "تم إرسال طلب قطع الغيار المخصصة بنجاح. سنقوم بمعالجة طلبك والعودة إليك قريباً.",
+    "requestDetails": "تفاصيل الطلب",
+    "requestId": "رقم الطلب",
+    "submittedAt": "تاريخ الإرسال",
+    "totalItems": "إجمالي القطع",
+    "trackingNumber": "رقم التتبع",
+    "notes": "ملاحظات",
+    "requestStatus": "حالة الطلب",
+    "status": "الحالة",
+    "paymentStatus": "حالة الدفع",
+    "requestedParts": "القطع المطلوبة",
+    "chassisNumber": "رقم الشاسيه",
+    "quantity": "الكمية",
+    "beforeTax": "قبل الضريبة",
+    "userInfo": "معلومات المستخدم",
+    "userType": "نوع المستخدم",
+    "workshopCode": "كود الورشة",
+    "priceSummary": "ملخص الأسعار",
+    "subtotal": "المجموع الفرعي",
+    "tax": "الضريبة (15%)",
+    "total": "الإجمالي",
+    "paymentMethod": "طريقة الدفع",
+    "viewShippingLabel": "عرض بوليصة الشحن",
+    "trackRequest": "تتبع طلبي",
+    "continueShopping": "متابعة التسوق"
+  },
   "orders": {
     "status": "حالة الطلب"
   },
@@ -215,6 +243,14 @@
     "delivered": "تم التوصيل",
     "cancelled": "ملغي"
   },
+  "requestStatus": {
+    "draft": "مسودة",
+    "pending": "قيد الانتظار",
+    "submitted": "تم الإرسال",
+    "accepted": "تم القبول",
+    "rejected": "مرفوض",
+    "completed": "مكتمل"
+  },
   "paymentStatus": {
     "paid": "تم الدفع",
     "pending": "قيد الانتظار",
@@ -222,7 +258,9 @@
   },
   "paymentMethod": {
     "cash": "الدفع عند الاستلام",
-    "card": "بطاقة ائتمان/خصم"
+    "card": "بطاقة ائتمان/خصم",
+    "credit_card": "بطاقة ائتمان",
+    "cash_on_delivery": "الدفع عند الاستلام"
   },
   "currency": "ر.س"
 }

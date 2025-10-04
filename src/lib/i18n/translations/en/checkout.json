@@ -203,6 +203,34 @@
     "invalidRequest": "Invalid Request",
     "missingParameters": "Required payment information is missing. Please try again or contact support."
   },
+  "requestComplete": {
+    "title": "Request Confirmed!",
+    "subtitle": "Your custom parts request has been submitted successfully. We'll process your request and get back to you soon.",
+    "requestDetails": "Request Details",
+    "requestId": "Request ID",
+    "submittedAt": "Submitted Date",
+    "totalItems": "Total Items",
+    "trackingNumber": "Tracking Number",
+    "notes": "Notes",
+    "requestStatus": "Request Status",
+    "status": "Status",
+    "paymentStatus": "Payment Status",
+    "requestedParts": "Requested Parts",
+    "chassisNumber": "Chassis Number",
+    "quantity": "Quantity",
+    "beforeTax": "before tax",
+    "userInfo": "User Information",
+    "userType": "User Type",
+    "workshopCode": "Workshop Code",
+    "priceSummary": "Price Summary",
+    "subtotal": "Subtotal",
+    "tax": "Tax (15%)",
+    "total": "Total",
+    "paymentMethod": "Payment Method",
+    "viewShippingLabel": "View Shipping Label",
+    "trackRequest": "Track My Request",
+    "continueShopping": "Continue Shopping"
+  },
   "orders": {
     "status": "Order Status"
   },
@@ -214,6 +242,14 @@
     "delivered": "Delivered",
     "cancelled": "Cancelled"
   },
+  "requestStatus": {
+    "draft": "Draft",
+    "pending": "Pending",
+    "submitted": "Submitted",
+    "accepted": "Accepted",
+    "rejected": "Rejected",
+    "completed": "Completed"
+  },
   "paymentStatus": {
     "paid": "Paid",
     "pending": "Pending",
@@ -221,7 +257,9 @@
   },
   "paymentMethod": {
     "cash": "Cash on Delivery",
-    "card": "Credit/Debit Card"
+    "card": "Credit/Debit Card",
+    "credit_card": "Credit Card",
+    "cash_on_delivery": "Cash on Delivery"
   },
   "currency": "SAR"
 }
