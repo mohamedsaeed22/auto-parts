@@ -27,7 +27,11 @@ interface LoginFormProps {
   initialPhoneNumber?: string;
 }
 
-export default function LoginForm({ onSubmit, isLoading, initialPhoneNumber }: LoginFormProps) {
+export default function LoginForm({
+  onSubmit,
+  isLoading,
+  initialPhoneNumber,
+}: LoginFormProps) {
   const { t } = useTranslation("auth");
   const { translateError, getValidationMessage } = useFormErrorTranslation();
   const { login } = useAuth();
