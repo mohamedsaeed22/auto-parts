@@ -24,9 +24,10 @@ interface LoginFormProps {
   onSwitchToRegister: () => void;
   onSwitchToOtp: (phoneNumber: string) => void;
   isLoading: boolean;
+  initialPhoneNumber?: string;
 }
 
-export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
+export default function LoginForm({ onSubmit, isLoading, initialPhoneNumber }: LoginFormProps) {
   const { t } = useTranslation("auth");
   const { translateError, getValidationMessage } = useFormErrorTranslation();
   const { login } = useAuth();
@@ -38,7 +39,10 @@ export default function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    defaultValues: loginDefaultValues,
+    defaultValues: {
+      ...loginDefaultValues,
+      phoneNumber: initialPhoneNumber || loginDefaultValues.phoneNumber,
+    },
   });
 
   const handleGoogleCredentialResponse = useCallback(

@@ -125,6 +125,7 @@ export default function LoginDialog({ trigger, className }: LoginDialogProps) {
               setCurrentStep("otp");
             }}
             isLoading={isLoading || isSendingOtp}
+            initialPhoneNumber={getPhoneNumber()}
           />
         )}
 
