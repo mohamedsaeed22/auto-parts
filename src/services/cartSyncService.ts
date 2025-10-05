@@ -252,15 +252,31 @@ export class CartSyncService {
 
   /**
    * Clear all cart data (both local and API)
+   * @param skipApi - If true, only clear local cart without API call (useful during logout)
    */
-  static async clearAllCarts(): Promise<void> {
+  static async clearAllCarts(skipApi = false): Promise<void> {
     try {
       // Clear local cart
       store.dispatch(clearCart());
 
-      // Clear API cart if user is authenticated
-      await store.dispatch(cartApi.endpoints.clearCart.initiate()).unwrap();
-    } catch (error) {
+      // Only call API if user is authenticated and skipApi is false
+      if (!skipApi) {
+        const { storage } = await import("@/lib/storage");
+        const token = storage.getToken();
+        
+        if (token) {
+          try {
+            await store.dispatch(cartApi.endpoints.clearCart.initiate()).unwrap();
+          } catch (apiError) {
+            // Ignore 401 errors during logout to prevent infinite loop
+            const error = apiError as { status?: number };
+            if (error?.status !== 401) {
+              console.error("Failed to clear API cart:", apiError);
+            }
+          }
+        }
+      }
+    } catch {
       // Still clear local cart even if API fails
       store.dispatch(clearCart());
     }

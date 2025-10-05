@@ -71,10 +71,11 @@ const baseQueryWithAuth: BaseQueryFn<
       // 2. Reset all API cache to prevent stale data
       // Note: API reset will be handled by the auth context when it receives the authChange event
 
-      // 3. Clear backend cart if possible (ignore errors)
+      // 3. Clear backend cart - skip API call to prevent infinite loop
       try {
         const { CartSyncService } = await import("@/services/cartSyncService");
-        await CartSyncService.clearAllCarts();
+        // Pass skipApi=true to avoid calling the API (which would return 401 again)
+        await CartSyncService.clearAllCarts(true);
       } catch {
         // Ignore cart clearing errors on 401
         console.log("Cart clearing failed during 401 logout (expected)");

@@ -114,8 +114,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         result: () => null,
       });
 
-      // Clear backend cart
-      await CartSyncService.clearAllCarts();
+      // Clear backend cart - skip API call since we're logging out
+      await CartSyncService.clearAllCarts(true);
 
       // Purge localStorage AFTER clearing Redux state
       await persistor.purge();
