@@ -72,6 +72,7 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
     quantity: number;
     brand?: string;
     category?: string;
+    stock?: number;
   };
 
   // Prefer server cart items when available to avoid stale local storage
@@ -113,6 +114,7 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
         quantity: number;
         brand?: string;
         category?: string;
+        stock?: number;
       }) => ({
         id: it.id,
         title: it.title,
@@ -123,6 +125,7 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
         quantity: it.quantity,
         brand: it.brand,
         category: it.category,
+        stock: it.stock,
       })
     );
   }, [shouldUseAPI, apiCart, items]);
@@ -289,7 +292,10 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
 
                   <button
                     onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                    disabled={isItemLoading(item.id)}
+                    disabled={
+                      isItemLoading(item.id) ||
+                      (item.stock !== undefined && item.quantity >= item.stock)
+                    }
                     className={`h-8 w-8 p-0 hover:bg-logo-gold/10 text-logo-black rounded-none flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed ${
                       isRTL
                         ? "border-r border-logo-gold/30"
@@ -432,7 +438,11 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
                         onClick={() =>
                           updateQuantity(item.id, item.quantity + 1)
                         }
-                        disabled={isItemLoading(item.id)}
+                        disabled={
+                          isItemLoading(item.id) ||
+                          (item.stock !== undefined &&
+                            item.quantity >= item.stock)
+                        }
                         className={`h-8 w-8 p-0 hover:bg-logo-gold/10 text-logo-black rounded-none flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed ${
                           isRTL
                             ? "border-r border-logo-gold/30"

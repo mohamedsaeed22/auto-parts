@@ -204,7 +204,11 @@ const Cart: React.FC = () => {
                                     item.quantity + 1
                                   )
                                 }
-                                disabled={isItemLoading(item.id)}
+                                disabled={
+                                  isItemLoading(item.id) ||
+                                  (item.stock !== undefined &&
+                                    item.quantity >= item.stock)
+                                }
                                 className="p-0.5 hover:bg-neutral-200 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[20px] min-h-[20px]"
                               >
                                 {isItemLoading(item.id) ? (

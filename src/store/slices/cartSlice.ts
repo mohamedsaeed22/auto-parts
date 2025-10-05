@@ -55,6 +55,7 @@ type ApiCartItem = {
     primary_image?: string;
     category?: { name?: string } | null;
     description?: string;
+    stock?: number;
   };
   quantity: number;
 };
@@ -74,6 +75,7 @@ const mapApiCartToItems = (
     quantity: item.quantity,
     category: item.product?.category?.name || "Unknown Category",
     description: item.product?.description || "",
+    stock: item.product?.stock,
   }));
 };
 
@@ -165,6 +167,10 @@ const cartSlice = createSlice({
       );
       if (existing) {
         existing.quantity += 1;
+        // Update stock information if provided
+        if (action.payload.stock !== undefined) {
+          existing.stock = action.payload.stock;
+        }
       } else {
         state.items.push({ ...action.payload, quantity: 1 });
       }

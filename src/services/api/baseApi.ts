@@ -63,58 +63,27 @@ const baseQueryWithAuth: BaseQueryFn<
 
     console.log("🔒 401 Unauthorized - Session expired, logging out user");
 
-    // Check if we're on checkout page - preserve cart for better UX
-    const isCheckoutPage =
-      typeof window !== "undefined" &&
-      (window.location.pathname.includes("/checkout") ||
-        window.location.pathname.includes("/payment") ||
-        window.location.pathname.includes("/order"));
-
     try {
       // 1. Clear Redux state immediately for instant UI update
-      // Only clear cart if not on checkout-related pages
-      if (!isCheckoutPage) {
-        store.dispatch(clearCart());
-      }
+      store.dispatch(clearCart());
       store.dispatch(setCartOpen(false));
 
       // 2. Reset all API cache to prevent stale data
       // Note: API reset will be handled by the auth context when it receives the authChange event
 
       // 3. Clear backend cart - skip API call to prevent infinite loop
-      // Only clear backend cart if not on checkout pages
-      if (!isCheckoutPage) {
-        try {
-          const { CartSyncService } = await import(
-            "@/services/cartSyncService"
-          );
-          // Pass skipApi=true to avoid calling the API (which would return 401 again)
-          await CartSyncService.clearAllCarts(true);
-        } catch {
-          // Ignore cart clearing errors on 401
-          console.log("Cart clearing failed during 401 logout (expected)");
-        }
+      try {
+        const { CartSyncService } = await import("@/services/cartSyncService");
+        // Pass skipApi=true to avoid calling the API (which would return 401 again)
+        await CartSyncService.clearAllCarts(true);
+      } catch {
+        // Ignore cart clearing errors on 401
+        console.log("Cart clearing failed during 401 logout (expected)");
       }
 
       // 4. Purge persisted storage
-      // If on checkout page, preserve cart storage
-      if (isCheckoutPage) {
-        // Only purge auth-related storage, preserve cart
-        try {
-          // Clear auth storage manually without affecting cart
-          if (typeof window !== "undefined") {
-            localStorage.removeItem("fal_parts_auth");
-            localStorage.removeItem("fal_parts_user");
-            // Keep persist:cart-storage intact
-          }
-        } catch (error) {
-          console.log("Failed to clear auth storage:", error);
-        }
-      } else {
-        // Normal purge for non-checkout pages
-        await persistor.purge();
-        await persistor.flush();
-      }
+      await persistor.purge();
+      await persistor.flush();
 
       // 5. Clear localStorage auth data
       storage.removeAuth();
