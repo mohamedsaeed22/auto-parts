@@ -144,7 +144,13 @@ const Cart: React.FC = () => {
                         exit={{ opacity: 0, y: -20 }}
                         className="flex items-start space-x-3 p-3 bg-neutral-50 rounded-lg border border-border"
                       >
-                        <div className="relative w-16 h-16 flex-shrink-0 mx-2">
+                        <div 
+                          className="relative w-16 h-16 flex-shrink-0 mx-2 cursor-pointer hover:opacity-80 transition-opacity"
+                          onClick={() => {
+                            setCartOpen(false);
+                            router.push(`/product/${item.id}`);
+                          }}
+                        >
                           <Image
                             src={item.image}
                             alt={item.title}

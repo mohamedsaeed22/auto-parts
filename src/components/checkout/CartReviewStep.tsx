@@ -17,6 +17,8 @@ import { useTranslation } from "react-i18next";
 import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import { useGetCartQuery } from "@/services/api/cartApi";
 import type { ApiResponse } from "@/services/api/types";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface CartReviewStepProps {
   onNext: () => void;
@@ -24,6 +26,7 @@ interface CartReviewStepProps {
 
 const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
   const { t, i18n } = useTranslation("checkout");
+  const router = useRouter();
   const isRTL = i18n.language === "ar";
   const isSyncing = false;
 
@@ -186,14 +189,17 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
             <div className="md:hidden">
               <div className="flex gap-3 mb-3">
                 {/* Product Image */}
-                <div className="relative w-16 h-16 bg-logo-gold/10 rounded-lg overflow-hidden flex-shrink-0">
+                <Link 
+                  href={`/product/${item.id}`}
+                  className="relative w-16 h-16 bg-logo-gold/10 rounded-lg overflow-hidden flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                >
                   <Image
                     src={item.image}
                     alt={item.title}
                     fill
                     className="object-cover"
                   />
-                </div>
+                </Link>
 
                 {/* Product Info */}
                 <div className="flex-1 min-w-0">
@@ -342,7 +348,10 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
                 }`}
               >
                 {/* Product Image */}
-                <div className="relative w-20 h-20 lg:w-24 lg:h-24 bg-logo-gold/10 rounded-xl overflow-hidden flex-shrink-0">
+                <div 
+                  className="relative w-20 h-20 lg:w-24 lg:h-24 bg-logo-gold/10 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={() => router.push(`/product/${item.id}`)}
+                >
                   <Image
                     src={item.image}
                     alt={item.title}
