@@ -112,7 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Note: We don't call persistor.purge() here anymore
       // This allows the cart to persist in localStorage for unauthenticated users
       // The clearCart() action above clears the Redux state, and it will sync to localStorage
-      
+
       // Force persist to flush the cleared state immediately
       await persistor.flush();
     } catch (error) {
