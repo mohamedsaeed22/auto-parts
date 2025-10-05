@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 // import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
 const Cart: React.FC = () => {
@@ -144,12 +145,10 @@ const Cart: React.FC = () => {
                         exit={{ opacity: 0, y: -20 }}
                         className="flex items-start space-x-3 p-3 bg-neutral-50 rounded-lg border border-border"
                       >
-                        <div 
+                        <Link
+                          href={`/product/${item.id}`}
                           className="relative w-16 h-16 flex-shrink-0 mx-2 cursor-pointer hover:opacity-80 transition-opacity"
-                          onClick={() => {
-                            setCartOpen(false);
-                            router.push(`/product/${item.id}`);
-                          }}
+                          onClick={() => setCartOpen(false)}
                         >
                           <Image
                             src={item.image}
@@ -157,7 +156,7 @@ const Cart: React.FC = () => {
                             fill
                             className="object-cover rounded-md"
                           />
-                        </div>
+                        </Link>
 
                         <div className="flex-1 min-w-0">
                           <h3 className="font-medium text-neutral-900 text-xs line-clamp-2 mb-1">
