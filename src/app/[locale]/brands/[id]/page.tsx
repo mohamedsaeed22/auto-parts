@@ -8,6 +8,7 @@ import { useGetBrandsQuery, useGetProductsMutation } from "@/services/hooks";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { Product } from "@/services/api/types";
 import ProductCard from "@/components/product/ProductCard";
+import { useQueryState, parseAsInteger } from "nuqs";
 import {
   Building2,
   Star,
@@ -21,6 +22,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner, ErrorMessage } from "@/components/ui";
+import { CustomPagination } from "@/components/ui/custom-pagination";
 
 // Types
 interface Brand {
@@ -241,21 +243,43 @@ export default function BrandPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [productsLoading, setProductsLoading] = useState(false);
   const [productsError, setProductsError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState({
+    total: 0,
+    per_page: 8,
+    current_page: 1,
+    last_page: 1,
+    from: 1,
+    to: 12,
+  });
   const [getProducts] = useGetProductsMutation();
+  const [page] = useQueryState("page", parseAsInteger);
 
   // Fetch products for this brand
   useEffect(() => {
     if (brandId) {
-      console.log("🔍 Fetching products for brand ID:", brandId);
+      const currentPage = page || 1;
+      console.log(
+        "🔍 Fetching products for brand ID:",
+        brandId,
+        "page:",
+        currentPage
+      );
       setProductsLoading(true);
       setProductsError(null);
 
-      getProducts({ brand_id: brandId })
+      getProducts({
+        brand_id: brandId,
+        page: currentPage,
+        per_page: pagination.per_page,
+      })
         .unwrap()
         .then((response) => {
           console.log("✅ Products API response:", response);
           if (response.data?.items) {
             setProducts(response.data.items);
+            if (response.data.pagination) {
+              setPagination(response.data.pagination);
+            }
             console.log(
               `📦 Found ${response.data.items.length} products for brand ${brandId}`
             );
@@ -271,17 +295,25 @@ export default function BrandPage() {
           setProductsLoading(false);
         });
     }
-  }, [brandId, getProducts]);
+  }, [brandId, getProducts, page, pagination.per_page]);
 
   // Refetch products on auth change (login/logout)
   useEffect(() => {
     const handleAuthChange = () => {
       if (brandId) {
-        getProducts({ brand_id: brandId })
+        const currentPage = page || 1;
+        getProducts({
+          brand_id: brandId,
+          page: currentPage,
+          per_page: pagination.per_page,
+        })
           .unwrap()
           .then((response) => {
             if (response.data?.items) {
               setProducts(response.data.items);
+              if (response.data.pagination) {
+                setPagination(response.data.pagination);
+              }
             }
           })
           .catch((error) => {
@@ -295,7 +327,7 @@ export default function BrandPage() {
     return () => {
       window.removeEventListener("authChange", handleAuthChange);
     };
-  }, [brandId, getProducts]);
+  }, [brandId, getProducts, page, pagination.per_page]);
 
   const handleGoBack = () => {
     router.push("/");
@@ -442,11 +474,23 @@ export default function BrandPage() {
 
         {/* Products Grid */}
         {!productsLoading && !productsError && products.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product: Product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {products.map((product: Product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {pagination.total > pagination.per_page && (
+              <div className="mt-12 flex justify-center">
+                <CustomPagination
+                  totalItems={pagination.total}
+                  itemsPerPage={pagination.per_page}
+                />
+              </div>
+            )}
+          </>
         )}
 
         {/* No Products State */}
