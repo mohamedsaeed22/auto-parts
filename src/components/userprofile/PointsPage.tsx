@@ -117,7 +117,7 @@ export default function PointsPage() {
         <h3 className="text-lg font-semibold text-gray-900">
           {t("points.transactions.title")}
         </h3>
-        {pagination && (
+        {pagination && pagination.total > 0 && (
           <p className="text-sm text-gray-600 mt-1">
             {t("points.totalTransactions")}: {pagination.total}
           </p>

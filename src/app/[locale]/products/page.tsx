@@ -733,7 +733,7 @@ export default function ProductsPage({
 
                 {/* Pagination */}
 
-                {pagination && (
+                {pagination && pagination.total > 0 && (
                   <div className="mt-12 flex justify-center">
                     <CustomPagination
                       totalItems={pagination.total}

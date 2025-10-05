@@ -898,7 +898,7 @@ export default function RequestsPage() {
       )}
 
       {/* Pagination */}
-      {pagination && (
+      {pagination && pagination.total > 0 && (
         <div className="mt-8">
           <CustomPagination
             totalItems={pagination.total}
@@ -908,7 +908,7 @@ export default function RequestsPage() {
       )}
 
       {/* Pagination Info */}
-      {pagination && (
+      {pagination && pagination.total > 0 && (
         <div className="  mt-4 text-sm text-gray-600">
           {t(
             "requests.pagination.showing",

@@ -596,7 +596,7 @@ export default function OrdersPage() {
       )}
 
       {/* Pagination */}
-      {pagination && (
+      {pagination && pagination.total > 0 && (
         <div className="mt-8">
           <CustomPagination
             totalItems={pagination.total}
@@ -606,7 +606,7 @@ export default function OrdersPage() {
       )}
 
       {/* Pagination Info */}
-      {pagination && (
+      {pagination && pagination.total > 0 && (
         <div
           className={`text-center mt-4 text-sm text-gray-600 ${
             isRTL ? "text-right" : "text-left"
