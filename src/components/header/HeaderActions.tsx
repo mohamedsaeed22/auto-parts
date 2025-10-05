@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import LoginDialog from "../LoginDialog";
 import UserDropdown from "./UserDropdown";
 import NotificationDropdown from "./NotificationDropdown";
-import HeaderLanguageDropdown from "./HeaderLanguageDropdown";
+import LanguageSwitch from "./LanguageSwitch";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -12,8 +12,6 @@ interface HeaderActionsProps {
   totalItems: number;
   onCartClick: () => void;
   isRTL: boolean;
-  isLanguageOpen?: boolean;
-  setIsLanguageOpen?: (open: boolean) => void;
   onLanguageChange?: (locale: string) => void;
   activeLocale?: string;
   isChangingLocale?: boolean;
@@ -23,8 +21,6 @@ export default function HeaderActions({
   totalItems,
   onCartClick,
   isRTL,
-  isLanguageOpen,
-  setIsLanguageOpen,
   onLanguageChange,
   activeLocale,
   isChangingLocale,
@@ -35,20 +31,14 @@ export default function HeaderActions({
 
   return (
     <div className="flex items-center gap-1">
-      {/* Language Dropdown */}
-      {isLanguageOpen !== undefined &&
-        setIsLanguageOpen &&
-        onLanguageChange &&
-        activeLocale && (
-          <HeaderLanguageDropdown
-            isOpen={isLanguageOpen}
-            setIsOpen={setIsLanguageOpen}
-            onLanguageChange={onLanguageChange}
-            isRTL={isRTL}
-            activeLocale={activeLocale}
-            isChangingLocale={isChangingLocale}
-          />
-        )}
+      {/* Language Switch */}
+      {onLanguageChange && activeLocale && (
+        <LanguageSwitch
+          activeLocale={activeLocale}
+          onLanguageChange={onLanguageChange}
+          isChangingLocale={isChangingLocale}
+        />
+      )}
 
       {/* Account - Show UserDropdown if logged in, LoginDialog if not */}
       {isAuthenticated ? (

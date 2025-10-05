@@ -13,6 +13,7 @@ import HeaderNavigation from "./HeaderNavigation";
 import HeaderMobileMenu from "./HeaderMobileMenu";
 import HeaderBottomNavigation from "./HeaderBottomNavigation";
 import NotificationDropdown from "./NotificationDropdown";
+import LanguageSwitch from "./LanguageSwitch";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/hooks/useLocale";
 import { useHeaderSearch } from "@/hooks/useHeaderSearch";
@@ -21,7 +22,6 @@ import { useAuth } from "@/hooks/useAuth";
 export default function Header() {
   const { totalItems, setCartOpen } = useEnhancedCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const pathname = usePathname();
   const { t } = useTranslation("header");
@@ -128,8 +128,6 @@ export default function Header() {
                 totalItems={totalItems}
                 onCartClick={handleCartClick}
                 isRTL={isRTL}
-                isLanguageOpen={isLanguageOpen}
-                setIsLanguageOpen={setIsLanguageOpen}
                 onLanguageChange={onLanguageChange}
                 activeLocale={currentLocale}
                 isChangingLocale={isChangingLocale}
@@ -221,14 +219,6 @@ export default function Header() {
         isRTL={isRTL}
         pathname={pathname}
       />
-
-      {/* Click outside handlers */}
-      {isLanguageOpen && (
-        <div
-          className="fixed inset-0 z-30"
-          onClick={() => setIsLanguageOpen(false)}
-        />
-      )}
 
       {/* Add bottom padding to body content on mobile to account for bottom nav */}
       <style jsx global>{`
