@@ -98,7 +98,7 @@ export function PricingForm({
             </div>
           </div>
         ) : !isRegistrationComplete ? (
-          <div className="mb-6 p-4 rounded-lg border flex flex-col sm:flex-row items-start sm:items-center gap-3 text-orange-700 bg-orange-50 border-orange-200">
+          <div className="mb-6 p-4 rounded-lg border flex flex-col sm:flex-row justify-between items-start sm:items-center text-orange-700 bg-orange-50 border-orange-200">
             <div className="flex items-center gap-2">
               <AlertCircle size={20} />
               <div>
@@ -111,15 +111,13 @@ export function PricingForm({
               </div>
             </div>
 
-            <div className="sm:ml-auto">
-              <Button
-                onClick={handleCompleteRegistrationClick}
-                size="sm"
-                className="bg-orange-600 hover:bg-orange-700 text-white w-full sm:w-auto"
-              >
-                {t("auth.buttons.completeRegistration")}
-              </Button>
-            </div>
+            <Button
+              onClick={handleCompleteRegistrationClick}
+              size="sm"
+              className="bg-orange-600 hover:bg-orange-700 text-white w-full sm:w-auto mt-3 sm:mt-0"
+            >
+              {t("auth.buttons.completeRegistration")}
+            </Button>
           </div>
         ) : null}
       </>
