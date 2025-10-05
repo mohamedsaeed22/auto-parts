@@ -81,8 +81,8 @@ const baseQueryWithAuth: BaseQueryFn<
         console.log("Cart clearing failed during 401 logout (expected)");
       }
 
-      // 4. Purge persisted storage
-      await persistor.purge();
+      // 4. Flush persisted storage (don't purge to keep cart for unauthenticated users)
+      // Note: The clearCart() action above clears the Redux state, and flush will sync it to localStorage
       await persistor.flush();
 
       // 5. Clear localStorage auth data

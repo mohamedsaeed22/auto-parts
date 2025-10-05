@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import { AuthOnlyGuard } from "@/components/auth/AuthGuard";
 import { useGetAddressesQuery } from "@/services/api/addressesApi";
+import { useAuthContext } from "@/contexts/auth-context";
 import {
   CheckoutProgress,
   CartReviewStep,
@@ -19,6 +20,7 @@ import {
 
 const CheckoutPage = () => {
   const router = useRouter();
+  const { isAuthenticated } = useAuthContext();
   const {
     items,
     total,
@@ -27,7 +29,10 @@ const CheckoutPage = () => {
     updateQuantity,
     removeFromCart,
   } = useEnhancedCart();
-  const { data: addressesResp } = useGetAddressesQuery();
+  // Only fetch addresses if user is authenticated to prevent 401 errors
+  const { data: addressesResp } = useGetAddressesQuery(undefined, {
+    skip: !isAuthenticated,
+  });
   const [currentStep, setCurrentStep] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);

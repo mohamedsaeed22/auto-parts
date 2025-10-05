@@ -54,9 +54,12 @@ export function useAuth() {
     store.dispatch(setCartOpen(false));
     store.dispatch(api.util.resetApiState());
 
-    // Purge persisted storage
+    // Note: We don't call persistor.purge() here anymore
+    // This allows the cart to persist in localStorage for unauthenticated users
+    // The clearCart() action above clears the Redux state, and it will sync to localStorage
+    
+    // Flush the cleared state to localStorage immediately
     try {
-      await persistor.purge();
       await persistor.flush();
     } catch (e) {
       // ignore

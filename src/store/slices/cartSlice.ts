@@ -3,7 +3,6 @@ import { cartApi } from "@/services/api/cartApi";
 import type { RootState } from "@/store";
 import type { ApiResponse, Cart } from "@/services/api/types";
 import { CartSyncService } from "@/services/cartSyncService";
-import { PURGE } from "redux-persist";
 
 export interface CartItem {
   id: number;
@@ -300,10 +299,6 @@ const cartSlice = createSlice({
         state.items = [];
         state.total = 0;
         state.totalItems = 0;
-      })
-      // Handle PURGE action to reset state when logging out
-      .addCase(PURGE, () => {
-        return initialState;
       });
   },
 });

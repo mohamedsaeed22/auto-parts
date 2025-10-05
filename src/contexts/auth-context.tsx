@@ -15,7 +15,6 @@ import { persistor, store } from "@/store";
 import { clearCart, setCartOpen } from "@/store/slices/cartSlice";
 import { getCurrentLocale } from "@/lib/localeService";
 import { api } from "@/services/api";
-import { PURGE } from "redux-persist";
 
 interface AuthContextType {
   user: User | null;
@@ -107,29 +106,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Reset cached queries (e.g., cart) to avoid any stale data
       store.dispatch(api.util.resetApiState());
 
-      // Dispatch PURGE action to the cart slice specifically
-      store.dispatch({
-        type: PURGE,
-        key: "cart-storage",
-        result: () => null,
-      });
-
       // Clear backend cart - skip API call since we're logging out
       await CartSyncService.clearAllCarts(true);
 
-      // Purge localStorage AFTER clearing Redux state
-      await persistor.purge();
-
-      // Force persist to flush immediately
+      // Note: We don't call persistor.purge() here anymore
+      // This allows the cart to persist in localStorage for unauthenticated users
+      // The clearCart() action above clears the Redux state, and it will sync to localStorage
+      
+      // Force persist to flush the cleared state immediately
       await persistor.flush();
     } catch (error) {
       // Even if clearing fails, still clear the UI
       store.dispatch(clearCart());
       store.dispatch(setCartOpen(false));
       try {
-        await persistor.purge();
-      } catch (purgeError) {
-        // Failed to purge persistor
+        await persistor.flush();
+      } catch (flushError) {
+        // Failed to flush persistor
       }
     }
 
