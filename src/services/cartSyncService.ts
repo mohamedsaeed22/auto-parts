@@ -263,10 +263,12 @@ export class CartSyncService {
       if (!skipApi) {
         const { storage } = await import("@/lib/storage");
         const token = storage.getToken();
-        
+
         if (token) {
           try {
-            await store.dispatch(cartApi.endpoints.clearCart.initiate()).unwrap();
+            await store
+              .dispatch(cartApi.endpoints.clearCart.initiate())
+              .unwrap();
           } catch (apiError) {
             // Ignore 401 errors during logout to prevent infinite loop
             const error = apiError as { status?: number };
