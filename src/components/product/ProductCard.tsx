@@ -837,7 +837,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     )}
                     <span>
                       {isProductOutOfStock(product)
-                        ? t("outOfStock")
+                        ? isRTL ? " غير متوفر" : "Out of Stock"
                         : t("addToCart")}
                     </span>
                   </Button>
