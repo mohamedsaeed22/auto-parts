@@ -314,10 +314,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
   if (variant === "list") {
     return (
       <div className="group relative" dir={isRTL ? "rtl" : "ltr"}>
-        <Link href={`/product/${product.id}`}>
-          <div className="bg-card rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-border overflow-hidden">
-            <div className="flex flex-col sm:flex-row">
-              {/* Image Container */}
+        <div className="bg-card rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-border overflow-hidden">
+          <div className="flex flex-col sm:flex-row">
+            {/* Image Container */}
+            <Link href={`/product/${product.id}`} className="cursor-pointer">
               <div
                 className="relative w-full sm:w-48 h-48 sm:h-40 overflow-hidden bg-neutral-100 flex-shrink-0 flex items-center justify-center"
                 onMouseEnter={handleMouseEnter}
@@ -469,14 +469,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   </div>
                 )}
               </div>
+            </Link>
 
-              {/* Product Info */}
-              <div className="flex-1 p-4 flex flex-col justify-center">
-                <div>
-                  {/* Product Name */}
+            {/* Product Info */}
+            <div className="flex-1 p-4 flex flex-col justify-center">
+              <div>
+                {/* Product Name */}
+                <Link href={`/product/${product.id}`} className="cursor-pointer">
                   <h3 className="text-lg font-semibold text-neutral-900 mb-2 group-hover:text-primary transition-colors">
                     {productName}
                   </h3>
+                </Link>
 
                   {/* Product Description */}
                   {product.description && (
@@ -569,7 +572,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                         onClick={handleIncreaseQuantity}
                         size="sm"
                         variant="ghost"
-                        className="h-8 w-8 p-0 hover:bg-green-50 text-green-600 hover:text-green-700 rounded-none border-l border-primary/10 transition-colors duration-200 disabled:text-gray-400 disabled:cursor-not-allowed"
+                        className="h-8 w-8 p-0 hover:bg-green-50 text-green-600 hover:text-green-700 rounded-none border-l border-primary/10 transition-colors duration-200 disabled:text-gray-400 disabled:!cursor-not-allowed disabled:opacity-50"
                         disabled={
                           isItemLoading(product.id) ||
                           !canIncreaseQuantity(product)
@@ -587,17 +590,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
               </div>
             </div>
           </div>
-        </Link>
-      </div>
+        </div>
     );
   }
 
   // Default grid view layout
   return (
     <div className="group relative" dir={isRTL ? "rtl" : "ltr"}>
-      <Link href={`/product/${product.id}`}>
-        <div className="bg-card rounded-lg shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col border border-border overflow-hidden">
-          {/* Image Container with Badges */}
+      <div className="bg-card rounded-lg shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col border border-border overflow-hidden">
+        {/* Image Container with Badges */}
+        <Link href={`/product/${product.id}`} className="cursor-pointer">
           <div
             className="relative aspect-square overflow-hidden bg-neutral-100"
             onMouseEnter={handleMouseEnter}
@@ -781,113 +783,115 @@ const ProductCard: React.FC<ProductCardProps> = ({
               </div>
             )}
           </div>
+        </Link>
 
-          {/* Product Info */}
-          <div className="p-3 flex flex-col flex-1">
-            {/* Product Name */}
+        {/* Product Info */}
+        <div className="p-3 flex flex-col flex-1">
+          {/* Product Name */}
+          <Link href={`/product/${product.id}`} className="cursor-pointer">
             <h3 className="text-md font-medium text-neutral-900 mb-2 group-hover:text-primary transition-colors overflow-hidden">
               <span className="block truncate" title={productName}>
                 {productName}
               </span>
             </h3>
+          </Link>
 
-            {/* Price and Add to Cart Section */}
-            <div className="mt-auto">
-              <div className={`flex items-center justify-between flex-row`}>
-                {/* Price Section */}
-                <div className={`flex flex-col gap-1`}>
-                  <span className="text-sm font-bold text-neutral-900">
+          {/* Price and Add to Cart Section */}
+          <div className="mt-auto">
+            <div className={`flex items-center justify-between flex-row`}>
+              {/* Price Section */}
+              <div className={`flex flex-col gap-1`}>
+                <span className="text-sm font-bold text-neutral-900">
+                  {isRTL
+                    ? `${productFinalPrice} ${t("currency")} `
+                    : `${productFinalPrice} ${t("currency")}`}
+                </span>
+                {hasDiscount && (
+                  <span className="text-xs text-neutral-500 line-through">
                     {isRTL
-                      ? `${productFinalPrice} ${t("currency")} `
-                      : `${productFinalPrice} ${t("currency")}`}
+                      ? `${productPrice} ${t("currency")} `
+                      : `${productPrice} ${t("currency")}`}
                   </span>
-                  {hasDiscount && (
-                    <span className="text-xs text-neutral-500 line-through">
-                      {isRTL
-                        ? `${productPrice} ${t("currency")} `
-                        : `${productPrice} ${t("currency")}`}
-                    </span>
-                  )}
-                </div>
-
-                {!isInCart ? (
-                  <Button
-                    size="sm"
-                    className="bg-primary hover:bg-primary/90 text-white rounded px-2 py-1 flex items-center gap-1 transition-colors duration-200 text-xs relative z-10 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                    onClick={(e) => {
-                      handleAddToCart(e);
-                    }}
-                    disabled={
-                      isItemLoading(product.id) ||
-                      isProductOutOfStock(product) ||
-                      !canAddToCart(product)
-                    }
-                    style={{
-                      pointerEvents: "auto",
-                      cursor:
-                        isProductOutOfStock(product) || !canAddToCart(product)
-                          ? "not-allowed"
-                          : "pointer",
-                    }}
-                  >
-                    {isItemLoading(product.id) ? (
-                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
-                    ) : (
-                      <ShoppingCart size={12} />
-                    )}
-                    <span>
-                      {isProductOutOfStock(product)
-                        ? isRTL ? " غير متوفر" : "Out of Stock"
-                        : t("addToCart")}
-                    </span>
-                  </Button>
-                ) : (
-                  <div className="flex items-center bg-white border border-primary/20 rounded overflow-hidden shadow-sm">
-                    <Button
-                      onClick={handleDecreaseQuantity}
-                      size="sm"
-                      variant="ghost"
-                      className="h-7 w-7 p-0 hover:bg-red-50 text-red-600 hover:text-red-700 rounded-none border-r border-primary/10 transition-colors duration-200"
-                      disabled={isItemLoading(product.id)}
-                    >
-                      {isItemLoading(product.id) ? (
-                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-red-600"></div>
-                      ) : cartItem?.quantity === 1 ? (
-                        <Trash size={12} />
-                      ) : (
-                        <Minus size={12} />
-                      )}
-                    </Button>
-
-                    <div className="h-7 px-2 flex items-center justify-center bg-primary/5 min-w-[28px]">
-                      <span className="text-sm font-semibold text-primary">
-                        {cartItem?.quantity}
-                      </span>
-                    </div>
-
-                    <Button
-                      onClick={handleIncreaseQuantity}
-                      size="sm"
-                      variant="ghost"
-                      className="h-7 w-7 p-0 hover:bg-green-50 text-green-600 hover:text-green-700 rounded-none border-l border-primary/10 transition-colors duration-200 disabled:text-gray-400 disabled:cursor-not-allowed"
-                      disabled={
-                        isItemLoading(product.id) ||
-                        !canIncreaseQuantity(product)
-                      }
-                    >
-                      {isItemLoading(product.id) ? (
-                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-green-600"></div>
-                      ) : (
-                        <Plus size={12} />
-                      )}
-                    </Button>
-                  </div>
                 )}
               </div>
+
+              {!isInCart ? (
+                <Button
+                  size="sm"
+                  className="bg-primary hover:bg-primary/90 text-white rounded px-2 py-1 flex items-center gap-1 transition-colors duration-200 text-xs relative z-10 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  onClick={(e) => {
+                    handleAddToCart(e);
+                  }}
+                  disabled={
+                    isItemLoading(product.id) ||
+                    isProductOutOfStock(product) ||
+                    !canAddToCart(product)
+                  }
+                  style={{
+                    pointerEvents: "auto",
+                    cursor:
+                      isProductOutOfStock(product) || !canAddToCart(product)
+                        ? "not-allowed"
+                        : "pointer",
+                  }}
+                >
+                  {isItemLoading(product.id) ? (
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                  ) : (
+                    <ShoppingCart size={12} />
+                  )}
+                  <span>
+                    {isProductOutOfStock(product)
+                      ? isRTL ? " غير متوفر" : "Out of Stock"
+                      : t("addToCart")}
+                  </span>
+                </Button>
+              ) : (
+                <div className="flex items-center bg-white border border-primary/20 rounded overflow-hidden shadow-sm">
+                  <Button
+                    onClick={handleDecreaseQuantity}
+                    size="sm"
+                    variant="ghost"
+                    className="h-7 w-7 p-0 hover:bg-red-50 text-red-600 hover:text-red-700 rounded-none border-r border-primary/10 transition-colors duration-200"
+                    disabled={isItemLoading(product.id)}
+                  >
+                    {isItemLoading(product.id) ? (
+                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-red-600"></div>
+                    ) : cartItem?.quantity === 1 ? (
+                      <Trash size={12} />
+                    ) : (
+                      <Minus size={12} />
+                    )}
+                  </Button>
+
+                  <div className="h-7 px-2 flex items-center justify-center bg-primary/5 min-w-[28px]">
+                    <span className="text-sm font-semibold text-primary">
+                      {cartItem?.quantity}
+                    </span>
+                  </div>
+
+                  <Button
+                    onClick={handleIncreaseQuantity}
+                    size="sm"
+                    variant="ghost"
+                    className="h-7 w-7 p-0 hover:bg-green-50 text-green-600 hover:text-green-700 rounded-none border-l border-primary/10 transition-colors duration-200 disabled:text-gray-400 disabled:!cursor-not-allowed disabled:opacity-50"
+                    disabled={
+                      isItemLoading(product.id) ||
+                      !canIncreaseQuantity(product)
+                    }
+                  >
+                    {isItemLoading(product.id) ? (
+                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-green-600"></div>
+                    ) : (
+                      <Plus size={12} />
+                    )}
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
-      </Link>
+      </div>
     </div>
   );
 };
