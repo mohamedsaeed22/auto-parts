@@ -612,7 +612,9 @@ export default function ProductsPage({
                   </h2>
                   {hasActiveFilters && (
                     <p className="text-sm text-green-600 mt-1">
-                      {t("filtersApplied") || "Filters applied"}
+                      {
+                        isRTL?"تصفية حسب الفلتر.": "Filtered by your selected criteria."
+                      }
                     </p>
                   )}
                 </div>
