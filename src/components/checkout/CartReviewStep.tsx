@@ -52,6 +52,7 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
         primary_image?: string;
         brand?: { name?: string };
         category?: { name?: string };
+        stock?: number; // Add stock field
       };
     }>;
     cart_total: number;
@@ -101,6 +102,7 @@ const CartReviewStep: React.FC<CartReviewStepProps> = ({ onNext }) => {
             ?.brand?.name,
           category: (ci.product as { category?: { name?: string } } | undefined)
             ?.category?.name,
+          stock: (ci.product as { stock?: number } | undefined)?.stock, // Extract stock from API
         };
       });
     }

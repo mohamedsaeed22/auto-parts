@@ -241,14 +241,26 @@ const cartSlice = createSlice({
     },
 
     addMultipleToCart: (state, action: PayloadAction<CartItem[]>) => {
+      console.log("🔍 [addMultipleToCart] Received items:", action.payload);
       action.payload.forEach((newItem) => {
+        console.log("🔍 [addMultipleToCart] Processing item:", {
+          id: newItem.id,
+          title: newItem.title,
+          quantity: newItem.quantity,
+          stock: newItem.stock,
+        });
         const existing = state.items.find((i) => i.id === newItem.id);
         if (existing) {
           existing.quantity += newItem.quantity;
+          // Update stock if provided
+          if (newItem.stock !== undefined) {
+            existing.stock = newItem.stock;
+          }
         } else {
           state.items.push(newItem);
         }
       });
+      console.log("🔍 [addMultipleToCart] Final state.items:", state.items);
       const totals = calculateTotals(state.items);
       state.total = totals.total;
       state.totalItems = totals.totalItems;

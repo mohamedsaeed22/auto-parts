@@ -69,16 +69,29 @@ export class CartSyncService {
       store.dispatch(clearCart());
 
       if (response.code === 200 && response.data?.cart_items) {
-        const cartItems: CartItem[] = response.data.cart_items.map((item) => ({
-          id: item.product.id,
-          title: item.product.name,
-          price:
-            Number(item.product.final_price) || Number(item.product.price) || 0,
-          image: item.product.primary_image || "",
-          quantity: item.quantity,
-          category: item.product.category?.name || "Unknown Category",
-          description: item.product.description || "",
-        }));
+        const cartItems: CartItem[] = response.data.cart_items.map((item) => {
+          console.log("🔍 Syncing cart item from API:", {
+            productId: item.product.id,
+            productName: item.product.name,
+            stock: item.product.stock,
+            quantity: item.quantity,
+          });
+          return {
+            id: item.product.id,
+            title: item.product.name,
+            price:
+              Number(item.product.final_price) ||
+              Number(item.product.price) ||
+              0,
+            image: item.product.primary_image || "",
+            quantity: item.quantity,
+            category: item.product.category?.name || "Unknown Category",
+            description: item.product.description || "",
+            stock: item.product.stock, // Include stock from API response
+          };
+        });
+
+        console.log("🔍 Cart items to be added to Redux:", cartItems);
 
         // Add items to local cart (now empty, so no conflicts)
         store.dispatch(addMultipleToCart(cartItems));
@@ -133,8 +146,14 @@ export class CartSyncService {
           .unwrap();
 
         if (response.code === 200 && response.data?.cart_items) {
-          const cartItems: CartItem[] = response.data.cart_items.map(
-            (item) => ({
+          const cartItems: CartItem[] = response.data.cart_items.map((item) => {
+            console.log("🔍 [handleLoginSync] Syncing cart item from API:", {
+              productId: item.product.id,
+              productName: item.product.name,
+              stock: item.product.stock,
+              quantity: item.quantity,
+            });
+            return {
               id: item.product.id,
               title: item.product.name,
               price:
@@ -145,8 +164,15 @@ export class CartSyncService {
               quantity: item.quantity,
               category: item.product.category?.name || "Unknown Category",
               description: item.product.description || "",
-            })
+              stock: item.product.stock, // Include stock from API response
+            };
+          });
+
+          console.log(
+            "🔍 [handleLoginSync] Cart items to be added to Redux:",
+            cartItems
           );
+
           store.dispatch(addMultipleToCart(cartItems));
         }
 

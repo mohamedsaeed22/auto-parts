@@ -78,9 +78,9 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
       // Check if payment URL is provided (for credit card payments)
       if (result && result.data && result.data.payment_url) {
         showSuccess(
-          t("orderReview.redirectingToPayment", {
-            defaultValue: "Redirecting to payment gateway...",
-          })
+          isRTL
+            ? "جارٍ إعادة التوجيه إلى صفحة الدفع..."
+            : "Redirecting to payment page..."
         );
 
         // Clear coupon from localStorage before redirecting
