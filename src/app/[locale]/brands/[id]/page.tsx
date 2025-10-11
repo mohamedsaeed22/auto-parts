@@ -252,7 +252,31 @@ export default function BrandPage() {
     to: 12,
   });
   const [getProducts] = useGetProductsMutation();
-  const [page] = useQueryState("page", parseAsInteger);
+  const [page, setPage] = useQueryState("page", parseAsInteger);
+
+  // Track previous brandId to detect brand changes
+  const [previousBrandId, setPreviousBrandId] = useState<number | null>(null);
+
+  // Reset pagination to page 1 when brandId changes or when first loading a brand page
+  useEffect(() => {
+    if (brandId) {
+      // Reset pagination if:
+      // 1. This is a brand change (previousBrandId exists and is different)
+      // 2. This is the first load of a brand page (previousBrandId is null) and page is not 1
+      if (
+        (previousBrandId !== null && previousBrandId !== brandId) ||
+        (previousBrandId === null && page && page !== 1)
+      ) {
+        console.log("🔄 Resetting pagination to page 1:", {
+          from: previousBrandId,
+          to: brandId,
+          currentPage: page,
+        });
+        setPage(1);
+      }
+      setPreviousBrandId(brandId);
+    }
+  }, [brandId, previousBrandId, page, setPage]);
 
   // Fetch products for this brand
   useEffect(() => {

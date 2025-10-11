@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
@@ -176,7 +176,7 @@ const BrandCard = ({
               e.stopPropagation();
               onViewBrand(brand.id);
             }}
-            className="w-full bg-primary hover:bg-primary/90 text-white"
+            className="w-full bg-primary hover:bg-primary/90 text-white cursor-pointer"
           >
             {t("exploreBrand") || "Explore Brand"}
           </Button>
@@ -265,6 +265,8 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
     isLoading,
     error,
     refetch,
+    isFetching,
+    isError,
   } = useGetBrandsQuery({
     page: currentPage,
     per_page: 12,
@@ -273,6 +275,17 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
   const brands = brandsResponse?.data?.items || [];
   const pagination = brandsResponse?.data?.pagination;
 
+  // Debug logging
+  console.log("🏷️ BrandsPageClient - API State:", {
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    brandsCount: brands.length,
+    currentPage,
+    brandsResponse: brandsResponse?.data,
+  });
+
   const handleGoBack = () => {
     router.push("/");
   };
@@ -280,6 +293,27 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
   const handleViewBrand = (brandId: number) => {
     router.push(`/brands/${brandId}`);
   };
+
+  // Enhanced retry function with better error handling
+  const handleRetry = () => {
+    console.log("🔄 Retrying brands API call...");
+    refetch();
+  };
+
+  // Auto-retry logic for empty brands with no error
+  useEffect(() => {
+    if (!isLoading && !isError && brands.length === 0 && brandsResponse) {
+      console.log(
+        "⚠️ Brands array is empty but API call succeeded, retrying..."
+      );
+      // Small delay to avoid rapid retries
+      const timeoutId = setTimeout(() => {
+        refetch();
+      }, 1000);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isLoading, isError, brands.length, brandsResponse, refetch]);
 
   // Handle loading state
   if (isLoading) {
@@ -294,7 +328,7 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
   }
 
   // Handle error state
-  if (error) {
+  if (error || isError) {
     let errorMessage = t("failedToLoadBrands", "Failed to load brands");
     if ("status" in error) {
       errorMessage = `${t("error", "Error")} ${error.status}: ${t(
@@ -305,11 +339,13 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
       errorMessage = error.message || errorMessage;
     }
 
+    console.error("❌ Brands API Error:", error);
+
     return (
       <div dir={direction}>
         <HeroSection t={t} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <ErrorMessage message={errorMessage} onRetry={refetch} />
+          <ErrorMessage message={errorMessage} onRetry={handleRetry} />
         </div>
       </div>
     );
@@ -398,9 +434,14 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
             <p className="text-gray-500 mb-6">
               {t("noBrandsDesc") || "Check back later for new brands!"}
             </p>
-            <Button onClick={handleGoBack} variant="outline">
-              {t("goBack") || "Go Back"}
-            </Button>
+            <div className="flex gap-4 justify-center">
+              <Button onClick={handleGoBack} variant="outline">
+                {t("goBack") || "Go Back"}
+              </Button>
+              <Button onClick={handleRetry} variant="default">
+                {t("retry") || "Retry"}
+              </Button>
+            </div>
           </div>
         ) : (
           <div
