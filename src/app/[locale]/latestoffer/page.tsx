@@ -312,6 +312,7 @@ export default function LatestOffersPage() {
                 ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
                 : "space-y-6"
             }
+            data-products-section
           >
             {offers.map((offer: Offer) => (
               <OfferCard

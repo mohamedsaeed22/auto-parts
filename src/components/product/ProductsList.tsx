@@ -63,7 +63,11 @@ const ProductsList = () => {
   // Simple loading skeleton
   if (isLoading && products.length === 0) {
     return (
-      <section className="py-16 bg-gray-50" dir={isRTL ? "rtl" : "ltr"}>
+      <section
+        className="py-16 bg-gray-50"
+        dir={isRTL ? "rtl" : "ltr"}
+        data-products-section
+      >
         <div className="container mx-auto px-4">
           {/* Header Skeleton */}
           <div className="text-center mb-12">
@@ -102,7 +106,11 @@ const ProductsList = () => {
   // Simple error component
   if (error && products.length === 0) {
     return (
-      <section className="py-16 bg-gray-50" dir={isRTL ? "rtl" : "ltr"}>
+      <section
+        className="py-16 bg-gray-50"
+        dir={isRTL ? "rtl" : "ltr"}
+        data-products-section
+      >
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
@@ -130,7 +138,11 @@ const ProductsList = () => {
   }
 
   return (
-    <section className="py-16 bg-gray-50" dir={isRTL ? "rtl" : "ltr"}>
+    <section
+      className="py-16 bg-gray-50"
+      dir={isRTL ? "rtl" : "ltr"}
+      data-products-section
+    >
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">

@@ -24,6 +24,36 @@ export function CustomPagination({
   const handlePageChange = (newPage: number) => {
     if (newPage < 1 || newPage > totalPages || newPage === currentPage) return;
     setPage(newPage);
+
+    // Scroll to top of the page when pagination changes
+    // Try to find the brand features section first (for brand pages), then products section, otherwise scroll to top of page
+    const brandFeaturesSection = document.querySelector(
+      "[data-brand-features]"
+    );
+    const productsSection =
+      document.querySelector("[data-products-section]") ||
+      document.querySelector(".py-16.bg-gray-50") ||
+      document.querySelector("section");
+
+    if (brandFeaturesSection) {
+      // For brand pages, scroll to brand features section
+      brandFeaturesSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    } else if (productsSection) {
+      // For other pages, scroll to products section
+      productsSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    } else {
+      // Fallback to top of page
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
   };
 
   const renderPageNumbers = () => {

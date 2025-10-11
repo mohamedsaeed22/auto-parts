@@ -425,10 +425,12 @@ export default function BrandPage() {
       <BrandHeader brand={displayBrand} isRTL={isRTL} t={t} />
 
       {/* Brand Features */}
-      <BrandFeatures isRTL={isRTL} t={t} />
+      <div data-brand-features>
+        <BrandFeatures isRTL={isRTL} t={t} />
+      </div>
 
       {/* Products Section */}
-      <div className="space-y-6">
+      <div className="space-y-6" data-products-section>
         <div className={`text-center ${isRTL ? "text-right" : "text-left"}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             {t("brandProducts") || "Products by this Brand"}

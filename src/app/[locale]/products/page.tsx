@@ -612,9 +612,9 @@ export default function ProductsPage({
                   </h2>
                   {hasActiveFilters && (
                     <p className="text-sm text-green-600 mt-1">
-                      {
-                        isRTL?"تصفية حسب الفلتر.": "Filtered by your selected criteria."
-                      }
+                      {isRTL
+                        ? "تصفية حسب الفلتر."
+                        : "Filtered by your selected criteria."}
                     </p>
                   )}
                 </div>
@@ -660,6 +660,7 @@ export default function ProductsPage({
                       ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
                       : "space-y-6"
                   }
+                  data-products-section
                 >
                   {products.map(
                     (product: {
