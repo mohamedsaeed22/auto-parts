@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { CreditCard, Truck, ArrowLeft, ArrowRight } from "lucide-react";
+import { CreditCard, ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 
@@ -18,12 +18,12 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
 }) => {
   const { t, i18n } = useTranslation("checkout");
   const isRTL = i18n.language === "ar";
-  const selectedMethod = paymentMethod || "cash";
+  const selectedMethod = paymentMethod || "credit_card";
 
   // Auto-select first payment method if none selected
   useEffect(() => {
     if (!paymentMethod) {
-      onPaymentMethodChange("cash");
+      onPaymentMethodChange("credit_card");
     }
   }, [paymentMethod, onPaymentMethodChange]);
 
@@ -40,12 +40,6 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
       <div className="p-6">
         <div className="space-y-4 mb-6">
           {[
-            {
-              key: "cash",
-              icon: Truck,
-              title: t("payment.cashOnDelivery"),
-              desc: t("payment.cashOnDeliveryDesc"),
-            },
             {
               key: "credit_card",
               icon: CreditCard,

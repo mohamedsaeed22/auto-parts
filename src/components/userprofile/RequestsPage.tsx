@@ -210,7 +210,7 @@ export default function RequestsPage() {
 
   const handleAcceptConfirm = async (data: {
     address_id?: number;
-    payment_method: "cash" | "credit_card";
+    payment_method: "credit_card";
     first_name?: string;
     last_name?: string;
     phone?: string;
@@ -258,13 +258,10 @@ export default function RequestsPage() {
       setPendingRequestId(null);
 
       // If payment method is credit_card and we got a payment URL, redirect to it
-      if (
-        data.payment_method === "credit_card" &&
-        response?.data?.payment_url
-      ) {
+      if (response?.data?.payment_url) {
         window.location.href = response.data.payment_url;
       } else {
-        // Show success toast for cash payment
+        // Show success toast
         if (response?.code === 200) {
           const successMessage = isRTL
             ? "تم قبول الطلب بنجاح"
@@ -624,12 +621,7 @@ export default function RequestsPage() {
                         {t("requests.paymentMethod", "Payment Method")}
                       </div>
                       <div className="font-medium capitalize">
-                        {request.payment_method === "cash"
-                          ? t("requests.paymentMethods.cash", "Cash")
-                          : t(
-                              "requests.paymentMethods.creditCard",
-                              "Credit Card"
-                            )}
+                        {t("requests.paymentMethods.creditCard", "Credit Card")}
                       </div>
                     </div>
                   )}

@@ -144,8 +144,8 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
       date: formatDate(order.created_at),
       orderNumber: order.order_number,
       clientName: fullName,
-      vat: "7039446120", // Static VAT number
-      address: fullAddress,
+      vat: "313046229500003 ", // Static VAT number
+      address: "شارع الأمير محمد بن عبد العزيز، حي الفيصلية، جدة",
       phone: order.address.phone,
       products: order.products.map((product) => ({
         id: product.id,

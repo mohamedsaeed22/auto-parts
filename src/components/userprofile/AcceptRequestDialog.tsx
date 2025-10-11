@@ -22,7 +22,6 @@ import {
   Plus,
   Check,
   CreditCard,
-  Wallet,
   ChevronRight,
   ChevronLeft,
 } from "lucide-react";
@@ -232,7 +231,7 @@ export default function AcceptRequestDialog({
   );
   const [showNewAddressForm, setShowNewAddressForm] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "credit_card">(
-    "cash"
+    "credit_card"
   );
 
   // React Hook Form with Zod validation
@@ -265,7 +264,7 @@ export default function AcceptRequestDialog({
       setStep(1);
       setSelectedAddressId(null);
       setShowNewAddressForm(false);
-      setPaymentMethod("cash");
+      setPaymentMethod("credit_card");
       reset();
     }
   }, [isOpen, reset]);
@@ -286,7 +285,7 @@ export default function AcceptRequestDialog({
     setStep(1);
     setSelectedAddressId(null);
     setShowNewAddressForm(false);
-    setPaymentMethod("cash");
+    setPaymentMethod("credit_card");
     reset();
   };
 
@@ -751,66 +750,6 @@ export default function AcceptRequestDialog({
               </h3>
 
               <div className="space-y-3">
-                {/* Cash Payment */}
-                <div
-                  className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
-                    paymentMethod === "cash"
-                      ? "border-[#b3984a] bg-[#b3984a]/5"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
-                  onClick={() => setPaymentMethod("cash")}
-                >
-                  <div
-                    className={`flex items-start justify-between ${
-                      isRTL ? "flex-row" : "flex-row"
-                    }`}
-                  >
-                    <div
-                      className={`flex items-start gap-4 ${
-                        isRTL ? "flex-row" : "flex-row"
-                      }`}
-                    >
-                      <div
-                        className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                          paymentMethod === "cash"
-                            ? "bg-[#b3984a] text-white"
-                            : "bg-gray-100 text-gray-600"
-                        }`}
-                      >
-                        <Wallet size={24} />
-                      </div>
-                      <div>
-                        <h4
-                          className={`font-medium text-gray-900 mb-1 ${
-                            isRTL ? "text-right" : "text-left"
-                          }`}
-                        >
-                          {t(
-                            "requests.acceptDialog.cashPayment",
-                            "Cash on Delivery"
-                          )}
-                        </h4>
-                        <p
-                          className={`text-sm text-gray-600 ${
-                            isRTL ? "text-right" : "text-left"
-                          }`}
-                        >
-                          {t(
-                            "requests.acceptDialog.cashDescription",
-                            "Pay with cash when your order is delivered"
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                    {paymentMethod === "cash" && (
-                      <Check
-                        size={20}
-                        className="text-[#b3984a] flex-shrink-0"
-                      />
-                    )}
-                  </div>
-                </div>
-
                 {/* Credit Card Payment */}
                 <div
                   className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
