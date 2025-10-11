@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useNotificationCount } from "@/services/api/notifications";
+import { useNotificationPollingService } from "@/hooks/useNotificationPollingService";
 
 interface NotificationContextType {
   unreadCount: number;
@@ -24,6 +25,17 @@ export function NotificationProvider({
   const queryClient = useQueryClient();
   const { isAuthenticated } = useAuth();
   const [unreadCount, setUnreadCount] = useState(0);
+
+  // Initialize notification polling with smart options
+  useNotificationPollingService({
+    baseInterval: 30000, // 30 seconds
+    maxInterval: 300000, // 5 minutes
+    useExponentialBackoff: true,
+    maxErrors: 5,
+    pollWhenHidden: false, // Don't poll when tab is hidden
+    pollWhenUnauthenticated: false, // Don't poll when not authenticated
+    autoStart: true,
+  });
 
   // Get notification count from API
   const { data: countData } = useNotificationCount();

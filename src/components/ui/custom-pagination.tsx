@@ -26,10 +26,11 @@ export function CustomPagination({
     setPage(newPage);
 
     // Scroll to top of the page when pagination changes
-    // Try to find the brand features section first (for brand pages), then products section, otherwise scroll to top of page
+    // Try to find the brand features section first (for brand pages), then breadcrumb (for products page), then products section, otherwise scroll to top of page
     const brandFeaturesSection = document.querySelector(
       "[data-brand-features]"
     );
+    const breadcrumbSection = document.querySelector("[data-breadcrumb]");
     const productsSection =
       document.querySelector("[data-products-section]") ||
       document.querySelector(".py-16.bg-gray-50") ||
@@ -38,6 +39,12 @@ export function CustomPagination({
     if (brandFeaturesSection) {
       // For brand pages, scroll to brand features section
       brandFeaturesSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    } else if (breadcrumbSection) {
+      // For products page, scroll to breadcrumb section
+      breadcrumbSection.scrollIntoView({
         behavior: "smooth",
         block: "start",
       });

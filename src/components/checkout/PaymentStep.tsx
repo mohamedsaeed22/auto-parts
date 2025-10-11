@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { CreditCard, ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import Image from "next/image";
 
 interface PaymentStepProps {
   paymentMethod: string;
@@ -66,13 +67,61 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {key === "credit_card" && selectedMethod === key && (
-                  <div className="flex items-center space-x-2">
-                    <div className="w-8 h-5 bg-blue-600 rounded text-white text-xs flex items-center justify-center font-bold">
-                      VISA
+                {key === "credit_card" && (
+                  <div className="flex items-center gap-1 sm:gap-2 flex-wrap justify-center sm:justify-start">
+                    {/* Visa */}
+                    <div className="w-10 h-6 sm:w-12 sm:h-8 relative">
+                      <Image
+                        src="/credit_card_imgs/Visa.png"
+                        alt="Visa"
+                        fill
+                        className="object-contain"
+                      />
                     </div>
-                    <div className="w-8 h-5 bg-red-600 rounded text-white text-xs flex items-center justify-center font-bold">
-                      MC
+                    {/* Mastercard */}
+                    <div className="w-10 h-6 sm:w-12 sm:h-8 relative">
+                      <Image
+                        src="/credit_card_imgs/MasterCard.png"
+                        alt="Mastercard"
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                    {/* PayPal */}
+                    <div className="w-10 h-6 sm:w-12 sm:h-8 relative">
+                      <Image
+                        src="/credit_card_imgs/paypal.png"
+                        alt="PayPal"
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                    {/* STC Pay */}
+                    <div className="w-10 h-6 sm:w-12 sm:h-8 relative">
+                      <Image
+                        src="/credit_card_imgs/stc-bank.png"
+                        alt="STC Pay"
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                    {/* Tabby */}
+                    <div className="w-10 h-6 sm:w-12 sm:h-8 relative">
+                      <Image
+                        src="/credit_card_imgs/tabby.jpg"
+                        alt="Tabby"
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                    {/* Tamara */}
+                    <div className="w-10 h-6 sm:w-12 sm:h-8 relative">
+                      <Image
+                        src="/credit_card_imgs/tamara.png"
+                        alt="Tamara"
+                        fill
+                        className="object-contain"
+                      />
                     </div>
                   </div>
                 )}

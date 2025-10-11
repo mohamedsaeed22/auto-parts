@@ -240,7 +240,7 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
               <div className="p-2 bg-logo-gold/20 rounded-lg">
                 <CreditCard className="w-5 h-5 text-logo-gold" />
               </div>
-              <div>
+              <div className="flex-1">
                 <p className="text-sm font-semibold text-logo-black">
                   {paymentMethod === "credit_card"
                     ? t("orderReview.creditCard")
@@ -271,6 +271,68 @@ const OrderReviewStep: React.FC<OrderReviewStepProps> = ({
                 </p>
               </div>
             </div>
+
+            {/* Payment Method Icons */}
+            {paymentMethod === "credit_card" && (
+              <div className="mt-4 pt-4 border-t border-logo-gold/10">
+                <div className="flex items-center gap-1 sm:gap-2 flex-wrap justify-center sm:justify-start">
+                  {/* Visa */}
+                  <div className="w-10 h-6 sm:w-12 sm:h-8 relative">
+                    <Image
+                      src="/credit_card_imgs/Visa.png"
+                      alt="Visa"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                  {/* Mastercard */}
+                  <div className="w-10 h-6 sm:w-12 sm:h-8 relative">
+                    <Image
+                      src="/credit_card_imgs/MasterCard.png"
+                      alt="Mastercard"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                  {/* PayPal */}
+                  <div className="w-10 h-6 sm:w-12 sm:h-8 relative">
+                    <Image
+                      src="/credit_card_imgs/paypal.png"
+                      alt="PayPal"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                  {/* STC Pay */}
+                  <div className="w-10 h-6 sm:w-12 sm:h-8 relative">
+                    <Image
+                      src="/credit_card_imgs/stc-bank.png"
+                      alt="STC Pay"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                  {/* Tabby */}
+                  <div className="w-10 h-6 sm:w-12 sm:h-8 relative">
+                    <Image
+                      src="/credit_card_imgs/tabby.jpg"
+                      alt="Tabby"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                  {/* Tamara */}
+                  <div className="w-10 h-6 sm:w-12 sm:h-8 relative">
+                    <Image
+                      src="/credit_card_imgs/tamara.png"
+                      alt="Tamara"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

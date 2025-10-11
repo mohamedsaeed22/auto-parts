@@ -131,7 +131,9 @@ export const useNotifications = (page: number = 1, perPage: number = 5) => {
     queryFn: () => getNotifications(page, perPage),
     enabled: !!storage.getToken(),
     staleTime: 30000, // 30 seconds
-    refetchOnWindowFocus: false, // Disable aggressive refetching
+    refetchOnWindowFocus: false, // Disable aggressive refetching (handled by polling)
+    refetchOnMount: true, // Always refetch when component mounts
+    refetchOnReconnect: true, // Refetch when network reconnects
     retry: (failureCount, error: Error | ApiError) => {
       // Don't retry on 401 errors (authentication issues)
       if (error instanceof ApiError && error.status === 401) {

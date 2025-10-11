@@ -496,6 +496,7 @@ export default function ProductsPage({
           className={`flex items-center gap-2 text-sm text-gray-500 mb-8 ${
             isRTL ? "flex-row" : ""
           }`}
+          data-breadcrumb
         >
           <button
             onClick={handleGoBack}

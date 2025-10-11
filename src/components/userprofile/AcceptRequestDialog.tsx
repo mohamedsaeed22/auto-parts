@@ -26,6 +26,7 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import type { Address } from "@/services/api/types";
+import Image from "next/image";
 
 interface AcceptRequestDialogProps {
   isOpen: boolean;
@@ -790,7 +791,7 @@ export default function AcceptRequestDialog({
                           )}
                         </h4>
                         <p
-                          className={`text-sm text-gray-600 ${
+                          className={`text-sm text-gray-600 mb-3 ${
                             isRTL ? "text-right" : "text-left"
                           }`}
                         >
@@ -799,6 +800,64 @@ export default function AcceptRequestDialog({
                             "Pay securely online with your credit card"
                           )}
                         </p>
+
+                        {/* Payment Method Icons */}
+                        <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+                          {/* Visa */}
+                          <div className="w-8 h-5 sm:w-10 sm:h-6 relative">
+                            <Image
+                              src="/credit_card_imgs/Visa.png"
+                              alt="Visa"
+                              fill
+                              className="object-contain"
+                            />
+                          </div>
+                          {/* Mastercard */}
+                          <div className="w-8 h-5 sm:w-10 sm:h-6 relative">
+                            <Image
+                              src="/credit_card_imgs/MasterCard.png"
+                              alt="Mastercard"
+                              fill
+                              className="object-contain"
+                            />
+                          </div>
+                          {/* PayPal */}
+                          <div className="w-8 h-5 sm:w-10 sm:h-6 relative">
+                            <Image
+                              src="/credit_card_imgs/paypal.png"
+                              alt="PayPal"
+                              fill
+                              className="object-contain"
+                            />
+                          </div>
+                          {/* STC Pay */}
+                          <div className="w-8 h-5 sm:w-10 sm:h-6 relative">
+                            <Image
+                              src="/credit_card_imgs/stc-bank.png"
+                              alt="STC Pay"
+                              fill
+                              className="object-contain"
+                            />
+                          </div>
+                          {/* Tabby */}
+                          <div className="w-8 h-5 sm:w-10 sm:h-6 relative">
+                            <Image
+                              src="/credit_card_imgs/tabby.jpg"
+                              alt="Tabby"
+                              fill
+                              className="object-contain"
+                            />
+                          </div>
+                          {/* Tamara */}
+                          <div className="w-8 h-5 sm:w-10 sm:h-6 relative">
+                            <Image
+                              src="/credit_card_imgs/tamara.png"
+                              alt="Tamara"
+                              fill
+                              className="object-contain"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                     {paymentMethod === "credit_card" && (
