@@ -6,6 +6,11 @@ import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { SEOMetadata } from "@/components/seo/SEOMetadata";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { seoConfig } from "@/lib/seo/config";
+import { useGetBrandsQuery } from "@/services/hooks";
+import { Brand } from "@/services/api/types";
+import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AlertCircle } from "lucide-react";
 import {
   Building2 as Building2Icon,
   Users as UsersIcon,
@@ -353,48 +358,163 @@ const ProductCategories = ({ t }: { t: (key: string) => string }) => (
 );
 
 // Supported Brands Component
-const SupportedBrands = ({ t }: { t: (key: string) => string }) => (
-  <div className="py-16 bg-[var(--muted)]">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold text-[var(--foreground)] mb-4">
-          {t("brands.title")}
-        </h2>
-        <p className="text-lg text-[var(--muted-foreground)] max-w-3xl mx-auto">
-          {t("brands.subtitle")}
-        </p>
-      </div>
+const SupportedBrands = ({ t }: { t: (key: string) => string }) => {
+  // Fetch brands from API
+  const {
+    data: brandsResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useGetBrandsQuery({
+    per_page: 12, // Limit to 12 brands for the about page
+  });
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
-        {[
-          "GEELY",
-          "CHANGAN",
-          "BAIC",
-          "CHERY",
-          "FAW",
-          "HYUNDAI",
-          "KIA MOTORS",
-          "JETOUR",
-          "HAVAL",
-        ].map((brand, index) => (
-          <div
-            key={index}
-            className="bg-[var(--card)] rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow flex items-center justify-center border-[var(--border)]"
-          >
-            <div className="text-center">
-              <div className="w-16 h-16 bg-logo-gold/15 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Building2Icon className="h-8 w-8 text-logo-gold" />
-              </div>
-              <h3 className="font-bold text-[var(--foreground)] text-sm">
-                {brand}
-              </h3>
-            </div>
+  const brands = brandsResponse?.data?.items || [];
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="py-16 bg-[var(--muted)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-[var(--foreground)] mb-4">
+              {t("brands.title")}
+            </h2>
+            <p className="text-lg text-[var(--muted-foreground)] max-w-3xl mx-auto">
+              {t("brands.subtitle")}
+            </p>
           </div>
-        ))}
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+            {[...Array(8)].map((_, index) => (
+              <div
+                key={index}
+                className="bg-[var(--card)] rounded-lg p-6 shadow-sm border-[var(--border)]"
+              >
+                <div className="text-center">
+                  <Skeleton className="w-16 h-16 rounded-full mx-auto mb-3" />
+                  <Skeleton className="w-20 h-4 mx-auto" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="py-16 bg-[var(--muted)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-[var(--foreground)] mb-4">
+              {t("brands.title")}
+            </h2>
+            <p className="text-lg text-[var(--muted-foreground)] max-w-3xl mx-auto">
+              {t("brands.subtitle")}
+            </p>
+          </div>
+
+          <div className="text-center py-12">
+            <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-[var(--foreground)] mb-2">
+              {t("brands.error.title", "Failed to load brands")}
+            </h3>
+            <p className="text-[var(--muted-foreground)] mb-6">
+              {t(
+                "brands.error.desc",
+                "Unable to load brand information. Please try again later."
+              )}
+            </p>
+            <button
+              onClick={() => refetch()}
+              className="bg-logo-gold text-white px-6 py-2 rounded-lg hover:bg-amber-600 transition-colors"
+            >
+              {t("brands.error.retry", "Try Again")}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="py-16 bg-[var(--muted)]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-[var(--foreground)] mb-4">
+            {t("brands.title")}
+          </h2>
+          <p className="text-lg text-[var(--muted-foreground)] max-w-3xl mx-auto">
+            {t("brands.subtitle")}
+          </p>
+        </div>
+
+        {brands.length === 0 ? (
+          <div className="text-center py-12">
+            <Building2Icon className="h-16 w-16 text-[var(--muted-foreground)] mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-[var(--foreground)] mb-2">
+              {t("brands.empty.title", "No brands available")}
+            </h3>
+            <p className="text-[var(--muted-foreground)]">
+              {t(
+                "brands.empty.desc",
+                "Check back later for brand information."
+              )}
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+            {brands.map((brand: Brand) => (
+              <div
+                key={brand.id}
+                className="bg-[var(--card)] rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow flex items-center justify-center border-[var(--border)] group"
+              >
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-logo-gold/15 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-logo-gold/20 transition-colors">
+                    {brand.image ? (
+                      <div className="w-12 h-12 relative">
+                        <Image
+                          src={brand.image}
+                          alt={brand.name}
+                          fill
+                          className="object-contain rounded-full"
+                          onError={(e) => {
+                            // Fallback to icon if image fails to load
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = "none";
+                            const parent = target.parentElement;
+                            if (parent) {
+                              parent.innerHTML =
+                                '<Building2Icon className="h-8 w-8 text-logo-gold" />';
+                            }
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <Building2Icon className="h-8 w-8 text-logo-gold" />
+                    )}
+                  </div>
+                  <h3 className="font-bold text-[var(--foreground)] text-sm group-hover:text-logo-gold transition-colors">
+                    {brand.name}
+                  </h3>
+                  {brand.number_of_products && (
+                    <p className="text-xs text-[var(--muted-foreground)] mt-1">
+                      {brand.number_of_products}{" "}
+                      {t("brands.products", "products")}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 // Team Section Component
 const TeamSection = ({ t }: { t: (key: string) => string }) => (
