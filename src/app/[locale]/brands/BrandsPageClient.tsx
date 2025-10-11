@@ -377,7 +377,9 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
         </nav>
 
         {/* Brand Features */}
-        <BrandFeatures isRTL={isRTL} t={t} />
+        <div data-brand-features>
+          <BrandFeatures isRTL={isRTL} t={t} />
+        </div>
 
         {/* Brands Count */}
         <div className={`mb-8 ${isRTL ? "text-right" : "text-left"}`}>
