@@ -47,7 +47,19 @@ const ImageDialog: React.FC<ImageDialogProps> = ({
   const handleDownload = () => {
     const link = document.createElement("a");
     link.href = imageUrl;
-    link.download = `${title}.${imageUrl.split(".").pop() || "jpg"}`;
+
+    // Handle data URLs properly
+    if (imageUrl.startsWith("data:")) {
+      // For data URLs, use a clean filename based on the title
+      const cleanTitle = title
+        .replace(/[^a-zA-Z0-9\u0600-\u06FF\s]/g, "")
+        .replace(/\s+/g, "_");
+      link.download = `${cleanTitle}.png`;
+    } else {
+      // For regular URLs, try to extract extension
+      link.download = `${title}.${imageUrl.split(".").pop() || "jpg"}`;
+    }
+
     link.target = "_blank";
     document.body.appendChild(link);
     link.click();

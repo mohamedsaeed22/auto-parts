@@ -4,11 +4,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { useTranslation } from "react-i18next";
 import ImageDialog from "./ImageDialog";
+import QRCode from "qrcode";
 
 const Footer = () => {
   const { t } = useTranslation("footer");
   const [isCommerceImageOpen, setIsCommerceImageOpen] = useState(false);
   const [isVatImageOpen, setIsVatImageOpen] = useState(false);
+  const [isQrCodeOpen, setIsQrCodeOpen] = useState(false);
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
 
   const handleCommerceClick = () => {
     setIsCommerceImageOpen(true);
@@ -21,6 +24,29 @@ const Footer = () => {
   const handleValidateClick = () => {
     window.open("https://business.sa/", "_blank");
   };
+
+  const handleQrCodeClick = () => {
+    setIsQrCodeOpen(true);
+  };
+
+  // Generate QR Code for bank account
+  React.useEffect(() => {
+    const accountNumber = "SA2310000061700000871701";
+    QRCode.toDataURL(accountNumber, {
+      width: 160,
+      margin: 1,
+      errorCorrectionLevel: "M",
+      color: {
+        dark: "#b9974d", // Golden color to match the theme
+        light: "#FFFFFF",
+      },
+    })
+      .then(setQrCodeUrl)
+      .catch((error) => {
+        console.error("Error generating QR code:", error);
+        setQrCodeUrl("");
+      });
+  }, []);
 
   return (
     <footer className="bg-gray-900 text-white py-16">
@@ -214,15 +240,6 @@ const Footer = () => {
                   className="rounded shadow-sm hover:shadow-md transition-shadow"
                 />
               </div>
-
-              <div className="text-white">
-                <div className="text-xs font-medium text-gray-300">
-                  {t("certificates.taxNumber")}
-                </div>
-                <div className="text-sm font-bold text-[#b9974d]">
-                  7039446120
-                </div>
-              </div>
             </div>
 
             {/* Validate Certificate */}
@@ -246,16 +263,32 @@ const Footer = () => {
                 src="/snb.png"
                 alt="SNB Bank"
                 width={80}
-                height={170}
+                height={50}
                 className="rounded shadow-sm"
               />
-              <div>
-                <div className="text-xs font-medium text-gray-300">
-                  {t("certificates.bankAccount")}
-                </div>
-                <div className="flex items-center gap-3 text-sm font-bold text-[#b9974d]">
-                  <span>SA2310000061700000871701</span>
-                </div>
+              <div className="flex flex-col items-center gap-2">
+                {/* <div className="text-xs font-medium text-gray-300 text-center">
+                    {t("certificates.bankAccount")}
+                  </div> */}
+                {qrCodeUrl ? (
+                  <div
+                    className="cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={handleQrCodeClick}
+                    title="انقر لعرض رمز QR للحساب البنكي"
+                  >
+                    <Image
+                      src={qrCodeUrl}
+                      alt="QR Code for Bank Account"
+                      width={50}
+                      height={50}
+                      className="rounded shadow-sm hover:shadow-md transition-shadow"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-20 h-20 rounded shadow-sm bg-gray-200 flex items-center justify-center">
+                    <div className="text-xs text-gray-500">Loading...</div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -286,6 +319,14 @@ const Footer = () => {
         imageUrl="/vat-image.jpg"
         title="VAT Certificate"
         alt="VAT Certificate"
+      />
+
+      <ImageDialog
+        isOpen={isQrCodeOpen}
+        onClose={() => setIsQrCodeOpen(false)}
+        imageUrl={qrCodeUrl}
+        title="رمز QR للحساب البنكي"
+        alt="QR Code for Bank Account"
       />
     </footer>
   );
