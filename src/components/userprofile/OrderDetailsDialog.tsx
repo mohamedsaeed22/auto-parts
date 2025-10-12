@@ -219,6 +219,31 @@ export default function OrderDetailsDialog({
                 </h3>
 
                 <div className="space-y-2.5">
+                  {/* Subtotal breakdown */}
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-600">
+                      {t("orders.subtotalWithoutTax", "Subtotal (excl. tax)")}
+                    </span>
+                    <span className="font-semibold text-gray-900">
+                      {orderDetails.pricing.subtotal_without_tax ||
+                        orderDetails.pricing.subtotal}{" "}
+                      {isCurrentRTL ? "ر.س" : "SAR"}
+                    </span>
+                  </div>
+
+                  {orderDetails.pricing.subtotal_tax &&
+                    orderDetails.pricing.subtotal_tax > 0 && (
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-600">
+                          {t("orders.subtotalTax", "Subtotal Tax")}
+                        </span>
+                        <span className="font-semibold text-gray-900">
+                          {orderDetails.pricing.subtotal_tax!}{" "}
+                          {isCurrentRTL ? "ر.س" : "SAR"}
+                        </span>
+                      </div>
+                    )}
+
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-600">
                       {t("orders.subtotal")}
@@ -240,6 +265,31 @@ export default function OrderDetailsDialog({
                       </span>
                     </div>
                   )}
+
+                  {/* Shipping breakdown */}
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-600">
+                      {t("orders.shippingWithoutTax", "Shipping (excl. tax)")}
+                    </span>
+                    <span className="font-semibold text-gray-900">
+                      {orderDetails.pricing.shipping_cost_without_tax ||
+                        orderDetails.pricing.shipping_cost}{" "}
+                      {isCurrentRTL ? "ر.س" : "SAR"}
+                    </span>
+                  </div>
+
+                  {orderDetails.pricing.shipping_cost_tax &&
+                    orderDetails.pricing.shipping_cost_tax > 0 && (
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-600">
+                          {t("orders.shippingTax", "Shipping Tax")}
+                        </span>
+                        <span className="font-semibold text-gray-900">
+                          {orderDetails.pricing.shipping_cost_tax!}{" "}
+                          {isCurrentRTL ? "ر.س" : "SAR"}
+                        </span>
+                      </div>
+                    )}
 
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-600">
@@ -287,6 +337,21 @@ export default function OrderDetailsDialog({
                           <p className="text-sm font-bold text-green-700 font-mono">
                             {orderDetails.coupon.code}
                           </p>
+                          {orderDetails.coupon.details && (
+                            <div className="mt-1">
+                              <p className="text-xs text-green-600">
+                                {orderDetails.coupon.details.name}
+                              </p>
+                              <p className="text-xs text-green-500">
+                                {orderDetails.coupon.details.type ===
+                                "percentage"
+                                  ? `${orderDetails.coupon.details.value}% OFF`
+                                  : `${orderDetails.coupon.details.value} ${
+                                      isCurrentRTL ? "ر.س" : "SAR"
+                                    } OFF`}
+                              </p>
+                            </div>
+                          )}
                         </div>
                       </div>
                       <span className="text-lg font-bold text-green-700">
@@ -308,7 +373,7 @@ export default function OrderDetailsDialog({
               </h3>
 
               <div className="space-y-3">
-                {orderDetails.products.map((product, index) => (
+                {orderDetails.products.map((product) => (
                   <div
                     key={product.id}
                     className="border border-gray-200 rounded-lg p-4 hover:border-primary/40 hover:shadow-sm transition-all bg-gray-50/50"
@@ -354,10 +419,17 @@ export default function OrderDetailsDialog({
                             <span className="text-gray-500">
                               {t("orders.unitPrice", "Unit Price")}:
                             </span>
-                            <span className="font-semibold text-gray-900">
-                              {product.final_unit_price}{" "}
-                              {isCurrentRTL ? "ر.س" : "SAR"}
-                            </span>
+                            <div className="flex items-center gap-2">
+                              {product.price !== product.final_unit_price && (
+                                <span className="text-sm text-gray-400 line-through">
+                                  {product.price} {isCurrentRTL ? "ر.س" : "SAR"}
+                                </span>
+                              )}
+                              <span className="font-semibold text-gray-900">
+                                {product.final_unit_price}{" "}
+                                {isCurrentRTL ? "ر.س" : "SAR"}
+                              </span>
+                            </div>
                           </div>
 
                           {product.discount_percentage > 0 && (
@@ -376,10 +448,10 @@ export default function OrderDetailsDialog({
                       {/* Product Total */}
                       <div className="text-right flex-shrink-0">
                         <p className="text-xs text-gray-500 mb-1">
-                          {t("orders.lineTotal", "Total")}
+                          {t("orders.lineTotal", "Line Total")}
                         </p>
                         <p className="text-xl font-bold text-primary">
-                          {product.total}
+                          {product.line_total || product.total}
                         </p>
                         <p className="text-sm font-medium text-primary">
                           {isCurrentRTL ? "ر.س" : "SAR"}
@@ -391,6 +463,13 @@ export default function OrderDetailsDialog({
                             {isCurrentRTL ? "ر.س" : "SAR"}
                           </p>
                         )}
+                        {product.line_total &&
+                          product.line_total !== product.total && (
+                            <p className="text-xs text-gray-500 mt-1">
+                              {t("orders.itemTotal", "Item Total")}:{" "}
+                              {product.total}
+                            </p>
+                          )}
                       </div>
                     </div>
                   </div>
@@ -402,7 +481,10 @@ export default function OrderDetailsDialog({
             {(orderDetails.tracking_number ||
               orderDetails.notes ||
               orderDetails.can_be_cancelled ||
-              orderDetails.can_be_refunded) && (
+              orderDetails.can_be_refunded ||
+              orderDetails.paid_at ||
+              orderDetails.shipped_at ||
+              orderDetails.delivered_at) && (
               <div className="bg-white border border-gray-200 rounded-lg p-5">
                 <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                   <Truck size={20} className="text-primary" />
@@ -410,6 +492,64 @@ export default function OrderDetailsDialog({
                 </h3>
 
                 <div className="space-y-3">
+                  {/* Order Timestamps */}
+                  {(orderDetails.paid_at ||
+                    orderDetails.shipped_at ||
+                    orderDetails.delivered_at) && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                      {orderDetails.paid_at && (
+                        <div className="flex items-center gap-3 p-3 bg-emerald-50 rounded-lg border-l-4 border-emerald-500">
+                          <CreditCard
+                            size={16}
+                            className="text-emerald-600 flex-shrink-0"
+                          />
+                          <div>
+                            <p className="text-xs text-emerald-600 font-semibold uppercase tracking-wide">
+                              {t("orders.paidAt", "Paid At")}
+                            </p>
+                            <p className="text-sm font-semibold text-emerald-900">
+                              {formatDate(orderDetails.paid_at)}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {orderDetails.shipped_at && (
+                        <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg border-l-4 border-purple-500">
+                          <Truck
+                            size={16}
+                            className="text-purple-600 flex-shrink-0"
+                          />
+                          <div>
+                            <p className="text-xs text-purple-600 font-semibold uppercase tracking-wide">
+                              {t("orders.shippedAt", "Shipped At")}
+                            </p>
+                            <p className="text-sm font-semibold text-purple-900">
+                              {formatDate(orderDetails.shipped_at)}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {orderDetails.delivered_at && (
+                        <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg border-l-4 border-green-500">
+                          <CheckCircle
+                            size={16}
+                            className="text-green-600 flex-shrink-0"
+                          />
+                          <div>
+                            <p className="text-xs text-green-600 font-semibold uppercase tracking-wide">
+                              {t("orders.deliveredAt", "Delivered At")}
+                            </p>
+                            <p className="text-sm font-semibold text-green-900">
+                              {formatDate(orderDetails.delivered_at)}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   {/* Tracking Number */}
                   {orderDetails.tracking_number && (
                     <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">

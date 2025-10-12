@@ -76,9 +76,13 @@ export interface Order {
   };
   pricing: {
     subtotal: number;
+    subtotal_without_tax?: number;
+    subtotal_tax?: number;
     discount_amount: number;
     tax_amount: number;
     shipping_cost: number;
+    shipping_cost_without_tax?: number;
+    shipping_cost_tax?: number;
     total: number;
     grand_total?: number; // Optional - not always present in list response
     currency: string;
@@ -192,9 +196,13 @@ export interface DetailedOrder {
   };
   pricing: {
     subtotal: number;
+    subtotal_without_tax?: number;
+    subtotal_tax?: number;
     discount_amount: number;
     tax_amount: number;
     shipping_cost: number;
+    shipping_cost_without_tax?: number;
+    shipping_cost_tax?: number;
     total: number;
     grand_total: number;
     currency: string;
