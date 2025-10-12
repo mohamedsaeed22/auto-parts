@@ -31,7 +31,8 @@ const Footer = () => {
 
   // Generate QR Code for bank account
   React.useEffect(() => {
-    const accountNumber = "SA2310000061700000871701";
+    const accountNumber =
+      "https://indd.adobe.com/view/34c2d2ae-eba4-4c0b-a234-b1741693d49e";
     QRCode.toDataURL(accountNumber, {
       width: 160,
       margin: 1,
@@ -205,90 +206,161 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Business Certificates Section - Full Width Row */}
+        {/* Business Certificates & Payment Methods Section - Full Width Row */}
         <div className="mt-12 pt-8 border-t border-gray-700">
-          <h3 className="font-bold text-lg mb-6 text-[#b9974d] text-center">
-            {t("certificates.title")}
-          </h3>
-          <div className="flex flex-wrap justify-center items-center gap-6 md:gap-8">
-            {/* Commerce Certificate */}
-            <div
-              className="cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={handleVatClick}
-              title={t("certificates.vat.tooltip")}
-            >
-              <Image
-                src="/vat.png"
-                alt={t("certificates.vat.title")}
-                width={50}
-                height={50}
-                className="rounded shadow-sm hover:shadow-md transition-shadow"
-              />
-            </div>
-            {/* VAT Certificate with Tax Number */}
-            <div className="flex items-center gap-3">
-              <div
-                className="cursor-pointer hover:opacity-80 transition-opacity"
-                onClick={handleCommerceClick}
-                title={t("certificates.commerce.tooltip")}
-              >
-                <Image
-                  src="/commerce.png"
-                  alt={t("certificates.commerce.title")}
-                  width={50}
-                  height={50}
-                  className="rounded shadow-sm hover:shadow-md transition-shadow"
-                />
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+            {/* Right Side - Payment Methods */}
+            <div className="flex flex-col items-center">
+              <h3 className="font-bold text-lg mb-6 text-[#b9974d] text-center">
+                {t("paymentMethods.title")}
+              </h3>
+              <div className="flex flex-wrap justify-center lg:justify-end items-center gap-3 md:gap-4">
+                {/* Visa */}
+                <div className="cursor-pointer hover:opacity-80 transition-opacity">
+                  <Image
+                    src="/credit_card_imgs/Visa.png"
+                    alt="Visa"
+                    width={60}
+                    height={40}
+                    className="rounded shadow-sm hover:shadow-md transition-shadow"
+                  />
+                </div>
+                {/* MasterCard */}
+                <div className="cursor-pointer hover:opacity-80 transition-opacity">
+                  <Image
+                    src="/credit_card_imgs/MasterCard.png"
+                    alt="MasterCard"
+                    width={60}
+                    height={40}
+                    className="rounded shadow-sm hover:shadow-md transition-shadow"
+                  />
+                </div>
+                {/* PayPal */}
+                <div className="cursor-pointer hover:opacity-80 transition-opacity">
+                  <Image
+                    src="/credit_card_imgs/paypal.png"
+                    alt="PayPal"
+                    width={60}
+                    height={40}
+                    className="rounded shadow-sm hover:shadow-md transition-shadow"
+                  />
+                </div>
+                {/* STC Bank */}
+                <div className="cursor-pointer hover:opacity-80 transition-opacity">
+                  <Image
+                    src="/credit_card_imgs/stc-bank.png"
+                    alt="STC Bank"
+                    width={60}
+                    height={40}
+                    className="rounded shadow-sm hover:shadow-md transition-shadow"
+                  />
+                </div>
+                {/* Mada */}
+                <div className="cursor-pointer hover:opacity-80 transition-opacity">
+                  <Image
+                    src="/credit_card_imgs/Mada.jpg"
+                    alt="Mada"
+                    width={60}
+                    height={40}
+                    className="rounded shadow-sm hover:shadow-md transition-shadow"
+                  />
+                </div>
+                {/* Tabby */}
+                <div className="cursor-pointer hover:opacity-80 transition-opacity">
+                  <Image
+                    src="/credit_card_imgs/tabby.jpg"
+                    alt="Tabby"
+                    width={60}
+                    height={40}
+                    className="rounded shadow-sm hover:shadow-md transition-shadow"
+                  />
+                </div>
+                {/* Tamara */}
+                <div className="cursor-pointer hover:opacity-80 transition-opacity">
+                  <Image
+                    src="/credit_card_imgs/tamara.png"
+                    alt="Tamara"
+                    width={60}
+                    height={40}
+                    className="rounded shadow-sm hover:shadow-md transition-shadow"
+                  />
+                </div>
               </div>
             </div>
+            {/* Left Side - Business Certificates */}
+            <div className="flex flex-col items-center">
+              <h3 className="font-bold text-lg mb-6 text-[#b9974d] text-center">
+                {t("certificates.title")}
+              </h3>
+              <div className="flex flex-wrap justify-center lg:justify-start items-center gap-4 md:gap-6">
+                {/* Commerce Certificate */}
+                <div
+                  className="cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={handleVatClick}
+                  title={t("certificates.vat.tooltip")}
+                >
+                  <Image
+                    src="/vat.png"
+                    alt={t("certificates.vat.title")}
+                    width={50}
+                    height={50}
+                    className="rounded shadow-sm hover:shadow-md transition-shadow"
+                  />
+                </div>
+                {/* VAT Certificate with Tax Number */}
+                <div
+                  className="cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={handleCommerceClick}
+                  title={t("certificates.commerce.tooltip")}
+                >
+                  <Image
+                    src="/commerce.png"
+                    alt={t("certificates.commerce.title")}
+                    width={50}
+                    height={50}
+                    className="rounded shadow-sm hover:shadow-md transition-shadow"
+                  />
+                </div>
 
-            {/* Validate Certificate */}
-            <div
-              className="cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={handleValidateClick}
-              title={t("certificates.validate.tooltip")}
-            >
-              <Image
-                src="/validate.jpg"
-                alt={t("certificates.validate.title")}
-                width={70}
-                height={60}
-                className="rounded shadow-sm hover:shadow-md transition-shadow"
-              />
-            </div>
+                {/* Validate Certificate */}
+                <div
+                  className="cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={handleValidateClick}
+                  title={t("certificates.validate.tooltip")}
+                >
+                  <Image
+                    src="/validate.jpg"
+                    alt={t("certificates.validate.title")}
+                    width={70}
+                    height={60}
+                    className="rounded shadow-sm hover:shadow-md transition-shadow"
+                  />
+                </div>
 
-            {/* Bank IBAN Info */}
-            <div className="text-white flex gap-3">
-              <Image
-                src="/snb.png"
-                alt="SNB Bank"
-                width={80}
-                height={50}
-                className="rounded shadow-sm"
-              />
-              <div className="flex flex-col items-center gap-2">
-                {/* <div className="text-xs font-medium text-gray-300 text-center">
-                    {t("certificates.bankAccount")}
-                  </div> */}
-                {qrCodeUrl ? (
-                  <div
-                    className="cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={handleQrCodeClick}
-                    title="انقر لعرض رمز QR للحساب البنكي"
-                  >
-                    <Image
-                      src={qrCodeUrl}
-                      alt="QR Code for Bank Account"
-                      width={50}
-                      height={50}
-                      className="rounded shadow-sm hover:shadow-md transition-shadow"
-                    />
+                {/* Bank IBAN Info */}
+                <div className="text-white">
+                  <div className="flex flex-col items-center gap-2">
+                    {qrCodeUrl ? (
+                      <div
+                        className="cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={handleQrCodeClick}
+                        title="SNB Bank QR Code"
+                      >
+                        <Image
+                          src={qrCodeUrl}
+                          alt="SNB Bank QR Code"
+                          width={50}
+                          height={50}
+                          className="rounded shadow-sm hover:shadow-md transition-shadow"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-20 h-20 rounded shadow-sm bg-gray-200 flex items-center justify-center">
+                        <div className="text-xs text-gray-500">Loading...</div>
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <div className="w-20 h-20 rounded shadow-sm bg-gray-200 flex items-center justify-center">
-                    <div className="text-xs text-gray-500">Loading...</div>
-                  </div>
-                )}
+                </div>
               </div>
             </div>
           </div>
@@ -325,7 +397,7 @@ const Footer = () => {
         isOpen={isQrCodeOpen}
         onClose={() => setIsQrCodeOpen(false)}
         imageUrl={qrCodeUrl}
-        title="رمز QR للحساب البنكي"
+        title="SNB Bank QR Code"
         alt="QR Code for Bank Account"
       />
     </footer>

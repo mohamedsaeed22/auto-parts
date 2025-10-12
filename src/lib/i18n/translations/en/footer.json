@@ -61,6 +61,9 @@
     "taxNumber": "Commercial registration number",
     "bankAccount": "Bank Account Number"
   },
+  "paymentMethods": {
+    "title": "Payment Methods"
+  },
   "companyName": "Fal Future Auto Parts",
   "copyright": "All rights reserved"
 }

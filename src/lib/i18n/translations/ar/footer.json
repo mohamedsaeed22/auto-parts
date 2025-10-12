@@ -61,6 +61,9 @@
     "taxNumber": "رقم السجل التجارى",
     "bankAccount": "رقم الحساب المصرفي"
   },
+  "paymentMethods": {
+    "title": "طرق الدفع"
+  },
   "companyName": "فال بارتس لقطع السيارات",
   "copyright": "جميع الحقوق محفوظة"
 }
