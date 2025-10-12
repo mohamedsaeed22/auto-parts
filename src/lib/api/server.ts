@@ -18,7 +18,7 @@ export async function fetchProductById(id: string | number, locale?: string) {
     }
 
     const data = await response.json();
-    return data.data || null;
+    return data.data?.product || null;
   } catch (error) {
     return null;
   }

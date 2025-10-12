@@ -1,64 +1,77 @@
-"use client";
-
 import React from "react";
-import HeroSwiper from "@/components/swiper/HeroSwiper";
-import Brands from "@/components/brand/Brands";
-import OffersSwiper from "@/components/offers/OffersSwiper";
-import ProductsList from "@/components/product/ProductsList";
-import SectionsContainer from "@/components/section/SectionsContainer";
-import CategoriesSection from "@/components/sections/CategoriesSection";
-import Partners from "@/components/partners/Partners";
-import { useScrollToTop } from "@/hooks/useScrollToTop";
-import { SEOMetadata } from "@/components/seo/SEOMetadata";
-import { StructuredData } from "@/components/seo/StructuredData";
 import { seoConfig } from "@/lib/seo/config";
-import PaymentAlert from "@/components/payment/PaymentAlert";
+import { Metadata } from "next";
+import HomePageClient from "./HomePageClient";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+
+  return {
+    title: seoConfig.defaultMetadata.home.title[locale as "en" | "ar"],
+    description:
+      seoConfig.defaultMetadata.home.description[locale as "en" | "ar"],
+    keywords: seoConfig.company.keywords[locale as "en" | "ar"].join(", "),
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
+    openGraph: {
+      type: "website",
+      title: seoConfig.defaultMetadata.home.title[locale as "en" | "ar"],
+      description:
+        seoConfig.defaultMetadata.home.description[locale as "en" | "ar"],
+      url: seoConfig.siteUrl,
+      siteName: seoConfig.company.name,
+      images: [
+        {
+          url: `${seoConfig.siteUrl}/og-image.jpg`,
+          width: 1200,
+          height: 630,
+          alt: seoConfig.defaultMetadata.home.title[locale as "en" | "ar"],
+        },
+      ],
+      locale: locale === "ar" ? "ar_SA" : "en_US",
+    },
+    twitter: {
+      card: "summary_large_image",
+      site: seoConfig.twitter.site,
+      creator: seoConfig.twitter.creator,
+      title: seoConfig.defaultMetadata.home.title[locale as "en" | "ar"],
+      description:
+        seoConfig.defaultMetadata.home.description[locale as "en" | "ar"],
+      images: [`${seoConfig.siteUrl}/og-image.jpg`],
+    },
+    alternates: {
+      canonical: seoConfig.siteUrl,
+      languages: {
+        ar: seoConfig.siteUrl,
+        en: `${seoConfig.siteUrl}/en`,
+      },
+    },
+    other: {
+      "og:image:width": "1200",
+      "og:image:height": "630",
+      "og:image:alt":
+        seoConfig.defaultMetadata.home.title[locale as "en" | "ar"],
+    },
+  };
+}
 
 export default function Home({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  // Scroll to top when page loads
-  useScrollToTop();
-
-  const { locale } = React.use(params);
-
-  return (
-    <div>
-      <SEOMetadata
-        title={seoConfig.defaultMetadata.home.title[locale as "en" | "ar"]}
-        description={
-          seoConfig.defaultMetadata.home.description[locale as "en" | "ar"]
-        }
-        keywords={seoConfig.company.keywords[locale as "en" | "ar"].join(", ")}
-        locale={locale}
-        type="website"
-      />
-
-      <StructuredData
-        type="website"
-        data={{
-          name: seoConfig.company.name,
-          description: seoConfig.company.description[locale as "en" | "ar"],
-          url: seoConfig.siteUrl,
-        }}
-        locale={locale}
-      />
-
-      <main className="min-h-screen mt-10">
-        <div className="container mx-auto">
-          <HeroSwiper />
-          <Brands />
-          <OffersSwiper />
-          <CategoriesSection />
-          <SectionsContainer />
-          <ProductsList />
-          <Partners />
-        </div>
-      </main>
-
-      <PaymentAlert />
-    </div>
-  );
+  return <HomePageClient params={params} />;
 }
