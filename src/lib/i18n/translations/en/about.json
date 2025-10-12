@@ -89,6 +89,7 @@
     "title": "Supported Brands",
     "subtitle": "We work with the best global brands",
     "products": "products",
+    "noProducts": "no products",
     "error": {
       "title": "Failed to load brands",
       "desc": "Unable to load brand information. Please try again later.",

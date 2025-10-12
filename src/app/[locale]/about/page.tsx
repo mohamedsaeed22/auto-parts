@@ -420,19 +420,16 @@ const SupportedBrands = ({ t }: { t: (key: string) => string }) => {
           <div className="text-center py-12">
             <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-[var(--foreground)] mb-2">
-              {t("brands.error.title", "Failed to load brands")}
+              {t("brands.error.title")}
             </h3>
             <p className="text-[var(--muted-foreground)] mb-6">
-              {t(
-                "brands.error.desc",
-                "Unable to load brand information. Please try again later."
-              )}
+              {t("brands.error.desc")}
             </p>
             <button
               onClick={() => refetch()}
               className="bg-logo-gold text-white px-6 py-2 rounded-lg hover:bg-amber-600 transition-colors"
             >
-              {t("brands.error.retry", "Try Again")}
+              {t("brands.error.retry")}
             </button>
           </div>
         </div>
@@ -456,13 +453,10 @@ const SupportedBrands = ({ t }: { t: (key: string) => string }) => {
           <div className="text-center py-12">
             <Building2Icon className="h-16 w-16 text-[var(--muted-foreground)] mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-[var(--foreground)] mb-2">
-              {t("brands.empty.title", "No brands available")}
+              {t("brands.empty.title")}
             </h3>
             <p className="text-[var(--muted-foreground)]">
-              {t(
-                "brands.empty.desc",
-                "Check back later for brand information."
-              )}
+              {t("brands.empty.desc")}
             </p>
           </div>
         ) : (
@@ -500,12 +494,15 @@ const SupportedBrands = ({ t }: { t: (key: string) => string }) => {
                   <h3 className="font-bold text-[var(--foreground)] text-sm group-hover:text-logo-gold transition-colors">
                     {brand.name}
                   </h3>
-                  {brand.number_of_products && (
-                    <p className="text-xs text-[var(--muted-foreground)] mt-1">
-                      {brand.number_of_products}{" "}
-                      {t("brands.products", "products")}
-                    </p>
-                  )}
+                  <p className="text-xs text-[var(--muted-foreground)] mt-1">
+                    {(brand.number_of_products ?? 0) > 0 ? (
+                      <>
+                        {brand.number_of_products} {t("brands.products")}
+                      </>
+                    ) : (
+                      t("brands.noProducts")
+                    )}
+                  </p>
                 </div>
               </div>
             ))}
