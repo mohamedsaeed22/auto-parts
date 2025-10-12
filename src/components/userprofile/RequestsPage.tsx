@@ -32,6 +32,7 @@ import { useLocale } from "@/hooks/useLocale";
 import { redirectToCompleteRegistration } from "@/lib/registrationRedirect";
 import AcceptRequestDialog from "./AcceptRequestDialog";
 import RejectConfirmDialog from "./RejectConfirmDialog";
+import RequestPdfViewer from "@/components/requests/RequestPdfViewer";
 import type { ApproveRequestRequest } from "@/services/api/requestsApi";
 import { showSuccess, showError } from "@/lib/toast";
 
@@ -121,6 +122,11 @@ export default function RequestsPage() {
   const [isAcceptDialogOpen, setIsAcceptDialogOpen] = useState(false);
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
   const [pendingRequestId, setPendingRequestId] = useState<number | null>(null);
+
+  // State for request PDF viewer
+  const [selectedRequestForPdf, setSelectedRequestForPdf] =
+    useState<RequestResponse | null>(null);
+  const [isPdfDialogOpen, setIsPdfDialogOpen] = useState(false);
 
   console.log("RequestsPage - Response:", requestsResponse);
   console.log("RequestsPage - Error:", error);
@@ -327,6 +333,12 @@ export default function RequestsPage() {
       router,
       currentLocale
     );
+  };
+
+  // Handle view request PDF
+  const handleViewPdf = (request: RequestResponse) => {
+    setSelectedRequestForPdf(request);
+    setIsPdfDialogOpen(true);
   };
 
   // Check if registration is complete, if not show informative message
@@ -587,8 +599,24 @@ export default function RequestsPage() {
                       {formatDate(request.created_at)}
                     </div>
                   </div>
-                  <div className="text-sm font-mono text-gray-600">
-                    #{request.id}
+                  <div className="flex items-center gap-2">
+                    <div className="text-sm font-mono text-gray-600">
+                      #{request.id}
+                    </div>
+
+                    {request.status === "accepted" && (
+                      <Button
+                        onClick={() => handleViewPdf(request)}
+                        size="sm"
+                        variant="outline"
+                        className="flex items-center gap-2 min-w-[100px] border-blue-500 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                      >
+                        <FileText size={14} />
+                        {isRTL
+                          ? t("requests.actions.viewPdf", "عرض الفاتورة")
+                          : t("requests.actions.viewPdf", "View Invoice")}
+                      </Button>
+                    )}
                   </div>
                 </div>
 
@@ -934,6 +962,16 @@ export default function RequestsPage() {
         }}
         onConfirm={handleRejectConfirm}
         isLoading={isApproving}
+      />
+
+      {/* Request PDF Viewer Dialog */}
+      <RequestPdfViewer
+        isOpen={isPdfDialogOpen}
+        onClose={() => {
+          setIsPdfDialogOpen(false);
+          setSelectedRequestForPdf(null);
+        }}
+        requestData={selectedRequestForPdf}
       />
     </div>
   );
