@@ -91,8 +91,8 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
       const date = new Date(dateString);
       return date.toLocaleDateString("ar-SA", {
         year: "numeric",
-        month: "long",
-        day: "numeric",
+        month: "2-digit",
+        day: "2-digit",
         hour: "2-digit",
         minute: "2-digit",
       });
@@ -145,8 +145,12 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
       orderNumber: order.order_number,
       clientName: fullName,
       vat: "313046229500003 ", // Static VAT number
-      address: "شارع الأمير محمد بن عبد العزيز، حي الفيصلية، جدة",
+      address: order.address.address,
       phone: order.address.phone,
+      // Company information - static values since not provided in API response
+      companyAddress: "شارع الأمير محمد بن عبد العزيز، حي الفيصلية، جدة",
+      companyPhone: "0543777569",
+      companyVat: "313046229500003",
       products: order.products.map((product) => ({
         id: product.id,
         title: product.product_name,
@@ -285,6 +289,21 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                   <p className="font-semibold text-lg text-logo-gold">
                     فال بارتس - متجر قطع غيار السيارات
                   </p>
+                  <div className="mt-4 text-sm text-gray-700">
+                    <p className="mb-1">
+                      <span className="font-semibold">العنوان:</span>{" "}
+                      {data?.companyAddress ||
+                        "شارع الأمير محمد بن عبد العزيز، حي الفيصلية، جدة"}
+                    </p>
+                    <p className="mb-1">
+                      <span className="font-semibold">رقم الهاتف:</span>{" "}
+                      {data?.companyPhone || "0543777569"}
+                    </p>
+                    <p>
+                      <span className="font-semibold">الرقم الضريبي:</span>{" "}
+                      {data?.companyVat || "313046229500003"}
+                    </p>
+                  </div>
                 </div>
                 <div className="text-left">
                   <div
@@ -347,7 +366,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                     className="text-base font-medium"
                     style={{ color: "#1a1a1a" }}
                   >
-                    {"شارع الأمير محمد بن عبد العزيز، حي الفيصلية، جدة"}
+                    {data.address}
                   </p>
                 </div>
               </div>
@@ -377,7 +396,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                     className="text-lg font-semibold"
                     style={{ color: "#1a1a1a" }}
                   >
-                    {data.vat}
+                    لا يوجد
                   </p>
                 </div>
                 <div
@@ -391,7 +410,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                     className="text-base font-medium"
                     style={{ color: "#1a1a1a" }}
                   >
-                    0543777569
+                    {data.phone}
                   </p>
                 </div>
               </div>
