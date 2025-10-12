@@ -88,11 +88,10 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
   // Transform order data for display
   const transformOrderData = (order: OrderData) => {
     const formatDate = (dateString: string) => {
-      const date = new Date(dateString);
-      return date.toLocaleDateString("ar-SA", {
+      return new Date(dateString).toLocaleDateString("en-US", {
         year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
+        month: "short",
+        day: "numeric",
         hour: "2-digit",
         minute: "2-digit",
       });
