@@ -674,7 +674,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                     className="w-full border-2 border-blue-500 text-blue-600 hover:bg-blue-50 hover:text-blue-700 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-300"
                   >
                     <FileText className="w-4 h-4 mr-2" />
-                    {isRTL ? "تحميل الفاتورة" : "Download Invoice"}
+                    {isRTL ? "عرض الفاتورة" : "View Invoice"}
                   </Button>
 
                   {/* <Button

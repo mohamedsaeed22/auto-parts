@@ -576,7 +576,7 @@ export default function OrdersPage() {
                       className="flex items-center gap-2 min-w-[100px] border-blue-500 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
                     >
                       <FileText size={14} />
-                      {isRTL ? "تحميل الفاتورة" : "Download Invoice"}
+                      {isRTL ? "عرض الفاتورة" : "View Invoice"}
                     </Button>
                     {/* <Button
                       size="sm"

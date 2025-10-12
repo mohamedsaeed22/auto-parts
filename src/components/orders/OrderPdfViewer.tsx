@@ -261,7 +261,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                 className="bg-logo-gold hover:bg-logo-gold/90 text-white"
               >
                 <Download className="w-4 h-4 ml-2" />
-                تحميل الفاتورة
+                عرض الفاتورة
               </Button>
             </div>
           </DialogTitle>
