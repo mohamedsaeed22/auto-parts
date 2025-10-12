@@ -31,8 +31,7 @@ const Footer = () => {
 
   // Generate QR Code for bank account
   React.useEffect(() => {
-    const accountNumber =
-      "https://indd.adobe.com/view/34c2d2ae-eba4-4c0b-a234-b1741693d49e";
+    const accountNumber = "SA2310000061700000871701";
     QRCode.toDataURL(accountNumber, {
       width: 160,
       margin: 1,
@@ -344,11 +343,11 @@ const Footer = () => {
                       <div
                         className="cursor-pointer hover:opacity-80 transition-opacity"
                         onClick={handleQrCodeClick}
-                        title="SNB Bank QR Code"
+                        title="SNB Bank IBAN QR Code"
                       >
                         <Image
                           src={qrCodeUrl}
-                          alt="SNB Bank QR Code"
+                          alt="SNB Bank IBAN QR Code"
                           width={50}
                           height={50}
                           className="rounded shadow-sm hover:shadow-md transition-shadow"
@@ -397,8 +396,8 @@ const Footer = () => {
         isOpen={isQrCodeOpen}
         onClose={() => setIsQrCodeOpen(false)}
         imageUrl={qrCodeUrl}
-        title="SNB Bank QR Code"
-        alt="QR Code for Bank Account"
+        title="SNB Bank IBAN QR Code"
+        alt="SNB Bank IBAN QR Code"
       />
     </footer>
   );
