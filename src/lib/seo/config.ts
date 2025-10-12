@@ -3,7 +3,7 @@
 export const seoConfig = {
   // Basic site information
   siteName: "FalParts",
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://www.falparts.sa",
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.sa",
   defaultLocale: "ar",
   supportedLocales: ["ar", "en"],
 
@@ -276,9 +276,9 @@ export const seoConfig = {
       "@context": "https://schema.org",
       "@type": "Organization",
       name: "FalParts",
-      url: process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa",
+      url: process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.sa",
       logo: `${
-        process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa"
+        process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.sa"
       }/logo.png`,
       description:
         "Leading auto parts supplier offering high-quality automotive parts and accessories",
@@ -318,13 +318,13 @@ export const seoConfig = {
       "@context": "https://schema.org",
       "@type": "AutomotivePartsStore",
       "@id": `${
-        process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa"
+        process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.sa"
       }/#organization`,
       name: "FalParts",
       alternateName: "Fal Al-Gharbia Company",
       description:
         "Leading Saudi company specializing in automotive spare parts. Supplier of genuine and certified spare parts for all types of vehicles.",
-      url: process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa",
+      url: process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.sa",
       telephone: "+966543777569",
       email: "parts@falfuture.com",
       address: {
@@ -360,14 +360,14 @@ export const seoConfig = {
       "@context": "https://schema.org",
       "@type": "WebSite",
       name: "FalParts",
-      url: process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa",
+      url: process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.sa",
       description: "Online auto parts store for all vehicle makes and models",
       potentialAction: {
         "@type": "SearchAction",
         target: {
           "@type": "EntryPoint",
           urlTemplate: `${
-            process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa"
+            process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.sa"
           }/search?q={search_term_string}`,
         },
         "query-input": "required name=search_term_string",
@@ -378,7 +378,7 @@ export const seoConfig = {
         logo: {
           "@type": "ImageObject",
           url: `${
-            process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa"
+            process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.sa"
           }/logo.png`,
         },
       },
@@ -454,9 +454,9 @@ export const seoConfig = {
       },
     ],
     sitemap: `${
-      process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa"
+      process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.sa"
     }/sitemap.xml`,
-    host: process.env.NEXT_PUBLIC_SITE_URL || "http://www.falparts.sa",
+    host: process.env.NEXT_PUBLIC_SITE_URL || "https://falparts.sa",
   },
 };
 

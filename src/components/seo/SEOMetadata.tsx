@@ -124,11 +124,17 @@ export function SEOMetadata({
         <link key={hreflang} rel="alternate" hrefLang={hreflang} href={href} />
       ))}
 
+      {/* Self-referential alternate link */}
+      <link rel="alternate" hrefLang={activeLocale} href={canonicalUrl} />
+
       {/* Open Graph Tags */}
       <meta property="og:type" content={type} />
       <meta property="og:title" content={finalTitle} />
       <meta property="og:description" content={finalDescription} />
       <meta property="og:image" content={finalImage} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={finalTitle} />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:site_name" content={seoConfig.openGraph.siteName} />
       <meta
@@ -182,6 +188,7 @@ export function SEOMetadata({
       <meta name="twitter:title" content={finalTitle} />
       <meta name="twitter:description" content={finalDescription} />
       <meta name="twitter:image" content={finalImage} />
+      <meta name="twitter:image:alt" content={finalTitle} />
 
       {/* Additional Meta Tags */}
       <meta name="viewport" content="width=device-width, initial-scale=1" />

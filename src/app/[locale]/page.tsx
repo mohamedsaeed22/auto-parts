@@ -48,7 +48,7 @@ export default function Home({
 
       <main className="min-h-screen mt-10">
         <div className="container mx-auto">
-          <h1 className="sr-only">
+          <h1 className="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white">
             {locale === "ar"
               ? "فال بارتس - قطع غيار السيارات والإكسسوارات المميزة أونلاين"
               : "FalParts - Premium Auto Parts & Car Accessories Online"}
@@ -65,7 +65,6 @@ export default function Home({
       </main>
 
       <PaymentAlert />
-
     </div>
   );
 }
