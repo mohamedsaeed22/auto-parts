@@ -33,6 +33,14 @@ export interface RequestItemResponse {
   updated_at: string;
 }
 
+// User interface for request response
+export interface RequestUser {
+  id: number;
+  name: string;
+  email: string;
+  code: string;
+}
+
 // Request response interface (from API)
 export interface RequestResponse {
   id: number;
@@ -74,6 +82,16 @@ export interface RequestResponse {
   calculated_total: number;
   can_be_submitted: boolean;
   has_address_details: boolean;
+  // New fields from backend response
+  user?: RequestUser;
+  calculated_total_without_tax?: number;
+  calculated_total_tax?: number;
+  delivery_amount?: number;
+  delivery_amount_without_tax?: number;
+  delivery_amount_tax?: number;
+  final_total?: number;
+  total_weight?: number;
+  calculated_total_weight?: number;
 }
 
 // Requests list request interface

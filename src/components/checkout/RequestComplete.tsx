@@ -119,24 +119,24 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
     router.push("/userprofile");
   };
 
-const formatPrice = (price: number | string) => {
+  const formatPrice = (price: number | string) => {
     const numPrice = typeof price === "string" ? parseFloat(price) : price;
     const isArabic = i18n.language === "ar";
-    const formatted = new Intl.NumberFormat( "en-US", {
-        style: "currency",
-        currency: "SAR",
-        // currencyDisplay: isArabic ? "narrowSymbol" : "code",
+    const formatted = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "SAR",
+      // currencyDisplay: isArabic ? "narrowSymbol" : "code",
     }).format(numPrice);
 
     // For Arabic, replace "SAR" with "ر.س" and move to left
     if (isArabic) {
-        const value = formatted.replace("SAR", "").trim();
-        return `${value} ر.س`;
+      const value = formatted.replace("SAR", "").trim();
+      return `${value} ر.س`;
     } else {
-        const value = formatted.replace("SAR", "").trim();
-        return `${value} SAR`;
+      const value = formatted.replace("SAR", "").trim();
+      return `${value} SAR`;
     }
-};
+  };
 
   return (
     <div
@@ -219,7 +219,10 @@ const formatPrice = (price: number | string) => {
                         })}
                       </div>
                       <div className="font-semibold text-logo-black">
-                        {request.items.reduce((sum, item) => sum + item.quantity, 0)}
+                        {request.items.reduce(
+                          (sum, item) => sum + item.quantity,
+                          0
+                        )}
                       </div>
                     </div>
                     {request.tracking_number && (
@@ -309,9 +312,12 @@ const formatPrice = (price: number | string) => {
                           })}
                         </div>
                         <div className="font-semibold capitalize">
-                          {t(`checkout:paymentStatus.${request.payment_status}`, {
-                            defaultValue: request.payment_status,
-                          })}
+                          {t(
+                            `checkout:paymentStatus.${request.payment_status}`,
+                            {
+                              defaultValue: request.payment_status,
+                            }
+                          )}
                         </div>
                       </div>
                     </div>
@@ -447,6 +453,42 @@ const formatPrice = (price: number | string) => {
                       </div>
                     </div>
                   )}
+                  {request.user && (
+                    <>
+                      <div className="space-y-1">
+                        <div className="text-sm text-neutral-600">
+                          {t("checkout:requestComplete.userName", {
+                            defaultValue: "User Name",
+                          })}
+                        </div>
+                        <div className="font-semibold text-logo-black">
+                          {request.user.name}
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-sm text-neutral-600">
+                          {t("checkout:requestComplete.userEmail", {
+                            defaultValue: "Email",
+                          })}
+                        </div>
+                        <div className="font-semibold text-logo-black">
+                          {request.user.email}
+                        </div>
+                      </div>
+                      {request.user.code && (
+                        <div className="space-y-1">
+                          <div className="text-sm text-neutral-600">
+                            {t("checkout:requestComplete.userCode", {
+                              defaultValue: "User Code",
+                            })}
+                          </div>
+                          <div className="font-semibold text-logo-black">
+                            {request.user.code}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
@@ -476,10 +518,11 @@ const formatPrice = (price: number | string) => {
                       </span>
                       <span>
                         {formatPrice(
-                          request.items.reduce(
-                            (sum, item) => sum + item.price_without_tax,
-                            0
-                          )
+                          request.calculated_total_without_tax ||
+                            request.items.reduce(
+                              (sum, item) => sum + item.price_without_tax,
+                              0
+                            )
                         )}
                       </span>
                     </div>
@@ -491,19 +534,58 @@ const formatPrice = (price: number | string) => {
                       </span>
                       <span>
                         {formatPrice(
-                          request.items.reduce((sum, item) => sum + item.tax, 0)
+                          request.calculated_total_tax ||
+                            request.items.reduce(
+                              (sum, item) => sum + item.tax,
+                              0
+                            )
                         )}
                       </span>
                     </div>
+                    <div className="flex justify-between text-neutral-600">
+                      <span>
+                        {t("checkout:requestComplete.deliveryAmount", {
+                          defaultValue: "Delivery Amount",
+                        })}
+                      </span>
+                      <span>{formatPrice(request.delivery_amount || 0)}</span>
+                    </div>
+                    {request.delivery_amount_without_tax && (
+                      <div className="flex justify-between text-neutral-500 text-sm">
+                        <span>
+                          {t(
+                            "checkout:requestComplete.deliveryAmountWithoutTax",
+                            {
+                              defaultValue: "Delivery (Before Tax)",
+                            }
+                          )}
+                        </span>
+                        <span>
+                          {formatPrice(request.delivery_amount_without_tax)}
+                        </span>
+                      </div>
+                    )}
+                    {request.delivery_amount_tax && (
+                      <div className="flex justify-between text-neutral-500 text-sm">
+                        <span>
+                          {t("checkout:requestComplete.deliveryAmountTax", {
+                            defaultValue: "Delivery Tax",
+                          })}
+                        </span>
+                        <span>{formatPrice(request.delivery_amount_tax)}</span>
+                      </div>
+                    )}
                     <div className="pt-3 border-t-2 border-logo-gold/20">
                       <div className="flex justify-between items-baseline">
                         <span className="text-lg font-bold text-logo-black">
-                          {t("checkout:requestComplete.total", {
-                            defaultValue: "Total",
+                          {t("checkout:requestComplete.finalTotal", {
+                            defaultValue: "Final Total",
                           })}
                         </span>
                         <span className="text-2xl font-bold text-logo-gold">
-                          {formatPrice(request.calculated_total)}
+                          {formatPrice(
+                            request.final_total || request.calculated_total
+                          )}
                         </span>
                       </div>
                     </div>
@@ -517,17 +599,272 @@ const formatPrice = (price: number | string) => {
                           defaultValue: "Payment Method",
                         })}
                         :{" "}
-                        {t(
-                          `checkout:paymentMethod.${request.payment_method}`,
-                          {
-                            defaultValue:
-                              request.payment_method === "credit_card"
-                                ? "Credit Card"
-                                : "Cash",
-                          }
-                        )}
+                        {t(`checkout:paymentMethod.${request.payment_method}`, {
+                          defaultValue:
+                            request.payment_method === "credit_card"
+                              ? "Credit Card"
+                              : "Cash",
+                        })}
                       </span>
                     </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Weight Information */}
+            {(request.total_weight || request.calculated_total_weight) && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+              >
+                <Card className="shadow-lg border-logo-gold/20">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
+                      <Package className="w-5 h-5 text-logo-gold" />
+                      {t("checkout:requestComplete.weight", {
+                        defaultValue: "Weight Information",
+                      })}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {request.total_weight && (
+                      <div className="flex justify-between">
+                        <span className="text-neutral-600">
+                          {t("checkout:requestComplete.totalWeight", {
+                            defaultValue: "Total Weight",
+                          })}
+                        </span>
+                        <span className="font-semibold text-logo-black">
+                          {request.total_weight}{" "}
+                          {t("checkout:requestComplete.kg", {
+                            defaultValue: "kg",
+                          })}
+                        </span>
+                      </div>
+                    )}
+                    {request.calculated_total_weight && (
+                      <div className="flex justify-between">
+                        <span className="text-neutral-600">
+                          {t("checkout:requestComplete.calculatedTotalWeight", {
+                            defaultValue: "Calculated Weight",
+                          })}
+                        </span>
+                        <span className="font-semibold text-logo-black">
+                          {request.calculated_total_weight}{" "}
+                          {t("checkout:requestComplete.kg", {
+                            defaultValue: "kg",
+                          })}
+                        </span>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+
+            {/* Address Details */}
+            {request.has_address_details && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.65 }}
+              >
+                <Card className="shadow-lg border-logo-gold/20">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
+                      <User className="w-5 h-5 text-logo-gold" />
+                      {t("checkout:requestComplete.addressDetails", {
+                        defaultValue: "Address Details",
+                      })}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {request.full_name && (
+                      <div className="space-y-1">
+                        <div className="text-sm text-neutral-600">
+                          {t("checkout:requestComplete.userName", {
+                            defaultValue: "Full Name",
+                          })}
+                        </div>
+                        <div className="font-semibold text-logo-black">
+                          {request.full_name}
+                        </div>
+                      </div>
+                    )}
+                    {request.phone && (
+                      <div className="space-y-1">
+                        <div className="text-sm text-neutral-600">
+                          {t("checkout:requestComplete.userPhone", {
+                            defaultValue: "Phone",
+                          })}
+                        </div>
+                        <div className="font-semibold text-logo-black">
+                          {request.phone}
+                        </div>
+                      </div>
+                    )}
+                    {request.formatted_address && (
+                      <div className="space-y-1">
+                        <div className="text-sm text-neutral-600">
+                          {t("checkout:requestComplete.address", {
+                            defaultValue: "Address",
+                          })}
+                        </div>
+                        <div className="font-semibold text-logo-black">
+                          {request.formatted_address}
+                        </div>
+                      </div>
+                    )}
+                    {(request.address ||
+                      request.apartment ||
+                      request.city ||
+                      request.state ||
+                      request.country ||
+                      request.zip_code) && (
+                      <div className="space-y-2">
+                        <div className="text-sm text-neutral-600">
+                          {t("checkout:requestComplete.detailedAddress", {
+                            defaultValue: "Detailed Address",
+                          })}
+                        </div>
+                        <div className="bg-logo-gold/5 p-3 rounded-lg border border-logo-gold/10">
+                          <div className="space-y-1 text-sm">
+                            {request.address && (
+                              <div>
+                                <strong>
+                                  {t("checkout:requestComplete.street", {
+                                    defaultValue: "Street",
+                                  })}
+                                  :
+                                </strong>{" "}
+                                {request.address}
+                              </div>
+                            )}
+                            {request.apartment && (
+                              <div>
+                                <strong>
+                                  {t("checkout:requestComplete.apartment", {
+                                    defaultValue: "Apartment",
+                                  })}
+                                  :
+                                </strong>{" "}
+                                {request.apartment}
+                              </div>
+                            )}
+                            {request.city && (
+                              <div>
+                                <strong>
+                                  {t("checkout:requestComplete.city", {
+                                    defaultValue: "City",
+                                  })}
+                                  :
+                                </strong>{" "}
+                                {request.city}
+                              </div>
+                            )}
+                            {request.state && (
+                              <div>
+                                <strong>
+                                  {t("checkout:requestComplete.state", {
+                                    defaultValue: "State",
+                                  })}
+                                  :
+                                </strong>{" "}
+                                {request.state}
+                              </div>
+                            )}
+                            {request.country && (
+                              <div>
+                                <strong>
+                                  {t("checkout:requestComplete.country", {
+                                    defaultValue: "Country",
+                                  })}
+                                  :
+                                </strong>{" "}
+                                {request.country}
+                              </div>
+                            )}
+                            {request.zip_code && (
+                              <div>
+                                <strong>
+                                  {t("checkout:requestComplete.zipCode", {
+                                    defaultValue: "ZIP Code",
+                                  })}
+                                  :
+                                </strong>{" "}
+                                {request.zip_code}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+
+            {/* Request Capabilities */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+            >
+              <Card className="shadow-lg border-logo-gold/20">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
+                    <Info className="w-5 h-5 text-logo-gold" />
+                    {t("checkout:requestComplete.requestCapabilities", {
+                      defaultValue: "Request Capabilities",
+                    })}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-neutral-600">
+                      {t("checkout:requestComplete.canBeSubmitted", {
+                        defaultValue: "Can Be Submitted",
+                      })}
+                    </span>
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        request.can_be_submitted
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {request.can_be_submitted
+                        ? t("checkout:requestComplete.canBeSubmitted", {
+                            defaultValue: "Yes",
+                          })
+                        : t("checkout:requestComplete.cannotBeSubmitted", {
+                            defaultValue: "No",
+                          })}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-neutral-600">
+                      {t("checkout:requestComplete.hasAddressDetails", {
+                        defaultValue: "Address Details",
+                      })}
+                    </span>
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        request.has_address_details
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {request.has_address_details
+                        ? t("checkout:requestComplete.hasAddressDetails", {
+                            defaultValue: "Available",
+                          })
+                        : t("checkout:requestComplete.noAddressDetails", {
+                            defaultValue: "Not Available",
+                          })}
+                    </span>
                   </div>
                 </CardContent>
               </Card>
@@ -538,12 +875,14 @@ const formatPrice = (price: number | string) => {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
+                transition={{ delay: 0.75 }}
               >
                 <Card className="shadow-lg border-logo-gold/20">
                   <CardContent className="pt-6">
                     <Button
-                      onClick={() => window.open(request.pdf_label || "", "_blank")}
+                      onClick={() =>
+                        window.open(request.pdf_label || "", "_blank")
+                      }
                       variant="outline"
                       className="w-full border-2 border-logo-gold text-logo-gold hover:bg-logo-gold hover:text-white transition-colors"
                     >
@@ -561,7 +900,7 @@ const formatPrice = (price: number | string) => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
+              transition={{ delay: 0.8 }}
             >
               <Card className="shadow-lg border-logo-gold/20">
                 <CardContent className="pt-6 space-y-3">
