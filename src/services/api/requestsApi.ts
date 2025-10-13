@@ -126,6 +126,11 @@ export interface ApproveRequestResponse {
   payment_url?: string;
 }
 
+// Delivery amount response interface
+export interface DeliveryAmountResponse {
+  delivery_amount: number;
+}
+
 export const requestsApi = api.injectEndpoints({
   endpoints: (builder) => ({
     // Get all requests
@@ -221,6 +226,15 @@ export const requestsApi = api.injectEndpoints({
       }),
       invalidatesTags: ["Requests"],
     }),
+
+    // Get delivery amount
+    getDeliveryAmount: builder.query<
+      ApiResponse<DeliveryAmountResponse>,
+      { requestId: number; addressId: number }
+    >({
+      query: ({ requestId, addressId }) =>
+        `/requests/get-delivery-amount/${requestId}/${addressId}`,
+    }),
   }),
 });
 
@@ -229,4 +243,5 @@ export const {
   useGetRequestDetailsQuery,
   useCreateRequestMutation,
   useApproveRequestMutation,
+  useGetDeliveryAmountQuery,
 } = requestsApi;

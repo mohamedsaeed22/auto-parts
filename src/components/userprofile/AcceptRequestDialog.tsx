@@ -11,7 +11,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useGetAddressesQuery, useCreateAddressMutation } from "@/services/api";
+import {
+  useGetAddressesQuery,
+  useCreateAddressMutation,
+  useGetDeliveryAmountQuery,
+} from "@/services/api";
 import {
   Loader2,
   MapPin,
@@ -25,6 +29,7 @@ import type { Address } from "@/services/api/types";
 import AddressForm from "@/components/address/AddressForm";
 import type { AddressFormData } from "@/lib/validations/addressSchema";
 import { showSuccess, showError } from "@/lib/toast";
+import DeliveryAmountDisplay from "./DeliveryAmountDisplay";
 
 interface AcceptRequestDialogProps {
   isOpen: boolean;
@@ -34,6 +39,7 @@ interface AcceptRequestDialogProps {
     payment_method: "cash" | "credit_card";
   }) => void;
   isLoading?: boolean;
+  requestId?: number;
 }
 
 export default function AcceptRequestDialog({
@@ -41,6 +47,7 @@ export default function AcceptRequestDialog({
   onClose,
   onConfirm,
   isLoading = false,
+  requestId,
 }: AcceptRequestDialogProps) {
   const { t, i18n } = useTranslation(["userProfile", "addressSelection"]);
   const isRTL = i18n.language === "ar";
@@ -79,6 +86,23 @@ export default function AcceptRequestDialog({
   // Create address mutation
   const [createAddress, { isLoading: isCreatingAddress }] =
     useCreateAddressMutation();
+
+  // Get delivery amount query - call whenever an address is selected
+  const {
+    data: deliveryAmountResponse,
+    isLoading: isLoadingDeliveryAmount,
+    error: deliveryAmountError,
+  } = useGetDeliveryAmountQuery(
+    {
+      requestId: requestId!,
+      addressId: selectedAddressId!,
+    },
+    {
+      skip: !requestId || !selectedAddressId,
+    }
+  );
+
+  const deliveryAmount = deliveryAmountResponse?.data?.delivery_amount || 0;
 
   // Auto-select default address if no address is selected
   useEffect(() => {
@@ -366,6 +390,16 @@ export default function AcceptRequestDialog({
                       ))}
                     </div>
                   )}
+
+                  {/* Delivery Amount Display for Step 1 */}
+                  {selectedAddressId && !showNewAddressForm && (
+                    <DeliveryAmountDisplay
+                      isLoading={isLoadingDeliveryAmount}
+                      error={!!deliveryAmountError}
+                      amount={deliveryAmount}
+                      className="mt-4"
+                    />
+                  )}
                 </div>
               )}
 
@@ -482,17 +516,30 @@ export default function AcceptRequestDialog({
               </div>
 
               {paymentMethod === "credit_card" && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <p
-                    className={`text-sm text-blue-800 ${
-                      isRTL ? "text-right" : "text-left"
-                    }`}
-                  >
-                    {t(
-                      "requests.acceptDialog.creditCardNote",
-                      "You will be redirected to a secure payment page to complete your transaction."
-                    )}
-                  </p>
+                <div className="space-y-4">
+                  {/* Delivery Amount Section */}
+                  {selectedAddressId && !showNewAddressForm && (
+                    <DeliveryAmountDisplay
+                      isLoading={isLoadingDeliveryAmount}
+                      error={!!deliveryAmountError}
+                      amount={deliveryAmount}
+                      className="mt-4"
+                    />
+                  )}
+
+                  {/* Payment Note */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <p
+                      className={`text-sm text-blue-800 ${
+                        isRTL ? "text-right" : "text-left"
+                      }`}
+                    >
+                      {t(
+                        "requests.acceptDialog.creditCardNote",
+                        "You will be redirected to a secure payment page to complete your transaction."
+                      )}
+                    </p>
+                  </div>
                 </div>
               )}
             </div>

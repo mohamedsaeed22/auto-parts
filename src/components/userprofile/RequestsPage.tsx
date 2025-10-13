@@ -951,6 +951,7 @@ export default function RequestsPage() {
         }}
         onConfirm={handleAcceptConfirm}
         isLoading={isApproving}
+        requestId={pendingRequestId}
       />
 
       {/* Reject Confirmation Dialog */}
