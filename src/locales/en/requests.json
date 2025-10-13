@@ -98,6 +98,7 @@
     "notesPlaceholder": "Additional delivery instructions",
     "cancel": "Cancel",
     "createAndSelect": "Use This Address",
-    "selectAddress": "Select Address"
+    "selectAddress": "Select Address",
+    "saveAndContinue": "Save & Continue"
   }
 }

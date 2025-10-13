@@ -2,12 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import FormInput from "@/components/ui/FormInput";
-import { SearchableSelect } from "@/components/ui/SearchableSelect";
 import {
   Dialog,
   DialogContent,
@@ -16,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useGetAddressesQuery, useGetCitiesQuery } from "@/services/api";
+import { useGetAddressesQuery, useCreateAddressMutation } from "@/services/api";
 import {
   Loader2,
   MapPin,
@@ -27,196 +22,19 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import type { Address } from "@/services/api/types";
-import Image from "next/image";
+import AddressForm from "@/components/address/AddressForm";
+import type { AddressFormData } from "@/lib/validations/addressSchema";
+import { showSuccess, showError } from "@/lib/toast";
 
 interface AcceptRequestDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: (data: {
-    address_id?: number;
+    address_id: number;
     payment_method: "cash" | "credit_card";
-    first_name?: string;
-    last_name?: string;
-    phone?: string;
-    address?: string;
-    apartment?: string;
-    city?: string;
-    state?: string;
-    country?: string;
-    zip_code?: string;
   }) => void;
   isLoading?: boolean;
 }
-
-interface NewAddressForm {
-  first_name: string;
-  last_name: string;
-  phone: string;
-  address: string;
-  apartment: string;
-  city: string;
-  state: string;
-  country: string;
-  zip_code: string;
-}
-
-// Zod schema for address validation
-const createAddressSchema = (
-  t: (key: string, fallback: string) => string,
-  isRTL: boolean
-) => {
-  return z.object({
-    first_name: z
-      .string()
-      .min(1, {
-        message: isRTL
-          ? "الاسم الأول مطلوب"
-          : t(
-              "addressSelection:validation.firstName.required",
-              "First name is required"
-            ),
-      })
-      .min(2, {
-        message: isRTL
-          ? "الاسم الأول يجب أن يكون على الأقل حرفين"
-          : t(
-              "addressSelection:validation.firstName.minLength",
-              "First name must be at least 2 characters"
-            ),
-      }),
-    last_name: z
-      .string()
-      .min(1, {
-        message: isRTL
-          ? "الاسم الأخير مطلوب"
-          : t(
-              "addressSelection:validation.lastName.required",
-              "Last name is required"
-            ),
-      })
-      .min(2, {
-        message: isRTL
-          ? "الاسم الأخير يجب أن يكون على الأقل حرفين"
-          : t(
-              "addressSelection:validation.lastName.minLength",
-              "Last name must be at least 2 characters"
-            ),
-      }),
-    phone: z
-      .string()
-      .min(1, {
-        message: isRTL
-          ? "رقم الهاتف مطلوب"
-          : t(
-              "addressSelection:validation.phone.required",
-              "Phone number is required"
-            ),
-      })
-      .regex(/^05\d{8}$/, {
-        message: isRTL
-          ? "رقم الهاتف يجب أن يبدأ بـ 05 ويتكون من 10 أرقام (مثال: 0543777569)"
-          : t(
-              "addressSelection:validation.phone.invalid",
-              "Phone must start with 05 and be 10 digits (e.g., 0543777569)"
-            ),
-      }),
-    address: z
-      .string()
-      .min(1, {
-        message: isRTL
-          ? "العنوان مطلوب"
-          : t(
-              "addressSelection:validation.address.required",
-              "Address is required"
-            ),
-      })
-      .min(5, {
-        message: isRTL
-          ? "العنوان يجب أن يكون على الأقل 5 أحرف"
-          : t(
-              "addressSelection:validation.address.minLength",
-              "Address must be at least 5 characters"
-            ),
-      }),
-    apartment: z.string().min(1, {
-      message: isRTL
-        ? "الشقة مطلوبة"
-        : t(
-            "addressSelection:validation.apartment.required",
-            "Apartment is required"
-          ),
-    }),
-    city: z
-      .string()
-      .min(1, {
-        message: isRTL
-          ? "المدينة مطلوبة"
-          : t("addressSelection:validation.city.required", "City is required"),
-      })
-      .min(2, {
-        message: isRTL
-          ? "المدينة يجب أن تكون على الأقل حرفين"
-          : t(
-              "addressSelection:validation.city.minLength",
-              "City must be at least 2 characters"
-            ),
-      }),
-    state: z
-      .string()
-      .min(1, {
-        message: isRTL
-          ? "المحافظة مطلوبة"
-          : t(
-              "addressSelection:validation.state.required",
-              "State is required"
-            ),
-      })
-      .min(2, {
-        message: isRTL
-          ? "المحافظة يجب أن تكون على الأقل حرفين"
-          : t(
-              "addressSelection:validation.state.minLength",
-              "State must be at least 2 characters"
-            ),
-      }),
-    country: z
-      .string()
-      .min(1, {
-        message: isRTL
-          ? "الدولة مطلوبة"
-          : t(
-              "addressSelection:validation.country.required",
-              "Country is required"
-            ),
-      })
-      .min(2, {
-        message: isRTL
-          ? "الدولة يجب أن تكون على الأقل حرفين"
-          : t(
-              "addressSelection:validation.country.minLength",
-              "Country must be at least 2 characters"
-            ),
-      }),
-    zip_code: z
-      .string()
-      .min(1, {
-        message: isRTL
-          ? "الرمز البريدي مطلوب"
-          : t(
-              "addressSelection:validation.zipCode.required",
-              "ZIP code is required"
-            ),
-      })
-      .regex(/^\d{5}$/, {
-        message: isRTL
-          ? "الرمز البريدي يجب أن يكون 5 أرقام"
-          : t(
-              "addressSelection:validation.zipCode.invalid",
-              "ZIP code must be 5 digits"
-            ),
-      }),
-  });
-};
 
 export default function AcceptRequestDialog({
   isOpen,
@@ -236,29 +54,6 @@ export default function AcceptRequestDialog({
     "credit_card"
   );
 
-  // React Hook Form with Zod validation
-  const {
-    handleSubmit,
-    formState: { errors },
-    reset,
-    watch,
-    setValue,
-  } = useForm<NewAddressForm>({
-    resolver: zodResolver(createAddressSchema(t, isRTL)),
-    mode: "onChange",
-    defaultValues: {
-      first_name: "",
-      last_name: "",
-      phone: "",
-      address: "",
-      apartment: "",
-      city: "",
-      state: "",
-      country: "",
-      zip_code: "",
-    },
-  });
-
   // Reset form and step when dialog closes
   useEffect(() => {
     if (!isOpen) {
@@ -267,41 +62,39 @@ export default function AcceptRequestDialog({
       setSelectedAddressId(null);
       setShowNewAddressForm(false);
       setPaymentMethod("credit_card");
-      reset();
     }
-  }, [isOpen, reset]);
+  }, [isOpen]);
 
-  // Reset form when switching back from new address form
+  const {
+    data: addressesResponse,
+    isLoading: isLoadingAddresses,
+    refetch: refetchAddresses,
+  } = useGetAddressesQuery();
+
+  const addresses: Address[] = useMemo(
+    () => addressesResponse?.data?.addresses || [],
+    [addressesResponse]
+  );
+
+  // Create address mutation
+  const [createAddress, { isLoading: isCreatingAddress }] =
+    useCreateAddressMutation();
+
+  // Auto-select default address if no address is selected
   useEffect(() => {
-    if (!showNewAddressForm) {
-      reset();
+    if (addresses.length > 0 && !selectedAddressId && !showNewAddressForm) {
+      const defaultAddress = addresses.find((addr) => addr.is_default);
+      if (defaultAddress) {
+        setSelectedAddressId(defaultAddress.id);
+      }
     }
-  }, [showNewAddressForm, reset]);
-
-  const { data: addressesResponse, isLoading: isLoadingAddresses } =
-    useGetAddressesQuery();
-
-  const addresses: Address[] = addressesResponse?.data?.addresses || [];
-
-  // Fetch cities from API with current locale
-  const { data: citiesResponse } = useGetCitiesQuery(i18n.language);
-
-  // Transform cities data to options format
-  const cityOptions = useMemo(() => {
-    if (!citiesResponse?.data?.cities) return [];
-    return citiesResponse.data.cities.map((city) => ({
-      value: city.key, // Send the key to backend
-      label: city.value, // Display the translated name to user
-      searchText: city.key, // Allow searching by English name too
-    }));
-  }, [citiesResponse]);
+  }, [addresses, selectedAddressId, showNewAddressForm]);
 
   const resetForm = () => {
     setStep(1);
     setSelectedAddressId(null);
     setShowNewAddressForm(false);
     setPaymentMethod("credit_card");
-    reset();
   };
 
   const handleClose = () => {
@@ -310,40 +103,53 @@ export default function AcceptRequestDialog({
   };
 
   const isStep1Valid = () => {
-    if (showNewAddressForm) {
-      // Form is valid when there are no errors and all required fields have values
-      return Object.keys(errors).length === 0;
-    }
     return selectedAddressId !== null;
   };
 
   const handleNextStep = () => {
-    if (step === 1) {
-      if (showNewAddressForm) {
-        // Trigger form validation
-        handleSubmit(() => {
-          setStep(2);
-        })();
-      } else if (selectedAddressId) {
-        setStep(2);
-      }
+    if (step === 1 && selectedAddressId) {
+      setStep(2);
     }
   };
 
-  const onFormSubmit = (formData: NewAddressForm) => {
-    const data: Parameters<typeof onConfirm>[0] = {
-      payment_method: paymentMethod,
-      ...formData,
-    };
+  // Handle address form submission
+  const handleAddressFormSubmit = async (formData: AddressFormData) => {
+    try {
+      // Ensure is_default is a boolean
+      const addressData = {
+        ...formData,
+        is_default: formData.is_default ?? false,
+      };
 
-    onConfirm(data);
+      const result = await createAddress(addressData).unwrap();
+
+      if (result.data) {
+        const newAddressId = result.data.id;
+
+        // Show success message
+        showSuccess(
+          t("addresses.successCreate", "Address created successfully")
+        );
+
+        // Manually refetch addresses to ensure the new address is in the list
+        await refetchAddresses();
+
+        // Set the newly created address as selected AFTER refetching
+        setSelectedAddressId(newAddressId);
+
+        // Hide the form to show the addresses list with the new address selected
+        setShowNewAddressForm(false);
+      }
+    } catch (error) {
+      const errorMessage =
+        (error as { data?: { message?: string } })?.data?.message ||
+        t("addresses.errorCreate", "Failed to create address");
+      showError(errorMessage);
+    }
   };
 
   const handleConfirm = () => {
-    if (showNewAddressForm) {
-      // Submit the form which will trigger validation and onFormSubmit if valid
-      handleSubmit(onFormSubmit)();
-    } else if (selectedAddressId) {
+    if (selectedAddressId) {
       const data: Parameters<typeof onConfirm>[0] = {
         payment_method: paymentMethod,
         address_id: selectedAddressId,
@@ -565,7 +371,7 @@ export default function AcceptRequestDialog({
 
               {showNewAddressForm && (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-4">
                     <h3
                       className={`text-lg font-medium text-gray-900 ${
                         isRTL ? "text-right" : "text-left"
@@ -577,178 +383,23 @@ export default function AcceptRequestDialog({
                       variant="outline"
                       size="sm"
                       onClick={() => setShowNewAddressForm(false)}
+                      disabled={isCreatingAddress}
                     >
                       {t("addressSelection:back", "Back")}
                     </Button>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormInput
-                      label={t("addressSelection:firstName", "First Name")}
-                      placeholder={t(
-                        "addressSelection:firstNamePlaceholder",
-                        "Enter first name"
-                      )}
-                      value={watch("first_name")}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setValue("first_name", e.target.value, {
-                          shouldValidate: true,
-                          shouldDirty: true,
-                        })
-                      }
-                      error={errors.first_name?.message}
-                      required
-                      inputClassName="h-12"
-                    />
-
-                    <FormInput
-                      label={t("addressSelection:lastName", "Last Name")}
-                      placeholder={t(
-                        "addressSelection:lastNamePlaceholder",
-                        "Enter last name"
-                      )}
-                      value={watch("last_name")}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setValue("last_name", e.target.value, {
-                          shouldValidate: true,
-                          shouldDirty: true,
-                        })
-                      }
-                      error={errors.last_name?.message}
-                      required
-                      inputClassName="h-12"
-                    />
-
-                    <FormInput
-                      label={t("addressSelection:phone", "Phone")}
-                      type="tel"
-                      placeholder="0543777569"
-                      value={watch("phone")}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setValue("phone", e.target.value, {
-                          shouldValidate: true,
-                          shouldDirty: true,
-                        })
-                      }
-                      error={errors.phone?.message}
-                      required
-                      inputClassName="h-12"
-                      dir="ltr"
-                    />
-
-                    <FormInput
-                      label={t("addressSelection:zipCode", "ZIP Code")}
-                      placeholder={t(
-                        "addressSelection:zipCodePlaceholder",
-                        "Enter ZIP code"
-                      )}
-                      value={watch("zip_code")}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setValue("zip_code", e.target.value, {
-                          shouldValidate: true,
-                          shouldDirty: true,
-                        })
-                      }
-                      error={errors.zip_code?.message}
-                      required
-                      inputClassName="h-12"
-                    />
-
-                    <FormInput
-                      label={t("addressSelection:address", "Address")}
-                      placeholder={t(
-                        "addressSelection:addressPlaceholder",
-                        "Enter street address"
-                      )}
-                      value={watch("address")}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setValue("address", e.target.value, {
-                          shouldValidate: true,
-                          shouldDirty: true,
-                        })
-                      }
-                      error={errors.address?.message}
-                      required
-                      inputClassName="h-12"
-                      containerClassName="md:col-span-2"
-                    />
-
-                    <FormInput
-                      label={t("addressSelection:apartment", "Apartment")}
-                      placeholder={t(
-                        "addressSelection:apartmentPlaceholder",
-                        "Apartment, suite, etc."
-                      )}
-                      value={watch("apartment")}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setValue("apartment", e.target.value, {
-                          shouldValidate: true,
-                          shouldDirty: true,
-                        })
-                      }
-                      error={errors.apartment?.message}
-                      required
-                      inputClassName="h-12"
-                    />
-
-                    <SearchableSelect
-                      label={t("addressSelection:city", "City")}
-                      placeholder={t(
-                        "addressSelection:cityPlaceholder",
-                        "Select city"
-                      )}
-                      searchPlaceholder={t(
-                        "addressSelection:searchCity",
-                        "Search city..."
-                      )}
-                      value={watch("city")}
-                      onValueChange={(value) =>
-                        setValue("city", value, {
-                          shouldValidate: true,
-                          shouldDirty: true,
-                        })
-                      }
-                      options={cityOptions}
-                      error={errors.city?.message}
-                      required
-                    />
-
-                    <FormInput
-                      label={t("addressSelection:state", "State")}
-                      placeholder={t(
-                        "addressSelection:statePlaceholder",
-                        "Enter state"
-                      )}
-                      value={watch("state")}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setValue("state", e.target.value, {
-                          shouldValidate: true,
-                          shouldDirty: true,
-                        })
-                      }
-                      error={errors.state?.message}
-                      required
-                      inputClassName="h-12"
-                    />
-
-                    <FormInput
-                      label={t("addressSelection:country", "Country")}
-                      placeholder={t(
-                        "addressSelection:countryPlaceholder",
-                        "Enter country"
-                      )}
-                      value={watch("country")}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setValue("country", e.target.value, {
-                          shouldValidate: true,
-                          shouldDirty: true,
-                        })
-                      }
-                      error={errors.country?.message}
-                      required
-                      inputClassName="h-12"
-                    />
-                  </div>
+                  <AddressForm
+                    onSubmit={handleAddressFormSubmit}
+                    onCancel={() => setShowNewAddressForm(false)}
+                    isSubmitting={isCreatingAddress}
+                    isCreating={isCreatingAddress}
+                    showCancelButton={false}
+                    submitButtonText={t(
+                      "addressSelection:saveAndContinue",
+                      "Save & Continue"
+                    )}
+                  />
                 </div>
               )}
             </>
@@ -818,8 +469,6 @@ export default function AcceptRequestDialog({
                             "Pay securely online with your credit card"
                           )}
                         </p>
-
-                         
                       </div>
                     </div>
                     {paymentMethod === "credit_card" && (
@@ -855,25 +504,29 @@ export default function AcceptRequestDialog({
         >
           {step === 1 ? (
             <>
-              <Button
-                variant="outline"
-                onClick={handleClose}
-                disabled={isLoading}
-              >
-                {t("addressSelection:cancel", "Cancel")}
-              </Button>
-              <Button
-                onClick={handleNextStep}
-                disabled={!isStep1Valid() || isLoading}
-                className="bg-[#b3984a] hover:bg-[#b3984a]/90"
-              >
-                {t("requests.acceptDialog.next", "Next")}
-                {isRTL ? (
-                  <ChevronLeft size={16} className="ml-2" />
-                ) : (
-                  <ChevronRight size={16} className="ml-2" />
-                )}
-              </Button>
+              {!showNewAddressForm && (
+                <>
+                  <Button
+                    variant="outline"
+                    onClick={handleClose}
+                    disabled={isLoading || isCreatingAddress}
+                  >
+                    {t("addressSelection:cancel", "Cancel")}
+                  </Button>
+                  <Button
+                    onClick={handleNextStep}
+                    disabled={!isStep1Valid() || isLoading || isCreatingAddress}
+                    className="bg-[#b3984a] hover:bg-[#b3984a]/90"
+                  >
+                    {t("requests.acceptDialog.next", "Next")}
+                    {isRTL ? (
+                      <ChevronLeft size={16} className="ml-2" />
+                    ) : (
+                      <ChevronRight size={16} className="ml-2" />
+                    )}
+                  </Button>
+                </>
+              )}
             </>
           ) : (
             <>

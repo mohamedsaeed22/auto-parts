@@ -31,6 +31,7 @@
   "cancel": "Cancel",
   "createAndSelect": "Use This Address",
   "selectAddress": "Select Address",
+  "saveAndContinue": "Save & Continue",
   "validation": {
     "firstName": {
       "required": "First name is required",
