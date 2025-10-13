@@ -260,6 +260,7 @@ export interface UpdateCartRequest {
 
 export interface ApplyCouponRequest {
   coupon_code: string;
+  address_id?: number;
 }
 
 // Wishlist & Favourites Types

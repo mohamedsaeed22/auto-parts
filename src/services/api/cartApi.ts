@@ -11,8 +11,16 @@ import type {
 export const cartApi = api.injectEndpoints({
   endpoints: (builder) => ({
     // Cart Operations
-    getCart: builder.query<ApiResponse<Cart>, void>({
-      query: () => "/cart",
+    getCart: builder.query<ApiResponse<Cart>, { address_id?: number } | void>({
+      query: (params = {}) => {
+        const { address_id } = params as { address_id?: number };
+        const queryParams = new URLSearchParams();
+        if (address_id) {
+          queryParams.append("address_id", address_id.toString());
+        }
+        const queryString = queryParams.toString();
+        return `/cart${queryString ? `?${queryString}` : ""}`;
+      },
       providesTags: ["Cart"],
     }),
 
@@ -79,6 +87,11 @@ export const cartApi = api.injectEndpoints({
       query: (data) => {
         const formData = new URLSearchParams();
         formData.append("coupon_code", data.coupon_code);
+
+        // Include address_id if provided
+        if (data.address_id) {
+          formData.append("address_id", data.address_id.toString());
+        }
 
         return {
           url: "/cart/apply-coupon",

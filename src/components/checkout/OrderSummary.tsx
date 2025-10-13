@@ -10,6 +10,7 @@ import { useAppDispatch } from "@/store/hooks";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { useTranslation } from "react-i18next";
 import type { ApiResponse } from "@/services/api/types";
+import { useSmartAddress } from "@/hooks/useSmartAddress";
 
 // Constants for localStorage
 const COUPON_CODE_KEY = "auto_parts_coupon_code";
@@ -98,6 +99,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   const dispatch = useAppDispatch();
   const [applyCoupon, { isLoading: isApplying }] = useApplyCouponMutation();
 
+  // Smart address management
+  const { getEffectiveAddressId, selectedAddress } = useSmartAddress();
+
   // State management
   const [localError, setLocalError] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState<string>("");
@@ -105,14 +109,21 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [couponData, setCouponData] = useState<CouponResponse | null>(null);
 
+  // Get effective address ID for API calls
+  const effectiveAddressId = getEffectiveAddressId();
+
   // Fetch cart data
   const {
     data: apiCart,
     isLoading: isCartLoading,
     error: cartError,
-  } = useGetCartQuery(undefined, {
-    // If unauthenticated, this will be skipped by the API layer or error; we handle undefined below
-  });
+  } = useGetCartQuery(
+    effectiveAddressId ? { address_id: effectiveAddressId } : undefined,
+    {
+      // If unauthenticated, this will be skipped by the API layer or error; we handle undefined below
+      refetchOnMountOrArgChange: true, // Ensure we get fresh data
+    }
+  );
 
   // Get cart data from API response
   const cartData = (apiCart as ApiResponse<CartResponse> | undefined)?.data;
@@ -133,6 +144,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
     try {
       const result = await applyCoupon({
         coupon_code: couponCode.trim(),
+        address_id: effectiveAddressId || undefined,
       }).unwrap();
 
       // Display success message from API response
@@ -218,6 +230,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           try {
             const result = await applyCoupon({
               coupon_code: savedCouponCode,
+              address_id: effectiveAddressId || undefined,
             }).unwrap();
 
             if (result && typeof result.message === "string") {
@@ -265,6 +278,48 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
     onApplyCoupon,
     dispatch,
     isInitialized,
+    effectiveAddressId,
+  ]);
+
+  // Re-apply coupon when address changes
+  useEffect(() => {
+    const reapplyCouponOnAddressChange = async () => {
+      if (isCouponApplied && selectedAddress && effectiveAddressId) {
+        try {
+          const savedCouponCode = localStorage.getItem(COUPON_CODE_KEY);
+          if (savedCouponCode && savedCouponCode.trim() !== "") {
+            const result = await applyCoupon({
+              coupon_code: savedCouponCode,
+              address_id: effectiveAddressId,
+            }).unwrap();
+
+            if (result && typeof result.message === "string") {
+              setSuccessMessage(result.message);
+              setLocalError("");
+            }
+
+            const data = (result as ApiResponse<unknown>)
+              ?.data as CouponResponse;
+            if (data && data.total_coupon_discount > 0) {
+              setCouponData(data);
+            }
+          }
+        } catch (error) {
+          console.warn("Failed to re-apply coupon with new address:", error);
+        }
+      }
+    };
+
+    // Only re-apply if we have an initialized component and address changed
+    if (isInitialized && selectedAddress) {
+      reapplyCouponOnAddressChange();
+    }
+  }, [
+    selectedAddress,
+    effectiveAddressId,
+    isCouponApplied,
+    isInitialized,
+    applyCoupon,
   ]);
 
   // Display values - use coupon data if available, otherwise use cart data
@@ -520,34 +575,32 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             )}
 
           {/* 7. Delivery Amount (الشحن) */}
-          <div className="flex justify-between">
-            <span className="text-neutral-600">
-              {t("orderSummary.deliveryAmount", "Shipping")}
-            </span>
-            <span className="font-medium">
-              {displayData.delivery_amount > 0
-                ? isRTL
+          {displayData.delivery_amount > 0 && (
+            <div className="flex justify-between">
+              <span className="text-neutral-600">
+                {t("orderSummary.deliveryAmount", "Shipping")}
+              </span>
+              <span className="font-medium">
+                {isRTL
                   ? `${displayData.delivery_amount.toFixed(2)} ر.س`
-                  : `${displayData.delivery_amount.toFixed(2)} SAR`
-                : t("orderSummary.free", "Free")}
-            </span>
-          </div>
+                  : `${displayData.delivery_amount.toFixed(2)} SAR`}
+              </span>
+            </div>
+          )}
 
           {/* 8. Delivery Tax (ضريبة الشحن) */}
-          <div className="flex justify-between">
-            <span className="text-neutral-600">
-              {t("orderSummary.deliveryTax", "Delivery Tax")}
-            </span>
-            <span className="font-medium">
-              {displayData.delivery_tax > 0
-                ? isRTL
+          {displayData.delivery_tax > 0 && (
+            <div className="flex justify-between">
+              <span className="text-neutral-600">
+                {t("orderSummary.deliveryTax", "Delivery Tax")}
+              </span>
+              <span className="font-medium">
+                {isRTL
                   ? `${displayData.delivery_tax.toFixed(2)} ر.س`
-                  : `${displayData.delivery_tax.toFixed(2)} SAR`
-                : isRTL
-                ? "لا يوجد ضريبة"
-                : "Free"}
-            </span>
-          </div>
+                  : `${displayData.delivery_tax.toFixed(2)} SAR`}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* 9. Final Total (الإجمالي النهائي) */}

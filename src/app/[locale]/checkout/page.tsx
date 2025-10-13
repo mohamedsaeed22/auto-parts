@@ -201,16 +201,11 @@ const CheckoutPage = () => {
             <div className="lg:col-span-4">
               <OrderSummary
                 currentStep={currentStep}
-                total={total}
                 couponCode={couponCode}
-                couponDiscount={couponDiscount}
                 isApplyingCoupon={isApplyingCoupon}
                 couponError={couponError}
-                isProcessing={isProcessing}
                 onCouponCodeChange={handleCouponCodeChange}
                 onApplyCoupon={handleApplyCoupon}
-                onRemoveCoupon={handleRemoveCoupon}
-                onPlaceOrder={handlePlaceOrder}
               />
             </div>
           </div>

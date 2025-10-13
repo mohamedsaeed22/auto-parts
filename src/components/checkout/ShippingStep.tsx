@@ -6,15 +6,16 @@ import {
   useGetAddressesQuery,
   useCreateAddressMutation,
 } from "@/services/api/addressesApi";
+import { useSmartAddress } from "@/hooks/useSmartAddress";
+import { cartApi, useApplyCouponMutation } from "@/services/api/cartApi";
+import { useAppDispatch } from "@/store/hooks";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
   DialogTrigger,
-  DialogClose,
 } from "@/components/ui/dialog";
 import { AddressForm } from "@/components/address";
 import { showSuccess, showError } from "@/lib/toast";
@@ -37,9 +38,14 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
 }) => {
   const { t, i18n } = useTranslation("checkout");
   const isRTL = i18n.language === "ar";
+  const dispatch = useAppDispatch();
   const { data: addressesResp } = useGetAddressesQuery();
   const [createAddress, { isLoading: isCreating }] = useCreateAddressMutation();
+  const [applyCoupon] = useApplyCouponMutation();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Smart address management
+  const { setSelectedAddress: setSmartAddress } = useSmartAddress();
 
   const addresses = useMemo(
     () => addressesResp?.data?.addresses || [],
@@ -60,10 +66,57 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
       // Auto-select the newly created address
       if (result?.data?.id) {
         onAddressSelect(result.data.id);
+        setSmartAddress(result.data.id);
+
+        // Update cart with new address
+        dispatch(cartApi.util.invalidateTags(["Cart"]));
+
+        // Re-apply any existing coupon with the new address
+        try {
+          const savedCouponCode = localStorage.getItem(
+            "auto_parts_coupon_code"
+          );
+          if (savedCouponCode && savedCouponCode.trim() !== "") {
+            await applyCoupon({
+              coupon_code: savedCouponCode,
+              address_id: result.data.id,
+            }).unwrap();
+          }
+        } catch (error) {
+          console.warn("Failed to re-apply coupon with new address:", error);
+        }
       }
     } catch {
       showError(t("addresses.errors.addFailed"));
     }
+  };
+
+  const handleAddressSelect = async (addressId: number) => {
+    onAddressSelect(addressId);
+    setSmartAddress(addressId);
+
+    // Update cart with selected address
+    dispatch(cartApi.util.invalidateTags(["Cart"]));
+
+    // Re-apply any existing coupon with the new address
+    try {
+      const savedCouponCode = localStorage.getItem("auto_parts_coupon_code");
+      if (savedCouponCode && savedCouponCode.trim() !== "") {
+        await applyCoupon({
+          coupon_code: savedCouponCode,
+          address_id: addressId,
+        }).unwrap();
+      }
+    } catch (error) {
+      console.warn("Failed to re-apply coupon with new address:", error);
+    }
+  };
+
+  const handleNext = () => {
+    if (!selectedAddress) return;
+
+    // Proceed to next step - OrderSummary will automatically get updated data
+    onNext();
   };
 
   // Auto-select first address if none selected
@@ -109,7 +162,7 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
                         ? "border-logo-gold bg-logo-gold/10 shadow-md"
                         : "border-neutral-200 hover:border-logo-gold/40"
                     }`}
-                    onClick={() => onAddressSelect(address.id)}
+                    onClick={() => handleAddressSelect(address.id)}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -208,7 +261,7 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
             )}
           </Button>
           <Button
-            onClick={onNext}
+            onClick={handleNext}
             disabled={!hasAddresses}
             className="flex-1 bg-logo-gold hover:bg-logo-gold/90 text-white py-3 flex items-center justify-center disabled:bg-logo-gold/50 disabled:text-white/70"
           >
