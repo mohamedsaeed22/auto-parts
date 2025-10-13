@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import FormInput from "@/components/ui/FormInput";
+import { SearchableSelect } from "@/components/ui/SearchableSelect";
 import {
   Dialog,
   DialogContent,
@@ -15,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useGetAddressesQuery } from "@/services/api";
+import { useGetAddressesQuery, useGetCitiesQuery } from "@/services/api";
 import {
   Loader2,
   MapPin,
@@ -281,6 +282,19 @@ export default function AcceptRequestDialog({
     useGetAddressesQuery();
 
   const addresses: Address[] = addressesResponse?.data?.addresses || [];
+
+  // Fetch cities from API with current locale
+  const { data: citiesResponse } = useGetCitiesQuery(i18n.language);
+
+  // Transform cities data to options format
+  const cityOptions = useMemo(() => {
+    if (!citiesResponse?.data?.cities) return [];
+    return citiesResponse.data.cities.map((city) => ({
+      value: city.key, // Send the key to backend
+      label: city.value, // Display the translated name to user
+      searchText: city.key, // Allow searching by English name too
+    }));
+  }, [citiesResponse]);
 
   const resetForm = () => {
     setStep(1);
@@ -677,22 +691,26 @@ export default function AcceptRequestDialog({
                       inputClassName="h-12"
                     />
 
-                    <FormInput
+                    <SearchableSelect
                       label={t("addressSelection:city", "City")}
                       placeholder={t(
                         "addressSelection:cityPlaceholder",
-                        "Enter city"
+                        "Select city"
+                      )}
+                      searchPlaceholder={t(
+                        "addressSelection:searchCity",
+                        "Search city..."
                       )}
                       value={watch("city")}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setValue("city", e.target.value, {
+                      onValueChange={(value) =>
+                        setValue("city", value, {
                           shouldValidate: true,
                           shouldDirty: true,
                         })
                       }
+                      options={cityOptions}
                       error={errors.city?.message}
                       required
-                      inputClassName="h-12"
                     />
 
                     <FormInput
