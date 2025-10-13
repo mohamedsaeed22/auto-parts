@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -91,6 +92,7 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
 }) => {
   const pdfRef = useRef<HTMLDivElement>(null);
   const [qrCodeUrl, setQrCodeUrl] = React.useState<string>("");
+  const [isGeneratingPdf, setIsGeneratingPdf] = React.useState<boolean>(false);
 
   // Transform request data for display
   const transformRequestData = (request: RequestData) => {
@@ -170,12 +172,20 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
   }, [data]);
 
   const handleDownload = async () => {
-    if (!pdfRef.current) return;
+    if (!pdfRef.current || isGeneratingPdf) return;
 
+    setIsGeneratingPdf(true);
     try {
       // Dynamically import html2canvas and jspdf
       const html2canvas = (await import("html2canvas")).default;
       const { jsPDF } = await import("jspdf");
+
+      // Add loading state to prevent flashing
+      const originalContent = pdfRef.current.style.visibility;
+      pdfRef.current.style.visibility = "hidden";
+
+      // Wait a moment for any animations to complete
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       // Capture the element with html2canvas - simplified approach
       const canvas = await html2canvas(pdfRef.current, {
@@ -184,7 +194,17 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
         allowTaint: true,
         logging: false,
         backgroundColor: "#ffffff",
+        ignoreElements: (element) => {
+          // Skip elements that might cause OKLCH issues
+          return (
+            element.classList.contains("dialog-content") ||
+            element.classList.contains("dialog-header")
+          );
+        },
       });
+
+      // Restore visibility
+      pdfRef.current.style.visibility = originalContent;
 
       const imgData = canvas.toDataURL("image/png", 1.0);
       const pdf = new jsPDF({
@@ -217,6 +237,8 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
         console.error("Error stack:", error.stack);
       }
       alert("حدث خطأ أثناء إنشاء ملف PDF. يرجى المحاولة مرة أخرى.");
+    } finally {
+      setIsGeneratingPdf(false);
     }
   };
 
@@ -231,13 +253,17 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
               </span>
               <Button
                 onClick={handleDownload}
-                className="bg-logo-gold hover:bg-logo-gold/90 text-white"
+                disabled={isGeneratingPdf}
+                className="bg-logo-gold hover:bg-logo-gold/90 text-white disabled:opacity-50"
               >
                 <Download className="w-4 h-4 ml-2" />
-                تحميل الفاتورة
+                {isGeneratingPdf ? "جاري التحميل..." : "تحميل الفاتورة"}
               </Button>
             </div>
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            عرض وتحميل فاتورة طلب قطع الغيار
+          </DialogDescription>
         </DialogHeader>
 
         {/* PDF Content */}
