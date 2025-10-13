@@ -609,47 +609,6 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                       </span>
                     </div>
                   )}
-
-                {/* 3. Subtotal */}
-                {/* <div
-                  className="flex justify-between items-center pb-2"
-                  style={{ borderBottom: "1px solid #d1d5db" }}
-                >
-                  <span
-                    className="text-sm font-medium"
-                    style={{ color: "#374151" }}
-                  >
-                    المجموع الفرعي
-                  </span>
-                  <span
-                    className="text-base font-semibold"
-                    style={{ color: "#1a1a1a" }}
-                  >
-                    {data.subtotal.toFixed(2)} {isCurrentRTL ? "ر.س" : "SAR"}
-                  </span>
-                </div> */}
-
-                {/* 4. Total Tax */}
-                {/* {data.vatAmount > 0 && (
-                  <div
-                    className="flex justify-between items-center pb-2"
-                    style={{ borderBottom: "1px solid #d1d5db" }}
-                  >
-                    <span
-                      className="text-sm font-medium"
-                      style={{ color: "#374151" }}
-                    >
-                      الضريبة
-                    </span>
-                    <span
-                      className="text-base font-semibold"
-                      style={{ color: "#1a1a1a" }}
-                    >
-                      {data.vatAmount.toFixed(2)} {isCurrentRTL ? "ر.س" : "SAR"}
-                    </span>
-                  </div>
-                )} */}
-
                 {/* 5. Total Including VAT */}
                 <div
                   className="flex justify-between items-center pb-2"
@@ -691,48 +650,6 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                     </span>
                   </div>
                 )}
-
-                {/* 7. Cart Total */}
-                {/* <div
-                  className="flex justify-between items-center pb-2"
-                  style={{ borderBottom: "1px solid #d1d5db" }}
-                >
-                  <span
-                    className="text-sm font-semibold"
-                    style={{ color: "#374151" }}
-                  >
-                    إجمالي السلة
-                  </span>
-                  <span
-                    className="text-base font-semibold"
-                    style={{ color: "#1a1a1a" }}
-                  >
-                    {data.cartTotal.toFixed(2)} {isCurrentRTL ? "ر.س" : "SAR"}
-                  </span>
-                </div> */}
-
-                {/* 8. Coupon Discount */}
-                {/* {data.couponCode && data.couponDiscount > 0 && (
-                  <div
-                    className="flex justify-between items-center pb-2"
-                    style={{ borderBottom: "1px solid #d1d5db" }}
-                  >
-                    <span
-                      className="text-sm font-medium"
-                      style={{ color: "#374151" }}
-                    >
-                      خصم القسيمة
-                    </span>
-                    <span
-                      className="text-base font-semibold"
-                      style={{ color: "#D4AF37" }}
-                    >
-                      - {data.couponDiscount.toFixed(2)}{" "}
-                      {isCurrentRTL ? "ر.س" : "SAR"}
-                    </span>
-                  </div>
-                )} */}
-
                 {/* 7. Shipping Without Tax */}
                 <div
                   className="flex justify-between items-center pb-2"

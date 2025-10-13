@@ -542,7 +542,7 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
                   border: "2px solid rgba(212, 175, 55, 0.2)",
                 }}
               >
-                {/* 1. إجمالي قطع الغيار بدون ضريبة (calculated_total_without_tax) */}
+                {/* 1. Subtotal Without Tax */}
                 <div
                   className="flex justify-between items-center pb-2"
                   style={{ borderBottom: "1px solid #d1d5db" }}
@@ -551,7 +551,7 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
                     className="text-sm font-medium"
                     style={{ color: "#374151" }}
                   >
-                    إجمالي قطع الغيار بدون ضريبة
+                    المجموع الفرعي (بدون ضريبة)
                   </span>
                   <span
                     className="text-base font-semibold"
@@ -561,7 +561,7 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
                   </span>
                 </div>
 
-                {/* 2. ضريبة قطع الغيار (calculated_total_tax) */}
+                {/* 2. Subtotal Tax */}
                 <div
                   className="flex justify-between items-center pb-2"
                   style={{ borderBottom: "1px solid #d1d5db" }}
@@ -570,7 +570,7 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
                     className="text-sm font-medium"
                     style={{ color: "#374151" }}
                   >
-                    ضريبة قطع الغيار
+                    ضريبة المجموع الفرعي
                   </span>
                   <span
                     className="text-base font-semibold"
@@ -580,7 +580,7 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
                   </span>
                 </div>
 
-                {/* 3. إجمالي قطع الغيار شامل الضريبة (calculated_total) */}
+                {/* 3. Total Including VAT */}
                 <div
                   className="flex justify-between items-center pb-2"
                   style={{ borderBottom: "1px solid #d1d5db" }}
@@ -589,7 +589,7 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
                     className="text-sm font-medium"
                     style={{ color: "#374151" }}
                   >
-                    إجمالي قطع الغيار شامل الضريبة
+                    الإجمالي شامل الضريبة
                   </span>
                   <span
                     className="text-base font-semibold"
@@ -599,7 +599,7 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
                   </span>
                 </div>
 
-                {/* 4. رسوم التوصيل بدون ضريبة (delivery_amount_without_tax) */}
+                {/* 4. Shipping Without Tax */}
                 <div
                   className="flex justify-between items-center pb-2"
                   style={{ borderBottom: "1px solid #d1d5db" }}
@@ -608,7 +608,7 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
                     className="text-sm font-medium"
                     style={{ color: "#374151" }}
                   >
-                    رسوم التوصيل بدون ضريبة
+                    الشحن (بدون ضريبة)
                   </span>
                   <span
                     className="text-base font-semibold"
@@ -618,7 +618,7 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
                   </span>
                 </div>
 
-                {/* 5. ضريبة التوصيل (delivery_amount_tax) */}
+                {/* 5. Shipping Tax */}
                 <div
                   className="flex justify-between items-center pb-2"
                   style={{ borderBottom: "1px solid #d1d5db" }}
@@ -627,7 +627,7 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
                     className="text-sm font-medium"
                     style={{ color: "#374151" }}
                   >
-                    ضريبة التوصيل
+                    ضريبة الشحن
                   </span>
                   <span
                     className="text-base font-semibold"
@@ -637,7 +637,7 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
                   </span>
                 </div>
 
-                {/* 6. إجمالي رسوم التوصيل شامل الضريبة (delivery_amount) */}
+                {/* 6. Total Shipping */}
                 <div
                   className="flex justify-between items-center pb-2"
                   style={{ borderBottom: "1px solid #d1d5db" }}
@@ -646,7 +646,7 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
                     className="text-sm font-medium"
                     style={{ color: "#374151" }}
                   >
-                    إجمالي رسوم التوصيل شامل الضريبة
+                    الشحن
                   </span>
                   <span
                     className="text-base font-semibold"
@@ -656,7 +656,7 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
                   </span>
                 </div>
 
-                {/* 7. الإجمالي النهائي (final_total) */}
+                {/* 7. Final Total */}
                 <div
                   className="flex justify-between items-center pt-2 px-5 py-3 -mx-5 -mb-5 rounded-b-lg"
                   style={{ backgroundColor: "rgba(212, 175, 55, 0.2)" }}
