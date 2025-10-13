@@ -819,63 +819,7 @@ export default function AcceptRequestDialog({
                           )}
                         </p>
 
-                        {/* Payment Method Icons */}
-                        <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
-                          {/* Visa */}
-                          <div className="w-8 h-5 sm:w-10 sm:h-6 relative">
-                            <Image
-                              src="/credit_card_imgs/Visa.png"
-                              alt="Visa"
-                              fill
-                              className="object-contain"
-                            />
-                          </div>
-                          {/* Mastercard */}
-                          <div className="w-8 h-5 sm:w-10 sm:h-6 relative">
-                            <Image
-                              src="/credit_card_imgs/MasterCard.png"
-                              alt="Mastercard"
-                              fill
-                              className="object-contain"
-                            />
-                          </div>
-                          {/* PayPal */}
-                          <div className="w-8 h-5 sm:w-10 sm:h-6 relative">
-                            <Image
-                              src="/credit_card_imgs/paypal.png"
-                              alt="PayPal"
-                              fill
-                              className="object-contain"
-                            />
-                          </div>
-                          {/* STC Pay */}
-                          <div className="w-8 h-5 sm:w-10 sm:h-6 relative">
-                            <Image
-                              src="/credit_card_imgs/stc-bank.png"
-                              alt="STC Pay"
-                              fill
-                              className="object-contain"
-                            />
-                          </div>
-                          {/* Tabby */}
-                          <div className="w-8 h-5 sm:w-10 sm:h-6 relative">
-                            <Image
-                              src="/credit_card_imgs/tabby.jpg"
-                              alt="Tabby"
-                              fill
-                              className="object-contain"
-                            />
-                          </div>
-                          {/* Tamara */}
-                          <div className="w-8 h-5 sm:w-10 sm:h-6 relative">
-                            <Image
-                              src="/credit_card_imgs/tamara.png"
-                              alt="Tamara"
-                              fill
-                              className="object-contain"
-                            />
-                          </div>
-                        </div>
+                         
                       </div>
                     </div>
                     {paymentMethod === "credit_card" && (
