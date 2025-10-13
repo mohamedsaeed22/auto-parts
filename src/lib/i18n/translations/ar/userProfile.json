@@ -368,6 +368,7 @@
     "address": "العنوان التفصيلي",
     "city": "المدينة",
     "postalCode": "الرمز البريدي",
+    "nationalAddress": "العنوان الوطني",
     "type": "نوع العنوان",
     "selectType": "اختر نوع العنوان",
     "save": "حفظ",
@@ -399,9 +400,11 @@
     "placeholders": {
       "fullName": "الاسم الكامل",
       "phone": "+966 50 123 4567",
-      "city": "الرياض",
+      "city": "اختر المدينة",
+      "searchCity": "ابحث عن مدينة...",
       "detailedAddress": "الشارع، الحي، المبنى، الطابق",
-      "postalCode": "12345"
+      "postalCode": "12345",
+      "nationalAddress": "أدخل العنوان الوطني"
     },
     "validation": {
       "addressType": {
@@ -429,6 +432,11 @@
       "postalCode": {
         "required": "الرمز البريدي مطلوب",
         "invalid": "الرمز البريدي يجب أن يكون 5 أرقام"
+      },
+      "nationalAddress": {
+        "required": "العنوان الوطني مطلوب",
+        "minLength": "العنوان الوطني يجب أن يكون 5 أحرف على الأقل",
+        "maxLength": "العنوان الوطني يجب ألا يتجاوز 200 حرف"
       }
     }
   },

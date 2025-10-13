@@ -227,6 +227,27 @@ export default function AddressForm({
             />
           </div>
 
+          {/* National Address Input */}
+          <div className="md:col-span-2">
+            <FormInput
+              label={t("addresses.nationalAddress")}
+              placeholder={t("addresses.placeholders.nationalAddress")}
+              value={watch("national_address")}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setValue("national_address", e.target.value, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+              error={
+                errors.national_address?.message
+                  ? t(errors.national_address.message)
+                  : undefined
+              }
+              required
+            />
+          </div>
+
           {/* Postal Code Input */}
           <FormInput
             label={t("addresses.postalCode")}
@@ -241,25 +262,6 @@ export default function AddressForm({
             error={
               errors.postal_code?.message
                 ? t(errors.postal_code.message)
-                : undefined
-            }
-            required
-          />
-
-          {/* National Address Input */}
-          <FormInput
-            label={t("addresses.nationalAddress")}
-            placeholder={t("addresses.placeholders.nationalAddress")}
-            value={watch("national_address")}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setValue("national_address", e.target.value, {
-                shouldValidate: true,
-                shouldDirty: true,
-              })
-            }
-            error={
-              errors.national_address?.message
-                ? t(errors.national_address.message)
                 : undefined
             }
             required

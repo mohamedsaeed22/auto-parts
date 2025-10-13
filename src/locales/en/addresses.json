@@ -22,6 +22,30 @@
     "nationalAddress": "Enter national address"
   },
   "validation": {
+    "addressType": {
+      "required": "Address type is required"
+    },
+    "name": {
+      "required": "Name is required",
+      "minLength": "Name must be at least 2 characters",
+      "maxLength": "Name must not exceed 100 characters"
+    },
+    "phone": {
+      "required": "Phone number is required",
+      "invalid": "Please enter a valid Saudi phone number"
+    },
+    "city": {
+      "required": "City is required"
+    },
+    "detailedAddress": {
+      "required": "Detailed address is required",
+      "minLength": "Detailed address must be at least 10 characters",
+      "maxLength": "Detailed address must not exceed 500 characters"
+    },
+    "postalCode": {
+      "required": "Postal code is required",
+      "invalid": "Postal code must be 5 digits"
+    },
     "nationalAddress": {
       "required": "National address is required",
       "minLength": "National address must be at least 5 characters",

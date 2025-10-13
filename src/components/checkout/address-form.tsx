@@ -171,16 +171,16 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
         />
         <FormField
           control={form.control}
-          name="postal_code"
+          name="national_address"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-logo-black">
-                {t("address.postalCode")}
+                {t("address.nationalAddress")}
               </FormLabel>
               <FormControl>
                 <Input
                   {...field}
-                  className="border-neutral-300 focus:border-logo-gold focus:ring-logo-gold"
+                  className="w-full border-neutral-300 focus:border-logo-gold focus:ring-logo-gold"
                 />
               </FormControl>
               <FormMessage />
@@ -189,11 +189,11 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
         />
         <FormField
           control={form.control}
-          name="national_address"
+          name="postal_code"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-logo-black">
-                {t("address.nationalAddress", "National Address")}
+                {t("address.postalCode")}
               </FormLabel>
               <FormControl>
                 <Input

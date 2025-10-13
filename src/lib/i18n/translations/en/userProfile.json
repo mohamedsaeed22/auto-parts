@@ -372,6 +372,7 @@
     "address": "Detailed Address",
     "city": "City",
     "postalCode": "Postal Code",
+    "nationalAddress": "National Address",
     "type": "Address Type",
     "selectType": "Select address type",
     "save": "Save",
@@ -403,9 +404,11 @@
     "placeholders": {
       "fullName": "Full Name",
       "phone": "+966 50 123 4567",
-      "city": "Riyadh",
+      "city": "Select city",
+      "searchCity": "Search city...",
       "detailedAddress": "Street, District, Building, Floor",
-      "postalCode": "12345"
+      "postalCode": "12345",
+      "nationalAddress": "Enter national address"
     },
     "validation": {
       "addressType": {
@@ -433,6 +436,11 @@
       "postalCode": {
         "required": "Postal code is required",
         "invalid": "Postal code must be 5 digits"
+      },
+      "nationalAddress": {
+        "required": "National address is required",
+        "minLength": "National address must be at least 5 characters",
+        "maxLength": "National address must not exceed 200 characters"
       }
     }
   },
