@@ -320,7 +320,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                   >
                     {/* put logo here   */}
                     <img
-                      src="./logo.png"
+                      src="/logo.png"
                       alt="Logo"
                       className="w-26 h-26 object-contain"
                     />

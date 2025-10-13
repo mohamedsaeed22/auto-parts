@@ -283,7 +283,7 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
                     style={{ backgroundColor: "rgba(179, 152, 74, 0.1)" }}
                   >
                     <img
-                      src="./logo.png"
+                      src="/logo.png"
                       alt="Logo"
                       className="w-26 h-26 object-contain"
                     />
