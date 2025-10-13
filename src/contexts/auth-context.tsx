@@ -128,10 +128,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     storage.removeAuth();
     setUser(null);
-    
+
     // Dispatch a custom event to notify notification context to reset
     window.dispatchEvent(new CustomEvent("userLogout"));
-    
+
     // Don't redirect automatically - let components handle their own redirect logic
   };
 
