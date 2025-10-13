@@ -210,7 +210,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
 
     try {
       // Dynamically import html2canvas and jspdf
-      const html2canvas = (await import("html2canvas")).default;
+      const html2canvas = (await import("html2canvas-oklch")).default;
       const { jsPDF } = await import("jspdf");
 
       // Capture the element with html2canvas - simplified approach
