@@ -275,7 +275,9 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                       {getStatusIcon(order.status)}
                       <div>
                         <div className="text-sm opacity-75 mb-1">
-                          {t("orderComplete:status", { defaultValue: "Order Status" })}
+                          {t("orderComplete:status", {
+                            defaultValue: "Order Status",
+                          })}
                         </div>
                         <div className="font-semibold capitalize">
                           {t(`orderStatus.${order.status}`, {
@@ -554,7 +556,9 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                             {t("orderComplete:subtotalWithoutTax")}
                           </span>
                           <span className="font-medium text-logo-black">
-                            {(order.pricing.subtotal_without_tax || 0).toFixed(2)}{" "}
+                            {(order.pricing.subtotal_without_tax || 0).toFixed(
+                              2
+                            )}{" "}
                             {isRTL ? "ر.س" : "SAR"}
                           </span>
                         </div>
@@ -585,7 +589,9 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                             {t("orderComplete:shippingCostWithoutTax")}
                           </span>
                           <span className="font-medium text-logo-black">
-                            {(order.pricing.shipping_cost_without_tax || 0).toFixed(2)}{" "}
+                            {(
+                              order.pricing.shipping_cost_without_tax || 0
+                            ).toFixed(2)}{" "}
                             {isRTL ? "ر.س" : "SAR"}
                           </span>
                         </div>
@@ -761,7 +767,11 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
         <OrderPdfViewer
           isOpen={isPdfViewerOpen}
           onClose={() => setIsPdfViewerOpen(false)}
-          orderData={order as unknown as Parameters<typeof OrderPdfViewer>[0]['orderData']}
+          orderData={
+            order as unknown as Parameters<
+              typeof OrderPdfViewer
+            >[0]["orderData"]
+          }
         />
       )}
     </div>
