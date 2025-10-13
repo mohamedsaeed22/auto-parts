@@ -475,18 +475,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                           {request.user.email}
                         </div>
                       </div>
-                      {request.user.code && (
-                        <div className="space-y-1">
-                          <div className="text-sm text-neutral-600">
-                            {t("requestComplete:userCode", {
-                              defaultValue: "User Code",
-                            })}
-                          </div>
-                          <div className="font-semibold text-logo-black">
-                            {request.user.code}
-                          </div>
-                        </div>
-                      )}
+                     
                     </>
                   )}
                 </CardContent>
@@ -553,12 +542,9 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                     {request.delivery_amount_without_tax && (
                       <div className="flex justify-between text-neutral-500 text-sm">
                         <span>
-                          {t(
-                            "requestComplete:deliveryAmountWithoutTax",
-                            {
-                              defaultValue: "Delivery (Before Tax)",
-                            }
-                          )}
+                          {t("requestComplete:deliveryAmountWithoutTax", {
+                            defaultValue: "Delivery (Before Tax)",
+                          })}
                         </span>
                         <span>
                           {formatPrice(request.delivery_amount_without_tax)}
