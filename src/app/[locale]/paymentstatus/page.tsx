@@ -16,7 +16,7 @@ import { AuthOnlyGuard } from "@/components/auth/AuthGuard";
 const PaymentStatusPageContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { t, i18n } = useTranslation("checkout");
+  const { t, i18n } = useTranslation(["orderComplete", "checkout", "common"]);
   const isRTL = i18n.language === "ar";
 
   const paymentMethod = searchParams.get("payment_method");
@@ -71,10 +71,10 @@ const PaymentStatusPageContent = () => {
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Loader2 className="w-16 h-16 text-logo-gold animate-spin mb-4" />
             <h2 className="text-xl font-semibold text-logo-black mb-2">
-              {t("orderComplete.loadingOrder")}
+              {t("orderComplete:loadingOrder")}
             </h2>
             <p className="text-neutral-600 text-center">
-              {t("orderComplete.pleaseWait")}
+              {t("orderComplete:pleaseWait")}
             </p>
           </CardContent>
         </Card>
@@ -100,24 +100,24 @@ const PaymentStatusPageContent = () => {
                 <AlertCircle className="w-10 h-10 text-red-600" />
               </div>
               <h2 className="text-2xl font-bold text-red-600 mb-3 text-center">
-                {t("orderComplete.errorLoadingOrder")}
+                {t("orderComplete:errorLoadingOrder")}
               </h2>
               <p className="text-neutral-600 text-center mb-6">
-                {t("orderComplete.orderNotFound")}
+                {t("orderComplete:orderNotFound")}
               </p>
               <div className="w-full space-y-3">
                 <Button
                   onClick={handleBackToShopping}
                   className="w-full bg-logo-gold hover:bg-logo-gold/90 text-white"
                 >
-                  {t("orderComplete.backToShopping")}
+                  {t("orderComplete:backToShopping")}
                 </Button>
                 <Button
                   onClick={() => router.push("/userprofile")}
                   variant="outline"
                   className="w-full border-2 border-logo-gold text-logo-gold"
                 >
-                  {t("orderComplete.viewMyOrders")}
+                  {t("orderComplete:viewMyOrders")}
                 </Button>
               </div>
             </CardContent>
@@ -145,16 +145,16 @@ const PaymentStatusPageContent = () => {
                 <XCircle className="w-10 h-10 text-red-600" />
               </div>
               <h2 className="text-2xl font-bold text-red-600 mb-3 text-center">
-                {t("orderComplete.paymentFailed")}
+                {t("orderComplete:paymentFailed")}
               </h2>
               <p className="text-neutral-600 text-center mb-2">
-                {t("orderComplete.paymentNotCompleted")}
+                {t("orderComplete:paymentNotCompleted")}
               </p>
               {transactionId && (
                 <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6 w-full">
                   <p className="text-sm text-neutral-600 text-center">
                     <span className="font-medium">
-                      {t("orderComplete.transactionId")}:
+                      {t("orderComplete:transactionId")}:
                     </span>{" "}
                     {transactionId}
                   </p>
@@ -166,17 +166,17 @@ const PaymentStatusPageContent = () => {
                   variant="outline"
                   className="w-full border-2 border-neutral-300 text-neutral-700"
                 >
-                  {t("orderComplete.backToShopping")}
+                  {t("orderComplete:backToShopping")}
                 </Button>
               </div>
               <div className="mt-6 text-center">
                 <p className="text-sm text-neutral-500">
-                  {t("orderComplete.needHelp")}{" "}
+                  {t("orderComplete:needHelp")}{" "}
                   <button
                     onClick={() => router.push("/contact")}
                     className="text-logo-gold font-medium hover:underline"
                   >
-                    {t("orderComplete.contactSupport")}
+                    {t("orderComplete:contactSupport")}
                   </button>
                 </p>
               </div>
@@ -205,17 +205,17 @@ const PaymentStatusPageContent = () => {
                 <AlertCircle className="w-10 h-10 text-orange-600" />
               </div>
               <h2 className="text-2xl font-bold text-orange-600 mb-3 text-center">
-                {t("orderComplete.invalidRequest")}
+                {t("orderComplete:invalidRequest")}
               </h2>
               <p className="text-neutral-600 text-center mb-6">
-                {t("orderComplete.missingParameters")}
+                {t("orderComplete:missingParameters")}
               </p>
               <div className="w-full space-y-3">
                 <Button
                   onClick={handleBackToShopping}
                   className="w-full bg-logo-gold hover:bg-logo-gold/90 text-white"
                 >
-                  {t("orderComplete.backToShopping")}
+                  {t("orderComplete:backToShopping")}
                 </Button>
               </div>
             </CardContent>

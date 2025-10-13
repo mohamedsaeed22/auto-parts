@@ -35,7 +35,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
   onBackToShopping,
   order,
 }) => {
-  const { t, i18n } = useTranslation("checkout");
+  const { t, i18n } = useTranslation(["orderComplete", "checkout", "common"]);
   const router = useRouter();
   const isRTL = i18n.language === "ar";
   const [isPdfViewerOpen, setIsPdfViewerOpen] = useState(false);
@@ -148,18 +148,16 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
             <CheckCircle className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
           </div>
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-logo-black mb-2 sm:mb-3">
-            {t("orderComplete.title")}
+            {t("orderComplete:title")}
           </h1>
           <p className="text-base sm:text-lg text-neutral-600 mb-2">
-            {t("orderComplete.thankYou", {
-              defaultValue: "Thank you for your order!",
-            })}
+            {t("orderComplete:thankYou")}
           </p>
           {order && (
             <>
               <div className="inline-flex items-center gap-2 bg-logo-gold/10 border border-logo-gold/30 rounded-full px-4 sm:px-6 py-2 sm:py-3 mb-3 sm:mb-4">
                 <span className="text-neutral-700 font-medium text-sm sm:text-base">
-                  {t("orderComplete.orderNumber")}:
+                  {t("orderComplete:orderNumber")}:
                 </span>
                 <span className="text-logo-black font-bold text-base sm:text-lg">
                   {order.order_number}
@@ -173,7 +171,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
               </div>
               <p className="text-neutral-600 flex items-center justify-center gap-2 text-sm sm:text-base">
                 <Clock className="w-4 h-4" />
-                {t("orderComplete.deliveryTime")}
+                {t("orderComplete:deliveryTime")}
               </p>
             </>
           )}
@@ -193,7 +191,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
                     <Hash className="w-5 h-5 text-logo-gold" />
-                    {t("orderComplete.orderDetails", {
+                    {t("orderComplete:orderDetails", {
                       defaultValue: "Order Details",
                     })}
                   </CardTitle>
@@ -202,7 +200,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <div className="text-sm text-neutral-600">
-                        {t("orderComplete.orderId")}
+                        {t("orderComplete:orderId")}
                       </div>
                       <div className="font-semibold text-logo-black">
                         {order.id}
@@ -210,7 +208,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                     </div>
                     <div className="space-y-2">
                       <div className="text-sm text-neutral-600">
-                        {t("orderComplete.orderDate")}
+                        {t("orderComplete:orderDate")}
                       </div>
                       <div className="font-semibold text-logo-black">
                         {formatDate(order.created_at)}
@@ -218,7 +216,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                     </div>
                     <div className="space-y-2">
                       <div className="text-sm text-neutral-600">
-                        {t("orderComplete.totalItems")}
+                        {t("orderComplete:totalItems")}
                       </div>
                       <div className="font-semibold text-logo-black">
                         {order.total_items}
@@ -227,7 +225,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                     {order.tracking_number && (
                       <div className="space-y-2">
                         <div className="text-sm text-neutral-600">
-                          {t("orderComplete.trackingNumber")}
+                          {t("orderComplete:trackingNumber")}
                         </div>
                         <div className="font-semibold text-logo-black flex items-center gap-2">
                           {order.tracking_number}
@@ -247,7 +245,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                   {order.notes && (
                     <div className="space-y-2">
                       <div className="text-sm text-neutral-600">
-                        {t("orderComplete.notes")}
+                        {t("orderComplete:notes")}
                       </div>
                       <div className="bg-logo-gold/5 p-3 rounded-lg border border-logo-gold/10">
                         <p className="text-logo-black">{order.notes}</p>
@@ -262,7 +260,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
                     <Package className="w-5 h-5 text-logo-gold" />
-                    {t("orderComplete.orderStatus", {
+                    {t("orderComplete:orderStatus", {
                       defaultValue: "Order Status",
                     })}
                   </CardTitle>
@@ -277,7 +275,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                       {getStatusIcon(order.status)}
                       <div>
                         <div className="text-sm opacity-75 mb-1">
-                          {t("orders.status", { defaultValue: "Order Status" })}
+                          {t("orderComplete:status", { defaultValue: "Order Status" })}
                         </div>
                         <div className="font-semibold capitalize">
                           {t(`orderStatus.${order.status}`, {
@@ -294,7 +292,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                       {getPaymentStatusIcon(order.payment_status)}
                       <div>
                         <div className="text-sm opacity-75 mb-1">
-                          {t("orderComplete.paymentStatus", {
+                          {t("orderComplete:paymentStatus", {
                             defaultValue: "Payment Status",
                           })}
                         </div>
@@ -314,13 +312,13 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
                     <Package className="w-5 h-5 text-logo-gold" />
-                    {t("orderReview.products")}
+                    {t("orderComplete:products")}
                     <Badge
                       variant="secondary"
                       className="bg-logo-gold/20 text-logo-black"
                     >
                       {order.total_items}{" "}
-                      {t("orderComplete.items", { defaultValue: "items" })}
+                      {t("orderComplete:items", { defaultValue: "items" })}
                     </Badge>
                   </CardTitle>
                 </CardHeader>
@@ -359,7 +357,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
                             <div className="text-xs sm:text-sm text-neutral-600">
                               <span className="font-medium">
-                                {t("orderComplete.sku", {
+                                {t("orderComplete:sku", {
                                   defaultValue: "SKU",
                                 })}
                                 :
@@ -368,7 +366,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                             </div>
                             <div className="text-xs sm:text-sm text-neutral-600">
                               <span className="font-medium">
-                                {t("orderComplete.quantity", {
+                                {t("orderComplete:quantity", {
                                   defaultValue: "Qty",
                                 })}
                                 :
@@ -381,7 +379,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                           <div className="space-y-2">
                             <div className="flex items-center justify-between">
                               <div className="text-sm text-neutral-600">
-                                {t("orderComplete.unitPrice", {
+                                {t("orderComplete:unitPrice", {
                                   defaultValue: "Unit Price",
                                 })}
                               </div>
@@ -401,7 +399,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
 
                             <div className="flex items-center justify-between">
                               <div className="text-sm text-neutral-600">
-                                {t("orderComplete.lineTotal", {
+                                {t("orderComplete:lineTotal", {
                                   defaultValue: "Line Total",
                                 })}
                               </div>
@@ -414,7 +412,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                             {product.discount_amount > 0 && (
                               <div className="flex items-center justify-between">
                                 <div className="text-sm text-green-600">
-                                  {t("orderComplete.saved", {
+                                  {t("orderComplete:saved", {
                                     defaultValue: "Saved",
                                   })}
                                 </div>
@@ -450,7 +448,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
                     <MapPin className="w-5 h-5 text-logo-gold" />
-                    {t("orderReview.shippingAddress")}
+                    {t("orderComplete:shippingAddress")}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -500,7 +498,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
               <Card className="shadow-lg border-logo-gold/20">
                 <CardHeader className="pb-4">
                   <CardTitle className="text-lg sm:text-xl">
-                    {t("orderComplete.paymentDelivery", {
+                    {t("orderComplete:paymentDelivery", {
                       defaultValue: "Payment & Delivery",
                     })}
                   </CardTitle>
@@ -510,7 +508,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                     <CreditCard className="w-5 h-5 text-logo-gold" />
                     <div>
                       <div className="text-sm text-neutral-600">
-                        {t("orderReview.paymentMethod")}
+                        {t("orderComplete:paymentMethod")}
                       </div>
                       <div className="font-semibold text-logo-black capitalize">
                         {t(`paymentMethod.${order.payment_method}`, {
@@ -523,12 +521,12 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                     <Truck className="w-5 h-5 text-logo-gold" />
                     <div>
                       <div className="text-sm text-neutral-600">
-                        {t("orderComplete.deliveryMethod", {
+                        {t("orderComplete:deliveryMethod", {
                           defaultValue: "Delivery",
                         })}
                       </div>
                       <div className="font-semibold text-logo-black">
-                        {t("orderComplete.standardDelivery", {
+                        {t("orderComplete:standardDelivery", {
                           defaultValue: "Standard Delivery",
                         })}
                       </div>
@@ -541,7 +539,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
               <Card className="shadow-lg border-logo-gold/20">
                 <CardHeader className="pb-4">
                   <CardTitle className="text-lg sm:text-xl">
-                    {t("orderComplete.summary", {
+                    {t("orderComplete:summary", {
                       defaultValue: "Order Summary",
                     })}
                   </CardTitle>
@@ -549,42 +547,73 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                 <CardContent>
                   <div className="space-y-4">
                     <div className="space-y-3 text-sm">
-                      <div className="flex justify-between items-center">
-                        <span className="text-neutral-600">
-                          {t("orderSummary.subtotal")}
-                        </span>
-                        <span className="font-medium text-logo-black">
-                          {order.pricing.subtotal.toFixed(2)}{" "}
-                          {isRTL ? "ر.س" : "SAR"}
-                        </span>
-                      </div>
-
-                      <div className="flex justify-between items-center">
-                        <span className="text-neutral-600">
-                          {t("orderSummary.shipping")}
-                        </span>
-                        <span className="font-medium text-logo-black">
-                          {order.pricing.shipping_cost.toFixed(2)}{" "}
-                          {isRTL ? "ر.س" : "SAR"}
-                        </span>
-                      </div>
-
-                      {order.pricing.tax_amount > 0 && (
+                      {/* Subtotal Details */}
+                      <div className="bg-gray-50 p-3 rounded-lg space-y-2">
                         <div className="flex justify-between items-center">
                           <span className="text-neutral-600">
-                            {t("orderSummary.tax")}
+                            {t("orderComplete:subtotalWithoutTax")}
                           </span>
                           <span className="font-medium text-logo-black">
-                            {order.pricing.tax_amount.toFixed(2)}{" "}
+                            {(order.pricing.subtotal_without_tax || 0).toFixed(2)}{" "}
                             {isRTL ? "ر.س" : "SAR"}
                           </span>
                         </div>
-                      )}
+                        <div className="flex justify-between items-center">
+                          <span className="text-neutral-600">
+                            {t("orderComplete:subtotalTax")}
+                          </span>
+                          <span className="font-medium text-logo-black">
+                            {(order.pricing.subtotal_tax || 0).toFixed(2)}{" "}
+                            {isRTL ? "ر.س" : "SAR"}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center font-semibold pt-2 border-t border-gray-200">
+                          <span className="text-logo-black">
+                            {t("orderComplete:subtotal")}
+                          </span>
+                          <span className="text-logo-black">
+                            {order.pricing.subtotal.toFixed(2)}{" "}
+                            {isRTL ? "ر.س" : "SAR"}
+                          </span>
+                        </div>
+                      </div>
 
+                      {/* Shipping Details */}
+                      <div className="bg-blue-50 p-3 rounded-lg space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-neutral-600">
+                            {t("orderComplete:shippingCostWithoutTax")}
+                          </span>
+                          <span className="font-medium text-logo-black">
+                            {(order.pricing.shipping_cost_without_tax || 0).toFixed(2)}{" "}
+                            {isRTL ? "ر.س" : "SAR"}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-neutral-600">
+                            {t("orderComplete:shippingCostTax")}
+                          </span>
+                          <span className="font-medium text-logo-black">
+                            {(order.pricing.shipping_cost_tax || 0).toFixed(2)}{" "}
+                            {isRTL ? "ر.س" : "SAR"}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center font-semibold pt-2 border-t border-blue-200">
+                          <span className="text-logo-black">
+                            {t("orderComplete:shippingCost")}
+                          </span>
+                          <span className="text-logo-black">
+                            {order.pricing.shipping_cost.toFixed(2)}{" "}
+                            {isRTL ? "ر.س" : "SAR"}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Discount */}
                       {order.pricing.discount_amount > 0 && (
                         <div className="flex justify-between items-center">
                           <span className="text-green-600">
-                            {t("orderSummary.discount")}
+                            {t("orderComplete:discountAmount")}
                           </span>
                           <span className="font-medium text-green-600">
                             -{order.pricing.discount_amount.toFixed(2)}{" "}
@@ -593,13 +622,11 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                         </div>
                       )}
 
+                      {/* Coupon */}
                       {order.coupon.code && (
                         <div className="flex justify-between items-center text-sm bg-green-50 p-2 rounded-lg">
                           <span className="text-green-700">
-                            {t("orderComplete.coupon", {
-                              defaultValue: "Coupon",
-                            })}
-                            : {order.coupon.code}
+                            {t("orderComplete:couponCode")}: {order.coupon.code}
                           </span>
                           <span className="font-medium text-green-700">
                             -{order.coupon.discount.toFixed(2)}{" "}
@@ -609,14 +636,14 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                       )}
                     </div>
 
-                    <div className="border-t border-logo-gold/20 my-4" />
+                    <div className="border-t-2 border-logo-gold/30 my-4" />
 
                     <div className="space-y-2">
-                      <div className="flex justify-between items-center text-lg">
-                        <span className="font-semibold text-logo-black">
-                          {t("orderSummary.total")}
+                      <div className="flex justify-between items-center text-lg bg-logo-gold/10 p-3 rounded-lg">
+                        <span className="font-bold text-logo-black">
+                          {t("orderComplete:total")}
                         </span>
-                        <span className="font-bold text-xl text-logo-gold">
+                        <span className="font-bold text-2xl text-logo-gold">
                           {order.pricing.total.toFixed(2)}{" "}
                           {isRTL ? "ر.س" : "SAR"}
                         </span>
@@ -625,7 +652,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                       {/* {order.pricing.grand_total !== order.pricing.total && (
                         <div className="flex justify-between items-center text-sm">
                           <span className="text-neutral-600">
-                            {t("orderComplete.grandTotal", {
+                            {t("orderComplete:grandTotal", {
                               defaultValue: "Grand Total",
                             })}
                           </span>
@@ -644,7 +671,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
               <Card className="shadow-lg border-logo-gold/20">
                 <CardHeader className="pb-4">
                   <CardTitle className="text-lg sm:text-xl">
-                    {t("orderComplete.orderActions", {
+                    {t("orderComplete:orderActions", {
                       defaultValue: "Order Actions",
                     })}
                   </CardTitle>
@@ -654,7 +681,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                     onClick={onBackToShopping}
                     className="w-full bg-logo-gold hover:bg-logo-gold/90 text-white py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg shadow-lg hover:shadow-xl transition-all duration-300"
                   >
-                    {t("orderComplete.backToShopping")}
+                    {t("orderComplete:backToShopping")}
                   </Button>
 
                   <Button
@@ -663,7 +690,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                     className="w-full border-2 border-logo-gold text-logo-gold   py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-300"
                   >
                     <Eye className="w-4 h-4 mr-2" />
-                    {t("orderComplete.trackOrder", {
+                    {t("orderComplete:trackOrder", {
                       defaultValue: "Track Order",
                     })}
                   </Button>
@@ -682,7 +709,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                     className="w-full border-2 border-neutral-300 text-neutral-700  py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-300"
                   >
                     <Phone className="w-4 h-4 mr-2" />
-                    {t("orderComplete.contactSupport", {
+                    {t("orderComplete:contactSupport", {
                       defaultValue: "Contact Support",
                     })}
                   </Button> */}
@@ -695,7 +722,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                   <CardHeader className="pb-4">
                     <CardTitle className="text-lg sm:text-xl flex items-center gap-2">
                       <Info className="w-5 h-5 text-logo-gold" />
-                      {t("orderComplete.orderCapabilities", {
+                      {t("orderComplete:orderCapabilities", {
                         defaultValue: "Order Capabilities",
                       })}
                     </CardTitle>
@@ -705,7 +732,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                       <div className="flex items-center gap-2 text-sm">
                         <CheckCircle className="w-4 h-4 text-green-600" />
                         <span className="text-neutral-700">
-                          {t("orderComplete.canBeCancelled", {
+                          {t("orderComplete:canBeCancelled", {
                             defaultValue: "Can be cancelled",
                           })}
                         </span>
@@ -715,7 +742,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                       <div className="flex items-center gap-2 text-sm">
                         <CheckCircle className="w-4 h-4 text-green-600" />
                         <span className="text-neutral-700">
-                          {t("orderComplete.canBeRefunded", {
+                          {t("orderComplete:canBeRefunded", {
                             defaultValue: "Can be refunded",
                           })}
                         </span>
@@ -730,11 +757,13 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
       </div>
 
       {/* PDF Viewer Dialog */}
-      <OrderPdfViewer
-        isOpen={isPdfViewerOpen}
-        onClose={() => setIsPdfViewerOpen(false)}
-        orderData={order}
-      />
+      {order && (
+        <OrderPdfViewer
+          isOpen={isPdfViewerOpen}
+          onClose={() => setIsPdfViewerOpen(false)}
+          orderData={order as unknown as Parameters<typeof OrderPdfViewer>[0]['orderData']}
+        />
+      )}
     </div>
   );
 };
