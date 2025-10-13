@@ -257,7 +257,10 @@ export default function BrandsPageClient({ locale }: BrandsPageClientProps) {
   useScrollToTop();
 
   // Use nuqs to manage page state
-  const [currentPage, setCurrentPage] = useQueryState("page", parseAsInteger.withDefault(1));
+  const [currentPage, setCurrentPage] = useQueryState(
+    "page",
+    parseAsInteger.withDefault(1)
+  );
 
   // Reset to page 1 when component first mounts (when navigating to /brands)
   useEffect(() => {
