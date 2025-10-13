@@ -66,66 +66,6 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
                   <p className="text-sm text-neutral-600">{desc}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                {key === "credit_card" && (
-                  <div className="flex items-center gap-1 sm:gap-2 flex-wrap justify-center sm:justify-start">
-                    {/* Visa */}
-                    <div className="w-10 h-6 sm:w-12 sm:h-8 relative">
-                      <Image
-                        src="/credit_card_imgs/Visa.png"
-                        alt="Visa"
-                        fill
-                        className="object-contain"
-                      />
-                    </div>
-                    {/* Mastercard */}
-                    <div className="w-10 h-6 sm:w-12 sm:h-8 relative">
-                      <Image
-                        src="/credit_card_imgs/MasterCard.png"
-                        alt="Mastercard"
-                        fill
-                        className="object-contain"
-                      />
-                    </div>
-                    {/* PayPal */}
-                    <div className="w-10 h-6 sm:w-12 sm:h-8 relative">
-                      <Image
-                        src="/credit_card_imgs/paypal.png"
-                        alt="PayPal"
-                        fill
-                        className="object-contain"
-                      />
-                    </div>
-                    {/* STC Pay */}
-                    <div className="w-10 h-6 sm:w-12 sm:h-8 relative">
-                      <Image
-                        src="/credit_card_imgs/stc-bank.png"
-                        alt="STC Pay"
-                        fill
-                        className="object-contain"
-                      />
-                    </div>
-                    {/* Tabby */}
-                    <div className="w-10 h-6 sm:w-12 sm:h-8 relative">
-                      <Image
-                        src="/credit_card_imgs/tabby.jpg"
-                        alt="Tabby"
-                        fill
-                        className="object-contain"
-                      />
-                    </div>
-                    {/* Tamara */}
-                    <div className="w-10 h-6 sm:w-12 sm:h-8 relative">
-                      <Image
-                        src="/credit_card_imgs/tamara.png"
-                        alt="Tamara"
-                        fill
-                        className="object-contain"
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
             </div>
           ))}
         </div>
