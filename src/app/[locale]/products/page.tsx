@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useGetProductsMutation } from "@/services/hooks";
@@ -344,6 +344,7 @@ export default function ProductsPage({
   const router = useRouter();
   const { t, i18n } = useTranslation("products");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const productsRef = useRef<HTMLDivElement>(null);
 
   const isRTL = i18n.language === "ar";
   const { locale } = React.use(params);
@@ -351,6 +352,18 @@ export default function ProductsPage({
 
   // Scroll to top when component mounts
   useScrollToTop();
+
+  // Function to scroll to products section
+  const scrollToProducts = () => {
+    if (productsRef.current) {
+      const yOffset = -100; // Offset to account for any fixed headers
+      const y =
+        productsRef.current.getBoundingClientRect().top +
+        window.pageYOffset +
+        yOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+  };
 
   // Custom hooks
   const {
@@ -410,9 +423,13 @@ export default function ProductsPage({
     switch (key) {
       case "category_id":
         updateCategory(value as number | null);
+        // Scroll to products when category changes
+        setTimeout(() => scrollToProducts(), 100);
         break;
       case "brand_id":
         updateBrand(value as number | null);
+        // Scroll to products when brand changes
+        setTimeout(() => scrollToProducts(), 100);
         break;
       case "min_price":
       case "max_price":
@@ -530,8 +547,8 @@ export default function ProductsPage({
               onToggle={() => setIsFilterOpen(!isFilterOpen)}
             />
 
-            {/* Desktop Filters */}
-            <div className="hidden lg:block">
+            {/* Desktop Filters - Sticky */}
+            <div className="hidden lg:block lg:sticky lg:top-35 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto">
               <FilterPanel
                 isRTL={isRTL}
                 t={t}
@@ -562,7 +579,7 @@ export default function ProductsPage({
           </div>
 
           {/* Products Section */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3" ref={productsRef}>
             {/* Search Results Header */}
             {filters.search && (
               <div className={`mb-6 ${isRTL ? "text-right" : "text-left"}`}>
