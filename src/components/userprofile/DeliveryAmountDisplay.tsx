@@ -63,10 +63,7 @@ export default function DeliveryAmountDisplay({
                   isRTL ? "text-right" : "text-left"
                 }`}
               >
-                {t(
-                  "requests.acceptDialog.deliveryAmount",
-                  "Delivery Amount"
-                )}
+                {t("requests.acceptDialog.deliveryAmount", "Delivery Amount")}
               </p>
               <p
                 className={`text-xs text-green-600 ${
