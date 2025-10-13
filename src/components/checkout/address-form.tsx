@@ -3,13 +3,16 @@
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMemo } from "react";
 import * as z from "zod";
 import {
   useCreateAddressMutation,
   useUpdateAddressMutation,
-} from "@/services/api/addressesApi";
+  useGetCitiesQuery,
+} from "@/services/api";
 import type { Address } from "@/services/api/types";
 import { Button } from "@/components/ui/button";
+import { SearchableSelect } from "@/components/ui/SearchableSelect";
 import {
   Form,
   FormControl,
@@ -27,6 +30,7 @@ const addressSchema = z.object({
   detailed_address: z.string().min(1, "Address is required"),
   city: z.string().min(1, "City is required"),
   postal_code: z.string().min(1, "Postal code is required"),
+  national_address: z.string().min(1, "National address is required"),
   address_type: z.enum(["home", "office", "other"]),
   is_default: z.boolean(),
 });
@@ -39,9 +43,23 @@ interface AddressFormProps {
 }
 
 export function AddressForm({ address, onSuccess }: AddressFormProps) {
-  const { t } = useTranslation("checkout");
+  const { t, i18n } = useTranslation("checkout");
   const [createAddress] = useCreateAddressMutation();
   const [updateAddress] = useUpdateAddressMutation();
+
+  // Fetch cities from API with current locale
+  const { data: citiesResponse } = useGetCitiesQuery(i18n.language);
+
+  // Transform cities data to options format
+  // Send city.key to backend, but display city.value (translated name) to user
+  const cityOptions = useMemo(() => {
+    if (!citiesResponse?.data?.cities) return [];
+    return citiesResponse.data.cities.map((city) => ({
+      value: city.key, // Send the key to backend
+      label: city.value, // Display the translated name to user
+      searchText: city.key, // Allow searching by English name too
+    }));
+  }, [citiesResponse]);
 
   const form = useForm<AddressFormValues>({
     resolver: zodResolver(addressSchema),
@@ -51,6 +69,7 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
       detailed_address: address?.detailed_address || "",
       city: address?.city || "",
       postal_code: address?.postal_code || "",
+      national_address: address?.national_address || "",
       address_type: address?.address_type || "home",
       is_default: address?.is_default || false,
     },
@@ -67,7 +86,7 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
         await createAddress(values).unwrap();
       }
       onSuccess?.();
-    } catch (error) {
+    } catch {
       // Error handling is done by the mutations
     }
   };
@@ -134,8 +153,29 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
           name="city"
           render={({ field }) => (
             <FormItem>
+              <SearchableSelect
+                label={t("address.city")}
+                placeholder={t("address.selectCity", "Select city")}
+                searchPlaceholder={t("address.searchCity", "Search city...")}
+                value={field.value as string}
+                onValueChange={(value: string) =>
+                  (field.onChange as (value: string) => void)(value)
+                }
+                options={cityOptions}
+                error={form.formState.errors.city?.message}
+                required
+              />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="postal_code"
+          render={({ field }) => (
+            <FormItem>
               <FormLabel className="text-logo-black">
-                {t("address.city")}
+                {t("address.postalCode")}
               </FormLabel>
               <FormControl>
                 <Input
@@ -149,11 +189,11 @@ export function AddressForm({ address, onSuccess }: AddressFormProps) {
         />
         <FormField
           control={form.control}
-          name="postal_code"
+          name="national_address"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-logo-black">
-                {t("address.postalCode")}
+                {t("address.nationalAddress", "National Address")}
               </FormLabel>
               <FormControl>
                 <Input

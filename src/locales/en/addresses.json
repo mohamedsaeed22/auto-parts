@@ -11,8 +11,21 @@
   "city": "City",
   "address": "Address",
   "postalCode": "Postal Code",
+  "nationalAddress": "National Address",
   "default": "Default",
   "save": "Save",
   "cancel": "Cancel",
-  "noAddresses": "No addresses yet"
+  "noAddresses": "No addresses yet",
+  "placeholders": {
+    "city": "Select city",
+    "searchCity": "Search city...",
+    "nationalAddress": "Enter national address"
+  },
+  "validation": {
+    "nationalAddress": {
+      "required": "National address is required",
+      "minLength": "National address must be at least 5 characters",
+      "maxLength": "National address must not exceed 200 characters"
+    }
+  }
 }

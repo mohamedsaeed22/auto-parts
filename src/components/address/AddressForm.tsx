@@ -1,19 +1,20 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import FormInput from "@/components/ui/FormInput";
 import FormSelect from "@/components/ui/FormSelect";
+import { SearchableSelect } from "@/components/ui/SearchableSelect";
 import { useTranslation } from "react-i18next";
 import {
   addressSchema,
   addressDefaultValues,
   type AddressFormData,
 } from "@/lib/validations/addressSchema";
-import type { Address } from "@/services/api/types";
+import { useGetCitiesQuery } from "@/services/api";
 
 interface AddressFormProps {
   // Form data
@@ -56,6 +57,20 @@ export default function AddressForm({
   const { t, i18n } = useTranslation("userProfile");
   const isRTL = i18n.language === "ar";
 
+  // Fetch cities from API with current locale
+  const { data: citiesResponse } = useGetCitiesQuery(i18n.language);
+
+  // Transform cities data to options format
+  // Send city.key to backend, but display city.value (translated name) to user
+  const cityOptions = useMemo(() => {
+    if (!citiesResponse?.data?.cities) return [];
+    return citiesResponse.data.cities.map((city) => ({
+      value: city.key, // Send the key to backend
+      label: city.value, // Display the translated name to user
+      searchText: city.key, // Allow searching by English name too
+    }));
+  }, [citiesResponse]);
+
   // React Hook Form setup
   const form = useForm<AddressFormData>({
     resolver: zodResolver(addressSchema),
@@ -94,7 +109,7 @@ export default function AddressForm({
         address_type: data.address_type as "home" | "office" | "other",
       };
       await onSubmit(addressData);
-    } catch (error) {
+    } catch {
       // Error handling is done in the parent component
     }
   };
@@ -169,17 +184,22 @@ export default function AddressForm({
             required
           />
 
-          {/* City Input */}
-          <FormInput
+          {/* City Select */}
+          <SearchableSelect
             label={t("addresses.city")}
-            placeholder={t("addresses.placeholders.city")}
+            placeholder={t("addresses.placeholders.city", "Select city")}
+            searchPlaceholder={t(
+              "addresses.placeholders.searchCity",
+              "Search city..."
+            )}
             value={watch("city")}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setValue("city", e.target.value, {
+            onValueChange={(value) =>
+              setValue("city", value, {
                 shouldValidate: true,
                 shouldDirty: true,
               })
             }
+            options={cityOptions}
             error={errors.city?.message ? t(errors.city.message) : undefined}
             required
           />
@@ -221,6 +241,25 @@ export default function AddressForm({
             error={
               errors.postal_code?.message
                 ? t(errors.postal_code.message)
+                : undefined
+            }
+            required
+          />
+
+          {/* National Address Input */}
+          <FormInput
+            label={t("addresses.nationalAddress")}
+            placeholder={t("addresses.placeholders.nationalAddress")}
+            value={watch("national_address")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("national_address", e.target.value, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            error={
+              errors.national_address?.message
+                ? t(errors.national_address.message)
                 : undefined
             }
             required

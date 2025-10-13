@@ -11,8 +11,21 @@
   "city": "المدينة",
   "address": "العنوان",
   "postalCode": "الرمز البريدي",
+  "nationalAddress": "العنوان الوطني",
   "default": "افتراضي",
   "save": "حفظ",
   "cancel": "إلغاء",
-  "noAddresses": "لا توجد عناوين بعد"
+  "noAddresses": "لا توجد عناوين بعد",
+  "placeholders": {
+    "city": "اختر المدينة",
+    "searchCity": "ابحث عن مدينة...",
+    "nationalAddress": "أدخل العنوان الوطني"
+  },
+  "validation": {
+    "nationalAddress": {
+      "required": "العنوان الوطني مطلوب",
+      "minLength": "يجب أن يكون العنوان الوطني 5 أحرف على الأقل",
+      "maxLength": "يجب ألا يتجاوز العنوان الوطني 200 حرف"
+    }
+  }
 }

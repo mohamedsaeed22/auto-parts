@@ -32,6 +32,7 @@ export const addressesApi = api.injectEndpoints({
           urlEncodedData.append("city", data.city);
           urlEncodedData.append("detailed_address", data.detailed_address);
           urlEncodedData.append("postal_code", data.postal_code);
+          urlEncodedData.append("national_address", data.national_address);
           urlEncodedData.append("is_default", data.is_default ? "1" : "0");
 
           return {
@@ -60,6 +61,7 @@ export const addressesApi = api.injectEndpoints({
         urlEncodedData.append("city", data.city);
         urlEncodedData.append("detailed_address", data.detailed_address);
         urlEncodedData.append("postal_code", data.postal_code);
+        urlEncodedData.append("national_address", data.national_address);
         urlEncodedData.append("is_default", data.is_default ? "1" : "0");
 
         return {

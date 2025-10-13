@@ -272,6 +272,11 @@ export default function AddressesPage() {
                 <div className="text-sm text-gray-600">
                   {address.city} - {address.postal_code}
                 </div>
+                {address.national_address && (
+                  <div className="text-sm text-gray-600">
+                    {t("addresses.nationalAddress")}: {address.national_address}
+                  </div>
+                )}
               </div>
             </div>
           ))}

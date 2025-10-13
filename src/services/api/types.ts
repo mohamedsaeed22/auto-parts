@@ -281,6 +281,7 @@ export interface Address {
   city: string;
   detailed_address: string;
   postal_code: string;
+  national_address: string;
   is_default: boolean;
   created_at: string;
   updated_at: string;
@@ -297,6 +298,7 @@ export interface CreateAddressRequest {
   city: string;
   detailed_address: string;
   postal_code: string;
+  national_address: string;
   is_default: boolean;
 }
 

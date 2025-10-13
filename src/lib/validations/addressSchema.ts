@@ -22,11 +22,7 @@ export const addressSchema = z.object({
       const cleanPhone = val.replace(/^(\+966|00966|966)/, "0");
       return /^0[5][0-9]{8}$/.test(cleanPhone);
     }, "addresses.validation.phone.invalid"),
-  city: z
-    .string()
-    .min(1, "addresses.validation.city.required")
-    .min(2, "addresses.validation.city.minLength")
-    .max(50, "addresses.validation.city.maxLength"),
+  city: z.string().min(1, "addresses.validation.city.required"),
   detailed_address: z
     .string()
     .min(1, "addresses.validation.detailedAddress.required")
@@ -36,6 +32,11 @@ export const addressSchema = z.object({
     .string()
     .min(1, "addresses.validation.postalCode.required")
     .regex(/^[0-9]{5}$/, "addresses.validation.postalCode.invalid"),
+  national_address: z
+    .string()
+    .min(1, "addresses.validation.nationalAddress.required")
+    .min(5, "addresses.validation.nationalAddress.minLength")
+    .max(200, "addresses.validation.nationalAddress.maxLength"),
   is_default: z.boolean().optional(),
 });
 
@@ -50,5 +51,6 @@ export const addressDefaultValues: Partial<AddressFormData> = {
   city: "",
   detailed_address: "",
   postal_code: "",
+  national_address: "",
   is_default: false,
 };
