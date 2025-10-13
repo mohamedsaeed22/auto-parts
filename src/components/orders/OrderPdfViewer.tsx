@@ -92,6 +92,20 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
   const [qrCodeUrl, setQrCodeUrl] = React.useState<string>("");
   const isCurrentRTL = i18n.language === "ar";
 
+  // Get tax number from localStorage
+  const getTaxNumber = () => {
+    try {
+      const authData = localStorage.getItem("fal_parts_auth");
+      if (authData) {
+        const parsed = JSON.parse(authData);
+        return parsed?.user?.tax_number || "لا يوجد";
+      }
+    } catch (error) {
+      console.error("Error reading tax number from localStorage:", error);
+    }
+    return "لا يوجد";
+  };
+
   // Transform order data for display
   const transformOrderData = (order: OrderData) => {
     const formatDate = (dateString: string) => {
@@ -404,7 +418,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                     className="text-lg font-semibold"
                     style={{ color: "#1a1a1a" }}
                   >
-                    لا يوجد
+                    {getTaxNumber()}
                   </p>
                 </div>
                 <div

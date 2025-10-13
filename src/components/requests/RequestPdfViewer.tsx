@@ -92,6 +92,20 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
   const pdfRef = useRef<HTMLDivElement>(null);
   const [qrCodeUrl, setQrCodeUrl] = React.useState<string>("");
 
+  // Get tax number from localStorage
+  const getTaxNumber = () => {
+    try {
+      const authData = localStorage.getItem("fal_parts_auth");
+      if (authData) {
+        const parsed = JSON.parse(authData);
+        return parsed?.user?.tax_number || "لا يوجد";
+      }
+    } catch (error) {
+      console.error("Error reading tax number from localStorage:", error);
+    }
+    return "لا يوجد";
+  };
+
   // Transform request data for display
   const transformRequestData = (request: RequestData) => {
     const formatDate = (dateString: string) => {
@@ -140,6 +154,8 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
       totalAmountWithoutTax: request.calculated_total_without_tax,
       vatAmount: request.calculated_total_tax,
       totalBeforeVat: request.calculated_total,
+      deliveryAmountWithoutTax: request.delivery_amount_without_tax,
+      deliveryAmountTax: request.delivery_amount_tax,
       deliveryAmount: request.delivery_amount,
       finalTotal: request.final_total,
       total: request.final_total,
@@ -356,22 +372,20 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
                     {data.requestNumber}
                   </p>
                 </div>
-                {data.workshopCode && (
-                  <div
-                    className="pr-4"
-                    style={{ borderRight: "4px solid #D4AF37" }}
+                <div
+                  className="pr-4"
+                  style={{ borderRight: "4px solid #D4AF37" }}
+                >
+                  <p className="text-sm mb-1" style={{ color: "#4b5563" }}>
+                    الرقم الضريبي
+                  </p>
+                  <p
+                    className="text-lg font-semibold"
+                    style={{ color: "#1a1a1a" }}
                   >
-                    <p className="text-sm mb-1" style={{ color: "#4b5563" }}>
-                      كود الورشة
-                    </p>
-                    <p
-                      className="text-lg font-semibold"
-                      style={{ color: "#1a1a1a" }}
-                    >
-                      {data.workshopCode}
-                    </p>
-                  </div>
-                )}
+                    {getTaxNumber()}
+                  </p>
+                </div>
                 <div
                   className="pr-4"
                   style={{ borderRight: "4px solid #D4AF37" }}
@@ -528,7 +542,7 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
                   border: "2px solid rgba(212, 175, 55, 0.2)",
                 }}
               >
-                {/* 1. Total Amount Without Tax */}
+                {/* 1. إجمالي قطع الغيار بدون ضريبة (calculated_total_without_tax) */}
                 <div
                   className="flex justify-between items-center pb-2"
                   style={{ borderBottom: "1px solid #d1d5db" }}
@@ -537,7 +551,7 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
                     className="text-sm font-medium"
                     style={{ color: "#374151" }}
                   >
-                    الإجمالي بدون الضريبة
+                    إجمالي قطع الغيار بدون ضريبة
                   </span>
                   <span
                     className="text-base font-semibold"
@@ -547,28 +561,7 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
                   </span>
                 </div>
 
-                {/* 2. Total Tax */}
-                {data.vatAmount > 0 && (
-                  <div
-                    className="flex justify-between items-center pb-2"
-                    style={{ borderBottom: "1px solid #d1d5db" }}
-                  >
-                    <span
-                      className="text-sm font-medium"
-                      style={{ color: "#374151" }}
-                    >
-                      الضريبة
-                    </span>
-                    <span
-                      className="text-base font-semibold"
-                      style={{ color: "#1a1a1a" }}
-                    >
-                      {data.vatAmount.toFixed(2)} ر.س
-                    </span>
-                  </div>
-                )}
-
-                {/* 3. Total Including VAT */}
+                {/* 2. ضريبة قطع الغيار (calculated_total_tax) */}
                 <div
                   className="flex justify-between items-center pb-2"
                   style={{ borderBottom: "1px solid #d1d5db" }}
@@ -577,7 +570,26 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
                     className="text-sm font-medium"
                     style={{ color: "#374151" }}
                   >
-                    الإجمالي شامل الضريبة
+                    ضريبة قطع الغيار
+                  </span>
+                  <span
+                    className="text-base font-semibold"
+                    style={{ color: "#1a1a1a" }}
+                  >
+                    {data.vatAmount.toFixed(2)} ر.س
+                  </span>
+                </div>
+
+                {/* 3. إجمالي قطع الغيار شامل الضريبة (calculated_total) */}
+                <div
+                  className="flex justify-between items-center pb-2"
+                  style={{ borderBottom: "1px solid #d1d5db" }}
+                >
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: "#374151" }}
+                  >
+                    إجمالي قطع الغيار شامل الضريبة
                   </span>
                   <span
                     className="text-base font-semibold"
@@ -587,28 +599,64 @@ const RequestPdfViewer: React.FC<RequestPdfViewerProps> = ({
                   </span>
                 </div>
 
-                {/* 4. Delivery Amount */}
-                {data.deliveryAmount > 0 && (
-                  <div
-                    className="flex justify-between items-center pb-2"
-                    style={{ borderBottom: "1px solid #d1d5db" }}
+                {/* 4. رسوم التوصيل بدون ضريبة (delivery_amount_without_tax) */}
+                <div
+                  className="flex justify-between items-center pb-2"
+                  style={{ borderBottom: "1px solid #d1d5db" }}
+                >
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: "#374151" }}
                   >
-                    <span
-                      className="text-sm font-medium"
-                      style={{ color: "#374151" }}
-                    >
-                      رسوم التوصيل
-                    </span>
-                    <span
-                      className="text-base font-semibold"
-                      style={{ color: "#1a1a1a" }}
-                    >
-                      {data.deliveryAmount.toFixed(2)} ر.س
-                    </span>
-                  </div>
-                )}
+                    رسوم التوصيل بدون ضريبة
+                  </span>
+                  <span
+                    className="text-base font-semibold"
+                    style={{ color: "#1a1a1a" }}
+                  >
+                    {data.deliveryAmountWithoutTax.toFixed(2)} ر.س
+                  </span>
+                </div>
 
-                {/* 5. Final Total */}
+                {/* 5. ضريبة التوصيل (delivery_amount_tax) */}
+                <div
+                  className="flex justify-between items-center pb-2"
+                  style={{ borderBottom: "1px solid #d1d5db" }}
+                >
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: "#374151" }}
+                  >
+                    ضريبة التوصيل
+                  </span>
+                  <span
+                    className="text-base font-semibold"
+                    style={{ color: "#1a1a1a" }}
+                  >
+                    {data.deliveryAmountTax.toFixed(2)} ر.س
+                  </span>
+                </div>
+
+                {/* 6. إجمالي رسوم التوصيل شامل الضريبة (delivery_amount) */}
+                <div
+                  className="flex justify-between items-center pb-2"
+                  style={{ borderBottom: "1px solid #d1d5db" }}
+                >
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: "#374151" }}
+                  >
+                    إجمالي رسوم التوصيل شامل الضريبة
+                  </span>
+                  <span
+                    className="text-base font-semibold"
+                    style={{ color: "#1a1a1a" }}
+                  >
+                    {data.deliveryAmount.toFixed(2)} ر.س
+                  </span>
+                </div>
+
+                {/* 7. الإجمالي النهائي (final_total) */}
                 <div
                   className="flex justify-between items-center pt-2 px-5 py-3 -mx-5 -mb-5 rounded-b-lg"
                   style={{ backgroundColor: "rgba(212, 175, 55, 0.2)" }}
