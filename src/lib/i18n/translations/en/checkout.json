@@ -86,6 +86,7 @@
     "cartTotal": "Cart Total",
     "couponDiscount": "Coupon Discount",
     "deliveryAmount": "Shipping",
+    "deliveryTax": "Delivery Tax",
     "finalTotal": "Final Total",
     "confirmOrder": "Confirm Order",
     "processing": "Processing order...",

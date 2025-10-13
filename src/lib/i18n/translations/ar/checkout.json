@@ -87,6 +87,7 @@
     "cartTotal": "إجمالي السلة",
     "couponDiscount": "خصم القسيمة",
     "deliveryAmount": "الشحن",
+    "deliveryTax": "ضريبة الشحن",
     "finalTotal": "الإجمالي النهائي",
     "confirmOrder": "تأكيد الطلب",
     "processing": "جاري معالجة الطلب...",

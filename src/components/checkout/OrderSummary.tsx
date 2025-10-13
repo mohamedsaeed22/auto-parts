@@ -58,6 +58,7 @@ type CartResponse = {
   cart_total: number;
   total_coupon_discount: number;
   delivery_amount: number;
+  delivery_tax: number;
   final_total: number;
   item_count: number;
 };
@@ -80,6 +81,7 @@ type CouponResponse = {
   cart_total: number;
   total_coupon_discount: number;
   delivery_amount: number;
+  delivery_tax: number;
   final_total: number;
 };
 
@@ -238,7 +240,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             // Refresh cart data
             dispatch(cartApi.util.invalidateTags(["Cart"]));
             onApplyCoupon();
-          } catch (error) {
+          } catch {
             // Remove invalid coupon from localStorage
             localStorage.removeItem(COUPON_CODE_KEY);
             setIsCouponApplied(false);
@@ -275,6 +277,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       cart_total: 0,
       total_coupon_discount: 0,
       delivery_amount: 0,
+      delivery_tax: 0,
       final_total: 0,
       item_count: 0,
     };
@@ -438,10 +441,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           {displayData.total_before_discount > 0 && (
             <div className="flex justify-between">
               <span className="text-neutral-600">
-                {t(
-                  "orderSummary.totalBeforeDiscount",
-                  "Total Including VAT"
-                )}
+                {t("orderSummary.totalBeforeDiscount", "Total Including VAT")}
               </span>
               <span className="font-medium">
                 {isRTL
@@ -492,30 +492,32 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           )}
 
           {/* Show applied coupon info */}
-          {isCouponApplied && couponData && displayData.total_coupon_discount > 0 && (
-            <div className="flex justify-between text-sm text-logo-gold bg-logo-gold/10 p-2 rounded">
-              <span>
-                {t("orderSummary.couponApplied", "Coupon Applied")}:{" "}
-                {couponData.coupon.code}
-              </span>
-              <span className="font-medium">
-                {couponData.coupon.type === "percentage"
-                  ? `${couponData.coupon.value}% ${t(
-                      "orderSummary.off",
-                      "off"
-                    )}`
-                  : isRTL
-                  ? `${couponData.coupon.value} ر.س ${t(
-                      "orderSummary.off",
-                      "off"
-                    )}`
-                  : `${couponData.coupon.value} SAR ${t(
-                      "orderSummary.off",
-                      "off"
-                    )}`}
-              </span>
-            </div>
-          )}
+          {isCouponApplied &&
+            couponData &&
+            displayData.total_coupon_discount > 0 && (
+              <div className="flex justify-between text-sm text-logo-gold bg-logo-gold/10 p-2 rounded">
+                <span>
+                  {t("orderSummary.couponApplied", "Coupon Applied")}:{" "}
+                  {couponData.coupon.code}
+                </span>
+                <span className="font-medium">
+                  {couponData.coupon.type === "percentage"
+                    ? `${couponData.coupon.value}% ${t(
+                        "orderSummary.off",
+                        "off"
+                      )}`
+                    : isRTL
+                    ? `${couponData.coupon.value} ر.س ${t(
+                        "orderSummary.off",
+                        "off"
+                      )}`
+                    : `${couponData.coupon.value} SAR ${t(
+                        "orderSummary.off",
+                        "off"
+                      )}`}
+                </span>
+              </div>
+            )}
 
           {/* 7. Delivery Amount (الشحن) */}
           <div className="flex justify-between">
@@ -530,9 +532,25 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                 : t("orderSummary.free", "Free")}
             </span>
           </div>
+
+          {/* 8. Delivery Tax (ضريبة الشحن) */}
+          <div className="flex justify-between">
+            <span className="text-neutral-600">
+              {t("orderSummary.deliveryTax", "Delivery Tax")}
+            </span>
+            <span className="font-medium">
+              {displayData.delivery_tax > 0
+                ? isRTL
+                  ? `${displayData.delivery_tax.toFixed(2)} ر.س`
+                  : `${displayData.delivery_tax.toFixed(2)} SAR`
+                : isRTL
+                ? "لا يوجد ضريبة"
+                : "Free"}
+            </span>
+          </div>
         </div>
 
-        {/* 8. Final Total (الإجمالي النهائي) */}
+        {/* 9. Final Total (الإجمالي النهائي) */}
         <div className="border-t border-logo-gold/30 mt-4 pt-4">
           <div className="flex justify-between text-xl font-bold">
             <span className="text-logo-black">
