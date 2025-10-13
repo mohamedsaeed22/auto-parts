@@ -38,7 +38,7 @@ export function NotificationProvider({
   });
 
   // Get notification count from API
-  const { data: countData } = useNotificationCount();
+  const countData = useNotificationCount();
 
   // Update unread count when data changes
   useEffect(() => {
@@ -48,6 +48,30 @@ export function NotificationProvider({
       setUnreadCount(0);
     }
   }, [isAuthenticated, countData]);
+
+  // Listen for logout event to clear notification cache
+  useEffect(() => {
+    const handleLogout = () => {
+      // Clear all notification-related queries from React Query cache
+      queryClient.removeQueries({ queryKey: ["notifications"] });
+      // Reset unread count immediately
+      setUnreadCount(0);
+    };
+
+    window.addEventListener("userLogout", handleLogout);
+
+    return () => {
+      window.removeEventListener("userLogout", handleLogout);
+    };
+  }, [queryClient]);
+
+  // Reset notifications when user changes or logs out
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setUnreadCount(0);
+      queryClient.removeQueries({ queryKey: ["notifications"] });
+    }
+  }, [isAuthenticated, queryClient]);
 
   const refreshNotifications = () => {
     queryClient.invalidateQueries({ queryKey: ["notifications"] });
