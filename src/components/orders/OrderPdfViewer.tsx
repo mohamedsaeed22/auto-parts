@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import QRCode from "qrcode";
+import { useTranslation } from "react-i18next";
 
 interface OrderProduct {
   id: number;
@@ -40,9 +41,13 @@ interface OrderAddress {
 
 interface OrderPricing {
   subtotal: number;
+  subtotal_without_tax?: number;
+  subtotal_tax?: number;
   discount_amount: number;
   tax_amount: number;
   shipping_cost: number;
+  shipping_cost_without_tax?: number;
+  shipping_cost_tax?: number;
   total: number;
   currency: string;
 }
@@ -82,8 +87,10 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
   onClose,
   orderData,
 }) => {
+  const { i18n } = useTranslation();
   const pdfRef = useRef<HTMLDivElement>(null);
   const [qrCodeUrl, setQrCodeUrl] = React.useState<string>("");
+  const isCurrentRTL = i18n.language === "ar";
 
   // Transform order data for display
   const transformOrderData = (order: OrderData) => {
@@ -179,7 +186,9 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
   React.useEffect(() => {
     if (!data) return;
 
-    const qrData = `رقم الطلب: ${data.orderNumber}\nالعميل: ${data.clientName}\nالمجموع: ${data.totalAfterVat} ر.س`;
+    const qrData = `رقم الطلب: ${data.orderNumber}\nالعميل: ${
+      data.clientName
+    }\nالمجموع: ${data.totalAfterVat} ${isCurrentRTL ? "ر.س" : "SAR"}`;
     QRCode.toDataURL(qrData, {
       width: 160,
       margin: 1,
@@ -511,7 +520,8 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                           className="p-3 text-center font-medium"
                           style={{ border: "1px solid #d1d5db" }}
                         >
-                          {product.price.toFixed(2)} ر.س
+                          {product.price.toFixed(2)}{" "}
+                          {isCurrentRTL ? "ر.س" : "SAR"}
                         </td>
                         <td
                           className="p-3 text-center font-semibold"
@@ -520,7 +530,8 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                             color: "#1a1a1a",
                           }}
                         >
-                          {product.total.toFixed(2)} ر.س
+                          {product.total.toFixed(2)}{" "}
+                          {isCurrentRTL ? "ر.س" : "SAR"}
                         </td>
                       </tr>
                     ))}
@@ -539,7 +550,7 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                   border: "2px solid rgba(212, 175, 55, 0.2)",
                 }}
               >
-                {/* 1. Total Amount Without Tax */}
+                {/* 1. Subtotal Without Tax */}
                 <div
                   className="flex justify-between items-center pb-2"
                   style={{ borderBottom: "1px solid #d1d5db" }}
@@ -548,18 +559,64 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                     className="text-sm font-medium"
                     style={{ color: "#374151" }}
                   >
-                    الإجمالي بدون الضريبة
+                    المجموع الفرعي (بدون ضريبة)
                   </span>
                   <span
                     className="text-base font-semibold"
                     style={{ color: "#1a1a1a" }}
                   >
-                    {data.totalAmountWithoutTax.toFixed(2)} ر.س
+                    {(
+                      orderData?.pricing?.subtotal_without_tax ||
+                      data.totalAmountWithoutTax
+                    ).toFixed(2)}{" "}
+                    {isCurrentRTL ? "ر.س" : "SAR"}
                   </span>
                 </div>
 
-                {/* 2. Total Tax */}
-                {data.vatAmount > 0 && (
+                {/* 2. Subtotal Tax */}
+                {orderData?.pricing?.subtotal_tax &&
+                  orderData.pricing.subtotal_tax > 0 && (
+                    <div
+                      className="flex justify-between items-center pb-2"
+                      style={{ borderBottom: "1px solid #d1d5db" }}
+                    >
+                      <span
+                        className="text-sm font-medium"
+                        style={{ color: "#374151" }}
+                      >
+                        ضريبة المجموع الفرعي
+                      </span>
+                      <span
+                        className="text-base font-semibold"
+                        style={{ color: "#1a1a1a" }}
+                      >
+                        {orderData.pricing.subtotal_tax.toFixed(2)}{" "}
+                        {isCurrentRTL ? "ر.س" : "SAR"}
+                      </span>
+                    </div>
+                  )}
+
+                {/* 3. Subtotal */}
+                {/* <div
+                  className="flex justify-between items-center pb-2"
+                  style={{ borderBottom: "1px solid #d1d5db" }}
+                >
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: "#374151" }}
+                  >
+                    المجموع الفرعي
+                  </span>
+                  <span
+                    className="text-base font-semibold"
+                    style={{ color: "#1a1a1a" }}
+                  >
+                    {data.subtotal.toFixed(2)} {isCurrentRTL ? "ر.س" : "SAR"}
+                  </span>
+                </div> */}
+
+                {/* 4. Total Tax */}
+                {/* {data.vatAmount > 0 && (
                   <div
                     className="flex justify-between items-center pb-2"
                     style={{ borderBottom: "1px solid #d1d5db" }}
@@ -574,12 +631,12 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                       className="text-base font-semibold"
                       style={{ color: "#1a1a1a" }}
                     >
-                      {data.vatAmount.toFixed(2)} ر.س
+                      {data.vatAmount.toFixed(2)} {isCurrentRTL ? "ر.س" : "SAR"}
                     </span>
                   </div>
-                )}
+                )} */}
 
-                {/* 3. Total Including VAT */}
+                {/* 5. Total Including VAT */}
                 <div
                   className="flex justify-between items-center pb-2"
                   style={{ borderBottom: "1px solid #d1d5db" }}
@@ -594,11 +651,12 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                     className="text-base font-semibold"
                     style={{ color: "#1a1a1a" }}
                   >
-                    {data.totalBeforeVat.toFixed(2)} ر.س
+                    {data.totalBeforeVat.toFixed(2)}{" "}
+                    {isCurrentRTL ? "ر.س" : "SAR"}
                   </span>
                 </div>
 
-                {/* 4. Total Discount */}
+                {/* 6. Total Discount */}
                 {data.discountAmount > 0 && (
                   <div
                     className="flex justify-between items-center pb-2"
@@ -614,13 +672,14 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                       className="text-base font-semibold"
                       style={{ color: "#dc2626" }}
                     >
-                      - {data.discountAmount.toFixed(2)} ر.س
+                      - {data.discountAmount.toFixed(2)}{" "}
+                      {isCurrentRTL ? "ر.س" : "SAR"}
                     </span>
                   </div>
                 )}
 
-                {/* 5. Cart Total */}
-                <div
+                {/* 7. Cart Total */}
+                {/* <div
                   className="flex justify-between items-center pb-2"
                   style={{ borderBottom: "1px solid #d1d5db" }}
                 >
@@ -634,12 +693,12 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                     className="text-base font-semibold"
                     style={{ color: "#1a1a1a" }}
                   >
-                    {data.cartTotal.toFixed(2)} ر.س
+                    {data.cartTotal.toFixed(2)} {isCurrentRTL ? "ر.س" : "SAR"}
                   </span>
-                </div>
+                </div> */}
 
-                {/* 6. Coupon Discount */}
-                {data.couponCode && data.couponDiscount > 0 && (
+                {/* 8. Coupon Discount */}
+                {/* {data.couponCode && data.couponDiscount > 0 && (
                   <div
                     className="flex justify-between items-center pb-2"
                     style={{ borderBottom: "1px solid #d1d5db" }}
@@ -654,12 +713,59 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                       className="text-base font-semibold"
                       style={{ color: "#D4AF37" }}
                     >
-                      - {data.couponDiscount.toFixed(2)} ر.س
+                      - {data.couponDiscount.toFixed(2)}{" "}
+                      {isCurrentRTL ? "ر.س" : "SAR"}
                     </span>
                   </div>
-                )}
+                )} */}
 
-                {/* 7. Shipping */}
+                {/* 7. Shipping Without Tax */}
+                <div
+                  className="flex justify-between items-center pb-2"
+                  style={{ borderBottom: "1px solid #d1d5db" }}
+                >
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: "#374151" }}
+                  >
+                    الشحن (بدون ضريبة)
+                  </span>
+                  <span
+                    className="text-base font-semibold"
+                    style={{ color: "#1a1a1a" }}
+                  >
+                    {(
+                      orderData?.pricing?.shipping_cost_without_tax ||
+                      data.shippingCost
+                    ).toFixed(2)}{" "}
+                    {isCurrentRTL ? "ر.س" : "SAR"}
+                  </span>
+                </div>
+
+                {/* 8. Shipping Tax */}
+                {orderData?.pricing?.shipping_cost_tax &&
+                  orderData.pricing.shipping_cost_tax > 0 && (
+                    <div
+                      className="flex justify-between items-center pb-2"
+                      style={{ borderBottom: "1px solid #d1d5db" }}
+                    >
+                      <span
+                        className="text-sm font-medium"
+                        style={{ color: "#374151" }}
+                      >
+                        ضريبة الشحن
+                      </span>
+                      <span
+                        className="text-base font-semibold"
+                        style={{ color: "#1a1a1a" }}
+                      >
+                        {orderData.pricing.shipping_cost_tax.toFixed(2)}{" "}
+                        {isCurrentRTL ? "ر.س" : "SAR"}
+                      </span>
+                    </div>
+                  )}
+
+                {/* 9. Total Shipping */}
                 <div
                   className="flex justify-between items-center pb-2"
                   style={{ borderBottom: "1px solid #d1d5db" }}
@@ -675,12 +781,14 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                     style={{ color: "#1a1a1a" }}
                   >
                     {data.shippingCost > 0
-                      ? `${data.shippingCost.toFixed(2)} ر.س`
+                      ? `${data.shippingCost.toFixed(2)} ${
+                          isCurrentRTL ? "ر.س" : "SAR"
+                        }`
                       : "مجاناً"}
                   </span>
                 </div>
 
-                {/* 8. Final Total */}
+                {/* 10. Final Total */}
                 <div
                   className="flex justify-between items-center pt-2 px-5 py-3 -mx-5 -mb-5 rounded-b-lg"
                   style={{ backgroundColor: "rgba(212, 175, 55, 0.2)" }}
@@ -695,7 +803,8 @@ const OrderPdfViewer: React.FC<OrderPdfViewerProps> = ({
                     className="text-xl font-bold"
                     style={{ color: "#D4AF37" }}
                   >
-                    {data.totalAfterVat.toFixed(2)} ر.س
+                    {data.totalAfterVat.toFixed(2)}{" "}
+                    {isCurrentRTL ? "ر.س" : "SAR"}
                   </span>
                 </div>
               </div>
