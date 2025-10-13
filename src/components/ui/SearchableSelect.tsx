@@ -24,6 +24,7 @@ export interface SearchableSelectProps {
   className?: string;
   id?: string;
   name?: string;
+  translationNamespace?: string;
 }
 
 export function SearchableSelect({
@@ -39,8 +40,9 @@ export function SearchableSelect({
   className,
   id,
   name,
+  translationNamespace,
 }: SearchableSelectProps) {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation(translationNamespace);
   const isRTL = i18n.language === "ar";
 
   const [isOpen, setIsOpen] = useState(false);
@@ -243,7 +245,7 @@ export function SearchableSelect({
             isRTL ? "text-right" : "text-left"
           )}
         >
-          {error}
+          {t(error) || error}
         </p>
       )}
     </div>

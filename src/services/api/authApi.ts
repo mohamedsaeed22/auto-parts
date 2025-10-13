@@ -103,6 +103,13 @@ export const authApi = api.injectEndpoints({
         console.log("- city:", data.city, typeof data.city);
         formData.append("city", data.city);
 
+        console.log(
+          "- national_address:",
+          data.national_address,
+          typeof data.national_address
+        );
+        formData.append("national_address", data.national_address);
+
         console.log("- zip:", data.zip, typeof data.zip);
         formData.append("zip", data.zip);
 

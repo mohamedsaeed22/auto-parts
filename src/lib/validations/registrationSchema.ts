@@ -67,10 +67,13 @@ export const registrationSchema = z.object({
     .min(1, "validation.addressRequired")
     .max(255, "validation.addressTooLong"),
 
-  city: z
+  city: z.string().min(1, "validation.cityRequired"),
+
+  national_address: z
     .string()
-    .min(1, "validation.cityRequired")
-    .max(100, "validation.cityTooLong"),
+    .min(1, "validation.nationalAddressRequired")
+    .min(5, "validation.nationalAddressMinLength")
+    .max(200, "validation.nationalAddressTooLong"),
 
   state: z
     .string()

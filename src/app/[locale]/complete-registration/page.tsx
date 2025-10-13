@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { useCompleteRegistrationMutation } from "@/services/api";
 import { useAuth } from "@/hooks/useAuth";
@@ -24,6 +24,8 @@ import {
   registrationSchema,
   type RegistrationFormData,
 } from "@/lib/validations/registrationSchema";
+import { SearchableSelect } from "@/components/ui/SearchableSelect";
+import { useGetCitiesQuery, type City } from "@/services/api/citiesApi";
 
 export default function CompleteRegistrationPage() {
   // ALL HOOKS MUST BE CALLED FIRST - before any early returns
@@ -54,6 +56,7 @@ export default function CompleteRegistrationPage() {
       manager_name: "",
       address: "",
       city: "",
+      national_address: "",
       zip: "",
       state: "",
       tax_number: "",
@@ -61,6 +64,19 @@ export default function CompleteRegistrationPage() {
       longitude: "",
     },
   });
+
+  // Fetch cities based on current language
+  const { data: citiesResponse } = useGetCitiesQuery(i18n.language);
+
+  // Transform cities to options format
+  const cityOptions = useMemo(() => {
+    const cities = citiesResponse?.data?.cities || [];
+    return cities.map((city: City) => ({
+      value: city.key, // English key for backend
+      label: city.value, // Translated name for display
+      searchText: city.key, // Allow searching by English name too
+    }));
+  }, [citiesResponse]);
 
   // Watch latitude and longitude to determine if location is selected
   const latitude = watch("latitude");
@@ -642,15 +658,35 @@ export default function CompleteRegistrationPage() {
                     translationNamespace="registration"
                   />
 
+                  <div className="space-y-1">
+                    <Controller
+                      name="city"
+                      control={control}
+                      render={({ field }) => (
+                        <SearchableSelect
+                          label={t("labels.city")}
+                          placeholder={t("placeholders.city")}
+                          searchPlaceholder={t("placeholders.searchCity")}
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          options={cityOptions}
+                          required
+                          error={errors.city?.message}
+                          translationNamespace="registration"
+                        />
+                      )}
+                    />
+                  </div>
+
                   <FormInput
-                    label={t("labels.city")}
+                    label={t("labels.nationalAddress")}
                     type="text"
-                    id="city"
-                    {...register("city")}
-                    placeholder={t("placeholders.city")}
+                    id="national_address"
+                    {...register("national_address")}
+                    placeholder={t("placeholders.nationalAddress")}
                     required
-                    icon={Building}
-                    error={errors.city?.message}
+                    icon={MapPin}
+                    error={errors.national_address?.message}
                     translationNamespace="registration"
                   />
 

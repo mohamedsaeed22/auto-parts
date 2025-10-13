@@ -39,6 +39,7 @@ export interface CompleteRegistrationRequest {
   manager_name: string;
   address: string;
   city: string;
+  national_address: string;
   zip: string;
   state: string;
   tax_number: string;
