@@ -185,7 +185,7 @@ export default function AcceptRequestDialog({
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent
-        className="max-w-2xl max-h-[90vh] overflow-hidden"
+        className="max-w-2xl max-h-[90vh] flex flex-col"
         dir={isRTL ? "rtl" : "ltr"}
       >
         <DialogHeader>
@@ -273,7 +273,7 @@ export default function AcceptRequestDialog({
           </div>
         </DialogHeader>
 
-        <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 scrollbar-thumb-rounded-full">
+        <div className="space-y-6 flex-1 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 scrollbar-thumb-rounded-full">
           {/* Step 1: Address Selection */}
           {step === 1 && (
             <>
@@ -423,17 +423,19 @@ export default function AcceptRequestDialog({
                     </Button>
                   </div>
 
-                  <AddressForm
-                    onSubmit={handleAddressFormSubmit}
-                    onCancel={() => setShowNewAddressForm(false)}
-                    isSubmitting={isCreatingAddress}
-                    isCreating={isCreatingAddress}
-                    showCancelButton={false}
-                    submitButtonText={t(
-                      "addressSelection:saveAndContinue",
-                      "Save & Continue"
-                    )}
-                  />
+                  <div className="[&>div]:!max-h-none [&>div]:!overflow-visible [&>div]:!pr-0">
+                    <AddressForm
+                      onSubmit={handleAddressFormSubmit}
+                      onCancel={() => setShowNewAddressForm(false)}
+                      isSubmitting={isCreatingAddress}
+                      isCreating={isCreatingAddress}
+                      showCancelButton={false}
+                      submitButtonText={t(
+                        "addressSelection:saveAndContinue",
+                        "Save & Continue"
+                      )}
+                    />
+                  </div>
                 </div>
               )}
             </>
