@@ -31,6 +31,7 @@ export const namespaces = [
   "product",
   "productDetails",
   "checkout",
+  "requestComplete",
   "profile",
 
   // Components

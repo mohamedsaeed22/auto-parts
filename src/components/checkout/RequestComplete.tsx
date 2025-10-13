@@ -29,7 +29,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
   onBackToShopping,
   request,
 }) => {
-  const { t, i18n } = useTranslation(["checkout", "common"]);
+  const { t, i18n } = useTranslation(["requestComplete", "checkout", "common"]);
   const router = useRouter();
   const isRTL = i18n.language === "ar";
 
@@ -154,12 +154,12 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
             <CheckCircle className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
           </div>
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-logo-black mb-2 sm:mb-3">
-            {t("checkout:requestComplete.title", {
+            {t("requestComplete:title", {
               defaultValue: "Request Confirmed!",
             })}
           </h1>
           <p className="text-base sm:text-lg text-neutral-600 max-w-2xl mx-auto px-4">
-            {t("checkout:requestComplete.subtitle", {
+            {t("requestComplete:subtitle", {
               defaultValue:
                 "Your custom parts request has been submitted successfully. We'll process your request and get back to you soon.",
             })}
@@ -179,7 +179,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
                     <Package className="w-5 h-5 text-logo-gold" />
-                    {t("checkout:requestComplete.requestDetails", {
+                    {t("requestComplete:requestDetails", {
                       defaultValue: "Request Details",
                     })}
                   </CardTitle>
@@ -188,7 +188,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <div className="text-sm text-neutral-600">
-                        {t("checkout:requestComplete.requestId", {
+                        {t("requestComplete:requestId", {
                           defaultValue: "Request ID",
                         })}
                       </div>
@@ -204,7 +204,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                     </div>
                     <div className="space-y-2">
                       <div className="text-sm text-neutral-600">
-                        {t("checkout:requestComplete.submittedAt", {
+                        {t("requestComplete:submittedAt", {
                           defaultValue: "Submitted Date",
                         })}
                       </div>
@@ -214,7 +214,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                     </div>
                     <div className="space-y-2">
                       <div className="text-sm text-neutral-600">
-                        {t("checkout:requestComplete.totalItems", {
+                        {t("requestComplete:totalItems", {
                           defaultValue: "Total Items",
                         })}
                       </div>
@@ -228,7 +228,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                     {request.tracking_number && (
                       <div className="space-y-2">
                         <div className="text-sm text-neutral-600">
-                          {t("checkout:requestComplete.trackingNumber", {
+                          {t("requestComplete:trackingNumber", {
                             defaultValue: "Tracking Number",
                           })}
                         </div>
@@ -250,7 +250,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                   {request.notes && (
                     <div className="space-y-2">
                       <div className="text-sm text-neutral-600">
-                        {t("checkout:requestComplete.notes", {
+                        {t("requestComplete:notes", {
                           defaultValue: "Notes",
                         })}
                       </div>
@@ -273,7 +273,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
                     <Info className="w-5 h-5 text-logo-gold" />
-                    {t("checkout:requestComplete.requestStatus", {
+                    {t("requestComplete:requestStatus", {
                       defaultValue: "Request Status",
                     })}
                   </CardTitle>
@@ -288,7 +288,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                       {getStatusIcon(request.status)}
                       <div>
                         <div className="text-sm opacity-75 mb-1">
-                          {t("checkout:requestComplete.status", {
+                          {t("requestComplete:status", {
                             defaultValue: "Status",
                           })}
                         </div>
@@ -307,7 +307,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                       {getPaymentStatusIcon(request.payment_status)}
                       <div>
                         <div className="text-sm opacity-75 mb-1">
-                          {t("checkout:requestComplete.paymentStatus", {
+                          {t("requestComplete:paymentStatus", {
                             defaultValue: "Payment Status",
                           })}
                         </div>
@@ -336,7 +336,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
                     <Package className="w-5 h-5 text-logo-gold" />
-                    {t("checkout:requestComplete.requestedParts", {
+                    {t("requestComplete:requestedParts", {
                       defaultValue: "Requested Parts",
                     })}
                   </CardTitle>
@@ -378,14 +378,14 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                           </h4>
                           {item.chassis_number && (
                             <p className="text-sm text-neutral-600 mb-1">
-                              {t("checkout:requestComplete.chassisNumber", {
+                              {t("requestComplete:chassisNumber", {
                                 defaultValue: "Chassis",
                               })}
                               : {item.chassis_number}
                             </p>
                           )}
                           <p className="text-sm text-neutral-600 mb-2">
-                            {t("checkout:requestComplete.quantity", {
+                            {t("requestComplete:quantity", {
                               defaultValue: "Qty",
                             })}
                             : {item.quantity}
@@ -397,7 +397,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                               </span>
                               <span className="text-xs text-neutral-500">
                                 ({formatPrice(item.price_without_tax)}{" "}
-                                {t("checkout:requestComplete.beforeTax", {
+                                {t("requestComplete:beforeTax", {
                                   defaultValue: "before tax",
                                 })}
                                 )
@@ -425,7 +425,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
                     <User className="w-5 h-5 text-logo-gold" />
-                    {t("checkout:requestComplete.userInfo", {
+                    {t("requestComplete:userInfo", {
                       defaultValue: "User Information",
                     })}
                   </CardTitle>
@@ -433,7 +433,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                 <CardContent className="space-y-3">
                   <div className="space-y-1">
                     <div className="text-sm text-neutral-600">
-                      {t("checkout:requestComplete.userType", {
+                      {t("requestComplete:userType", {
                         defaultValue: "User Type",
                       })}
                     </div>
@@ -444,7 +444,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                   {request.workshop_code && (
                     <div className="space-y-1">
                       <div className="text-sm text-neutral-600">
-                        {t("checkout:requestComplete.workshopCode", {
+                        {t("requestComplete:workshopCode", {
                           defaultValue: "Workshop Code",
                         })}
                       </div>
@@ -457,7 +457,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                     <>
                       <div className="space-y-1">
                         <div className="text-sm text-neutral-600">
-                          {t("checkout:requestComplete.userName", {
+                          {t("requestComplete:userName", {
                             defaultValue: "User Name",
                           })}
                         </div>
@@ -467,7 +467,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                       </div>
                       <div className="space-y-1">
                         <div className="text-sm text-neutral-600">
-                          {t("checkout:requestComplete.userEmail", {
+                          {t("requestComplete:userEmail", {
                             defaultValue: "Email",
                           })}
                         </div>
@@ -478,7 +478,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                       {request.user.code && (
                         <div className="space-y-1">
                           <div className="text-sm text-neutral-600">
-                            {t("checkout:requestComplete.userCode", {
+                            {t("requestComplete:userCode", {
                               defaultValue: "User Code",
                             })}
                           </div>
@@ -503,7 +503,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
                     <CreditCard className="w-5 h-5 text-logo-gold" />
-                    {t("checkout:requestComplete.priceSummary", {
+                    {t("requestComplete:priceSummary", {
                       defaultValue: "Price Summary",
                     })}
                   </CardTitle>
@@ -512,7 +512,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                   <div className="space-y-3">
                     <div className="flex justify-between text-neutral-600">
                       <span>
-                        {t("checkout:requestComplete.subtotal", {
+                        {t("requestComplete:subtotal", {
                           defaultValue: "Subtotal",
                         })}
                       </span>
@@ -528,7 +528,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                     </div>
                     <div className="flex justify-between text-neutral-600">
                       <span>
-                        {t("checkout:requestComplete.tax", {
+                        {t("requestComplete:tax", {
                           defaultValue: "Tax (15%)",
                         })}
                       </span>
@@ -544,7 +544,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                     </div>
                     <div className="flex justify-between text-neutral-600">
                       <span>
-                        {t("checkout:requestComplete.deliveryAmount", {
+                        {t("requestComplete:deliveryAmount", {
                           defaultValue: "Delivery Amount",
                         })}
                       </span>
@@ -554,7 +554,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                       <div className="flex justify-between text-neutral-500 text-sm">
                         <span>
                           {t(
-                            "checkout:requestComplete.deliveryAmountWithoutTax",
+                            "requestComplete:deliveryAmountWithoutTax",
                             {
                               defaultValue: "Delivery (Before Tax)",
                             }
@@ -568,7 +568,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                     {request.delivery_amount_tax && (
                       <div className="flex justify-between text-neutral-500 text-sm">
                         <span>
-                          {t("checkout:requestComplete.deliveryAmountTax", {
+                          {t("requestComplete:deliveryAmountTax", {
                             defaultValue: "Delivery Tax",
                           })}
                         </span>
@@ -578,7 +578,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                     <div className="pt-3 border-t-2 border-logo-gold/20">
                       <div className="flex justify-between items-baseline">
                         <span className="text-lg font-bold text-logo-black">
-                          {t("checkout:requestComplete.finalTotal", {
+                          {t("requestComplete:finalTotal", {
                             defaultValue: "Final Total",
                           })}
                         </span>
@@ -595,7 +595,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                     <div className="flex items-center gap-2 text-sm text-neutral-600">
                       <CreditCard className="w-4 h-4" />
                       <span>
-                        {t("checkout:requestComplete.paymentMethod", {
+                        {t("requestComplete:paymentMethod", {
                           defaultValue: "Payment Method",
                         })}
                         :{" "}
@@ -623,7 +623,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                   <CardHeader className="pb-4">
                     <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
                       <Package className="w-5 h-5 text-logo-gold" />
-                      {t("checkout:requestComplete.weight", {
+                      {t("requestComplete:weight", {
                         defaultValue: "Weight Information",
                       })}
                     </CardTitle>
@@ -632,13 +632,13 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                     {request.total_weight && (
                       <div className="flex justify-between">
                         <span className="text-neutral-600">
-                          {t("checkout:requestComplete.totalWeight", {
+                          {t("requestComplete:totalWeight", {
                             defaultValue: "Total Weight",
                           })}
                         </span>
                         <span className="font-semibold text-logo-black">
                           {request.total_weight}{" "}
-                          {t("checkout:requestComplete.kg", {
+                          {t("requestComplete:kg", {
                             defaultValue: "kg",
                           })}
                         </span>
@@ -647,13 +647,13 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                     {request.calculated_total_weight && (
                       <div className="flex justify-between">
                         <span className="text-neutral-600">
-                          {t("checkout:requestComplete.calculatedTotalWeight", {
+                          {t("requestComplete:calculatedTotalWeight", {
                             defaultValue: "Calculated Weight",
                           })}
                         </span>
                         <span className="font-semibold text-logo-black">
                           {request.calculated_total_weight}{" "}
-                          {t("checkout:requestComplete.kg", {
+                          {t("requestComplete:kg", {
                             defaultValue: "kg",
                           })}
                         </span>
@@ -675,7 +675,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                   <CardHeader className="pb-4">
                     <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
                       <User className="w-5 h-5 text-logo-gold" />
-                      {t("checkout:requestComplete.addressDetails", {
+                      {t("requestComplete:addressDetails", {
                         defaultValue: "Address Details",
                       })}
                     </CardTitle>
@@ -684,7 +684,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                     {request.full_name && (
                       <div className="space-y-1">
                         <div className="text-sm text-neutral-600">
-                          {t("checkout:requestComplete.userName", {
+                          {t("requestComplete:userName", {
                             defaultValue: "Full Name",
                           })}
                         </div>
@@ -696,7 +696,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                     {request.phone && (
                       <div className="space-y-1">
                         <div className="text-sm text-neutral-600">
-                          {t("checkout:requestComplete.userPhone", {
+                          {t("requestComplete:userPhone", {
                             defaultValue: "Phone",
                           })}
                         </div>
@@ -708,7 +708,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                     {request.formatted_address && (
                       <div className="space-y-1">
                         <div className="text-sm text-neutral-600">
-                          {t("checkout:requestComplete.address", {
+                          {t("requestComplete:address", {
                             defaultValue: "Address",
                           })}
                         </div>
@@ -725,7 +725,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                       request.zip_code) && (
                       <div className="space-y-2">
                         <div className="text-sm text-neutral-600">
-                          {t("checkout:requestComplete.detailedAddress", {
+                          {t("requestComplete:detailedAddress", {
                             defaultValue: "Detailed Address",
                           })}
                         </div>
@@ -734,7 +734,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                             {request.address && (
                               <div>
                                 <strong>
-                                  {t("checkout:requestComplete.street", {
+                                  {t("requestComplete:street", {
                                     defaultValue: "Street",
                                   })}
                                   :
@@ -745,7 +745,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                             {request.apartment && (
                               <div>
                                 <strong>
-                                  {t("checkout:requestComplete.apartment", {
+                                  {t("requestComplete:apartment", {
                                     defaultValue: "Apartment",
                                   })}
                                   :
@@ -756,7 +756,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                             {request.city && (
                               <div>
                                 <strong>
-                                  {t("checkout:requestComplete.city", {
+                                  {t("requestComplete:city", {
                                     defaultValue: "City",
                                   })}
                                   :
@@ -767,7 +767,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                             {request.state && (
                               <div>
                                 <strong>
-                                  {t("checkout:requestComplete.state", {
+                                  {t("requestComplete:state", {
                                     defaultValue: "State",
                                   })}
                                   :
@@ -778,7 +778,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                             {request.country && (
                               <div>
                                 <strong>
-                                  {t("checkout:requestComplete.country", {
+                                  {t("requestComplete:country", {
                                     defaultValue: "Country",
                                   })}
                                   :
@@ -789,7 +789,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                             {request.zip_code && (
                               <div>
                                 <strong>
-                                  {t("checkout:requestComplete.zipCode", {
+                                  {t("requestComplete:zipCode", {
                                     defaultValue: "ZIP Code",
                                   })}
                                   :
@@ -816,7 +816,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
                     <Info className="w-5 h-5 text-logo-gold" />
-                    {t("checkout:requestComplete.requestCapabilities", {
+                    {t("requestComplete:requestCapabilities", {
                       defaultValue: "Request Capabilities",
                     })}
                   </CardTitle>
@@ -824,7 +824,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                 <CardContent className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-neutral-600">
-                      {t("checkout:requestComplete.canBeSubmitted", {
+                      {t("requestComplete:canBeSubmitted", {
                         defaultValue: "Can Be Submitted",
                       })}
                     </span>
@@ -836,17 +836,17 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                       }`}
                     >
                       {request.can_be_submitted
-                        ? t("checkout:requestComplete.canBeSubmitted", {
+                        ? t("requestComplete:yes", {
                             defaultValue: "Yes",
                           })
-                        : t("checkout:requestComplete.cannotBeSubmitted", {
+                        : t("requestComplete:no", {
                             defaultValue: "No",
                           })}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-neutral-600">
-                      {t("checkout:requestComplete.hasAddressDetails", {
+                      {t("requestComplete:addressDetails", {
                         defaultValue: "Address Details",
                       })}
                     </span>
@@ -858,10 +858,10 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                       }`}
                     >
                       {request.has_address_details
-                        ? t("checkout:requestComplete.hasAddressDetails", {
+                        ? t("requestComplete:available", {
                             defaultValue: "Available",
                           })
-                        : t("checkout:requestComplete.noAddressDetails", {
+                        : t("requestComplete:notAvailable", {
                             defaultValue: "Not Available",
                           })}
                     </span>
@@ -887,7 +887,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                       className="w-full border-2 border-logo-gold text-logo-gold hover:bg-logo-gold hover:text-white transition-colors"
                     >
                       <Eye className="w-4 h-4 mr-2" />
-                      {t("checkout:requestComplete.viewShippingLabel", {
+                      {t("requestComplete:viewShippingLabel", {
                         defaultValue: "View Shipping Label",
                       })}
                     </Button>
@@ -909,7 +909,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                     className="w-full bg-logo-gold hover:bg-logo-gold/90 text-white transition-colors"
                   >
                     <Package className="w-4 h-4 mr-2" />
-                    {t("checkout:requestComplete.trackRequest", {
+                    {t("requestComplete:trackRequest", {
                       defaultValue: "Track My Request",
                     })}
                   </Button>
@@ -918,7 +918,7 @@ const RequestComplete: React.FC<RequestCompleteProps> = ({
                     variant="outline"
                     className="w-full border-2 border-neutral-300 text-neutral-700  transition-colors"
                   >
-                    {t("checkout:requestComplete.continueShopping", {
+                    {t("requestComplete:continueShopping", {
                       defaultValue: "Continue Shopping",
                     })}
                   </Button>
