@@ -585,12 +585,8 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               </span>
               <span className="font-semibold">
                 {isRTL
-                  ? `${(
-                      displayData.delivery_amount + displayData.delivery_tax
-                    ).toFixed(2)} ر.س`
-                  : `${(
-                      displayData.delivery_amount + displayData.delivery_tax
-                    ).toFixed(2)} SAR`}
+                  ? `${displayData.delivery_amount.toFixed(2)} ر.س`
+                  : `${displayData.delivery_amount.toFixed(2)} SAR`}
               </span>
             </div>
           )}
@@ -603,8 +599,12 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               </span>
               <span className="text-gray-500 text-xs">
                 {isRTL
-                  ? `${displayData.delivery_amount.toFixed(2)} ر.س`
-                  : `${displayData.delivery_amount.toFixed(2)} SAR`}
+                  ? `${
+                      displayData.delivery_amount - displayData.delivery_tax
+                    } ر.س`
+                  : `${
+                      displayData.delivery_amount - displayData.delivery_tax
+                    } SAR`}
               </span>
             </div>
           )}
