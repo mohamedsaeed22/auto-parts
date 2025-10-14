@@ -574,13 +574,29 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               </div>
             )}
 
-          {/* 7. Delivery Amount (الشحن) */}
+          {/* 7. Total Delivery (مبلغ التوصيل شامل الضريبة) */}
+          {(displayData.delivery_amount > 0 || displayData.delivery_tax > 0) && (
+            <div className="flex justify-between">
+              <span className="text-neutral-600 font-semibold">
+                {isRTL
+                  ? "مبلغ التوصيل (شامل الضريبة)"
+                  : "Total Delivery (incl. Tax)"}
+              </span>
+              <span className="font-semibold">
+                {isRTL
+                  ? `${(displayData.delivery_amount + displayData.delivery_tax).toFixed(2)} ر.س`
+                  : `${(displayData.delivery_amount + displayData.delivery_tax).toFixed(2)} SAR`}
+              </span>
+            </div>
+          )}
+
+          {/* 7.1. Delivery Amount Before Tax (الشحن قبل الضريبة) */}
           {displayData.delivery_amount > 0 && (
             <div className="flex justify-between">
-              <span className="text-neutral-600">
-                {t("orderSummary.deliveryAmount", "Shipping")}
+              <span className="text-gray-500 text-xs">
+                {isRTL ? "الشحن (قبل الضريبة)" : "Shipping (before tax)"}
               </span>
-              <span className="font-medium">
+              <span className="text-gray-500 text-xs">
                 {isRTL
                   ? `${displayData.delivery_amount.toFixed(2)} ر.س`
                   : `${displayData.delivery_amount.toFixed(2)} SAR`}
@@ -588,13 +604,13 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             </div>
           )}
 
-          {/* 8. Delivery Tax (ضريبة الشحن) */}
+          {/* 7.2. Delivery Tax (ضريبة الشحن) */}
           {displayData.delivery_tax > 0 && (
             <div className="flex justify-between">
-              <span className="text-neutral-600">
-                {t("orderSummary.deliveryTax", "Delivery Tax")}
+              <span className="text-gray-500 text-xs">
+                {isRTL ? "ضريبة الشحن" : "Delivery Tax"}
               </span>
-              <span className="font-medium">
+              <span className="text-gray-500 text-xs">
                 {isRTL
                   ? `${displayData.delivery_tax.toFixed(2)} ر.س`
                   : `${displayData.delivery_tax.toFixed(2)} SAR`}

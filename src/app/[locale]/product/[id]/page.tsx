@@ -952,14 +952,14 @@ export default function ProductDetails() {
             </h1>
 
             {/* Stock Status */}
-            <div className="mt-3">
+            {/* <div className="mt-3">
               <StockIndicator
                 product={product}
                 isRTL={isRTL}
                 t={t}
                 getProductStockStatus={getProductStockStatus}
               />
-            </div>
+            </div> */}
           </div>
 
           {/* Enhanced Price Section */}
