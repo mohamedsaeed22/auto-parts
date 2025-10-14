@@ -118,7 +118,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
     isLoading: isCartLoading,
     error: cartError,
   } = useGetCartQuery(
-    effectiveAddressId ? { address_id: effectiveAddressId } : undefined,
+    effectiveAddressId && effectiveAddressId > 0
+      ? { address_id: effectiveAddressId }
+      : undefined,
     {
       // If unauthenticated, this will be skipped by the API layer or error; we handle undefined below
       refetchOnMountOrArgChange: true, // Ensure we get fresh data
@@ -144,7 +146,10 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
     try {
       const result = await applyCoupon({
         coupon_code: couponCode.trim(),
-        address_id: effectiveAddressId || undefined,
+        address_id:
+          effectiveAddressId && effectiveAddressId > 0
+            ? effectiveAddressId
+            : undefined,
       }).unwrap();
 
       // Display success message from API response
@@ -230,7 +235,10 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           try {
             const result = await applyCoupon({
               coupon_code: savedCouponCode,
-              address_id: effectiveAddressId || undefined,
+              address_id:
+                effectiveAddressId && effectiveAddressId > 0
+                  ? effectiveAddressId
+                  : undefined,
             }).unwrap();
 
             if (result && typeof result.message === "string") {
@@ -290,7 +298,10 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           if (savedCouponCode && savedCouponCode.trim() !== "") {
             const result = await applyCoupon({
               coupon_code: savedCouponCode,
-              address_id: effectiveAddressId,
+              address_id:
+                effectiveAddressId && effectiveAddressId > 0
+                  ? effectiveAddressId
+                  : undefined,
             }).unwrap();
 
             if (result && typeof result.message === "string") {
