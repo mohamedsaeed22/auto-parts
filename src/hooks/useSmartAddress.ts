@@ -65,6 +65,15 @@ export const useSmartAddress = (): UseSmartAddressReturn => {
     }
   }, [hasAddresses, defaultAddress]);
 
+  // Clear global address when user has no addresses
+  useEffect(() => {
+    if (!hasAddresses && globalSelectedAddress) {
+      globalSelectedAddress = null;
+      setSelectedAddress(null);
+      notifyListeners();
+    }
+  }, [hasAddresses]);
+
   // Enhanced setSelectedAddress that updates global state
   const setSelectedAddressGlobal = (addressId: number | null) => {
     globalSelectedAddress = addressId;
@@ -74,13 +83,21 @@ export const useSmartAddress = (): UseSmartAddressReturn => {
 
   // Get the effective address ID to use for API calls
   const getEffectiveAddressId = (): number | null => {
-    // If user has selected an address, use it
-    if (globalSelectedAddress) return globalSelectedAddress;
+    // First check if user has any addresses at all
+    if (!hasAddresses) return null;
+
+    // If user has selected an address, use it (but only if it exists in current addresses)
+    if (
+      globalSelectedAddress &&
+      addresses.some((addr) => addr.id === globalSelectedAddress)
+    ) {
+      return globalSelectedAddress;
+    }
 
     // If user has addresses but no selection, use default
-    if (hasAddresses && defaultAddress) return defaultAddress;
+    if (defaultAddress) return defaultAddress;
 
-    // No addresses available
+    // No valid addresses available
     return null;
   };
 
