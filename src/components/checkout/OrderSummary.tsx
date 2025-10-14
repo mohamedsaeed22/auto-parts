@@ -575,7 +575,8 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             )}
 
           {/* 7. Total Delivery (مبلغ التوصيل شامل الضريبة) */}
-          {(displayData.delivery_amount > 0 || displayData.delivery_tax > 0) && (
+          {(displayData.delivery_amount > 0 ||
+            displayData.delivery_tax > 0) && (
             <div className="flex justify-between">
               <span className="text-neutral-600 font-semibold">
                 {isRTL
@@ -584,8 +585,12 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               </span>
               <span className="font-semibold">
                 {isRTL
-                  ? `${(displayData.delivery_amount + displayData.delivery_tax).toFixed(2)} ر.س`
-                  : `${(displayData.delivery_amount + displayData.delivery_tax).toFixed(2)} SAR`}
+                  ? `${(
+                      displayData.delivery_amount + displayData.delivery_tax
+                    ).toFixed(2)} ر.س`
+                  : `${(
+                      displayData.delivery_amount + displayData.delivery_tax
+                    ).toFixed(2)} SAR`}
               </span>
             </div>
           )}
