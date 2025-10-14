@@ -611,10 +611,10 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               <span className="text-gray-500 text-xs">
                 {isRTL
                   ? `${
-                      displayData.delivery_amount - displayData.delivery_tax
+                      (displayData.delivery_amount - displayData.delivery_tax).toFixed(2)
                     } ر.س`
                   : `${
-                      displayData.delivery_amount - displayData.delivery_tax
+                      (displayData.delivery_amount - displayData.delivery_tax).toFixed(2)
                     } SAR`}
               </span>
             </div>
