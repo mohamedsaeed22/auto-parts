@@ -1,28 +1,36 @@
-import React from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Truck, ArrowLeft, ArrowRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import {
+  useGetAddressesQuery,
+  useCreateAddressMutation,
+} from "@/services/api/addressesApi";
+import { useSmartAddress } from "@/hooks/useSmartAddress";
+import { cartApi, useApplyCouponMutation } from "@/services/api/cartApi";
+import { useAppDispatch } from "@/store/hooks";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { AddressForm } from "@/components/address";
+import { showSuccess, showError } from "@/lib/toast";
+import type { AddressFormData } from "@/lib/validations/addressSchema";
 
-interface Address {
-  id: number;
-  label: string;
-  name: string;
-  address: string;
-  city: string;
-  phone: string;
-  isDefault: boolean;
-}
+import { Address } from "@/services/api/types";
 
 interface ShippingStepProps {
-  savedAddresses: Address[];
-  selectedAddress: number;
+  selectedAddress: number | null;
   onAddressSelect: (id: number) => void;
   onNext: () => void;
   onBack: () => void;
 }
 
 const ShippingStep: React.FC<ShippingStepProps> = ({
-  savedAddresses,
   selectedAddress,
   onAddressSelect,
   onNext,
@@ -30,74 +38,220 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
 }) => {
   const { t, i18n } = useTranslation("checkout");
   const isRTL = i18n.language === "ar";
+  const dispatch = useAppDispatch();
+  const { data: addressesResp } = useGetAddressesQuery();
+  const [createAddress, { isLoading: isCreating }] = useCreateAddressMutation();
+  const [applyCoupon] = useApplyCouponMutation();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Smart address management
+  const { setSelectedAddress: setSmartAddress } = useSmartAddress();
+
+  const addresses = useMemo(
+    () => addressesResp?.data?.addresses || [],
+    [addressesResp?.data?.addresses]
+  );
+  const hasAddresses = addresses.length > 0;
+
+  const handleCreateAddress = async (data: AddressFormData) => {
+    try {
+      const addressData = {
+        ...data,
+        is_default: data.is_default || false,
+      };
+      const result = await createAddress(addressData).unwrap();
+      showSuccess(t("addresses.success.addSuccess"));
+      setIsDialogOpen(false);
+
+      // Auto-select the newly created address
+      if (result?.data?.id) {
+        onAddressSelect(result.data.id);
+        setSmartAddress(result.data.id);
+
+        // Update cart with new address
+        dispatch(cartApi.util.invalidateTags(["Cart"]));
+
+        // Re-apply any existing coupon with the new address
+        try {
+          const savedCouponCode = localStorage.getItem(
+            "auto_parts_coupon_code"
+          );
+          if (savedCouponCode && savedCouponCode.trim() !== "") {
+            await applyCoupon({
+              coupon_code: savedCouponCode,
+              address_id: result.data.id,
+            }).unwrap();
+          }
+        } catch (error) {
+          console.warn("Failed to re-apply coupon with new address:", error);
+        }
+      }
+    } catch {
+      showError(t("addresses.errors.addFailed"));
+    }
+  };
+
+  const handleAddressSelect = async (addressId: number) => {
+    onAddressSelect(addressId);
+    setSmartAddress(addressId);
+
+    // Update cart with selected address
+    dispatch(cartApi.util.invalidateTags(["Cart"]));
+
+    // Re-apply any existing coupon with the new address
+    try {
+      const savedCouponCode = localStorage.getItem("auto_parts_coupon_code");
+      if (savedCouponCode && savedCouponCode.trim() !== "") {
+        await applyCoupon({
+          coupon_code: savedCouponCode,
+          address_id: addressId,
+        }).unwrap();
+      }
+    } catch (error) {
+      console.warn("Failed to re-apply coupon with new address:", error);
+    }
+  };
+
+  const handleNext = () => {
+    if (!selectedAddress) return;
+
+    // Proceed to next step - OrderSummary will automatically get updated data
+    onNext();
+  };
+
+  // Auto-select first address if none selected
+  useEffect(() => {
+    if (
+      hasAddresses &&
+      (!selectedAddress ||
+        !addresses.some((a: Address) => a.id === selectedAddress))
+    ) {
+      onAddressSelect(addresses[0].id);
+    }
+  }, [hasAddresses, addresses, selectedAddress, onAddressSelect]);
 
   return (
     <div dir={isRTL ? "rtl" : "ltr"}>
-      <div className="p-6 border-b border-gray-200">
-        <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-          <Truck className="w-6 h-6 mx-3" />
+      <div className="p-6 border-b border-logo-gold/30">
+        <h2 className="text-2xl font-bold text-logo-black flex items-center">
+          <Truck className="w-6 h-6 mx-3 text-logo-gold" />
           {t("shipping.title")}
         </h2>
-        <p className="text-gray-600 mt-1">{t("shipping.description")}</p>
+        <p className="text-neutral-600 mt-1">{t("shipping.description")}</p>
       </div>
 
       <div className="p-6">
-        <div className="space-y-4 mb-6">
-          {savedAddresses.map((address) => (
-            <div
-              key={address.id}
-              className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${
-                selectedAddress === address.id
-                  ? "border-blue-500 bg-blue-50 shadow-md"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
-              onClick={() => onAddressSelect(address.id)}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center mb-2 space-x-2">
-                    <span className="font-semibold text-gray-900">
-                      {address.label}
-                    </span>
-                    {address.isDefault && (
-                      <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">
-                        {t("shipping.default")}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-gray-900 font-medium">{address.name}</p>
-                  <p className="text-gray-600">{address.address}</p>
-                  <p className="text-gray-600">{address.city}</p>
-                  <p className="text-gray-600" dir="ltr">
-                    {address.phone}
+        <div className="mb-6">
+          {hasAddresses ? (
+            <>
+              {addresses.length > 3 && (
+                <div className="mb-3 p-2 bg-logo-gold/5 border border-logo-gold/20 rounded-lg">
+                  <p className="text-xs text-logo-gold font-medium text-center">
+                    {isRTL
+                      ? `لديك ${addresses.length} عناوين محفوظة - يمكنك التمرير للأسفل لرؤية المزيد`
+                      : `You have ${addresses.length} saved addresses - scroll down to see more`}
                   </p>
                 </div>
-                <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                  {t("shipping.edit")}
-                </button>
+              )}
+              <div className="max-h-96 overflow-y-auto pr-2 space-y-4 scrollbar-thin scrollbar-thumb-logo-gold/30 scrollbar-track-transparent hover:scrollbar-thumb-logo-gold/50 scrollbar-thumb-rounded-full border border-logo-gold/10 rounded-lg p-2 bg-gradient-to-b from-logo-gold/5 to-transparent">
+                {addresses.map((address) => (
+                  <div
+                    key={address.id}
+                    className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${
+                      selectedAddress === address.id
+                        ? "border-logo-gold bg-logo-gold/10 shadow-md"
+                        : "border-neutral-200 hover:border-logo-gold/40"
+                    }`}
+                    onClick={() => handleAddressSelect(address.id)}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center mb-2 space-x-2">
+                          <span className="font-semibold text-logo-black">
+                            {address.name}
+                          </span>
+                          {address.is_default && (
+                            <span className="bg-logo-gold/20 text-logo-black text-xs font-medium px-2 py-1 rounded-full">
+                              {t("shipping.default")}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-neutral-700">{address.city}</p>
+                        <p className="text-neutral-700">
+                          {address.detailed_address}
+                        </p>
+                        <p className="text-neutral-700" dir="ltr">
+                          {address.phone}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
+            </>
+          ) : (
+            <div className="p-4 border-2 border-dashed border-neutral-300 rounded-xl text-center text-neutral-600">
+              {t("shipping.noAddresses", "No saved addresses yet.")}
             </div>
-          ))}
+          )}
         </div>
 
-        <Button
-          variant="outline"
-          className="w-full mb-6 border-2 border-dashed border-gray-300 py-4 text-gray-600 hover:border-gray-400 flex items-center"
-        >
-          <Plus className="w-4 h-4 mx-2" />
-          {t("shipping.addNewAddress")}
-        </Button>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full mb-6 border-2 border-dashed border-logo-gold/50 py-4 text-logo-black hover:bg-white hover:text-gray-500 cursor-pointer flex items-center"
+            >
+              <Plus className="w-4 h-4 mx-2" />
+              {t("shipping.addNewAddress")}
+            </Button>
+          </DialogTrigger>
+          <DialogContent
+            className="sm:max-w-lg max-h-[90vh] overflow-hidden"
+            dir={isRTL ? "rtl" : "ltr"}
+          >
+            <DialogHeader>
+              <DialogTitle className="text-logo-black">
+                {t("shipping.addAddressTitle", "Add New Address")}
+              </DialogTitle>
+              <DialogDescription className="text-neutral-600">
+                {t(
+                  "shipping.addAddressDesc",
+                  "Fill the form below to save your address"
+                )}
+              </DialogDescription>
+            </DialogHeader>
+            <AddressForm
+              onSubmit={handleCreateAddress}
+              onCancel={() => setIsDialogOpen(false)}
+              isCreating={isCreating}
+              showCancelButton={false}
+              submitButtonText={t("address.add")}
+              className="mt-4"
+            />
+            {/* <DialogFooter className="mt-4">
+              <DialogClose asChild>
+                <Button
+                  variant="outline"
+                  className="border-logo-gold text-logo-black hover:bg-logo-gold/10"
+                >
+                  {t("dialog.cancel", "Cancel")}
+                </Button>
+              </DialogClose>
+            </DialogFooter> */}
+          </DialogContent>
+        </Dialog>
 
         <div className="flex gap-2">
           <Button
             variant="outline"
             onClick={onBack}
-            className="flex-1 py-3 flex items-center"
+            className="flex-1 py-3 flex items-center border-logo-gold text-logo-black hover:bg-logo-gold/10 hover:text-logo-black"
           >
             {isRTL ? (
               <>
-                {t("shipping.back")}
                 <ArrowRight className="w-4 h-4 mx-2" />
+                {t("shipping.back")}
               </>
             ) : (
               <>
@@ -107,13 +261,14 @@ const ShippingStep: React.FC<ShippingStepProps> = ({
             )}
           </Button>
           <Button
-            onClick={onNext}
-            className="flex-1 bg-black hover:bg-gray-800 text-white py-3 flex items-center justify-center"
+            onClick={handleNext}
+            disabled={!hasAddresses}
+            className="flex-1 bg-logo-gold hover:bg-logo-gold/90 text-white py-3 flex items-center justify-center disabled:bg-logo-gold/50 disabled:text-white/70"
           >
             {isRTL ? (
               <>
-                <ArrowLeft className="w-4 h-4 mx-2" />
                 {t("shipping.paymentMethod")}
+                <ArrowLeft className="w-4 h-4 mx-2" />
               </>
             ) : (
               <>

@@ -16,55 +16,55 @@ const optionalFileSchema = z
   .refine((file) => {
     if (!file) return true;
     return file.size <= MAX_FILE_SIZE;
-  }, "حجم الملف يجب أن يكون أقل من 5 ميجابايت")
+  }, "auth:validation.documentImage.fileSize")
   .refine((file) => {
     if (!file) return true;
     return ACCEPTED_IMAGE_TYPES.includes(file.type);
-  }, "نوع الملف يجب أن يكون JPG, PNG, أو GIF");
+  }, "auth:validation.documentImage.fileType");
 
 // Required file schema
 const requiredFileSchema = z
-  .instanceof(File, { message: "الصورة مطلوبة" })
+  .instanceof(File, { message: "auth:validation.documentImage.required" })
   .refine(
     (file) => file.size <= MAX_FILE_SIZE,
-    "حجم الملف يجب أن يكون أقل من 5 ميجابايت"
+    "auth:validation.documentImage.fileSize"
   )
   .refine(
     (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
-    "نوع الملف يجب أن يكون JPG, PNG، أو GIF"
+    "auth:validation.documentImage.fileType"
   );
 
 // Base schema for common fields
 const baseSchema = z.object({
   userType: z.enum(["workshop", "store"], {
-    message: "يجب اختيار نوع المستخدم",
+    message: "validation.userType.required",
   }),
   partName: z
     .string()
-    .min(1, "اسم القطعة مطلوب")
-    .min(2, "اسم القطعة يجب أن يكون أكثر من حرف واحد")
-    .max(100, "اسم القطعة طويل جداً"),
+    .min(1, "userPricing:validation.partName.required")
+    .min(2, "userPricing:validation.partName.minLength")
+    .max(100, "userPricing:validation.partName.maxLength"),
   quantity: z
     .string()
-    .min(1, "الكمية مطلوبة")
+    .min(1, "userPricing:validation.quantity.required")
     .refine((val) => {
       const num = parseInt(val);
       return !isNaN(num) && num > 0;
-    }, "الكمية يجب أن تكون رقم موجب"),
+    }, "userPricing:validation.quantity.positive"),
 });
 
-// Workshop-specific schema (images REQUIRED)
+// Workshop-specific schema (partImage and requestImage OPTIONAL, formImage REQUIRED)
 const workshopSchema = baseSchema.extend({
   userType: z.literal("workshop"),
   userCode: z
     .string()
-    .min(1, "كود الورشة مطلوب")
-    .min(3, "كود الورشة يجب أن يكون أكثر من 3 أحرف")
-    .max(20, "كود الورشة طويل جداً"),
+    .min(1, "userPricing:validation.userCode.required")
+    .min(3, "userPricing:validation.userCode.minLength")
+    .max(20, "userPricing:validation.userCode.maxLength"),
   chassisNumber: z.string().optional(),
 
-  partImage: requiredFileSchema,
-  requestImage: requiredFileSchema,
+  partImage: optionalFileSchema,
+  requestImage: optionalFileSchema,
   formImage: requiredFileSchema,
 });
 

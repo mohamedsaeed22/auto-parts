@@ -1,0 +1,69 @@
+{
+  "sections": {
+    "mainNavigation": {
+      "title": "Main Navigation",
+      "links": {
+        "about": "About Us",
+        "contact": "Contact",
+        "categories": "Categories",
+        "brands": "Brands",
+        "offers": "Offers"
+      }
+    },
+    "shoppingServices": {
+      "title": "Shopping & Services",
+      "links": {
+        "products": "Products",
+        "userPricing": "User Pricing",
+        "checkout": "Checkout",
+        "favourites": "Favourites",
+        "wishlist": "Wishlist"
+      }
+    },
+    "policies": {
+      "title": "Policies & Terms",
+      "links": {
+        "returnExchange": "Return & Exchange Policy",
+        "userAgreement": "User Agreement"
+      }
+    },
+    "autoPartsCategories": {
+      "title": "Auto Parts Categories",
+      "links": {
+        "spareParts": "Spare Parts",
+        "accessories": "Accessories",
+        "oils": "Oils & Lubricants",
+        "carCare": "Car Care",
+        "tiresBatteries": "Tires & Batteries"
+      }
+    },
+    "contactSupport": {
+      "title": "Contact & Support",
+      "email": "parts@falfuture.com",
+      "phone": "0543777569",
+      "address": "Prince Mohammed Bin Abdulaziz St"
+    }
+  },
+  "certificates": {
+    "title": "Business Certificates",
+    "commerce": {
+      "title": "Commerce Certificate",
+      "tooltip": "Commerce Certificate"
+    },
+    "vat": {
+      "title": "VAT Certificate",
+      "tooltip": "Value Added Tax Certificate"
+    },
+    "validate": {
+      "title": "Business Validation",
+      "tooltip": "Validate Business"
+    },
+    "taxNumber": "Commercial registration number",
+    "bankAccount": "Bank Account Number"
+  },
+  "paymentMethods": {
+    "title": "Payment Methods"
+  },
+  "companyName": "Fal Future Auto Parts",
+  "copyright": "All rights reserved"
+}

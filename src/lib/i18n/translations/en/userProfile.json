@@ -1,0 +1,657 @@
+{
+  "sidebar": {
+    "profile": "Profile",
+    "overview": "Profile",
+    "points": "My Wallet",
+    "notifications": "Notifications",
+    "orders": "Orders",
+    "addresses": "Addresses",
+    "requests": "Requests",
+    "wishlist": "Wishlist",
+    "settings": "Settings"
+  },
+  "profileOverview": {
+    "title": "Profile",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "fullName": "Full Name",
+    "email": "Email",
+    "phone": "Phone Number",
+    "birthDate": "Date of Birth",
+    "gender": "Gender",
+    "city": "City",
+    "male": "Male",
+    "female": "Female",
+    "stats": {
+      "completedOrders": "Completed Orders",
+      "favoriteProducts": "Favorite Products",
+      "savedAddresses": "Saved Addresses"
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "userCode": "User Code",
+    "name": "Name",
+    "nameLabel": "Name",
+    "namePlaceholder": "Enter your name",
+    "email": "Email",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter email (optional)",
+    "phone": "Phone",
+    "phoneLabel": "Phone Number",
+    "phonePlaceholder": "Enter phone number",
+    "noEmail": "No email",
+    "type": "Type",
+    "shop": "Shop",
+    "workshop": "Workshop",
+    "managerName": "Manager Name",
+    "address": "Address",
+    "city": "City",
+    "state": "State",
+    "zip": "ZIP Code",
+    "taxNumber": "Tax Number",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "commercialRegister": "Commercial Register",
+    "selectedFile": "Selected",
+    "currentFile": "Current",
+    "language": "Language",
+    "registrationComplete": "Registration Complete",
+    "registrationIncomplete": "Registration Incomplete",
+    "googleUser": "Google User",
+    "regularUser": "Regular User",
+    "submitButton": "Update Profile",
+    "submitButtonLoading": "Updating...",
+    "updateSuccess": "Profile updated successfully!",
+    "updateError": "Failed to update profile. Please try again.",
+    "codeCopied": "User code copied to clipboard!",
+    "copyFailed": "Failed to copy code to clipboard",
+    "copied": "Copied!",
+    "copyCode": "Copy code",
+    "selectLocation": "Select Location on Map",
+    "locationHelp": "Pick your exact location; address fields will auto-fill.",
+    "locationRequired": "Location selection is required",
+    "locationRequiredHelp": "Please select your location on the map to continue",
+    "viewFile": "View File"
+  },
+  "validation": {
+    "name": {
+      "required": "Name is required",
+      "minLength": "Name must be at least 2 characters",
+      "maxLength": "Name must be less than 100 characters"
+    },
+    "email": {
+      "invalid": "Please enter a valid email address"
+    },
+    "phone": {
+      "required": "Phone number is required",
+      "length": "Phone number must be between 10-14 characters",
+      "invalid": "Please enter a valid Saudi phone number"
+    },
+    "managerName": {
+      "required": "Manager name is required",
+      "minLength": "Manager name must be at least 2 characters",
+      "maxLength": "Manager name must be less than 100 characters"
+    },
+    "address": {
+      "required": "Address is required",
+      "minLength": "Address must be at least 5 characters",
+      "maxLength": "Address must be less than 200 characters"
+    },
+    "city": {
+      "required": "City is required",
+      "minLength": "City must be at least 2 characters",
+      "maxLength": "City must be less than 50 characters"
+    },
+    "state": {
+      "required": "State is required",
+      "minLength": "State must be at least 2 characters",
+      "maxLength": "State must be less than 50 characters"
+    },
+    "zip": {
+      "required": "ZIP code is required",
+      "minLength": "ZIP code must be at least 3 characters",
+      "maxLength": "ZIP code must be less than 10 characters"
+    },
+    "avatar": {
+      "required": "Avatar is required",
+      "fileSize": "Avatar file size must be less than 5MB",
+      "fileType": "Avatar must be a valid image file (JPEG, PNG, GIF, WebP)"
+    }
+  },
+  "requests": {
+    "title": "Requests",
+    "create": "Create Request",
+    "comingSoon": "Coming Soon",
+    "description": "The requests feature will be available soon.",
+    "filters": {
+      "title": "Filters",
+      "status": "Status",
+      "allStatuses": "All Statuses",
+      "dateFrom": "Date From",
+      "dateTo": "Date To",
+      "perPage": "Per Page",
+      "clear": "Clear Filters",
+      "apply": "Apply Filters",
+      "loading": "Loading...",
+      "results": "Showing {{from}}-{{to}} of {{total}} results",
+      "active": "Active"
+    },
+    "status": {
+      "draft": "Draft",
+      "pending": "Pending",
+      "submitted": "Submitted",
+      "accepted": "Accepted",
+      "rejected": "Rejected",
+      "completed": "Completed"
+    },
+    "id": "ID",
+    "userType": "Type",
+    "createdAt": "Created",
+    "submittedAt": "Submitted",
+    "price": "Price",
+    "totalPrice": "Total Price",
+    "workshopCode": "Workshop Code",
+    "items": {
+      "title": "Request Items",
+      "quantity": "Qty",
+      "created": "Created",
+      "itemNumber": "Item",
+      "chassisNumber": "Chassis Number",
+      "attachments": "Attachments",
+      "partImage": "Part Image",
+      "orderImage": "Request Image",
+      "formImage": "Form Image",
+      "unitPrice": "Unit Price",
+      "tax": "Tax"
+    },
+    "actions": {
+      "submit": "Submit",
+      "download": "Download",
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete",
+      "accept": "Accept",
+      "reject": "Reject"
+    },
+    "adminPricing": {
+      "title": "Admin has priced your request",
+      "description": "Please review and accept or reject the pricing"
+    },
+    "priceSummary": {
+      "title": "Price Summary",
+      "description": "Total calculated by admin",
+      "total": "Total Amount"
+    },
+    "paymentMethod": "Payment Method",
+    "paymentStatus": "Payment Status",
+    "shippingAddress": "Shipping Address",
+    "paymentMethods": {
+      "cash": "Cash on Delivery",
+      "creditCard": "Credit Card"
+    },
+    "paymentStatuses": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "failed": "Failed"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "showing": "Showing {{from}}-{{to}} of {{total}} results"
+    },
+    "empty": {
+      "title": "No Requests Found",
+      "description": "No requests match your current filters."
+    },
+    "error": {
+      "title": "Error Loading Requests",
+      "description": "Failed to load requests. Please try again.",
+      "retry": "Retry"
+    },
+    "registrationRequired": {
+      "title": "Complete Registration Required",
+      "description": "To access your requests, please complete your registration first.",
+      "button": "Complete Registration"
+    },
+    "rejectDialog": {
+      "title": "Reject Request",
+      "description": "Are you sure you want to reject this request? This action cannot be undone.",
+      "warning": "Once rejected, you will need to create a new request if you want to proceed with this order.",
+      "cancel": "Cancel",
+      "confirm": "Yes, Reject",
+      "successMessage": "Request rejected successfully",
+      "errorMessage": "Failed to reject request. Please try again"
+    },
+    "acceptDialog": {
+      "step1": "Address",
+      "step2": "Payment",
+      "paymentTitle": "Select Payment Method",
+      "paymentDescription": "Choose how you want to pay for this request.",
+      "choosePayment": "Choose your payment method",
+      "cashPayment": "Cash on Delivery",
+      "cashDescription": "Pay with cash when your order is delivered",
+      "creditCardPayment": "Credit Card",
+      "creditCardDescription": "Pay securely online with your credit card",
+      "creditCardNote": "You will be redirected to a secure payment page to complete your transaction.",
+      "calculatingDelivery": "Calculating delivery amount...",
+      "deliveryError": "Failed to calculate delivery amount. Please try again.",
+      "deliveryAmount": "Delivery Amount",
+      "deliveryNote": "This amount will be added to your total",
+      "freeDelivery": "Free delivery for this address",
+      "currency": "SAR",
+      "next": "Next",
+      "back": "Back",
+      "confirm": "Accept Request",
+      "successMessage": "Request accepted successfully",
+      "errorMessage": "Failed to accept request. Please try again"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "tabs": {
+      "company": "Company",
+      "legal": "Legal",
+      "account": "Account",
+      "privacy": "Privacy",
+      "security": "Security",
+      "language": "Language & Region"
+    },
+    "account": {
+      "title": "Notification Settings",
+      "emailNotifications": "Email Notifications",
+      "emailNotificationsDesc": "Receive notifications via email",
+      "smsNotifications": "SMS Notifications",
+      "smsNotificationsDesc": "Receive notifications via SMS",
+      "marketingEmails": "Marketing Emails",
+      "marketingEmailsDesc": "Receive special offers and discounts",
+      "orderUpdates": "Order Updates",
+      "orderUpdatesDesc": "Order status and shipping updates",
+      "newsletter": "Newsletter",
+      "newsletterDesc": "Weekly newsletter"
+    },
+    "privacy": {
+      "title": "Privacy Settings",
+      "profileVisibility": "Profile Visibility",
+      "public": "Public",
+      "friends": "Friends Only",
+      "private": "Private",
+      "showEmail": "Show Email",
+      "showPhone": "Show Phone",
+      "allowSearch": "Allow Search"
+    },
+    "security": {
+      "title": "Security Settings",
+      "twoFactorAuth": "Two-Factor Authentication",
+      "twoFactorAuthDesc": "Additional security for your account",
+      "loginAlerts": "Login Alerts",
+      "loginAlertsDesc": "Notify when logging in from new device",
+      "deviceManagement": "Device Management",
+      "deviceManagementDesc": "Manage registered devices"
+    },
+    "language": {
+      "title": "Language & Region Settings",
+      "language": "Language",
+      "arabic": "Arabic",
+      "english": "English",
+      "currency": "Currency",
+      "sar": "Saudi Riyal (SAR)",
+      "usd": "US Dollar (USD)",
+      "eur": "Euro (EUR)",
+      "timezone": "Timezone",
+      "riyadh": "Riyadh (GMT+3)",
+      "dubai": "Dubai (GMT+4)",
+      "london": "London (GMT+0)",
+      "changedSuccessfully": "Language changed successfully!",
+      "changeFailed": "Failed to change language. Please try again."
+    },
+    "company": {
+      "title": "Company Information",
+      "name": "Company Name",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "website": "Website",
+      "description": "Description",
+      "logo": "Logo",
+      "noAddress": "No address",
+      "noWebsite": "No website",
+      "noLogo": "No logo"
+    },
+    "support": {
+      "title": "Support Information",
+      "email": "Support Email",
+      "phone": "Support Phone",
+      "noSupport": "No support information available"
+    },
+    "social": {
+      "title": "Social Media",
+      "noSocial": "No social media links available"
+    },
+    "charge": {
+      "title": "Charge Information",
+      "company": "Company",
+      "city": "City",
+      "address": "Address",
+      "phone": "Phone"
+    },
+    "points": {
+      "title": "Points Settings",
+      "exchangeRate": "Exchange Rate",
+      "requestOrderPoints": "Request Order Points",
+      "pointsPerCurrency": "Points Per Currency"
+    },
+    "delivery": {
+      "title": "Delivery Information",
+      "amount": "Delivery Amount",
+      "sar": "SAR"
+    },
+    "legal": {
+      "termsOfService": "Terms of Service",
+      "privacyPolicy": "Privacy Policy",
+      "refundPolicy": "Refund Policy",
+      "shippingPolicy": "Shipping Policy",
+      "noContent": "No content available"
+    },
+    "loading": "Loading settings...",
+    "error": "Failed to load settings",
+    "retry": "Retry"
+  },
+  "addresses": {
+    "title": "Addresses",
+    "addAddress": "Add New Address",
+    "editAddress": "Edit Address",
+    "home": "Home",
+    "office": "Office",
+    "other": "Other",
+    "default": "Default",
+    "setDefault": "Set as Default",
+    "name": "Name",
+    "phone": "Phone Number",
+    "address": "Detailed Address",
+    "city": "City",
+    "postalCode": "Postal Code",
+    "nationalAddress": "National Address",
+    "type": "Address Type",
+    "selectType": "Select address type",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteTitle": "Delete address",
+    "deleteDescription": "Are you sure you want to delete this address?",
+    "confirm": "Confirm",
+    "confirmDelete": "Are you sure you want to delete this address?",
+    "add": "Add",
+    "update": "Update",
+    "noAddresses": "No addresses yet",
+    "addFirstAddress": "Add your first address to get started.",
+    "success": {
+      "addSuccess": "Address added successfully!",
+      "updateSuccess": "Address updated successfully!",
+      "deleteSuccess": "Address deleted successfully!"
+    },
+    "errors": {
+      "addFailed": "Failed to add address. Please try again.",
+      "updateFailed": "Failed to update address. Please try again.",
+      "deleteFailed": "Failed to delete address. Please try again.",
+      "loadFailed": "Failed to load addresses",
+      "fillRequiredFields": "Please fill in all required fields.",
+      "retryMessage": "Please try refreshing the page or contact support if the problem persists.",
+      "retry": "Retry"
+    },
+    "placeholders": {
+      "fullName": "Full Name",
+      "phone": "+966 50 123 4567",
+      "city": "Select city",
+      "searchCity": "Search city...",
+      "detailedAddress": "Street, District, Building, Floor",
+      "postalCode": "12345",
+      "nationalAddress": "Enter national address"
+    },
+    "validation": {
+      "addressType": {
+        "required": "Address type is required"
+      },
+      "name": {
+        "required": "Name is required",
+        "minLength": "Name must be at least 2 characters",
+        "maxLength": "Name must be less than 100 characters"
+      },
+      "phone": {
+        "required": "Phone number is required",
+        "invalid": "Please enter a valid Saudi phone number"
+      },
+      "city": {
+        "required": "City is required",
+        "minLength": "City must be at least 2 characters",
+        "maxLength": "City must be less than 50 characters"
+      },
+      "detailedAddress": {
+        "required": "Detailed address is required",
+        "minLength": "Address must be at least 10 characters",
+        "maxLength": "Address must be less than 500 characters"
+      },
+      "postalCode": {
+        "required": "Postal code is required",
+        "invalid": "Postal code must be 5 digits"
+      },
+      "nationalAddress": {
+        "required": "National address is required",
+        "minLength": "National address must be at least 5 characters",
+        "maxLength": "National address must not exceed 200 characters"
+      }
+    }
+  },
+  "orders": {
+    "title": "Orders",
+    "export": "Export",
+    "filters": {
+      "title": "Filters",
+      "status": "Order Status",
+      "allStatuses": "All Statuses",
+      "paymentStatus": "Payment Status",
+      "allPaymentStatuses": "All Payment Statuses",
+      "dateFrom": "Date From",
+      "dateTo": "Date To",
+      "sortBy": "Sort By",
+      "sortDirection": "Sort Direction",
+      "perPage": "Per Page",
+      "clear": "Clear Filters",
+      "apply": "Apply Filters",
+      "loading": "Loading...",
+      "createdAt": "Created Date",
+      "orderNumber": "Order Number",
+      "total": "Total",
+      "descending": "Descending",
+      "ascending": "Ascending"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "showing": "Showing {{from}}-{{to}} of {{total}} results"
+    },
+    "empty": {
+      "title": "No Orders Found",
+      "description": "You haven't placed any orders yet."
+    },
+    "error": {
+      "title": "Error Loading Orders",
+      "description": "Failed to load orders. Please try again.",
+      "retry": "Retry"
+    },
+    "orderDetails": "Order Details",
+    "orderDate": "Order Date",
+    "orderSummary": "Order Summary",
+    "customerName": "Customer Name",
+    "phone": "Phone",
+    "address": "Address",
+    "apartment": "Apartment",
+    "sku": "SKU",
+    "unitPrice": "Unit Price",
+    "pricingDetails": "Pricing Details",
+    "tax": "Tax",
+    "couponCode": "Coupon Code",
+    "savedAmount": "Saved Amount",
+    "loadingDetails": "Loading order details...",
+    "errorLoadingDetails": "Failed to load order details",
+    "status": "Status",
+    "paymentStatus": "Payment Status",
+    "paymentMethod": "Payment Method",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "shipping": "Shipping",
+    "total": "Total",
+    "grandTotal": "Grand Total",
+    "couponApplied": "Coupon Applied",
+    "products": "Products",
+    "quantity": "Quantity",
+    "price": "Price",
+    "shippingAddress": "Shipping Address",
+    "trackingNumber": "Tracking Number",
+    "notes": "Notes",
+    "reorder": "Reorder",
+    "downloadInvoice": "View Invoice",
+    "items": "Items",
+    "item": "item",
+    "viewDetails": "View Details",
+    "loading": "Loading orders...",
+    "additionalInfo": "Additional Information",
+    "customer": "Customer",
+    "lineTotal": "Line Total",
+    "canBeCancelled": "Can be Cancelled",
+    "cannotBeCancelled": "Cannot be Cancelled",
+    "saved": "Saved",
+    "subtotalWithoutTax": "Subtotal (excl. tax)",
+    "subtotalTax": "Subtotal Tax",
+    "shippingWithoutTax": "Shipping (excl. tax)",
+    "shippingTax": "Shipping Tax",
+    "paidAt": "Paid At",
+    "shippedAt": "Shipped At",
+    "deliveredAt": "Delivered At",
+    "itemTotal": "Item Total",
+    "statuses": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "refunded": "Refunded"
+    },
+    "paymentStatuses": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "failed": "Failed",
+      "refunded": "Refunded"
+    },
+    "paymentMethods": {
+      "cash": "Cash",
+      "credit_card": "Credit Card",
+      "paypal": "PayPal",
+      "stripe": "Stripe",
+      "bank_transfer": "Bank Transfer"
+    },
+    "stats": {
+      "totalOrders": "Total Orders",
+      "completedOrders": "Completed",
+      "pendingOrders": "Pending",
+      "cancelledOrders": "Cancelled",
+      "totalSpent": "Total Spent"
+    }
+  },
+  "points": {
+    "title": "My Wallet",
+    "description": "Track your points and redeem them for great rewards",
+    "totalPoints": "Total Wallet",
+    "availableBalance": "Available Balance",
+    "totalTransactions": "Total Transactions",
+    "thisMonth": "This Month",
+    "loading": "Loading points...",
+    "error": "Failed to load points",
+    "retry": "Retry",
+    "noTransactions": "No points transactions yet",
+    "noTransactionsDesc": "Your points transactions will appear here when you earn or use points.",
+    "transactions": {
+      "title": "Wallet Transactions",
+      "date": "Date",
+      "reason": "Reason",
+      "points": "Wallet"
+    },
+    "pagination": {
+      "showing": "Showing {{from}} to {{to}} of {{total}} transactions",
+      "page": "Page {{current}} of {{total}}"
+    },
+    "availableForRedemption": "Available for Redemption",
+    "availableRewards": "Available Rewards",
+    "pointsHistory": "Wallet History",
+    "earned": "Earned",
+    "redeemed": "Redeemed",
+    "productPurchase": "Product Purchase",
+    "discountVoucher": "Discount Voucher Redemption",
+    "productReview": "Product Review",
+    "redeem": "Redeem",
+    "notEnoughPoints": "Not enough points",
+    "rewards": {
+      "discount10": "10% Discount Voucher",
+      "discount10Desc": "10% discount on next order",
+      "freeShipping": "Free Shipping",
+      "freeShippingDesc": "Free shipping on next order",
+      "discount20": "20% Discount Voucher",
+      "discount20Desc": "20% discount on next order"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark All as Read",
+    "clearAll": "Clear All",
+    "filters": {
+      "all": "All",
+      "unread": "Unread",
+      "read": "Read"
+    },
+    "types": {
+      "order": "Orders",
+      "delivery": "Delivery",
+      "promotion": "Promotions",
+      "system": "System"
+    },
+    "orderConfirmed": "Order Confirmed",
+    "orderShipped": "Order Shipped",
+    "orderDelivered": "Order Delivered",
+    "specialOffer": "Special Offer on Brakes",
+    "privacyUpdate": "Privacy Policy Update",
+    "empty": "No notifications",
+    "emptyDesc": "You're all caught up! No new notifications."
+  },
+  "wishlist": {
+    "title": "Wishlist",
+    "itemsInWishlist": "items in wishlist",
+    "addAllToCart": "Add All to Cart",
+    "totalItems": "Total Items",
+    "totalValue": "Total Value",
+    "totalSavings": "Total Savings",
+    "addToCart": "Add to Cart",
+    "viewProduct": "View Product",
+    "removeFromWishlist": "Remove from Wishlist",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "addedOn": "Added on",
+    "sar": "SAR",
+    "categories": {
+      "brakes": "Brakes",
+      "oils": "Oils",
+      "filters": "Filters",
+      "ignition": "Ignition"
+    },
+    "empty": "Your wishlist is empty",
+    "emptyDesc": "Start adding products you love to your wishlist!"
+  }
+}

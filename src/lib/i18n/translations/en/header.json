@@ -1,0 +1,79 @@
+{
+  "navigation": {
+    "about": "About Us",
+    "contact": "Contact Us",
+    "categories": "Categories",
+    "brands": "Brands",
+    "offers": "Latest Offers",
+    "products": "Products",
+    "userPricing": "Request Pricing"
+  },
+  "language": {
+    "title": "Language",
+    "arabic": "العربية",
+    "english": "English",
+    "changedSuccessfully": "Language changed successfully!",
+    "changeFailed": "Failed to change language. Please try again."
+  },
+  "topBar": {
+    "freeShipping": "Free shipping on orders over $50",
+    "customerService": "24/7 Customer Service",
+    "trackOrder": "Track Your Order",
+    "help": "Help"
+  },
+  "actions": {
+    "login": "Login / Register",
+    "account": "Account",
+    "logout": "Logout",
+    "loggingOut": "Logging out...",
+    "notifications": "Notifications",
+    "favourites": "Favourites",
+    "wishlist": "Wishlist",
+    "openMainMenu": "Open main menu",
+    "search": "Search",
+    "searchPlaceholder": "Search for products, parts..."
+  },
+  "search": {
+    "searching": "Searching...",
+    "noResultsFor": "No products found for \"{{query}}\""
+  },
+  "cart": {
+    "cart": "Cart"
+  },
+  "bottomNav": {
+    "home": "Home",
+    "categories": "Categories",
+    "favourites": "Favourites",
+    "wishlist": "Wishlist",
+    "cart": "Cart",
+    "profile": "Profile",
+    "offers": "Offers",
+    "products": "Products"
+  },
+  "menu": {
+    "title": "Menu",
+    "help": "Help & Support",
+    "trackOrder": "Track Your Order"
+  },
+  "mobileMenu": {
+    "welcome": "Welcome",
+    "profile": "My Profile",
+    "points": "Wallet",
+    "notifications": "Notifications",
+    "shopping": "Shopping",
+    "explore": "Explore",
+    "support": "Support",
+    "home": "Home",
+    "categories": "Categories",
+    "brands": "Brands",
+    "offers": "Latest Offers",
+    "products": "Products",
+    "favourites": "Favourites",
+    "wishlist": "Wishlist",
+    "cart": "Cart",
+    "trackOrder": "Track Order",
+    "help": "Help & Support",
+    "version": "Version 1.0.0",
+    "userPricing": "Request Pricing"
+  }
+}

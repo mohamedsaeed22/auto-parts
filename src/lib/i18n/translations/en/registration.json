@@ -1,0 +1,114 @@
+{
+  "title": "Complete Registration",
+  "description": "Please complete your registration data to access all features",
+  "userCode": "User Code",
+  "basicInfo": "Basic Information",
+  "labels": {
+    "name": "Name",
+    "email": "Email",
+    "type": "Type",
+    "managerName": "Manager Name",
+    "address": "Address",
+    "city": "City",
+    "nationalAddress": "National Address",
+    "zip": "ZIP Code",
+    "state": "State",
+    "taxNumber": "Tax Number",
+    "latitudeStatic": "Latitude (Static)",
+    "longitudeStatic": "Longitude (Static)",
+    "commercialRegister": "Commercial Register",
+    "avatar": "Avatar",
+    "selectLocation": "Select Location"
+  },
+  "placeholders": {
+    "name": "Enter your name",
+    "email": "Enter your email (optional)",
+    "managerName": "Enter manager name",
+    "address": "Enter address",
+    "city": "Select city",
+    "searchCity": "Search city...",
+    "nationalAddress": "Enter national address",
+    "zip": "Enter ZIP code",
+    "state": "Enter state",
+    "taxNumber": "Enter tax number",
+    "latitude": "Static latitude value",
+    "longitude": "Static longitude value",
+    "selectType": "Select type"
+  },
+  "help": {
+    "fixedLocation": "Fixed location: Cairo, Egypt",
+    "uploadNote": "Image up to 5MB (jpeg, png, jpg)"
+  },
+  "location": {
+    "simpleInstruction": "Please select a location on the map above",
+    "searchPlaceholder": "Search for an address...",
+    "useCurrentLocation": "Use My Location",
+    "selectLocation": "Click anywhere on the map to select your location",
+    "locationSelected": "Location selected",
+    "searchingLocation": "Getting location...",
+    "locationError": "Failed to get location",
+    "permissionDenied": "Location permission denied",
+    "selectLocationOnMap": "Select Location on Map",
+    "changeLocation": "Change Location",
+    "hideMap": "Hide Map",
+    "selectedLocation": "Selected Location",
+    "loading": "Loading map...",
+    "instructions": "Click anywhere on the map to select your location. Drag the marker to fine-tune the position.",
+    "dragMarker": "Drag to adjust location",
+    "confirmLocation": "Confirm Location",
+    "closeMap": "Close Map",
+    "error": "Google Maps Error",
+    "apiKeyMissing": "Google Maps API Key Required",
+    "apiKeyInstructions": "Please add your Google Maps API key to the .env.local file to enable location selection.",
+    "lat": "Lat",
+    "lng": "Lng",
+    "geolocationNotSupported": "Geolocation is not supported by this browser",
+    "geolocationError": "Error getting your current location. Please try again or select manually."
+  },
+  "typeOptions": {
+    "shop": "Shop",
+    "workshop": "Workshop"
+  },
+  "uploads": {
+    "clickToSelectCR": "Click to select Commercial Register",
+    "clickToSelectAvatar": "Click to select Avatar",
+    "crPreviewAlt": "Commercial Register Preview",
+    "avatarPreviewAlt": "Avatar Preview",
+    "removeFile": "Remove file",
+    "uploadCRHelp": "Upload commercial register document (jpeg, png, jpg)",
+    "uploadAvatarHelp": "Upload your profile picture (jpeg, png, jpg)"
+  },
+  "validation": {
+    "nameRequired": "Name is required",
+    "managerRequired": "Manager name is required",
+    "addressRequired": "Address is required",
+    "cityRequired": "City is required",
+    "nationalAddressRequired": "National address is required",
+    "nationalAddressMinLength": "National address must be at least 5 characters",
+    "nationalAddressTooLong": "National address cannot exceed 200 characters",
+    "zipRequired": "ZIP code is required",
+    "stateRequired": "State is required",
+    "taxRequired": "Tax number is required",
+    "typeRequired": "Type selection is required",
+    "crRequired": "Commercial register is required",
+    "avatarRequired": "Avatar is required",
+    "fileType": "File must be of type: jpeg, png, jpg",
+    "fileSize": "File size must be less than 5MB"
+  },
+  "actions": {
+    "submit": "Submit Registration",
+    "submitting": "Submitting..."
+  },
+  "toasts": {
+    "registrationAlreadyCompleted": "Registration already completed!",
+    "registrationCompleted": "Registration completed successfully!",
+    "registrationFailed": "Failed to complete registration. Please try again.",
+    "locationSelected": "Location selected successfully! You can now edit the address details if needed."
+  },
+  "sections": {
+    "basicInfo": "Basic Information",
+    "addressInfo": "Address Information",
+    "documents": "Required Documents"
+  },
+  "optional": "Optional"
+}

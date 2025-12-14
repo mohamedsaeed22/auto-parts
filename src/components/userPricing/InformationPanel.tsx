@@ -16,7 +16,7 @@ export function InformationPanel({ userType }: InformationPanelProps) {
   const workshopInfo = t("information.workshop", {
     returnObjects: true,
   }) as string[];
-  const storeInfo = t("information.store", { returnObjects: true }) as string[];
+  const shopInfo = t("information.shop", { returnObjects: true }) as string[];
 
   return (
     <div className="mt-8 p-4 bg-logo-gold/10 rounded-lg border border-logo-gold/20">
@@ -39,10 +39,10 @@ export function InformationPanel({ userType }: InformationPanelProps) {
           workshopInfo.map((info, index) => (
             <li key={`workshop-${index}`}>• {info}</li>
           ))}
-        {userType === "store" &&
-          Array.isArray(storeInfo) &&
-          storeInfo.map((info, index) => (
-            <li key={`store-${index}`}>• {info}</li>
+        {userType === "shop" &&
+          Array.isArray(shopInfo) &&
+          shopInfo.map((info, index) => (
+            <li key={`shop-${index}`}>• {info}</li>
           ))}
       </ul>
     </div>

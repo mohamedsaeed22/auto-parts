@@ -1,0 +1,31 @@
+{
+  "backButton": "Back",
+  "description": "Description",
+  "quantity": "Quantity",
+  "addToCart": "Add to Cart",
+  "productCode": "Product Code",
+  "availability": "Availability",
+  "available": "Available",
+  "category": "Category",
+  "currency": "SAR",
+  "rating": "Rating",
+  "reviews": "Reviews",
+  "featuredProducts": "Our Featured Products",
+  "featuredDescription": "Discover a wide range of high-quality spare parts and accessories for your car",
+  "loadMore": "Load More Products",
+  "currencySymbol": "SAR",
+  "auth": {
+    "loginRequired": "Please login to add items to your favourites/wishlist",
+    "completeRegistrationRequired": "Please complete your registration to use this feature"
+  },
+  "category": {
+    "previousSlide": "Previous slide",
+    "nextSlide": "Next slide",
+    "viewAllProducts": "View All {{category}} Products"
+  },
+  "section": {
+    "previousSlide": "Previous slide",
+    "nextSlide": "Next slide",
+    "viewAllProducts": "View All {{section}} "
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "title": "اختر عنوان التسليم",
+  "description": "اختر عنواناً موجوداً أو أضف عنواناً جديداً لتسليم طلبك.",
+  "existingAddresses": "العناوين الموجودة",
+  "addNew": "إضافة جديد",
+  "newAddress": "عنوان جديد",
+  "back": "رجوع",
+  "noAddresses": "لم يتم العثور على عناوين",
+  "default": "افتراضي",
+  "firstName": "الاسم الأول",
+  "firstNamePlaceholder": "أدخل الاسم الأول",
+  "lastName": "اسم العائلة",
+  "lastNamePlaceholder": "أدخل اسم العائلة",
+  "phone": "الهاتف",
+  "phonePlaceholder": "أدخل رقم الهاتف",
+  "zipCode": "الرمز البريدي",
+  "zipCodePlaceholder": "أدخل الرمز البريدي",
+  "address": "العنوان",
+  "addressPlaceholder": "أدخل عنوان الشارع",
+  "apartment": "الشقة",
+  "apartmentPlaceholder": "الشقة، الطابق، إلخ",
+  "city": "المدينة",
+  "cityPlaceholder": "اختر المدينة",
+  "searchCity": "ابحث عن مدينة...",
+  "state": "المحافظة",
+  "statePlaceholder": "أدخل المحافظة",
+  "country": "البلد",
+  "countryPlaceholder": "أدخل البلد",
+  "notes": "ملاحظات",
+  "notesPlaceholder": "تعليمات إضافية للتسليم",
+  "cancel": "إلغاء",
+  "createAndSelect": "استخدام هذا العنوان",
+  "selectAddress": "اختيار العنوان",
+  "saveAndContinue": "حفظ ومتابعة",
+  "validation": {
+    "firstName": {
+      "required": "الاسم الأول مطلوب",
+      "minLength": "يجب أن يكون الاسم الأول على الأقل حرفين",
+      "maxLength": "يجب أن يكون الاسم الأول أقل من 50 حرفًا"
+    },
+    "lastName": {
+      "required": "اسم العائلة مطلوب",
+      "minLength": "يجب أن يكون اسم العائلة على الأقل حرفين",
+      "maxLength": "يجب أن يكون اسم العائلة أقل من 50 حرفًا"
+    },
+    "phone": {
+      "required": "رقم الهاتف مطلوب",
+      "length": "رقم الهاتف يجب أن يكون بين 10-14 رقمًا",
+      "invalid": "أدخل رقم هاتف سعودي صحيح"
+    },
+    "address": {
+      "required": "العنوان مطلوب",
+      "minLength": "يجب أن يكون العنوان على الأقل 5 أحرف",
+      "maxLength": "يجب أن يكون العنوان أقل من 200 حرف"
+    },
+    "apartment": {
+      "required": "الشقة مطلوبة",
+      "maxLength": "يجب أن تكون الشقة أقل من 100 حرف"
+    },
+    "city": {
+      "required": "المدينة مطلوبة",
+      "minLength": "يجب أن تكون المدينة على الأقل حرفين",
+      "maxLength": "يجب أن تكون المدينة أقل من 50 حرفًا"
+    },
+    "state": {
+      "required": "المحافظة مطلوبة",
+      "minLength": "يجب أن تكون المحافظة على الأقل حرفين",
+      "maxLength": "يجب أن تكون المحافظة أقل من 50 حرفًا"
+    },
+    "country": {
+      "required": "البلد مطلوب",
+      "minLength": "يجب أن يكون البلد على الأقل حرفين",
+      "maxLength": "يجب أن يكون البلد أقل من 50 حرفًا"
+    },
+    "zipCode": {
+      "required": "الرمز البريدي مطلوب",
+      "invalid": "يجب أن يكون الرمز البريدي 5 أرقام"
+    },
+    "notes": {
+      "maxLength": "يجب أن تكون الملاحظات أقل من 500 حرف"
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "returnExchangePolicy": {
+    "title": "Return & Exchange Policy",
+    "subtitle": "Terms and conditions for purchasing spare parts, warranty, return, and exchange policy",
+    "warranty": {
+      "title": "Warranty",
+      "description": "Spare parts are granted a 30-day warranty from the date of purchase according to the following conditions:",
+      "conditions": {
+        "noInstallationError": "The defect must not be caused by incorrect installation of the part or its associated components (such as incorrect connections or any improper installation).",
+        "originalInvoice": "The original invoice must be provided when requesting warranty service.",
+        "noLaborCosts": "The warranty does not cover labor costs, installation fees, or any related expenses.",
+        "electricalNotCovered": "Electrical and electronic parts are not covered by the warranty."
+      }
+    },
+    "returnPolicy": {
+      "title": "Return & Exchange Policy",
+      "policies": {
+        "sevenDays": "Customers have the right to exchange or return parts within 14 days of receipt, bearing all costs associated with the process (except in case of manufacturing defect, damage, or missing accessories). No requests will be accepted after the specified period.",
+        "originalCondition": "The part must be in its original condition: unused, sealed in its packaging, and free from any damage. The store reserves the right to inspect the part before approving the exchange or return.",
+        "defectiveItems": "In case of receiving a defective part (damage, manufacturing defect, or missing accessories), customer service must be notified within 24 hours of receipt, and the part will be exchanged or returned without any additional fees or shipping costs.",
+        "shippingCosts": "In regular cases, the customer bears the shipping costs, while in cases of manufacturing defects or store errors, the store bears all costs."
+      },
+      "electrical": {
+        "title": "Electrical & Electronic Parts",
+        "description": "Subject to special conditions, where they can only be exchanged or returned within 24 hours of receipt.",
+        "conditions": {
+          "notUsed": "Must not be used or installed",
+          "sealedPackage": "Must be sealed in original packaging",
+          "technicalInspection": "Subject to technical inspection before approval"
+        }
+      }
+    },
+    "exclusions": {
+      "title": "Exclusions from Return or Exchange",
+      "description": "Customers are not entitled to exchange or return parts in the following cases:",
+      "cases": {
+        "customMade": "If the part is manufactured or imported specifically upon customer request, except in case of manufacturing defect or non-compliance with required specifications.",
+        "misuse": "If the defect resulted from misuse or improper storage by the customer.",
+        "openedPackage": "If the electrical or electronic part packaging has been opened or installed, or if the specified return period (24 hours from receipt) has been exceeded."
+      }
+    },
+    "footerNote": "For any inquiries regarding our return and exchange policy, please contact our customer service team. We are here to help you."
+  }
+}

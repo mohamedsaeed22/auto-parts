@@ -1,64 +1,54 @@
 "use client";
 
 import { useState } from "react";
-import { useCart } from "@/hooks/useCart";
+import { useEnhancedCart } from "@/hooks/useEnhancedCart";
 import { useTranslation } from "react-i18next";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Menu } from "lucide-react";
 import HeaderLogo from "./HeaderLogo";
-import HeaderSearch from "./HeaderSearch";
-import HeaderLanguageDropdown from "./HeaderLanguageDropdown";
+import SearchAutocomplete from "./SearchAutocomplete";
 import HeaderActions from "./HeaderActions";
 import HeaderNavigation from "./HeaderNavigation";
 import HeaderMobileMenu from "./HeaderMobileMenu";
 import HeaderBottomNavigation from "./HeaderBottomNavigation";
+import NotificationDropdown from "./NotificationDropdown";
+import LanguageSwitch from "./LanguageSwitch";
 import { useRouter } from "next/navigation";
-import { i18nConfig } from "@/lib/i18n";
+import { useLocale } from "@/hooks/useLocale";
+import { useHeaderSearch } from "@/hooks/useHeaderSearch";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Header() {
-  const { totalItems, setCartOpen } = useCart();
+  const { totalItems, setCartOpen } = useEnhancedCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const pathname = usePathname();
-  const { t, i18n } = useTranslation("header");
-  const activeLocale = i18n.language;
-  const isRTL = activeLocale === "ar";
+  const { t } = useTranslation("header");
+  const { currentLocale, changeLocale, isRTL, isChangingLocale } = useLocale();
+  const { isAuthenticated } = useAuth();
   const router = useRouter();
-  const currentPathname = usePathname();
+  const {
+    searchQuery,
+    updateSearchQuery,
+    submitSearchQuery,
+    clearSearchQuery,
+  } = useHeaderSearch();
 
   const navLinks = [
     { href: "/about", label: t("navigation.about") },
     { href: "/contact", label: t("navigation.contact") },
+    { href: "/categories", label: t("navigation.categories") },
     { href: "/brands", label: t("navigation.brands") },
-    { href: "/offers", label: t("navigation.offers") },
+    { href: "/latestoffer", label: t("navigation.offers") },
     { href: "/products", label: t("navigation.products") },
     { href: "/userPricing", label: t("navigation.userPricing") },
   ];
 
-  const onLanguageChange = () => {
-    const newLocale = activeLocale === "en" ? "ar" : "en";
-
-    // Set a cookie for next-i18n-router to read the new locale
-    const days = 30;
-    const date = new Date();
-    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-    const expires = date.toUTCString();
-    document.cookie = `NEXT_LOCALE=${newLocale};expires=${expires};path=/`;
-
-    // Compute new path with updated locale
-    if (
-      activeLocale === i18nConfig.defaultLocale &&
-      !i18nConfig.prefixDefault
-    ) {
-      router.push("/" + newLocale + currentPathname);
-    } else {
-      router.push(currentPathname.replace(`/${activeLocale}`, `/${newLocale}`));
+  const onLanguageChange = (newLocale: string) => {
+    if (newLocale !== currentLocale) {
+      changeLocale(newLocale);
     }
-
-    router.refresh();
   };
 
   const handleCartClick = () => {
@@ -72,15 +62,22 @@ export default function Header() {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Navigate to search results page or handle search
-      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      // Submit search query (updates URL)
+      submitSearchQuery(searchQuery.trim());
+
+      // Navigate to products page with search parameter
+      const locale = currentLocale;
+      router.push(
+        `/${locale}/products?search=${encodeURIComponent(searchQuery.trim())}`
+      );
+
       setIsSearchOpen(false);
-      setSearchQuery("");
+      // Don't clear the search query - let the URL sync handle it
     }
   };
 
   const clearSearch = () => {
-    setSearchQuery("");
+    clearSearchQuery();
   };
 
   // Helper function to check if link is active
@@ -100,7 +97,7 @@ export default function Header() {
     <>
       {/* Main Header */}
       <header
-        className="bg-white shadow-sm sticky top-0 z-50"
+        className="bg-background shadow-sm sticky top-0 z-50"
         dir={isRTL ? "rtl" : "ltr"}
       >
         {/* Main Header Content */}
@@ -111,11 +108,12 @@ export default function Header() {
 
             {/* Desktop Search Bar - Centered */}
             <div className="hidden lg:flex items-center flex-1 max-w-2xl mx-8">
-              <HeaderSearch
+              <SearchAutocomplete
                 searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
+                setSearchQuery={updateSearchQuery}
                 onSubmit={handleSearchSubmit}
                 onClear={clearSearch}
+                onSuggestionSelect={submitSearchQuery}
                 isRTL={isRTL}
                 placeholder={
                   t("actions.searchPlaceholder") || "Search products..."
@@ -125,49 +123,38 @@ export default function Header() {
             </div>
 
             {/* Desktop Right Actions */}
-            <div className="hidden lg:flex items-center gap-6">
-              <HeaderLanguageDropdown
-                isOpen={isLanguageOpen}
-                setIsOpen={setIsLanguageOpen}
-                onLanguageChange={onLanguageChange}
-                isRTL={isRTL}
-                activeLocale={activeLocale}
-              />
+            <div className="hidden lg:flex items-center gap-2">
               <HeaderActions
                 totalItems={totalItems}
                 onCartClick={handleCartClick}
                 isRTL={isRTL}
+                onLanguageChange={onLanguageChange}
+                activeLocale={currentLocale}
+                isChangingLocale={isChangingLocale}
               />
             </div>
 
             {/* Mobile Right Actions */}
-            <div className="lg:hidden flex items-center gap-3">
+            <div className="lg:hidden flex items-center gap-1">
               {/* Search Toggle */}
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 className={`p-2 transition-all duration-150 ${
                   isSearchOpen
-                    ? "text-logo-gold bg-yellow-50 rounded-lg"
-                    : "text-gray-700 hover:text-logo-gold hover:bg-gray-50 rounded-lg"
+                    ? "text-primary bg-primary-50 rounded-lg"
+                    : "text-neutral-700 hover:text-primary hover:bg-neutral-50 rounded-lg"
                 }`}
               >
                 <Search size={20} />
               </button>
 
-              {/* Language Dropdown - Mobile */}
-              <HeaderLanguageDropdown
-                isOpen={isLanguageOpen}
-                setIsOpen={setIsLanguageOpen}
-                onLanguageChange={onLanguageChange}
-                isRTL={isRTL}
-                activeLocale={activeLocale}
-                isMobile={true}
-              />
+              {/* Notifications - Only show if authenticated */}
+              {isAuthenticated && <NotificationDropdown isRTL={isRTL} />}
 
               {/* Mobile Menu Toggle */}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="p-2 text-gray-700 hover:text-logo-gold transition-colors"
+                className="p-2 text-neutral-700 hover:text-primary transition-colors"
               >
                 <Menu size={20} />
               </button>
@@ -193,13 +180,14 @@ export default function Header() {
                 duration: 0.15,
                 ease: "easeOut",
               }}
-              className="lg:hidden bg-white border-t border-gray-200 px-4 py-3"
+              className="lg:hidden bg-background border-t border-border px-4 py-3"
             >
-              <HeaderSearch
+              <SearchAutocomplete
                 searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
+                setSearchQuery={updateSearchQuery}
                 onSubmit={handleSearchSubmit}
                 onClear={clearSearch}
+                onSuggestionSelect={submitSearchQuery}
                 isRTL={isRTL}
                 placeholder={
                   t("actions.searchPlaceholder") || "Search products..."
@@ -215,9 +203,12 @@ export default function Header() {
         <HeaderMobileMenu
           isOpen={isMenuOpen}
           onClose={closeMobileMenu}
-          navLinks={navLinks}
           isActiveLink={isActiveLink}
           isRTL={isRTL}
+          onCartClick={handleCartClick}
+          onLanguageChange={onLanguageChange}
+          activeLocale={currentLocale}
+          isChangingLocale={isChangingLocale}
         />
       </header>
 
@@ -228,14 +219,6 @@ export default function Header() {
         isRTL={isRTL}
         pathname={pathname}
       />
-
-      {/* Click outside handlers */}
-      {isLanguageOpen && (
-        <div
-          className="fixed inset-0 z-30"
-          onClick={() => setIsLanguageOpen(false)}
-        />
-      )}
 
       {/* Add bottom padding to body content on mobile to account for bottom nav */}
       <style jsx global>{`

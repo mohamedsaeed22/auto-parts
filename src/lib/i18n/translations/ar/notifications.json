@@ -1,0 +1,39 @@
+{
+  "title": "الإشعارات",
+  "empty": "لا توجد إشعارات",
+  "loading": "جاري التحميل...",
+  "error": "فشل تحميل الإشعارات",
+  "refresh": "تحديث",
+  "showMore": "عرض المزيد",
+  "showing": "عرض",
+  "of": "من",
+  "markAsRead": "تحديد كمقروء",
+  "markAllAsRead": "تحديد الكل كمقروء",
+  "delete": "حذف",
+  "deleteAll": "حذف الكل",
+  "confirmDeleteAll": "هل أنت متأكد من حذف جميع الإشعارات؟",
+  "retry": "إعادة المحاولة",
+  "previous": "السابق",
+  "next": "التالي",
+  "page": "الصفحة {{current}} من {{total}}",
+  "types": {
+    "order_status": "حالة الطلب",
+    "order_delivery": "توصيل الطلب",
+    "promotion": "عرض ترويجي",
+    "system": "النظام"
+  },
+  "errors": {
+    "loadingFailed": "فشل تحميل الإشعارات",
+    "markAsReadFailed": "فشل تحديد الإشعار كمقروء",
+    "markAllAsReadFailed": "فشل تحديد جميع الإشعارات كمقروءة",
+    "deleteFailed": "فشل حذف الإشعار",
+    "deleteAllFailed": "فشل حذف جميع الإشعارات"
+  },
+  "success": {
+    "markedAsRead": "تم تحديد الإشعار كمقروء",
+    "allMarkedAsRead": "تم تحديد جميع الإشعارات كمقروءة",
+    "deleted": "تم حذف الإشعار بنجاح",
+    "allDeleted": "تم حذف جميع الإشعارات بنجاح"
+  }
+}
+

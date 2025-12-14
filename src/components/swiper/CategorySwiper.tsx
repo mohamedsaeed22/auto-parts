@@ -40,6 +40,22 @@ const CategorySwiper: React.FC<CategoryProps> = ({
     getProducts(filters);
   }, [categoryId, getProducts]);
 
+  // Refetch products on auth change (login/logout)
+  React.useEffect(() => {
+    const handleAuthChange = () => {
+      const filters = categoryId
+        ? { category_id: categoryId, per_page: 10 }
+        : { per_page: 10 };
+      getProducts(filters);
+    };
+
+    window.addEventListener("authChange", handleAuthChange);
+
+    return () => {
+      window.removeEventListener("authChange", handleAuthChange);
+    };
+  }, [categoryId, getProducts]);
+
   // Loading component
   if (isLoading) {
     return (

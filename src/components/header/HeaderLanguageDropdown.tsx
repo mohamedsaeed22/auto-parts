@@ -1,14 +1,15 @@
-import { Globe, ChevronDown } from "lucide-react";
+import { ChevronDown, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
 interface HeaderLanguageDropdownProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  onLanguageChange: () => void;
+  onLanguageChange: (locale: string) => void;
   isRTL: boolean;
   activeLocale: string;
   isMobile?: boolean;
+  isChangingLocale?: boolean;
 }
 
 export default function HeaderLanguageDropdown({
@@ -18,11 +19,12 @@ export default function HeaderLanguageDropdown({
   isRTL,
   activeLocale,
   isMobile = false,
+  isChangingLocale = false,
 }: HeaderLanguageDropdownProps) {
   const { t } = useTranslation("header");
 
   const languages = [
-    { code: "ar", name: t("language.arabic"), flag: "🇸🇦" },
+    { code: "ar", name: t("language.arabic"), flag: "ar" },
     { code: "en", name: t("language.english"), flag: "🇺🇸" },
   ];
 
@@ -33,34 +35,52 @@ export default function HeaderLanguageDropdown({
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="p-2 text-gray-700 hover:text-logo-gold transition-colors"
+          className="p-2 text-neutral-700 hover:text-primary transition-colors"
+          disabled={isChangingLocale}
         >
-          <Globe size={20} />
+          {isChangingLocale ? (
+            <Loader2 size={18} className="animate-spin" />
+          ) : (
+            <span className="text-lg">{currentLanguage?.flag}</span>
+          )}
         </button>
 
         <AnimatePresence>
-          {isOpen && (
+          {isOpen && !isChangingLocale && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-full right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
-              style={{
-                transform: "translateX(calc(-100% + 2.5rem))",
-              }}
+              className={`absolute top-full mt-2 w-40 bg-background rounded-lg shadow-lg border border-border z-50 ${
+                isRTL ? "right-0" : "left-0"
+              }`}
             >
               <div className="py-1">
                 {languages.map((language) => (
                   <button
                     key={language.code}
-                    className={`w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 ${
+                    className={`w-full px-3 py-2 text-sm flex items-center gap-2 ${
                       isRTL ? "text-right" : "text-left"
+                    } ${
+                      language.code === activeLocale
+                        ? "bg-neutral-100 text-primary font-medium"
+                        : "text-neutral-700 hover:bg-neutral-50"
                     }`}
-                    onClick={onLanguageChange}
+                    onClick={() => {
+                      if (language.code !== activeLocale) {
+                        onLanguageChange(language.code);
+                        setIsOpen(false);
+                      }
+                    }}
                   >
                     <span className="text-base">{language.flag}</span>
                     <span className="text-xs">{language.name}</span>
+                    {language.code === activeLocale && (
+                      <span className="ml-auto">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary inline-block"></span>
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
@@ -75,36 +95,53 @@ export default function HeaderLanguageDropdown({
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+        className="p-2 text-neutral-700 hover:text-primary transition-colors"
+        title={currentLanguage?.name}
+        disabled={isChangingLocale}
       >
-        <Globe size={18} />
-        <span>{currentLanguage?.name}</span>
-        <ChevronDown
-          size={12}
-          className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
-        />
+        {isChangingLocale ? (
+          <Loader2 size={18} className="animate-spin" />
+        ) : (
+          <span className="text-lg">{currentLanguage?.flag}</span>
+        )}
       </button>
 
       <AnimatePresence>
-        {isOpen && (
+        {isOpen && !isChangingLocale && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+            className={`absolute top-full mt-2 w-48 bg-background rounded-lg shadow-lg border border-border z-50 ${
+              isRTL ? "right-0" : "left-0"
+            }`}
           >
             <div className="py-2">
               {languages.map((language) => (
                 <button
                   key={language.code}
-                  className={`w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-3 transition-colors ${
+                  className={`w-full px-4 py-3 text-sm flex items-center gap-3 transition-colors ${
                     isRTL ? "text-right" : "text-left"
+                  } ${
+                    language.code === activeLocale
+                      ? "bg-neutral-100 text-primary font-medium"
+                      : "text-neutral-700 hover:bg-neutral-50"
                   }`}
-                  onClick={onLanguageChange}
+                  onClick={() => {
+                    if (language.code !== activeLocale) {
+                      onLanguageChange(language.code);
+                      setIsOpen(false);
+                    }
+                  }}
                 >
                   <span className="text-lg">{language.flag}</span>
                   <span>{language.name}</span>
+                  {language.code === activeLocale && (
+                    <span className="ml-auto">
+                      <span className="h-1.5 w-1.5 rounded-full bg-primary inline-block"></span>
+                    </span>
+                  )}
                 </button>
               ))}
             </div>

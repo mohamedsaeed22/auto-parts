@@ -1,0 +1,88 @@
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useLocale } from "@/hooks/useLocale";
+import { storage } from "@/lib/storage";
+import type { RegistrationIncompleteErrorResponse } from "@/services/api/baseApi";
+
+export function useRegistrationStatus() {
+  const [isRegistrationIncomplete, setIsRegistrationIncomplete] =
+    useState(false);
+  const [registrationCode, setRegistrationCode] = useState<string | null>(null);
+  const router = useRouter();
+  const { currentLocale } = useLocale();
+
+  useEffect(() => {
+    // Check if user has incomplete registration
+    const checkRegistrationStatus = () => {
+      const authData = storage.getAuth();
+      const storedCode = storage.getRegistrationCode();
+
+      if (authData && !authData.user.is_registration_complete) {
+        setIsRegistrationIncomplete(true);
+        setRegistrationCode(storedCode);
+      } else {
+        setIsRegistrationIncomplete(false);
+        setRegistrationCode(null);
+      }
+    };
+
+    checkRegistrationStatus();
+
+    // Listen for auth changes to update registration status reactively
+    const handleAuthChange = () => {
+      checkRegistrationStatus();
+    };
+
+    window.addEventListener("authChange", handleAuthChange);
+
+    return () => {
+      window.removeEventListener("authChange", handleAuthChange);
+    };
+  }, []);
+
+  const handleRegistrationIncomplete = (
+    error: RegistrationIncompleteErrorResponse
+  ) => {
+    setIsRegistrationIncomplete(true);
+    if (error.data.data.user?.code) {
+      setRegistrationCode(error.data.data.user.code);
+      storage.setRegistrationCode(error.data.data.user.code);
+    }
+
+    // Store current page URL before redirecting
+    const currentPath = window.location.pathname;
+    storage.setPreviousPage(currentPath);
+
+    // Redirect to complete registration page
+    router.push(`/complete-registration`);
+  };
+
+  const clearRegistrationIncomplete = () => {
+    setIsRegistrationIncomplete(false);
+    setRegistrationCode(null);
+    storage.clearRegistrationCode();
+    storage.clearPreviousPage(); // Also clear the previous page URL
+  };
+
+  const isErrorRegistrationIncomplete = (
+    error: unknown
+  ): error is RegistrationIncompleteErrorResponse => {
+    const apiError = error as {
+      status?: number;
+      data?: { data?: { is_registration_complete?: boolean } };
+    };
+    return (
+      apiError &&
+      apiError.status === 403 &&
+      apiError.data?.data?.is_registration_complete === false
+    );
+  };
+
+  return {
+    isRegistrationIncomplete,
+    registrationCode,
+    handleRegistrationIncomplete,
+    clearRegistrationIncomplete,
+    isErrorRegistrationIncomplete,
+  };
+}

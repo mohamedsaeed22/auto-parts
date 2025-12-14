@@ -1,0 +1,127 @@
+{
+  "hero": {
+    "title": "Parts Pricing Request",
+    "subtitle": "Send us the details of the part you need and we will price it for you",
+    "description": "Get the best prices and fastest services from our experts"
+  },
+  "form": {
+    "title": "Pricing Request Form",
+    "subtitle": "Fill out the form below and the data will be saved on the left",
+    "userType": {
+      "label": "User Type",
+      "workshop": "Workshop",
+      "shop": "Shop"
+    },
+    "fields": {
+      "partName": {
+        "label": "Part Name",
+        "placeholder": "Enter the name of the required part"
+      },
+      "userCode": {
+        "label": "Workshop Code",
+        "placeholder": "Enter your workshop code",
+        "helpText": "You can change the code to get additional points"
+      },
+      "quantity": {
+        "label": "Quantity",
+        "placeholder": "Enter the required quantity"
+      },
+      "chassisNumber": {
+        "label": "Chassis Number",
+        "placeholder": "Enter chassis number",
+        "helpText": "The chassis number helps identify the appropriate part for your car"
+      }
+    },
+    "images": {
+      "title": "Required Images",
+      "required": "Required",
+      "optional": "Optional",
+      "partImage": "Part Image",
+      "requestImage": "Request Image",
+      "formImage": "Form Image"
+    },
+    "buttons": {
+      "addToList": "Add to List",
+      "saving": "Saving..."
+    }
+  },
+  "savedForms": {
+    "title": "Saved Data",
+    "count": "form",
+    "empty": {
+      "title": "No saved data",
+      "description": "Fill out the form on the right to add data"
+    },
+    "buttons": {
+      "sendAll": "Send All Data",
+      "sending": "Sending...",
+      "delete": "Delete"
+    },
+    "labels": {
+      "partName": "Part Name",
+      "quantity": "Quantity",
+      "userCode": "Workshop Code",
+      "chassisNumber": "Chassis Number",
+      "savedAt": "Saved at"
+    },
+    "imageAlts": {
+      "partImage": "Part Image",
+      "requestImage": "Request Image",
+      "formImage": "Form Image"
+    }
+  },
+  "information": {
+    "title": "Important Information:",
+    "general": [
+      "You can add multiple parts and then send them all from the left side",
+      "Your request will be responded to within 24 business hours",
+      "Make sure to attach clear images of the part, request, and form"
+    ],
+    "workshop": [
+      "The chassis number helps identify the appropriate part",
+      "You can track your request through the user code"
+    ],
+    "store": ["For stores: We offer special wholesale prices"]
+  },
+  "auth": {
+    "loginRequired": "Please login to access this feature",
+    "completeRegistrationRequired": "Please complete your registration to access this feature",
+    "buttons": {
+      "login": "Login",
+      "completeRegistration": "Complete Registration"
+    },
+    "status": {
+      "loginRequired": "You need to login to submit pricing requests",
+      "completeRegistration": "Please complete your registration to submit requests",
+      "readyToSubmit": "You can now submit pricing requests",
+      "backendLoginRequired": "Login required to send data to backend",
+      "backendCompleteRegistration": "Complete registration to send data",
+      "backendReady": "Ready to send data to backend"
+    }
+  },
+  "success": {
+    "requestSent": "Request sent successfully!",
+    "formSaved": "Form saved successfully!"
+  },
+  "errors": {
+    "noDataToSend": "No data to send!",
+    "sendFailed": "Failed to send request. Please try again.",
+    "saveFailed": "Failed to save form. Please try again."
+  },
+  "validation": {
+    "partName": {
+      "required": "Part name is required",
+      "minLength": "Part name must be more than 1 character",
+      "maxLength": "Part name is too long"
+    },
+    "quantity": {
+      "required": "Quantity is required",
+      "positive": "Quantity must be a positive number"
+    },
+    "userCode": {
+      "required": "Workshop code is required",
+      "minLength": "Workshop code must be at least 3 characters",
+      "maxLength": "Workshop code is too long"
+    }
+  }
+}

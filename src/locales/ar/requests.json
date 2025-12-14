@@ -1,0 +1,104 @@
+{
+  "title": "الطلبات",
+  "create": "إنشاء طلب",
+  "id": "الرقم",
+  "createdAt": "تاريخ الإنشاء",
+  "submittedAt": "تاريخ التقديم",
+  "totalPrice": "السعر الإجمالي",
+  "workshopCode": "كود الورشة",
+  "status": {
+    "draft": "مسودة",
+    "pending": "قيد الانتظار",
+    "submitted": "مقدم",
+    "accepted": "مقبول",
+    "rejected": "مرفوض",
+    "completed": "مكتمل"
+  },
+  "filters": {
+    "title": "الفلتر",
+    "status": "الحالة",
+    "allStatuses": "جميع الحالات",
+    "dateFrom": "التاريخ من",
+    "dateTo": "التاريخ إلى",
+    "perPage": "لكل صفحة",
+    "clear": "مسح الفلتر"
+  },
+  "items": {
+    "title": "عناصر الطلب",
+    "itemNumber": "العنصر",
+    "quantity": "الكمية",
+    "unitPrice": "سعر الوحدة",
+    "created": "تاريخ الإنشاء",
+    "chassisNumber": "رقم الهيكل",
+    "attachments": "المرفقات",
+    "partImage": "القطعة",
+    "orderImage": "الطلب",
+    "formImage": "النموذج"
+  },
+  "actions": {
+    "reject": "رفض",
+    "accept": "قبول"
+  },
+  "adminPricing": {
+    "title": "قام المسؤل بتسعير طلبك",
+    "description": "يرجى مراجعة التسعير وقبوله أو رفضه"
+  },
+  "priceSummary": {
+    "title": "ملخص السعر",
+    "description": "المجموع المحسوب من قبل المدير",
+    "total": "المبلغ الإجمالي"
+  },
+  "registrationRequired": {
+    "title": "إكمال التسجيل مطلوب",
+    "description": "للوصول إلى طلباتك، يرجى إكمال التسجيل أولاً.",
+    "button": "إكمال التسجيل"
+  },
+  "pagination": {
+    "previous": "السابق",
+    "next": "التالي",
+    "showing": "عرض {{from}}-{{to}} من {{total}} نتيجة"
+  },
+  "error": {
+    "title": "خطأ في تحميل الطلبات",
+    "description": "فشل في تحميل الطلبات. يرجى المحاولة مرة أخرى.",
+    "retry": "إعادة المحاولة"
+  },
+  "empty": {
+    "title": "لم يتم العثور على طلبات",
+    "description": "لا توجد طلبات تطابق الفلاتر الحالية."
+  },
+  "addressSelection": {
+    "title": "اختر عنوان التسليم",
+    "description": "اختر عنواناً موجوداً أو أضف عنواناً جديداً لتسليم طلبك.",
+    "existingAddresses": "العناوين الموجودة",
+    "addNew": "إضافة جديد",
+    "newAddress": "عنوان جديد",
+    "back": "رجوع",
+    "noAddresses": "لم يتم العثور على عناوين",
+    "default": "افتراضي",
+    "firstName": "الاسم الأول",
+    "firstNamePlaceholder": "أدخل الاسم الأول",
+    "lastName": "اسم العائلة",
+    "lastNamePlaceholder": "أدخل اسم العائلة",
+    "phone": "الهاتف",
+    "phonePlaceholder": "أدخل رقم الهاتف",
+    "zipCode": "الرمز البريدي",
+    "zipCodePlaceholder": "أدخل الرمز البريدي",
+    "address": "العنوان",
+    "addressPlaceholder": "أدخل عنوان الشارع",
+    "apartment": "الشقة",
+    "apartmentPlaceholder": "الشقة، الطابق، إلخ",
+    "city": "المدينة",
+    "cityPlaceholder": "أدخل المدينة",
+    "state": "المحافظة",
+    "statePlaceholder": "أدخل المحافظة",
+    "country": "البلد",
+    "countryPlaceholder": "أدخل البلد",
+    "notes": "ملاحظات",
+    "notesPlaceholder": "تعليمات إضافية للتسليم",
+    "cancel": "إلغاء",
+    "createAndSelect": "استخدام هذا العنوان",
+    "selectAddress": "اختيار العنوان",
+    "saveAndContinue": "حفظ ومتابعة"
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "hero": {
+    "title": "Get Your Parts Priced",
+    "subtitle": "Submit your part requests and get competitive pricing",
+    "description": "Choose your user type and submit your parts for pricing"
+  },
+  "form": {
+    "title": "Part Request Form",
+    "subtitle": "Submit your part request for pricing",
+    "userType": {
+      "label": "User Type",
+      "shop": "Shop",
+      "workshop": "Workshop"
+    },
+    "fields": {
+      "partName": {
+        "label": "Part Name",
+        "placeholder": "Enter the name of the required part"
+      },
+      "quantity": {
+        "label": "Quantity",
+        "placeholder": "Enter the required quantity"
+      },
+      "userCode": {
+        "label": "Workshop Code",
+        "placeholder": "workshop-125521",
+        "helpText": "You can change the code to get additional points"
+      },
+      "chassisNumber": {
+        "label": "Chassis Number",
+        "placeholder": "Enter chassis number",
+        "helpText": "Vehicle identification number"
+      }
+    },
+    "images": {
+      "title": "Required Images",
+      "required": "Required",
+      "optional": "Optional",
+      "partImage": "Part Image",
+      "requestImage": "Request Image",
+      "formImage": "Form Image"
+    },
+    "buttons": {
+      "addToList": "Add to List",
+      "saving": "Saving..."
+    },
+    "addNewItem": "Add New Item",
+    "addItem": "Add Item",
+    "itemsList": "Items List"
+  },
+  "savedForms": {
+    "title": "Saved Requests",
+    "count": "items",
+    "empty": {
+      "title": "No saved requests",
+      "description": "Add items to your list to see them here"
+    },
+    "buttons": {
+      "sendAll": "Send All Requests",
+      "sending": "Sending...",
+      "delete": "Delete"
+    },
+    "labels": {
+      "partName": "Part Name",
+      "quantity": "Quantity",
+      "userCode": "User Code",
+      "chassisNumber": "Chassis Number",
+      "savedAt": "Saved At"
+    },
+    "imageAlts": {
+      "partImage": "Part Image",
+      "requestImage": "Request Image",
+      "formImage": "Form Image"
+    }
+  },
+  "auth": {
+    "loginRequired": "Login Required",
+    "completeRegistrationRequired": "Complete Registration Required",
+    "status": {
+      "loginRequired": "Please login to submit requests",
+      "completeRegistration": "Please complete your registration to submit requests",
+      "backendLoginRequired": "Login required to send requests",
+      "backendCompleteRegistration": "Complete registration required to send requests",
+      "backendReady": "Ready to send requests"
+    },
+    "buttons": {
+      "login": "Login",
+      "completeRegistration": "Complete Registration"
+    }
+  },
+  "information": {
+    "title": "Important Information",
+    "general": [
+      "All fields marked with * are required",
+      "Images should be clear and well-lit",
+      "Double-check your information before submitting"
+    ],
+    "workshop": [
+      "Workshop code is required for pricing",
+      "All three images are mandatory",
+      "Chassis number helps with accurate pricing"
+    ],
+    "shop": [
+      "Shop requests are processed faster",
+      "No images required for shop requests",
+      "Bulk pricing available for multiple items"
+    ]
+  },
+  "success": {
+    "requestSent": "Request sent successfully!",
+    "formSaved": "Form saved successfully!"
+  },
+  "errors": {
+    "noDataToSend": "No data to send!",
+    "sendFailed": "Failed to send request. Please try again.",
+    "saveFailed": "Failed to save form. Please try again."
+  }
+}

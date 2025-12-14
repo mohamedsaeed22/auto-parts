@@ -5,14 +5,10 @@ import type {
   Product,
   ProductDetailsResponse,
   ProductsRequest,
-  Category,
-  CategoriesRequest,
   Brand,
   BrandsRequest,
   Banner,
   Offer,
-  Section,
-  Partner,
 } from "./types";
 
 export const productsApi = api.injectEndpoints({
@@ -39,6 +35,9 @@ export const productsApi = api.injectEndpoints({
         if (params?.description)
           formData.append("description", params.description);
         if (params?.search) formData.append("search", params.search);
+        if (params?.page) formData.append("page", params.page.toString());
+        if (params?.per_page)
+          formData.append("per_page", params.per_page.toString());
 
         return {
           url: "/products",
@@ -55,24 +54,21 @@ export const productsApi = api.injectEndpoints({
       providesTags: (result, error, id) => [{ type: "Products", id }],
     }),
 
-    // Categories
-    getCategories: builder.query<
-      ApiResponse<PaginatedResponse<Category>>,
-      CategoriesRequest | void
+    // Search Products for Autocomplete
+    searchProducts: builder.mutation<
+      ApiResponse<PaginatedResponse<Product>>,
+      { name: string }
     >({
       query: (params) => {
-        const queryParams = new URLSearchParams();
+        const formData = new FormData();
+        formData.append("search", params.name);
 
-        if (params?.level) queryParams.append("level", params.level.toString());
-        if (params?.perPage)
-          queryParams.append("perPage", params.perPage.toString());
-        if (params?.with_children)
-          queryParams.append("with_children", params.with_children.toString());
-
-        const queryString = queryParams.toString();
-        return `/categories${queryString ? `?${queryString}` : ""}`;
+        return {
+          url: "/products",
+          method: "POST",
+          body: formData,
+        };
       },
-      providesTags: ["Categories"],
     }),
 
     // Brands
@@ -100,8 +96,19 @@ export const productsApi = api.injectEndpoints({
     }),
 
     // Offers
-    getOffers: builder.query<ApiResponse<PaginatedResponse<Offer>>, void>({
-      query: () => "/offers",
+    getOffers: builder.query<
+      ApiResponse<PaginatedResponse<Offer>>,
+      { page?: number; per_page?: number }
+    >({
+      query: (params) => {
+        const queryParams = new URLSearchParams();
+        if (params?.page) queryParams.append("page", params.page.toString());
+        if (params?.per_page)
+          queryParams.append("per_page", params.per_page.toString());
+
+        const queryString = queryParams.toString();
+        return `/offers${queryString ? `?${queryString}` : ""}`;
+      },
       providesTags: ["Offers"],
     }),
 
@@ -111,35 +118,16 @@ export const productsApi = api.injectEndpoints({
       providesTags: (result, error, id) => [{ type: "Offers", id }],
     }),
 
-    // Sections
-    getSections: builder.query<ApiResponse<Section[]>, void>({
-      query: () => "/sections",
-      providesTags: ["Sections"],
-    }),
-
-    // Get Single Section
-    getSection: builder.query<ApiResponse<Section>, number>({
-      query: (id) => `/sections/${id}`,
-      providesTags: (result, error, id) => [{ type: "Sections", id }],
-    }),
-
-    // Partners
-    getPartners: builder.query<ApiResponse<Partner[]>, void>({
-      query: () => "/partners",
-      providesTags: ["Partners"],
-    }),
+    // Sections moved to dedicated sectionsApi.ts file
   }),
 });
 
 export const {
   useGetProductsMutation,
   useGetProductQuery,
-  useGetCategoriesQuery,
+  useSearchProductsMutation,
   useGetBrandsQuery,
   useGetBannersQuery,
   useGetOffersQuery,
   useGetOfferQuery,
-  useGetSectionsQuery,
-  useGetSectionQuery,
-  useGetPartnersQuery,
 } = productsApi;

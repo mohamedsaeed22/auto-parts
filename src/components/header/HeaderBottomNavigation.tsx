@@ -1,6 +1,16 @@
 import { motion } from "framer-motion";
-import { Home, Grid3X3, Tag, ShoppingCart } from "lucide-react";
+import {
+  Home,
+  Grid3X3,
+  ShoppingCart,
+  Heart,
+  Bookmark,
+  Gift,
+  User,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 interface HeaderBottomNavigationProps {
   totalItems: number;
@@ -16,46 +26,90 @@ export default function HeaderBottomNavigation({
   pathname,
 }: HeaderBottomNavigationProps) {
   const { t } = useTranslation("header");
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
 
-  // Bottom navigation items for mobile
-  const bottomNavItems = [
-    {
-      href: "/",
-      icon: Home,
-      label: t("bottomNav.home") || "Home",
-      isActive: pathname === "/",
-    },
-    {
-      href: "/products",
-      icon: Grid3X3,
-      label: t("bottomNav.categories") || "Categories",
-      isActive: pathname.startsWith("/products"),
-    },
-    {
-      href: "/offers",
-      icon: Tag,
-      label: t("bottomNav.offers") || "Offers",
-      isActive: pathname.startsWith("/offers"),
-    },
-    {
-      href: "#",
-      icon: ShoppingCart,
-      label: t("bottomNav.cart") || "Cart",
-      isActive: false,
-      isCart: true,
-    },
-  ];
+  // Bottom navigation items for mobile - adaptive based on authentication
+  const bottomNavItems = isAuthenticated
+    ? [
+        // Authenticated user navigation
+        {
+          href: "/",
+          icon: Home,
+          label: t("bottomNav.home") || "Home",
+          isActive: pathname === "/",
+        },
+        {
+          href: "/categories",
+          icon: Grid3X3,
+          label: t("bottomNav.categories") || "Categories",
+          isActive: pathname.startsWith("/categories"),
+        },
+        {
+          href: "/favourites",
+          icon: Heart,
+          label: t("bottomNav.favourites") || "Favourites",
+          isActive: pathname.startsWith("/favourites"),
+        },
+        {
+          href: "#",
+          icon: ShoppingCart,
+          label: t("bottomNav.cart") || "Cart",
+          isActive: false,
+          isCart: true,
+        },
+        {
+          href: "/userprofile",
+          icon: User,
+          label: t("bottomNav.profile") || "Profile",
+          isActive: pathname.startsWith("/userprofile"),
+        },
+      ]
+    : [
+        // Guest navigation
+        {
+          href: "/",
+          icon: Home,
+          label: t("bottomNav.home") || "Home",
+          isActive: pathname === "/",
+        },
+        {
+          href: "/categories",
+          icon: Grid3X3,
+          label: t("bottomNav.categories") || "Categories",
+          isActive: pathname.startsWith("/categories"),
+        },
+        {
+          href: "/latestoffer",
+          icon: Gift,
+          label: t("bottomNav.offers") || "Offers",
+          isActive: pathname.startsWith("/latestoffer"),
+        },
+        {
+          href: "#",
+          icon: ShoppingCart,
+          label: t("bottomNav.cart") || "Cart",
+          isActive: false,
+          isCart: true,
+        },
+        {
+          href: "/products",
+          icon: Grid3X3,
+          label: t("bottomNav.products") || "Products",
+          isActive: pathname.startsWith("/products"),
+        },
+      ];
 
   const handleBottomNavClick = (item: { href?: string; isCart?: boolean }) => {
     if (item.isCart) {
       onCartClick();
     } else if (item.href) {
-      window.location.href = item.href;
+      router.push(item.href);
     }
   };
 
   return (
-    <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
+    <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border z-40">
       <nav
         className="flex items-center justify-around h-16 px-2"
         dir={isRTL ? "rtl" : "ltr"}
@@ -68,8 +122,8 @@ export default function HeaderBottomNavigation({
               onClick={() => handleBottomNavClick(item)}
               className={`flex flex-col items-center justify-center flex-1 py-2 transition-colors ${
                 item.isActive
-                  ? "text-logo-gold"
-                  : "text-gray-500 hover:text-gray-700"
+                  ? "text-primary"
+                  : "text-neutral-500 hover:text-neutral-700"
               }`}
             >
               <div className="relative">
@@ -78,7 +132,7 @@ export default function HeaderBottomNavigation({
                   <motion.span
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]"
+                    className="absolute -top-1 -right-1 bg-accent text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]"
                   >
                     {totalItems}
                   </motion.span>

@@ -1,0 +1,82 @@
+{
+  "addresses": {
+    "title": "عناويني",
+    "addAddress": "إضافة عنوان",
+    "editAddress": "تعديل العنوان",
+    "type": "النوع",
+    "selectType": "اختر نوع العنوان",
+    "home": "المنزل",
+    "office": "المكتب",
+    "other": "أخرى",
+    "name": "الاسم",
+    "phone": "الهاتف",
+    "city": "المدينة",
+    "address": "العنوان",
+    "postalCode": "الرمز البريدي",
+    "nationalAddress": "العنوان الوطني",
+    "default": "افتراضي",
+    "save": "حفظ",
+    "update": "تحديث",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "confirm": "تأكيد",
+    "noAddresses": "لا توجد عناوين بعد",
+    "addFirstAddress": "أضف عنوانك الأول للبدء",
+    "deleteTitle": "حذف العنوان",
+    "deleteDescription": "هل أنت متأكد من حذف هذا العنوان؟ لا يمكن التراجع عن هذا الإجراء.",
+    "placeholders": {
+      "fullName": "أدخل الاسم الكامل",
+      "phone": "أدخل رقم الهاتف",
+      "city": "اختر المدينة",
+      "searchCity": "ابحث عن مدينة...",
+      "detailedAddress": "أدخل العنوان التفصيلي",
+      "postalCode": "أدخل الرمز البريدي",
+      "nationalAddress": "أدخل العنوان الوطني"
+    },
+    "errors": {
+      "loadFailed": "فشل تحميل العناوين",
+      "addFailed": "فشل إضافة العنوان",
+      "updateFailed": "فشل تحديث العنوان",
+      "deleteFailed": "فشل حذف العنوان",
+      "retry": "إعادة المحاولة",
+      "retryMessage": "يرجى تحديث الصفحة أو الاتصال بالدعم إذا استمرت المشكلة."
+    },
+    "success": {
+      "addSuccess": "تمت إضافة العنوان بنجاح",
+      "updateSuccess": "تم تحديث العنوان بنجاح",
+      "deleteSuccess": "تم حذف العنوان بنجاح"
+    },
+    "validation": {
+      "addressType": {
+        "required": "نوع العنوان مطلوب"
+      },
+      "name": {
+        "required": "الاسم مطلوب",
+        "minLength": "يجب أن يكون الاسم حرفين على الأقل",
+        "maxLength": "يجب ألا يتجاوز الاسم 100 حرف"
+      },
+      "phone": {
+        "required": "رقم الهاتف مطلوب",
+        "invalid": "يرجى إدخال رقم هاتف سعودي صحيح"
+      },
+      "city": {
+        "required": "المدينة مطلوبة"
+      },
+      "detailedAddress": {
+        "required": "العنوان التفصيلي مطلوب",
+        "minLength": "يجب أن يكون العنوان التفصيلي 10 أحرف على الأقل",
+        "maxLength": "يجب ألا يتجاوز العنوان التفصيلي 500 حرف"
+      },
+      "postalCode": {
+        "required": "الرمز البريدي مطلوب",
+        "invalid": "يجب أن يكون الرمز البريدي 5 أرقام"
+      },
+      "nationalAddress": {
+        "required": "العنوان الوطني مطلوب",
+        "minLength": "يجب أن يكون العنوان الوطني 5 أحرف على الأقل",
+        "maxLength": "يجب ألا يتجاوز العنوان الوطني 200 حرف"
+      }
+    }
+  }
+}

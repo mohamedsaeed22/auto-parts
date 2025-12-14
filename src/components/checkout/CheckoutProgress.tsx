@@ -57,7 +57,7 @@ const CheckoutProgress: React.FC<CheckoutProgressProps> = ({ currentStep }) => {
                 <div
                   className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
                     currentStep >= step.id
-                      ? "bg-black border-black text-white"
+                      ? "bg-logo-gold border-logo-gold text-white"
                       : "border-gray-300 text-gray-400"
                   }`}
                 >
@@ -65,7 +65,7 @@ const CheckoutProgress: React.FC<CheckoutProgressProps> = ({ currentStep }) => {
                 </div>
                 <span
                   className={`mx-3 text-sm font-medium ${
-                    currentStep >= step.id ? "text-black" : "text-gray-400"
+                    currentStep >= step.id ? "text-logo-gold" : "text-gray-400"
                   } whitespace-nowrap`}
                 >
                   {t(step.titleKey)}
@@ -74,7 +74,7 @@ const CheckoutProgress: React.FC<CheckoutProgressProps> = ({ currentStep }) => {
               {index < steps.length - 1 && (
                 <div
                   className={`w-16 h-0.5 mx-3 flex-shrink-0 ${
-                    currentStep > step.id ? "bg-black" : "bg-gray-300"
+                    currentStep > step.id ? "bg-logo-gold" : "bg-gray-300"
                   }`}
                 />
               )}

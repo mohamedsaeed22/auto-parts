@@ -1,0 +1,109 @@
+{
+  "title": "Complete Registration",
+  "description": "Please complete your registration data to access all features",
+  "userCode": "User Code",
+  "basicInfo": "Basic Information",
+  "labels": {
+    "name": "Name",
+    "email": "Email",
+    "type": "Type",
+    "managerName": "Manager Name",
+    "address": "Address",
+    "city": "City",
+    "zip": "ZIP Code",
+    "state": "State",
+    "taxNumber": "Tax Number",
+    "latitudeStatic": "Latitude (Static)",
+    "longitudeStatic": "Longitude (Static)",
+    "commercialRegister": "Commercial Register",
+    "avatar": "Avatar",
+    "selectLocation": "Select Location"
+  },
+  "placeholders": {
+    "name": "Enter your name",
+    "email": "Enter your email (optional)",
+    "managerName": "Enter manager name",
+    "address": "Enter address",
+    "city": "Enter city",
+    "zip": "Enter ZIP code",
+    "state": "Enter state",
+    "taxNumber": "Enter tax number",
+    "latitude": "Static latitude value",
+    "longitude": "Static longitude value",
+    "selectType": "Select type"
+  },
+  "help": {
+    "fixedLocation": "Fixed location: Cairo, Egypt",
+    "uploadNote": "Image up to 5MB (jpeg, png, jpg)",
+    "locationRequired": "Please search and select your exact business location on the map. This will help customers find you easily."
+  },
+  "typeOptions": {
+    "shop": "Shop",
+    "workshop": "Workshop"
+  },
+  "uploads": {
+    "clickToSelectCR": "Click to select Commercial Register",
+    "clickToSelectAvatar": "Click to select Avatar",
+    "crPreviewAlt": "Commercial Register Preview",
+    "avatarPreviewAlt": "Avatar Preview",
+    "removeFile": "Remove file",
+    "uploadCRHelp": "Upload commercial register document (jpeg, png, jpg)",
+    "uploadAvatarHelp": "Upload your profile picture (jpeg, png, jpg)"
+  },
+  "validation": {
+    "nameRequired": "Name is required",
+    "nameTooLong": "Name must be less than 100 characters",
+    "emailInvalid": "Please enter a valid email address",
+    "managerRequired": "Manager name is required",
+    "managerTooLong": "Manager name must be less than 100 characters",
+    "addressRequired": "Address is required",
+    "addressTooLong": "Address must be less than 255 characters",
+    "cityRequired": "City is required",
+    "cityTooLong": "City must be less than 100 characters",
+    "zipRequired": "ZIP code is required",
+    "zipTooLong": "ZIP code must be less than 20 characters",
+    "stateRequired": "State is required",
+    "stateTooLong": "State must be less than 100 characters",
+    "taxRequired": "Tax number is required",
+    "taxTooLong": "Tax number must be less than 50 characters",
+    "typeRequired": "Type selection is required",
+    "locationRequired": "Please select a location on the map to continue",
+    "locationInvalid": "Invalid location coordinates",
+    "crRequired": "Commercial register is required",
+    "avatarRequired": "Avatar is required",
+    "fileType": "File must be of type: jpeg, png, jpg, gif, or svg",
+    "fileSize": "File size must be less than 5MB"
+  },
+  "actions": {
+    "submit": "Submit Registration",
+    "submitting": "Submitting...",
+    "selectLocationFirst": "Select Location First"
+  },
+  "toasts": {
+    "registrationAlreadyCompleted": "Registration already completed!",
+    "registrationCompleted": "Registration completed successfully!",
+    "registrationFailed": "Failed to complete registration. Please try again.",
+    "locationSelected": "Location selected successfully! You can now edit the address details if needed."
+  },
+  "location": {
+    "simpleInstruction": "Please select a location on the map above",
+    "dragMarker": "Drag to select location",
+    "searchPlaceholder": "Search for a location...",
+    "useCurrentLocation": "Use My Location",
+    "geolocationNotSupported": "Geolocation is not supported by this browser.",
+    "geolocationError": "Error getting your location. Please try again.",
+    "permissionDenied": "Location permission is denied. Enable it in your browser settings.",
+    "permissionDeniedMobile": "Location access was denied. To enable location access, go to your browser settings and allow location for this site.",
+    "positionUnavailable": "Location information is unavailable. Trying again with fallback...",
+    "timeout": "Getting your location timed out. Try again or search manually.",
+    "insecureContext": "Location requires HTTPS. Please use a secure connection.",
+    "error": "Failed to load map",
+    "apiKeyInstructions": "Please configure your Google Maps API key to use the map feature."
+  },
+  "sections": {
+    "basicInfo": "Basic Information",
+    "addressInfo": "Address Information",
+    "documents": "Required Documents"
+  },
+  "optional": "Optional"
+}

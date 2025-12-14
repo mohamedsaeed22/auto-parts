@@ -1,0 +1,45 @@
+{
+  "reviews": "Reviews",
+  "rating": "Rating",
+  "comment": "Comment",
+  "commentPlaceholder": "Share your thoughts about this product...",
+  "writeReview": "Write a Review",
+  "submitReview": "Submit Review",
+  "updateReview": "Update Review",
+  "cancel": "Cancel",
+  "edit": "Edit",
+  "delete": "Delete",
+  "helpful": "Helpful",
+  "reportAbuse": "Report Abuse",
+  "verifiedPurchase": "Verified Purchase",
+  "noReviews": "No reviews yet. Be the first to review this product!",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page {{current}} of {{total}}",
+  "retry": "Retry",
+  "confirmDelete": "Are you sure you want to delete this review?",
+  "confirmReport": "Are you sure you want to report this review?",
+  "errors": {
+    "loadingFailed": "Failed to load reviews",
+    "submitFailed": "Failed to submit review",
+    "updateFailed": "Failed to update review",
+    "deleteFailed": "Failed to delete review",
+    "helpfulFailed": "Failed to mark review as helpful",
+    "reportFailed": "Failed to report review"
+  },
+  "success": {
+    "submitted": "Review submitted successfully",
+    "updated": "Review updated successfully",
+    "deleted": "Review deleted successfully",
+    "markedHelpful": "Review marked as helpful",
+    "reported": "Review reported successfully"
+  },
+  "validation": {
+    "ratingRequired": "Rating is required",
+    "ratingMin": "Rating must be at least 1",
+    "ratingMax": "Rating must be at most 5",
+    "commentRequired": "Comment is required",
+    "commentMin": "Comment must be at least 10 characters",
+    "commentMax": "Comment must be less than 1000 characters"
+  }
+}

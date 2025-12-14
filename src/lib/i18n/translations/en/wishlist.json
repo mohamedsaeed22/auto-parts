@@ -1,0 +1,14 @@
+{
+  "title": "My Wishlist",
+  "subtitle": "Your saved wishlist products",
+  "addToCart": "Add to Cart",
+  "empty": {
+    "title": "No wishlist items yet",
+    "message": "Start adding products to your wishlist to see them here.",
+    "browseButton": "Browse Products"
+  },
+  "error": {
+    "title": "Error loading wishlist",
+    "message": "Something went wrong. Please try again."
+  }
+}

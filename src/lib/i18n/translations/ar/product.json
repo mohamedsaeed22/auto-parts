@@ -1,0 +1,31 @@
+{
+  "backButton": "رجوع",
+  "description": "الوصف",
+  "quantity": "الكمية",
+  "addToCart": "أضف إلى السلة",
+  "productCode": "رمز المنتج",
+  "availability": "التوفر",
+  "available": "متوفر",
+  "category": "الفئة",
+  "currency": "ر.س",
+  "rating": "التقييم",
+  "reviews": "التقييمات",
+  "featuredProducts": "منتجاتنا المميزة",
+  "featuredDescription": "اكتشف مجموعة واسعة من قطع الغيار والإكسسوارات عالية الجودة لسيارتك",
+  "loadMore": "تحميل المزيد من المنتجات",
+  "currencySymbol": "ر.س",
+  "auth": {
+    "loginRequired": "يرجى تسجيل الدخول لإضافة العناصر إلى المفضلة/قائمة الرغبات",
+    "completeRegistrationRequired": "يرجى إكمال التسجيل لاستخدام هذه الميزة"
+  },
+  "category": {
+    "previousSlide": "الشريحة السابقة",
+    "nextSlide": "الشريحة التالية",
+    "viewAllProducts": "عرض جميع منتجات {{category}}"
+  },
+  "section": {
+    "previousSlide": "الشريحة السابقة",
+    "nextSlide": "الشريحة التالية",
+    "viewAllProducts": "عرض جميع منتجات {{section}}"
+  }
+}

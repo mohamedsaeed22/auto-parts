@@ -1,668 +1,664 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import dynamic from "next/dynamic";
-import {
-  MapPin,
-  Loader2,
-  Navigation,
-  Plus,
-  Minus,
-  Search,
-  X,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import type { LocationData } from "@/lib/validations/authSchema";
+import { MapPin, Search, Loader, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { showError } from "@/lib/toast";
 
-// Dynamically import map components to avoid SSR issues
-const MapContainer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.MapContainer),
-  { ssr: false }
-);
-const TileLayer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.TileLayer),
-  { ssr: false }
-);
-const Marker = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Marker),
-  { ssr: false }
-);
-const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
-  ssr: false,
-});
+// TypeScript interfaces
+export interface LocationData {
+  lat: number;
+  lng: number;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  postal_code: string;
+  formatted_address: string;
+}
 
-// Dynamically import the MapClickHandler to avoid hook issues
-const MapClickHandler = dynamic(
-  () =>
-    import("react-leaflet").then((mod) => {
-      const { useMapEvents } = mod;
-
-      return function MapClickHandlerComponent({
-        onLocationSelect,
-      }: {
-        onLocationSelect: (lat: number, lng: number) => void;
-      }) {
-        useMapEvents({
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          click: (e: any) => {
-            onLocationSelect(e.latlng.lat, e.latlng.lng);
-          },
-        });
-        return null;
-      };
-    }),
-  { ssr: false }
-);
-
-interface LocationPickerProps {
-  onLocationSelect: (location: LocationData) => void;
-  initialLocation?: Partial<LocationData>;
+export interface LocationPickerProps {
+  onLocationSelect: (locationData: LocationData) => void;
+  initialLocation?: { lat: number; lng: number };
+  className?: string;
   error?: string;
 }
 
-interface SearchResult {
-  display_name: string;
-  lat: string;
-  lon: string;
-  place_id: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  address: any;
+// Google Maps types - using module augmentation to avoid conflicts
+declare global {
+  interface Window {
+    initGoogleMaps?: () => void;
+  }
 }
+
+// Default location (Cairo, Egypt)
+const DEFAULT_LOCATION = { lat: 24.7136, lng: 46.6753 }; // Prince Mohammed Bin Abdulaziz St
 
 export default function LocationPicker({
   onLocationSelect,
-  initialLocation,
+  initialLocation = DEFAULT_LOCATION,
+  className = "",
   error,
 }: LocationPickerProps) {
-  const { t, i18n } = useTranslation("location");
+  const { t, i18n } = useTranslation("registration");
   const isRTL = i18n.language === "ar";
-  const [position, setPosition] = useState<[number, number]>([
-    initialLocation?.lat || 24.7136, // Default to Riyadh
-    initialLocation?.lng || 46.6753,
-  ]);
-  const [searchValue, setSearchValue] = useState("");
+
+  // Refs
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const markerRef = useRef<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const autocompleteRef = useRef<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+
+  // State
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState<LocationData | null>(
-    null
-  );
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [mapInstance] = useState<any>(null);
-  const [isClient, setIsClient] = useState(false);
-  const [zoom, setZoom] = useState(10);
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  const [showSearchResults, setShowSearchResults] = useState(false);
-  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(
-    null
-  );
+  const [searchQuery, setSearchQuery] = useState("");
+  const [, setSelectedLocation] = useState<LocationData | null>(null);
+  const [mapError, setMapError] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  // Map is always visible - no need for showMap state
 
-  // Ensure we're on the client side
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  // Initialize position if initial location is provided
-  useEffect(() => {
-    if (initialLocation?.lat && initialLocation?.lng) {
-      setPosition([initialLocation.lat, initialLocation.lng]);
-      setZoom(15);
-      // Also set the search value to the initial address if available
-      if (initialLocation.address) {
-        setSearchValue(initialLocation.address);
-      }
+  // Load Google Maps script
+  const loadGoogleMaps = useCallback(async () => {
+    if ((window as any).google && (window as any).google.maps) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
+      setIsMapLoaded(true);
+      return;
     }
-  }, [initialLocation]);
 
-  // Reverse geocoding function using Nominatim (free)
-  const reverseGeocode = useCallback(
-    async (lat: number, lng: number) => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=ar,en`
-        );
-
-        if (!response.ok) {
-          throw new Error(t("errors.addressFetchFailed"));
-        }
-
-        const data = await response.json();
-
-        if (data && data.display_name) {
-          const address = data.address || {};
-          const locationData: LocationData = {
-            address: data.display_name,
-            city:
-              address.city ||
-              address.town ||
-              address.village ||
-              address.suburb ||
-              "",
-            region: address.state || address.region || address.province || "",
-            country: address.country || "Saudi Arabia",
-            postalCode: address.postcode || "",
-            lat: lat,
-            lng: lng,
-            placeId: data.place_id?.toString() || "",
-            formattedAddress: data.display_name,
-          };
-
-          setCurrentLocation(locationData);
-          onLocationSelect(locationData);
-          // Update search value with the formatted address
-          setSearchValue(data.display_name);
-        }
-      } catch (error) {
-        console.error("Reverse geocoding failed:", error);
-        alert(t("errors.addressFetchFailed"));
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [t, onLocationSelect]
-  );
-
-  // Forward geocoding (search) with improved results
-  const searchLocation = useCallback(
-    async (query: string, selectFirst: boolean = false) => {
-      if (!query.trim() || query.length < 2) {
-        setSearchResults([]);
-        setShowSearchResults(false);
+    // Check if script is already loading or loaded
+    const existingScript = document.querySelector(
+      'script[src*="maps.googleapis.com"]'
+    );
+    if (existingScript) {
+      // Script already exists, wait for it to load
+      if ((window as any).google && (window as any).google.maps) {
+        setIsMapLoaded(true);
         return;
       }
+      // Wait for existing script to load
+      existingScript.addEventListener("load", () => {
+        setIsMapLoaded(true);
+      });
+      return;
+    }
 
-      setIsSearching(true);
-      try {
-        // Use multiple search strategies for better results
-        const searches = [
-          // Primary search with Saudi Arabia focus
-          fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-              query
-            )}&limit=10&countrycodes=sa&addressdetails=1&accept-language=ar,en&dedupe=1`
-          ),
-          // Backup search without country restriction but with Saudi context
-          fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-              query + " Saudi Arabia"
-            )}&limit=5&addressdetails=1&accept-language=ar,en&dedupe=1`
-          ),
-        ];
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+    if (!apiKey) {
+      setMapError(
+        "Google Maps API key not configured. Please add NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to your environment variables."
+      );
+      return;
+    }
 
-        const responses = await Promise.all(searches);
-        const results = await Promise.all(responses.map((r) => r.json()));
+    try {
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places,geometry&language=${i18n.language}&callback=initGoogleMaps`;
+      script.async = true;
+      script.defer = true;
+      script.id = "google-maps-script";
 
-        // Combine and deduplicate results
-        const combinedResults = [...results[0], ...results[1]];
-        const uniqueResults = combinedResults
-          .filter(
-            (result, index, self) =>
-              index === self.findIndex((r) => r.place_id === result.place_id)
-          )
-          .slice(0, 8); // Limit to 8 results
+      // Set up global callback
+      window.initGoogleMaps = () => {
+        setIsMapLoaded(true);
+      };
 
-        setSearchResults(uniqueResults);
-        setShowSearchResults(!selectFirst && uniqueResults.length > 0);
+      script.onload = () => {
+        setIsMapLoaded(true);
+      };
 
-        // If selectFirst is true or we have results, select the first one
-        if ((selectFirst || uniqueResults.length > 0) && uniqueResults[0]) {
-          const place = uniqueResults[0];
-          const lat = parseFloat(place.lat);
-          const lng = parseFloat(place.lon);
+      script.onerror = () => {
+        setMapError("Failed to load Google Maps");
+      };
 
-          setPosition([lat, lng]);
-          setZoom(16); // Higher zoom for better accuracy
-          setShowSearchResults(false);
+      document.head.appendChild(script);
+    } catch (err) {
+      setMapError("Error loading Google Maps");
+    }
+  }, [i18n.language]);
 
-          // Move map to new position
-          if (mapInstance) {
-            mapInstance.setView([lat, lng], 16);
-          }
+  // Initialize map
+  const initializeMap = () => {
+    if (!mapRef.current || !(window as any).google || mapInstanceRef.current)
+      return; // eslint-disable-line @typescript-eslint/no-explicit-any
 
-          await reverseGeocode(lat, lng);
+    try {
+      // Create map
+      mapInstanceRef.current = new (window as any).google.maps.Map(
+        mapRef.current,
+        {
+          // eslint-disable-line @typescript-eslint/no-explicit-any
+          center: initialLocation,
+          zoom: 13,
+          mapTypeControl: false,
+          streetViewControl: false,
+          fullscreenControl: true,
+          zoomControl: true,
+          gestureHandling: "cooperative",
+          styles: [
+            {
+              featureType: "poi",
+              elementType: "labels",
+              stylers: [{ visibility: "off" }],
+            },
+          ],
         }
-      } catch (error) {
-        console.error("Search failed:", error);
-        alert(t("errors.searchFailed"));
-      } finally {
-        setIsSearching(false);
-      }
-    },
-    [mapInstance, reverseGeocode, t]
-  );
+      );
 
-  // Debounced search effect
-  useEffect(() => {
-    if (searchTimeout) {
-      clearTimeout(searchTimeout);
+      // Create marker
+      markerRef.current = new (window as any).google.maps.Marker({
+        // eslint-disable-line @typescript-eslint/no-explicit-any
+        position: initialLocation,
+        map: mapInstanceRef.current,
+        draggable: true,
+        title: t("location.dragMarker"),
+      });
+
+      // Map click handler
+      mapInstanceRef.current.addListener("click", (event: any) => {
+        // eslint-disable-line @typescript-eslint/no-explicit-any
+        const lat = event.latLng.lat();
+        const lng = event.latLng.lng();
+        updateMarkerPosition(lat, lng);
+        reverseGeocode(lat, lng);
+      });
+
+      // Marker drag handler
+      markerRef.current.addListener("dragend", (event: any) => {
+        // eslint-disable-line @typescript-eslint/no-explicit-any
+        const lat = event.latLng.lat();
+        const lng = event.latLng.lng();
+        reverseGeocode(lat, lng);
+      });
+
+      // Initialize autocomplete
+      if (searchInputRef.current) {
+        autocompleteRef.current = new (
+          window as any
+        ).google.maps.places.Autocomplete(searchInputRef.current, {
+          // eslint-disable-line @typescript-eslint/no-explicit-any
+          fields: [
+            "place_id",
+            "geometry",
+            "formatted_address",
+            "address_components",
+          ],
+        });
+
+        autocompleteRef.current.addListener("place_changed", () => {
+          const place = autocompleteRef.current.getPlace();
+          if (place.geometry && place.geometry.location) {
+            const lat = place.geometry.location.lat();
+            const lng = place.geometry.location.lng();
+
+            updateMarkerPosition(lat, lng);
+            mapInstanceRef.current.setCenter({ lat, lng });
+            mapInstanceRef.current.setZoom(15);
+
+            // Process the place data
+            processPlaceData(place);
+            // Keep the controlled input in sync with what Google sets
+            if (place.formatted_address) {
+              setSearchQuery(place.formatted_address);
+            }
+          }
+        });
+      }
+    } catch (error) {
+      setMapError("Failed to initialize map");
+    }
+  };
+
+  // Update marker position
+  const updateMarkerPosition = (lat: number, lng: number) => {
+    if (markerRef.current) {
+      markerRef.current.setPosition({ lat, lng });
+    }
+  };
+
+  // Reverse geocode coordinates to get address
+  const reverseGeocode = async (lat: number, lng: number) => {
+    if (!(window as any).google) return; // eslint-disable-line @typescript-eslint/no-explicit-any
+
+    setIsLoading(true);
+    try {
+      const geocoder = new (window as any).google.maps.Geocoder(); // eslint-disable-line @typescript-eslint/no-explicit-any
+      const response = await new Promise((resolve) => {
+        geocoder.geocode(
+          { location: { lat, lng } },
+          (results: any[] | null, status: string) => {
+            // eslint-disable-line @typescript-eslint/no-explicit-any
+            if (status === "OK" && results?.[0]) {
+              resolve(results[0]);
+            } else if (status === "REQUEST_DENIED") {
+              resolve(null);
+            } else if (status === "OVER_QUERY_LIMIT") {
+              resolve(null);
+            } else {
+              resolve(null);
+            }
+          }
+        );
+      });
+
+      if (response) {
+        processPlaceData(response);
+      } else {
+        // Fallback: create basic location data with coordinates
+        const basicLocationData: LocationData = {
+          lat,
+          lng,
+          address: `Location at ${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+          city: "Unknown",
+          state: "Unknown",
+          country: "Unknown",
+          postal_code: "",
+          formatted_address: `Location at ${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+        };
+        setSelectedLocation(basicLocationData);
+        onLocationSelect(basicLocationData);
+        setSearchQuery(basicLocationData.formatted_address);
+      }
+    } catch (error) {
+      // Fallback: create basic location data with coordinates
+      const basicLocationData: LocationData = {
+        lat,
+        lng,
+        address: `Location at ${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+        city: "Unknown",
+        state: "Unknown",
+        country: "Unknown",
+        postal_code: "",
+        formatted_address: `Location at ${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+      };
+      setSelectedLocation(basicLocationData);
+      onLocationSelect(basicLocationData);
+      setSearchQuery(basicLocationData.formatted_address);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Process place data from Google Maps
+  const processPlaceData = (place: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+    const lat = place.geometry.location.lat();
+    const lng = place.geometry.location.lng();
+
+    let address = "";
+    let city = "";
+    let state = "";
+    let country = "";
+    let postal_code = "";
+
+    // Extract address components
+    if (place.address_components) {
+      place.address_components.forEach((component: any) => {
+        // eslint-disable-line @typescript-eslint/no-explicit-any
+        const types = component.types;
+
+        if (types.includes("street_number") || types.includes("route")) {
+          address += component.long_name + " ";
+        } else if (types.includes("locality")) {
+          city = component.long_name;
+        } else if (types.includes("administrative_area_level_1")) {
+          state = component.long_name;
+        } else if (types.includes("country")) {
+          country = component.long_name;
+        } else if (types.includes("postal_code")) {
+          postal_code = component.long_name;
+        }
+      });
     }
 
-    if (searchValue.length >= 2) {
-      const timeout = setTimeout(() => {
-        searchLocation(searchValue, false);
-      }, 500); // Reduced delay for better UX
-
-      setSearchTimeout(timeout);
-    } else {
-      setSearchResults([]);
-      setShowSearchResults(false);
+    const formatted =
+      place.formatted_address || `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    if (!address.trim()) {
+      address = formatted;
     }
 
-    return () => {
-      if (searchTimeout) {
-        clearTimeout(searchTimeout);
-      }
+    const locationData: LocationData = {
+      lat,
+      lng,
+      address: address.trim(),
+      city,
+      state,
+      country,
+      postal_code,
+      formatted_address: formatted,
     };
-  }, [searchValue, searchLocation, searchTimeout]);
 
-  const handleMapClick = useCallback(
-    async (lat: number, lng: number) => {
-      setPosition([lat, lng]);
-      setShowSearchResults(false);
-      await reverseGeocode(lat, lng);
-    },
-    [reverseGeocode]
-  );
+    setSelectedLocation(locationData);
+    onLocationSelect(locationData);
+    setSearchQuery(formatted);
+  };
 
-  const handleSearchResultClick = async (result: SearchResult) => {
-    const lat = parseFloat(result.lat);
-    const lng = parseFloat(result.lon);
-
-    setPosition([lat, lng]);
-    setZoom(16);
-    setSearchValue(result.display_name);
-    setShowSearchResults(false);
-
-    if (mapInstance) {
-      mapInstance.setView([lat, lng], 16);
+  // Use current location
+  const useCurrentLocation = async () => {
+    if (!navigator.geolocation) {
+      showError(t("location.geolocationNotSupported"));
+      return;
     }
 
-    await reverseGeocode(lat, lng);
-  };
-
-  const clearSearch = () => {
-    setSearchValue("");
-    setSearchResults([]);
-    setShowSearchResults(false);
-  };
-
-  const getCurrentLocation = () => {
-    if (!navigator.geolocation) {
-      alert(t("errors.locationNotSupported"));
+    // Warn if not secure context (required by many browsers)
+    if (typeof window !== "undefined" && !window.isSecureContext) {
+      showError(
+        t(
+          "location.insecureContext",
+          "Location requires HTTPS. Please use a secure connection."
+        )
+      );
       return;
     }
 
     setIsLoading(true);
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-        setPosition([latitude, longitude]);
-        setZoom(16);
 
-        if (mapInstance) {
-          mapInstance.setView([latitude, longitude], 16);
+    // For mobile devices, we need to directly call getCurrentPosition to trigger the permission prompt
+    // Checking permission status first can prevent the prompt from appearing on mobile
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      ) || window.innerWidth <= 768;
+
+    // Only check permission status on desktop, not on mobile
+    if (!isMobile) {
+      try {
+        // Request permission explicitly using the Permissions API (desktop only)
+        if (
+          navigator.permissions &&
+          typeof navigator.permissions.query === "function"
+        ) {
+          const permissionStatus = await navigator.permissions.query({
+            name: "geolocation" as PermissionName,
+          });
+
+          if (permissionStatus.state === "denied") {
+            setIsLoading(false);
+            showError(
+              t(
+                "location.permissionDenied",
+                "Location permission is denied. Enable it in your browser settings."
+              )
+            );
+            return;
+          }
         }
+      } catch (error) {
+        // Ignore permission query errors and continue with geolocation request
+      }
+    }
 
-        await reverseGeocode(latitude, longitude);
+    // Directly request location - this will trigger the permission prompt on mobile
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        updateMarkerPosition(lat, lng);
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.setCenter({ lat, lng });
+          mapInstanceRef.current.setZoom(15);
+        }
+        reverseGeocode(lat, lng);
+        setIsLoading(false);
       },
       (error) => {
-        console.error("Error getting current location:", error);
-        let errorMessage = t("errors.locationFailed");
-
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            errorMessage = t("errors.permissionDenied");
-            break;
-          case error.POSITION_UNAVAILABLE:
-            errorMessage = t("errors.positionUnavailable");
-            break;
-          case error.TIMEOUT:
-            errorMessage = t("errors.timeout");
-            break;
+        // Provide a user-friendly message and keep the map usable
+        let message = t(
+          "location.geolocationError",
+          "Unable to access your location. Please enable location permissions or search manually."
+        );
+        if (error && typeof error === "object") {
+          const code = (error as GeolocationPositionError).code;
+          if (code === 1) {
+            // Permission denied - this happens after user explicitly denies
+            message = isMobile
+              ? t(
+                  "location.permissionDeniedMobile",
+                  "Location access was denied. To enable location access, go to your browser settings and allow location for this site."
+                )
+              : t(
+                  "location.permissionDenied",
+                  "Location permission is denied. Enable it in your browser settings."
+                );
+          } else if (code === 2) {
+            message = t(
+              "location.positionUnavailable",
+              "Location information is unavailable. Trying again with fallback..."
+            );
+            // Try again quickly with reduced accuracy and different options
+            navigator.geolocation.getCurrentPosition(
+              (pos2) => {
+                const lat2 = pos2.coords.latitude;
+                const lng2 = pos2.coords.longitude;
+                updateMarkerPosition(lat2, lng2);
+                if (mapInstanceRef.current) {
+                  mapInstanceRef.current.setCenter({ lat: lat2, lng: lng2 });
+                  mapInstanceRef.current.setZoom(14);
+                }
+                reverseGeocode(lat2, lng2);
+                setIsLoading(false);
+              },
+              () => {
+                // Keep the message shown; user can search manually
+                setIsLoading(false);
+              },
+              {
+                enableHighAccuracy: false,
+                timeout: 7000,
+                maximumAge: 300000,
+              }
+            );
+            return; // Don't show error message yet, wait for fallback
+          } else if (code === 3) {
+            message = t(
+              "location.timeout",
+              "Getting your location timed out. Try again or search manually."
+            );
+          }
         }
-
-        alert(errorMessage);
+        showError(message);
         setIsLoading(false);
       },
       {
         enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 300000,
+        timeout: 15000, // Increased timeout for mobile
+        maximumAge: 60000,
       }
     );
   };
 
-  const zoomIn = () => {
-    if (mapInstance) {
-      const newZoom = Math.min(zoom + 1, 18);
-      setZoom(newZoom);
-      mapInstance.setZoom(newZoom);
-    }
-  };
+  // Effects
+  useEffect(() => {
+    // Detect mobile device
+    const checkMobile = () => {
+      const userAgent =
+        navigator.userAgent || navigator.vendor || (window as any).opera;
+      const isMobileDevice =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          userAgent
+        ) || window.innerWidth <= 768;
+      setIsMobile(isMobileDevice);
+    };
 
-  const zoomOut = () => {
-    if (mapInstance) {
-      const newZoom = Math.max(zoom - 1, 1);
-      setZoom(newZoom);
-      mapInstance.setZoom(newZoom);
-    }
-  };
+    checkMobile();
 
-  // Custom icon for marker with better visibility
-  const createCustomIcon = () => {
-    if (typeof window !== "undefined") {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const L = require("leaflet");
-      return new L.Icon({
-        iconUrl:
-          "data:image/svg+xml;base64," +
-          btoa(`
-          <svg width="30" height="45" viewBox="0 0 30 45" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 0C6.7 0 0 6.7 0 15c0 15 15 30 15 30s15-15 15-30C30 6.7 23.3 0 15 0z" fill="#DC2626" stroke="#fff" stroke-width="2"/>
-            <circle cx="15" cy="15" r="8" fill="white"/>
-            <circle cx="15" cy="15" r="4" fill="#DC2626"/>
-          </svg>
-        `),
-        iconSize: [30, 45],
-        iconAnchor: [15, 45],
-        popupAnchor: [1, -34],
-      });
-    }
-    return null;
-  };
+    // Listen for window resize to update mobile detection
+    window.addEventListener("resize", checkMobile);
 
-  if (!isClient) {
+    loadGoogleMaps();
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+    };
+  }, [loadGoogleMaps]);
+
+  useEffect(() => {
+    if (isMapLoaded) {
+      // Small delay to ensure DOM is ready
+      setTimeout(() => {
+        initializeMap();
+      }, 100);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMapLoaded]);
+
+  // Update map center and marker when initialLocation changes
+  useEffect(() => {
+    if (mapInstanceRef.current && markerRef.current && initialLocation) {
+      const newPosition = {
+        lat: initialLocation.lat,
+        lng: initialLocation.lng,
+      };
+
+      // Update marker position
+      markerRef.current.setPosition(newPosition);
+
+      // Center map on new position
+      mapInstanceRef.current.setCenter(newPosition);
+      mapInstanceRef.current.setZoom(15);
+
+      // Reverse geocode to get address for the new position
+      reverseGeocode(initialLocation.lat, initialLocation.lng);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialLocation.lat, initialLocation.lng]);
+
+  // Render error state
+  if (mapError) {
     return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-center h-[350px] bg-gray-100 rounded-lg">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-          <span className={`${isRTL ? "mr-2" : "ml-2"}`}>
-            {t("loadingMap")}
-          </span>
+      <div className={`space-y-4 ${className}`} dir={isRTL ? "rtl" : "ltr"}>
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="text-red-600 mt-1" size={20} />
+            <div className="flex-1">
+              <h4 className="text-sm font-medium text-red-900 mb-1">
+                {t("location.error")}
+              </h4>
+              <p className="text-sm text-red-700 mb-2">{mapError}</p>
+              <p className="text-xs text-red-600">
+                {t("location.apiKeyInstructions")}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <div
-        className={`flex items-center gap-2 mb-2 ${
-          isRTL ? "flex-row-reverse" : ""
-        }`}
-      >
-        <MapPin className="w-5 h-5 text-blue-600" />
-        <h3 className="text-lg font-medium text-gray-700">{t("title")}</h3>
-      </div>
-
-      {/* Enhanced Search Input */}
-      <div className="space-y-2">
-        <div className="relative">
-          <input
-            type="text"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            placeholder={t("searchPlaceholder")}
-            className={`w-full ${
-              isRTL ? "pl-12 pr-3 text-right" : "pr-12 pl-3 text-left"
-            } py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-              error ? "border-red-500" : "border-gray-300"
-            }`}
-          />
-          <Search
-            className={`absolute ${
-              isRTL ? "right-3" : "left-3"
-            } top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5`}
-          />
-
-          {searchValue && (
-            <button
-              onClick={clearSearch}
-              className={`absolute ${
-                isRTL ? "left-3" : "right-3"
-              } top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600`}
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
-
-          {isSearching && (
-            <div
-              className={`absolute ${
-                isRTL ? "right-10" : "left-10"
-              } top-1/2 transform -translate-y-1/2`}
-            >
-              <Loader2 className="text-blue-500 w-4 h-4 animate-spin" />
-            </div>
-          )}
-        </div>
-
-        {/* Search Results Dropdown */}
-        {showSearchResults && searchResults.length > 0 && (
-          <div className="absolute z-50 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-            {searchResults.map((result, index) => (
-              <button
-                key={result.place_id || index}
-                onClick={() => handleSearchResultClick(result)}
-                className={`w-full px-4 py-3 ${
-                  isRTL ? "text-right" : "text-left"
-                } hover:bg-gray-50 border-b border-gray-100 last:border-b-0 focus:outline-none focus:bg-gray-50`}
-              >
-                <div className="flex items-start gap-2">
-                  <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                  <div
-                    className={`flex-1 ${isRTL ? "text-right" : "text-left"}`}
-                  >
-                    <div className="text-sm font-medium text-gray-900 line-clamp-1">
-                      {result.display_name}
-                    </div>
-                    {result.address && (
-                      <div className="text-xs text-gray-500 mt-1">
-                        {result.address.city ||
-                          result.address.town ||
-                          result.address.village ||
-                          ""}
-                        {result.address.state && `, ${result.address.state}`}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        )}
-
-        <Button
-          type="button"
-          variant="outline"
-          onClick={getCurrentLocation}
-          disabled={isLoading}
-          className="w-full"
-        >
-          {isLoading ? (
-            <>
-              <Loader2
-                className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"} animate-spin`}
-              />
-              {t("locatingText")}
-            </>
-          ) : (
-            <>
-              <Navigation className={`w-4 h-4 ${isRTL ? "mr-2" : "ml-2"}`} />
-              {t("useCurrentLocation")}
-            </>
-          )}
-        </Button>
-      </div>
-
-      {/* Enhanced Map Container */}
-      <div
-        className={`relative border rounded-lg overflow-hidden ${
-          error ? "border-red-500" : "border-gray-300"
-        }`}
-      >
-        <style jsx global>{`
-          .leaflet-container {
-            height: 350px;
-            width: 100%;
-            z-index: 1;
-            cursor: crosshair;
-          }
-          .leaflet-control-attribution {
-            font-size: 10px !important;
-          }
-          .leaflet-clickable {
-            cursor: pointer !important;
-          }
-          .leaflet-control-zoom {
-            display: none !important;
-          }
-        `}</style>
-
-        <MapContainer
-          center={position}
-          zoom={zoom}
-          style={{ height: "350px", width: "100%" }}
-          // whenReady={setMapInstance}
-          // onZoomEnd={(e: any) => setZoom(e.target.getZoom())}
-          zoomControl={false}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            maxZoom={18}
-          />
-
-          <Marker position={position} icon={createCustomIcon()}>
-            <Popup>
-              <div className="text-center p-2">
-                <p className="font-medium text-blue-900">📍 الموقع المحدد</p>
-                {currentLocation && (
-                  <p className="text-sm text-gray-600 mt-1 max-w-xs">
-                    {currentLocation.formattedAddress}
-                  </p>
-                )}
-              </div>
-            </Popup>
-          </Marker>
-
-          <MapClickHandler onLocationSelect={handleMapClick} />
-        </MapContainer>
-
-        {/* Enhanced Zoom Controls */}
-        <div className="absolute top-4 left-4 z-[1000] bg-white rounded-lg shadow-lg border">
-          <button
-            onClick={zoomIn}
-            disabled={zoom >= 18}
-            className="block p-3 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed border-b transition-colors"
-            title={t("zoomIn")}
-          >
-            <Plus className="w-4 h-4" />
-          </button>
-          <button
-            onClick={zoomOut}
-            disabled={zoom <= 1}
-            className="block p-3 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            title={t("zoomOut")}
-          >
-            <Minus className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Enhanced instruction overlay */}
-        <div
-          className={`absolute bottom-4 ${
-            isRTL ? "right-4" : "left-4"
-          } z-[1000] bg-black bg-opacity-80 text-white text-xs px-3 py-2 rounded-lg`}
-        >
-          {t("mapInstructions")}
-        </div>
-
-        {/* Loading overlay */}
-        {isLoading && (
-          <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-[1000]">
-            <div className="flex items-center gap-2">
-              <Loader2 className="w-5 h-5 animate-spin text-blue-500" />
-              <span className="text-sm text-gray-600">
-                {t("updatingLocation")}
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Enhanced Selected Location Info */}
-      {currentLocation && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4
-            className={`font-medium text-blue-900 mb-3 flex items-center gap-2 ${
-              isRTL ? "flex-row-reverse" : ""
-            }`}
-          >
-            <MapPin className="w-4 h-4" />
-            {t("selectedLocation")}
-          </h4>
-          <p
-            className={`text-sm text-blue-800 ${
-              isRTL ? "text-right" : "text-left"
-            } mb-3 leading-relaxed`}
-          >
-            {currentLocation.formattedAddress}
-          </p>
-          <div className="grid grid-cols-2 gap-3 text-xs text-blue-700">
-            {currentLocation.city && (
-              <div className="flex justify-between">
-                <span className="font-medium">{t("city")}:</span>
-                <span>{currentLocation.city}</span>
-              </div>
-            )}
-            {currentLocation.region && (
-              <div className="flex justify-between">
-                <span className="font-medium">{t("region")}:</span>
-                <span>{currentLocation.region}</span>
-              </div>
-            )}
-            {currentLocation.postalCode && (
-              <div className="flex justify-between">
-                <span className="font-medium">{t("postalCode")}:</span>
-                <span>{currentLocation.postalCode}</span>
-              </div>
-            )}
-            <div className="flex justify-between">
-              <span className="font-medium">{t("coordinates")}:</span>
-              <span>
-                {position[0].toFixed(6)}, {position[1].toFixed(6)}
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
-
+    <div
+      className={`space-y-4 ${className}`}
+      dir={isRTL ? "rtl" : "ltr"}
+      style={{
+        position: "static",
+        zIndex: "auto",
+        maxWidth: "100%",
+        overflow: "hidden",
+      }}
+    >
+      {/* Error Display */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-          <p
-            className={`text-sm text-red-600 ${
-              isRTL ? "text-right" : "text-left"
-            }`}
-          >
-            {error}
-          </p>
+        <div className="text-sm text-red-600 flex items-center gap-2">
+          <AlertCircle size={16} />
+          {error}
         </div>
       )}
 
-      {/* <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-        <p className="text-xs text-green-700 text-right mb-2">
-          💡 <strong>كيفية استخدام أداة تحديد الموقع:</strong>
-        </p>
-        <ul className="text-xs text-green-600 space-y-1 text-right">
-          <li>🔍 اكتب اسم المكان أو العنوان في مربع البحث</li>
-          <li>📍 انقر على النتيجة المناسبة من قائمة البحث</li>
-          <li>🗺️ أو انقر مباشرة على الخريطة لتحديد موقع دقيق</li>
-          <li>📱 استخدم "موقعي الحالي" للحصول على موقعك بدقة GPS</li>
-          <li>🔍 استخدم أزرار التكبير والتصغير للبحث بدقة أكبر</li>
-        </ul>
-      </div> */}
+      {/* Map Container */}
+      {isMapLoaded ? (
+        <div
+          className="border border-neutral-200 rounded-lg overflow-hidden shadow-lg mb-4 block w-full"
+          style={{
+            position: "static",
+            zIndex: "auto",
+            maxWidth: "100%",
+            boxSizing: "border-box",
+          }}
+        >
+          {/* Search Controls */}
+          <div className="p-4 bg-neutral-50 border-b border-neutral-200">
+            <div className="flex flex-col sm:flex-row gap-2">
+              <div
+                className={`relative ${
+                  isMobile ? "w-full" : "w-full sm:flex-1"
+                }`}
+              >
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-4 h-4" />
+                <Input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder={t(
+                    "location.searchPlaceholder",
+                    "Search for a location..."
+                  )}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              {/* Only show "Use My Location" button on desktop */}
+              {/* {!isMobile && (
+                <Button
+                  type="button"
+                  onClick={useCurrentLocation}
+                  disabled={isLoading}
+                  variant="outline"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 border-logo-gold/30 text-logo-gold hover:bg-logo-gold/10"
+                >
+                  {isLoading ? (
+                    <Loader className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <MapPin className="w-4 h-4" />
+                  )}
+                  {t("location.useCurrentLocation", "Use My Location")}
+                </Button>
+              )} */}
+            </div>
+          </div>
+
+          {/* Map */}
+          <div
+            className="block w-full"
+            style={{ position: "static", zIndex: "auto" }}
+          >
+            <div
+              ref={mapRef}
+              className="w-full h-80 md:h-96 block"
+              style={{
+                minHeight: "320px",
+                position: "static",
+                zIndex: "auto",
+                maxWidth: "100%",
+                boxSizing: "border-box",
+              }}
+            />
+
+            {/* Loading Overlay */}
+            {isLoading && (
+              <div className="absolute inset-0 bg-white/50 flex items-center justify-center">
+                <Loader className="w-8 h-8 animate-spin text-logo-gold" />
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div
+          className="border border-neutral-200 rounded-lg p-8 text-center block w-full mb-4"
+          style={{
+            position: "static",
+            zIndex: "auto",
+            maxWidth: "100%",
+            boxSizing: "border-box",
+          }}
+        >
+          <Loader className="w-8 h-8 animate-spin mx-auto text-logo-gold" />
+        </div>
+      )}
     </div>
   );
 }

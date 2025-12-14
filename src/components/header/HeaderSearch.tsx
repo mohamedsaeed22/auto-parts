@@ -25,7 +25,7 @@ export default function HeaderSearch({
     <form onSubmit={onSubmit} className="relative w-full">
       <div className="relative">
         <Search
-          className={`absolute top-1/2 transform -translate-y-1/2 text-gray-400 ${
+          className={`absolute top-1/2 transform -translate-y-1/2 text-logo-gold ${
             isDesktop ? "w-5 h-5" : "w-4 h-4"
           } ${
             isRTL
@@ -52,8 +52,8 @@ export default function HeaderSearch({
               : "pl-10 pr-10 text-left"
           } ${
             isDesktop ? "py-3" : "py-3"
-          } border-2 border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-logo-gold focus:border-logo-gold transition-colors ${
-            isDesktop ? "bg-gray-50 focus:bg-white" : ""
+          } border-2 border-logo-gold/40 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-logo-gold focus:border-logo-gold transition-colors ${
+            isDesktop ? "bg-neutral-50 focus:bg-background" : ""
           } ${!isDesktop ? "rounded-lg border" : ""}`}
           autoFocus={autoFocus}
         />
@@ -61,7 +61,7 @@ export default function HeaderSearch({
           <button
             type="button"
             onClick={onClear}
-            className={`absolute top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 ${
+            className={`absolute top-1/2 transform -translate-y-1/2 text-logo-gold hover:text-logo-black ${
               isRTL
                 ? isDesktop
                   ? "left-4"

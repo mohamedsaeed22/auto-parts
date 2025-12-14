@@ -1,31 +1,322 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, User } from "lucide-react";
+import {
+  X,
+  User,
+  Home,
+  Grid3X3,
+  ShoppingCart,
+  Heart,
+  Bookmark,
+  UserCircle,
+  Wallet,
+  Gift,
+  HelpCircle,
+  LogOut,
+  Wrench,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+// import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/navigation";
 import LoginDialog from "../LoginDialog";
-
-interface NavLink {
-  href: string;
-  label: string;
-}
+// import UserDropdown from "./UserDropdown";
+import { useAuth } from "@/hooks/useAuth";
+import { useEnhancedCart } from "@/hooks/useEnhancedCart";
+import Image from "next/image";
+import { useLogoutMutation } from "@/services/hooks";
+import LanguageSwitch from "./LanguageSwitch";
 
 interface HeaderMobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
-  navLinks: NavLink[];
   isActiveLink: (href: string) => boolean;
   isRTL: boolean;
+  onCartClick: () => void;
+  onLanguageChange?: (locale: string) => void;
+  activeLocale?: string;
+  isChangingLocale?: boolean;
 }
 
 export default function HeaderMobileMenu({
   isOpen,
   onClose,
-  navLinks,
   isActiveLink,
   isRTL,
+  onCartClick,
+  onLanguageChange,
+  activeLocale,
+  isChangingLocale,
 }: HeaderMobileMenuProps) {
   const { t } = useTranslation("header");
+  const { user, isAuthenticated, logout } = useAuth();
+  const { totalItems } = useEnhancedCart();
+  const router = useRouter();
+  const [logoutApi, { isLoading: isLoggingOut }] = useLogoutMutation();
+
+  const handleLogout = async () => {
+    try {
+      await logoutApi().unwrap();
+    } catch {
+      // ignore API errors, proceed with local logout
+    }
+    logout();
+    onClose();
+  };
+
+  // Navigation items based on authentication status
+  const getNavigationItems = () => {
+    if (isAuthenticated) {
+      return [
+        // User Profile Section
+        {
+          type: "profile",
+          items: [
+            {
+              href: "/userprofile",
+              icon: UserCircle,
+              label: t("mobileMenu.profile") || "My Profile",
+              isActive: isActiveLink("/userprofile"),
+            },
+            {
+              href: "/userprofile/points",
+              icon: Wallet,
+              label: t("mobileMenu.points") || "My Wallet",
+              isActive: isActiveLink("/userprofile/points"),
+              badge: user?.points,
+              pointsNav: true,
+            },
+            // {
+            //   href: "/notifications",
+            //   icon: Bell,
+            //   label: t("mobileMenu.notifications") || "Notifications",
+            //   isActive: isActiveLink("/notifications"),
+            // },
+          ],
+        },
+        // Shopping Section
+        {
+          type: "shopping",
+          title: t("mobileMenu.shopping") || "Shopping",
+          items: [
+            {
+              href: "/favourites",
+              icon: Heart,
+              label: t("mobileMenu.favourites") || "Favourites",
+              isActive: isActiveLink("/favourites"),
+            },
+            {
+              href: "/wishlist",
+              icon: Bookmark,
+              label: t("mobileMenu.wishlist") || "Wishlist",
+              isActive: isActiveLink("/wishlist"),
+            },
+            {
+              href: "#",
+              icon: ShoppingCart,
+              label: t("mobileMenu.cart") || "Cart",
+              isActive: false,
+              isCart: true,
+              badge: totalItems,
+            },
+          ],
+        },
+        // Main Navigation
+        {
+          type: "main",
+          title: t("mobileMenu.explore") || "Explore",
+          items: [
+            {
+              href: "/",
+              icon: Home,
+              label: t("mobileMenu.home") || "Home",
+              isActive: isActiveLink("/"),
+            },
+            {
+              href: "/categories",
+              icon: Grid3X3,
+              label: t("mobileMenu.categories") || "Categories",
+              isActive: isActiveLink("/categories"),
+            },
+            {
+              href: "/brands",
+              icon: Wallet,
+              label: t("mobileMenu.brands") || "Brands",
+              isActive: isActiveLink("/brands"),
+            },
+            {
+              href: "/latestoffer",
+              icon: Gift,
+              label: t("mobileMenu.offers") || "Offers",
+              isActive: isActiveLink("/latestoffer"),
+            },
+            {
+              href: "/products",
+              icon: Grid3X3,
+              label: t("mobileMenu.products") || "Products",
+              isActive: isActiveLink("/products"),
+            },
+            {
+              href: "/userPricing",
+              icon: Wrench,
+              label:
+                (t as unknown as (k: string) => string)(
+                  "navigation.userPricing"
+                ) ||
+                (t as unknown as (k: string) => string)(
+                  "mobileMenu.userPricing"
+                ) ||
+                "Request Pricing",
+              isActive: isActiveLink("/userPricing"),
+            },
+            {
+              href: "/about",
+              icon: Home,
+              label: t("navigation.about") || "About Us",
+              isActive: isActiveLink("/about"),
+            },
+            {
+              href: "/contact",
+              icon: HelpCircle,
+              label: t("navigation.contact") || "Contact Us",
+              isActive: isActiveLink("/contact"),
+            },
+          ],
+        },
+        // Support Section
+        // {
+        //   type: "support",
+        //   title: t("mobileMenu.support") || "Support",
+        //   items: [
+        //     {
+        //       href: "/track-order",
+        //       icon: Truck,
+        //       label: t("mobileMenu.trackOrder") || "Track Order",
+        //       isActive: isActiveLink("/track-order"),
+        //     },
+        //     {
+        //       href: "/help",
+        //       icon: HelpCircle,
+        //       label: t("mobileMenu.help") || "Help & Support",
+        //       isActive: isActiveLink("/help"),
+        //     },
+        //   ],
+        // },
+      ];
+    } else {
+      return [
+        // Guest Navigation
+        {
+          type: "main",
+          title: t("mobileMenu.explore") || "Explore",
+          items: [
+            {
+              href: "/about",
+              icon: Home,
+              label: t("navigation.about") || "About Us",
+              isActive: isActiveLink("/about"),
+            },
+            {
+              href: "/contact",
+              icon: HelpCircle,
+              label: t("navigation.contact") || "Contact Us",
+              isActive: isActiveLink("/contact"),
+            },
+            {
+              href: "/",
+              icon: Home,
+              label: t("mobileMenu.home") || "Home",
+              isActive: isActiveLink("/"),
+            },
+            {
+              href: "/categories",
+              icon: Grid3X3,
+              label: t("mobileMenu.categories") || "Categories",
+              isActive: isActiveLink("/categories"),
+            },
+            {
+              href: "/brands",
+              icon: Wallet,
+              label: t("mobileMenu.brands") || "Brands",
+              isActive: isActiveLink("/brands"),
+            },
+            {
+              href: "/latestoffer",
+              icon: Gift,
+              label: t("mobileMenu.offers") || "Offers",
+              isActive: isActiveLink("/latestoffer"),
+            },
+            {
+              href: "/products",
+              icon: Grid3X3,
+              label: t("mobileMenu.products") || "Products",
+              isActive: isActiveLink("/products"),
+            },
+            {
+              href: "/userPricing",
+              icon: Wrench,
+              label:
+                (t as unknown as (k: string) => string)(
+                  "navigation.userPricing"
+                ) ||
+                (t as unknown as (k: string) => string)(
+                  "mobileMenu.userPricing"
+                ) ||
+                "Request Pricing",
+              isActive: isActiveLink("/userPricing"),
+            },
+          ],
+        },
+        // Shopping Section (Guest)
+        {
+          type: "shopping",
+          title: t("mobileMenu.shopping") || "Shopping",
+          items: [
+            {
+              href: "#",
+              icon: ShoppingCart,
+              label: t("mobileMenu.cart") || "Cart",
+              isActive: false,
+              isCart: true,
+              badge: totalItems,
+            },
+          ],
+        },
+        // Support Section
+        {
+          type: "support",
+          title: t("mobileMenu.support") || "Support",
+          items: [
+            {
+              href: "/help",
+              icon: HelpCircle,
+              label: t("mobileMenu.help") || "Help & Support",
+              isActive: isActiveLink("/help"),
+            },
+          ],
+        },
+      ];
+    }
+  };
+
+  type MenuItem = {
+    href?: string;
+    isCart?: boolean;
+    pointsNav?: boolean;
+  };
+
+  const handleItemClick = (item: MenuItem) => {
+    if (item.isCart) {
+      onCartClick();
+    } else if (item.pointsNav) {
+      try {
+        localStorage.setItem("userProfileActivePage", "points");
+      } catch {}
+      router.push("/userprofile");
+    } else if (item.href && item.href !== "#") {
+      router.push(item.href);
+    }
+    onClose();
+  };
 
   return (
     <AnimatePresence>
@@ -52,81 +343,151 @@ export default function HeaderMobileMenu({
             dir={isRTL ? "rtl" : "ltr"}
           >
             {/* Menu Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">
-                {t("menu.title") || "Menu"}
-              </h2>
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-primary to-primary-600">
+              <div className="flex items-center gap-3">
+                {isAuthenticated && (
+                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white bg-white/10 flex items-center justify-center">
+                    {user?.avatar ? (
+                      <Image
+                        src={user.avatar}
+                        alt="User Avatar"
+                        width={40}
+                        height={40}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-white font-semibold">
+                        {(
+                          user?.name?.[0] ||
+                          user?.phone?.[0] ||
+                          "U"
+                        ).toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+                )}
+                <div>
+                  <h2 className="text-lg font-semibold text-white">
+                    {isAuthenticated
+                      ? user?.name || t("mobileMenu.welcome")
+                      : t("menu.title")}
+                  </h2>
+                </div>
+              </div>
               <button
                 onClick={onClose}
-                className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+                className="p-2 text-white hover:text-white/80 transition-colors"
               >
                 <X size={20} />
               </button>
             </div>
 
-            {/* Account Section */}
-            <div className="p-4 border-b border-gray-200">
-              <LoginDialog
-                trigger={
-                  <Button
-                    variant="outline"
-                    className="w-full justify-center gap-2"
-                  >
-                    <User size={20} />
-                    {t("actions.login") || "Login / Register"}
-                  </Button>
-                }
-              />
-            </div>
+            {/* Login Section for Guests */}
+            {!isAuthenticated && (
+              <div className="p-4 border-b border-gray-200 bg-gray-50">
+                <LoginDialog
+                  trigger={
+                    <Button className="w-full justify-center gap-2 bg-primary hover:bg-primary-600">
+                      <User size={20} />
+                      {t("actions.login") || "Login / Register"}
+                    </Button>
+                  }
+                />
+              </div>
+            )}
 
-            {/* Navigation Links */}
-            <div className="py-4">
-              {navLinks.map((link, index) => (
-                <motion.div
-                  key={link.href}
-                  initial={{ opacity: 0, x: isRTL ? 20 : -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
+            {/* Language Selection */}
+            {onLanguageChange && activeLocale && (
+              <div className="p-4 border-b border-gray-200 bg-gray-50">
+                <div
+                  className={`flex items-center justify-between ${
+                    isRTL ? "flex-row-reverse" : ""
+                  }`}
                 >
-                  <Link
-                    href={link.href}
-                    className={`block px-4 py-3 text-base font-medium transition-colors relative ${
-                      isActiveLink(link.href)
-                        ? "text-logo-gold bg-yellow-50"
-                        : "text-gray-700 hover:text-logo-gold hover:bg-gray-50"
-                    }`}
-                    onClick={onClose}
-                  >
-                    {link.label}
-                    {/* Active indicator */}
-                    {isActiveLink(link.href) && (
-                      <span
-                        className={`absolute top-0 bottom-0 w-1 bg-logo-gold ${
-                          isRTL ? "right-0" : "left-0"
-                        }`}
-                      />
-                    )}
-                  </Link>
-                </motion.div>
+                  <span className="text-sm font-medium text-gray-700">
+                    {t("language.title") || "Language"}
+                  </span>
+                  <LanguageSwitch
+                    activeLocale={activeLocale}
+                    onLanguageChange={onLanguageChange}
+                    isChangingLocale={isChangingLocale}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Navigation Sections */}
+            <div className="py-2">
+              {getNavigationItems().map((section, sectionIndex) => (
+                <div key={section.type} className="mb-4">
+                  {section.title && (
+                    <div className="px-4 py-2">
+                      <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                        {section.title}
+                      </h3>
+                    </div>
+                  )}
+
+                  {section.items?.map((item, itemIndex) => {
+                    const Icon = item.icon;
+                    const totalDelay = sectionIndex * 0.1 + itemIndex * 0.05;
+
+                    return (
+                      <motion.div
+                        key={item.href || item.label}
+                        initial={{ opacity: 0, x: isRTL ? 20 : -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: totalDelay }}
+                      >
+                        <button
+                          onClick={() => handleItemClick(item)}
+                          className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors relative ${
+                            item.isActive
+                              ? "text-primary bg-primary-50 border-r-2 border-primary"
+                              : "text-neutral-700 hover:text-primary hover:bg-neutral-50"
+                          }`}
+                        >
+                          <div className="relative">
+                            <Icon size={20} className="flex-shrink-0" />
+                            {(item.badge ?? 0) > 0 && (
+                              <span className="absolute -top-1 -right-1 bg-accent text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]">
+                                {item.badge}
+                              </span>
+                            )}
+                          </div>
+                          <span className="font-medium">{item.label}</span>
+                        </button>
+                      </motion.div>
+                    );
+                  })}
+                </div>
               ))}
             </div>
 
-            {/* Additional Links */}
-            <div className="py-4 border-t border-gray-200">
-              <Link
-                href="/help"
-                className="block px-4 py-3 text-sm text-gray-600 hover:text-logo-gold transition-colors"
-                onClick={onClose}
-              >
-                {t("menu.help") || "Help & Support"}
-              </Link>
-              <Link
-                href="/track-order"
-                className="block px-4 py-3 text-sm text-gray-600 hover:text-logo-gold transition-colors"
-                onClick={onClose}
-              >
-                {t("menu.trackOrder") || "Track Your Order"}
-              </Link>
+            {/* Logout Button for authenticated users */}
+            {isAuthenticated && (
+              <div className="p-4 border-t border-gray-200">
+                <Button
+                  variant="outline"
+                  className="w-full justify-center gap-2 text-red-600 border-red-200 hover:bg-red-50"
+                  disabled={isLoggingOut}
+                  onClick={handleLogout}
+                >
+                  <LogOut size={18} />
+                  {isLoggingOut
+                    ? (t("actions.loggingOut") as string) || "Logging out..."
+                    : (t("actions.logout") as string) || "Logout"}
+                </Button>
+              </div>
+            )}
+
+            {/* Footer */}
+            <div className="mt-auto p-4 border-t border-gray-200 bg-gray-50">
+              <div className="text-center">
+                <p className="text-xs text-gray-500">
+                  {t("mobileMenu.version") || "Version 1.0.0"}
+                </p>
+              </div>
             </div>
           </motion.div>
         </>

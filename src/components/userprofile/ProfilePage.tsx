@@ -1,0 +1,951 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Building,
+  FileText,
+  Edit,
+  Save,
+  X,
+  Upload,
+  Globe2,
+  Copy,
+  Check,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import FormInput from "@/components/ui/FormInput";
+import { useTranslation } from "react-i18next";
+import {
+  useGetProfileQuery,
+  useUpdateProfileMutation,
+  useChangeLanguageMutation,
+} from "@/services/api";
+import { useLocale } from "@/hooks/useLocale";
+import { showSuccess, showError } from "@/lib/toast";
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
+import {
+  profileUpdateSchema,
+  profileUpdateDefaultValues,
+  type ProfileUpdateFormData,
+} from "@/lib/validations/profileSchema";
+import { useAuthContext } from "@/contexts/auth-context";
+import LocationPicker from "@/components/LocationPicker";
+import type { LocationData } from "@/components/LocationPicker";
+
+interface ProfileData {
+  id: number;
+  code: string;
+  name: string;
+  email: string | null;
+  phone: string;
+  type: "shop" | "workshop";
+  manager_name: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  tax_number: string;
+  commercial_register: string | null;
+  avatar: string | null;
+  latitude: string;
+  longitude: string;
+  is_registration_complete: boolean;
+  is_google_user: boolean;
+}
+
+export default function ProfilePage() {
+  const { t, i18n } = useTranslation("userProfile");
+  const isRTL = i18n.language === "ar";
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedAvatar, setSelectedAvatar] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [isCopied, setIsCopied] = useState(false);
+
+  // React Hook Form setup
+  const form = useForm<ProfileUpdateFormData>({
+    resolver: zodResolver(profileUpdateSchema),
+    defaultValues: profileUpdateDefaultValues,
+    mode: "onSubmit",
+  });
+
+  const {
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    setValue,
+    watch,
+  } = form;
+
+  const {
+    data: profileResponse,
+    isLoading: isLoadingProfile,
+    refetch,
+  } = useGetProfileQuery();
+  const [updateProfile] = useUpdateProfileMutation();
+  const [changeLanguage] = useChangeLanguageMutation();
+  const { changeLocale } = useLocale();
+  const { updateUser } = useAuthContext();
+
+  type ProfileEnvelope = { user: ProfileData } | ProfileData | undefined;
+  const responseData = profileResponse?.data as unknown as ProfileEnvelope;
+  let profile: ProfileData | undefined;
+  if (
+    responseData &&
+    typeof responseData === "object" &&
+    "user" in (responseData as Record<string, unknown>)
+  ) {
+    profile = (responseData as { user: ProfileData }).user;
+  } else {
+    profile = responseData as ProfileData | undefined;
+  }
+
+  // Update form data when profile is loaded
+  useEffect(() => {
+    if (profile) {
+      reset({
+        name: profile.name || "",
+        email: profile.email || "",
+        phone: profile.phone || "",
+        manager_name: profile.manager_name || "",
+        address: profile.address || "",
+        city: profile.city || "",
+        state: profile.state || "",
+        zip: profile.zip || "",
+        latitude: profile.latitude || "",
+        longitude: profile.longitude || "",
+        avatar: undefined,
+      });
+    }
+  }, [profile, reset]);
+
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    fieldName: string
+  ) => {
+    const file = e.target.files?.[0] || null;
+    if (fieldName === "avatar") {
+      setSelectedAvatar(file);
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setAvatarPreview(e.target?.result as string);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        setAvatarPreview(null);
+      }
+    }
+  };
+
+  const onSubmit = async (data: ProfileUpdateFormData) => {
+    if (!profile) return;
+
+    // Check if location is required (no existing coordinates)
+    const hasExistingLocation =
+      profile.latitude &&
+      profile.longitude &&
+      profile.latitude !== "" &&
+      profile.longitude !== "";
+
+    // If no existing location, require new location selection
+    if (
+      !hasExistingLocation &&
+      (!data.latitude ||
+        !data.longitude ||
+        data.latitude === "" ||
+        data.longitude === "")
+    ) {
+      showError(
+        t(
+          "profile.locationRequired",
+          "Please select your location on the map to continue"
+        )
+      );
+      return;
+    }
+
+    try {
+      const updatePayload = {
+        name: data.name || undefined,
+        email: data.email || undefined,
+        phone: data.phone || undefined,
+        manager_name: data.manager_name || undefined,
+        address: data.address || undefined,
+        city: data.city || undefined,
+        zip: data.zip || undefined,
+        state: data.state || undefined,
+        latitude: data.latitude || undefined,
+        longitude: data.longitude || undefined,
+        avatar: selectedAvatar || undefined,
+      };
+
+      const response = await updateProfile(updatePayload).unwrap();
+
+      // Update user data in localStorage and auth context
+      if (response.data && "user" in response.data) {
+        const userData = (response.data as { user: ProfileData }).user;
+        // Convert ProfileData to User type for auth context
+        const extractedPoints = (() => {
+          const maybe = (userData as { points?: unknown }).points;
+          return typeof maybe === "number" ? maybe : 0;
+        })();
+
+        const userForAuth = {
+          id: userData.id,
+          name: userData.name,
+          email: userData.email || undefined, // Convert null to undefined
+          phone: userData.phone,
+          type: userData.type,
+          manager_name: userData.manager_name,
+          address: userData.address,
+          city: userData.city,
+          zip: userData.zip,
+          state: userData.state,
+          tax_number: userData.tax_number,
+          latitude: userData.latitude,
+          longitude: userData.longitude,
+          avatar: userData.avatar || undefined, // Convert null to undefined
+          commercial_register: userData.commercial_register || undefined, // Convert null to undefined
+          is_registration_complete: userData.is_registration_complete,
+          points: extractedPoints,
+        };
+        await updateUser(userForAuth);
+      }
+
+      // Refresh profile data
+      refetch();
+
+      // Reset form state
+      setSelectedAvatar(null);
+      setAvatarPreview(null);
+      setIsEditing(false);
+
+      showSuccess(t("profile.updateSuccess", "Profile updated successfully!"));
+    } catch (error: unknown) {
+      // Handle backend validation errors
+      const errorData = error as {
+        data?: {
+          errors?: Array<{ key: string; value: string[] }>;
+          message?: string;
+        };
+      };
+
+      if (errorData?.data?.errors && Array.isArray(errorData.data.errors)) {
+        // Show each validation error as a separate toast
+        errorData.data.errors.forEach((validationError) => {
+          if (validationError.value && Array.isArray(validationError.value)) {
+            validationError.value.forEach((message: string) => {
+              showError(message);
+            });
+          }
+        });
+      } else if (errorData?.data?.message) {
+        // Show general error message
+        showError(errorData.data.message);
+      } else {
+        // Fallback error message
+        showError(
+          t(
+            "profile.updateError",
+            "Failed to update profile. Please try again."
+          )
+        );
+      }
+    }
+  };
+
+  const handleEdit = () => {
+    if (profile) {
+      reset({
+        name: profile.name || "",
+        email: profile.email || "",
+        phone: profile.phone || "",
+        manager_name: profile.manager_name || "",
+        address: profile.address || "",
+        city: profile.city || "",
+        state: profile.state || "",
+        zip: profile.zip || "",
+        latitude: profile.latitude || "",
+        longitude: profile.longitude || "",
+        avatar: undefined,
+      });
+    }
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    if (profile) {
+      reset({
+        name: profile.name || "",
+        email: profile.email || "",
+        phone: profile.phone || "",
+        manager_name: profile.manager_name || "",
+        address: profile.address || "",
+        city: profile.city || "",
+        state: profile.state || "",
+        zip: profile.zip || "",
+        latitude: profile.latitude || "",
+        longitude: profile.longitude || "",
+        avatar: undefined,
+      });
+      setSelectedAvatar(null);
+      setAvatarPreview(null);
+    }
+    setIsEditing(false);
+  };
+
+  const handleLanguageChange = async (locale: "ar" | "en") => {
+    try {
+      // First, update the frontend language immediately (like header does)
+      changeLocale(locale);
+
+      // Then, update the user's language preference in the backend
+      await changeLanguage({ locale }).unwrap();
+
+      showSuccess(
+        t(
+          "settings.language.changedSuccessfully",
+          "Language changed successfully!"
+        )
+      );
+    } catch (error: unknown) {
+      // Handle backend validation errors
+      const errorData = error as {
+        data?: {
+          errors?: Array<{ key: string; value: string[] }>;
+          message?: string;
+        };
+      };
+
+      if (errorData?.data?.errors && Array.isArray(errorData.data.errors)) {
+        // Show each validation error as a separate toast
+        errorData.data.errors.forEach((validationError) => {
+          if (validationError.value && Array.isArray(validationError.value)) {
+            validationError.value.forEach((message: string) => {
+              showError(message);
+            });
+          }
+        });
+      } else if (errorData?.data?.message) {
+        // Show general error message
+        showError(errorData.data.message);
+      } else {
+        // Fallback error message
+        showError(
+          t(
+            "settings.language.changeFailed",
+            "Failed to change language. Please try again."
+          )
+        );
+      }
+    }
+  };
+
+  const handleCopyCode = async () => {
+    if (!profile?.code) return;
+
+    try {
+      await navigator.clipboard.writeText(profile.code);
+      setIsCopied(true);
+      showSuccess(t("profile.codeCopied", "User code copied to clipboard!"));
+
+      // Reset the copied state after 3 seconds
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 3000);
+    } catch {
+      showError(t("profile.copyFailed", "Failed to copy code to clipboard"));
+    }
+  };
+
+  const handleLocationSelect = (locationData: LocationData) => {
+    // Update coordinates
+    setValue("latitude", locationData.lat.toString(), {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+    setValue("longitude", locationData.lng.toString(), {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+
+    // Auto-fill address fields if provided by geocoder
+    const preferredAddress =
+      locationData.formatted_address || locationData.address;
+    if (preferredAddress) {
+      setValue("address", preferredAddress, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+    if (locationData.city) {
+      setValue("city", locationData.city, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+    if (locationData.state) {
+      setValue("state", locationData.state, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+    if (locationData.postal_code) {
+      setValue("zip", locationData.postal_code, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+  };
+
+  if (isLoadingProfile) {
+    return (
+      <div className="p-8 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="p-8 text-center">
+        <div className="text-red-600 mb-2">Failed to load profile data</div>
+        <p className="text-gray-600 mb-4">
+          Please try refreshing the page or contact support if the problem
+          persists.
+        </p>
+        <Button onClick={() => refetch()} variant="outline">
+          Retry
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-4 sm:p-6 lg:p-8">
+      <div
+        className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 ${
+          isRTL ? "sm:flex-row" : ""
+        }`}
+      >
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+          {t("profile.title")}
+        </h2>
+        {!isEditing ? (
+          <Button
+            onClick={handleEdit}
+            className="flex items-center gap-2 w-full sm:w-auto"
+          >
+            <Edit size={16} />
+            {t("profile.edit")}
+          </Button>
+        ) : (
+          <div
+            className={`flex flex-col sm:flex-row gap-2 w-full sm:w-auto ${
+              isRTL ? "sm:flex-row" : ""
+            }`}
+          >
+            <Button
+              onClick={handleSubmit(onSubmit)}
+              className="flex items-center gap-2"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save size={16} />
+              )}
+              {t("profile.save")}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleCancel}
+              className="flex items-center gap-2"
+            >
+              <X size={16} />
+              {t("profile.cancel")}
+            </Button>
+          </div>
+        )}
+      </div>
+
+      {/* Language Selection */}
+      <div className="mb-6 p-4 sm:p-6 bg-gray-50 rounded-lg border border-gray-200">
+        <div
+          className={`flex items-center justify-between gap-4 ${
+            isRTL ? "flex-row" : ""
+          }`}
+        >
+          {/* Title */}
+          <div className="flex items-center gap-2">
+            <Globe2 size={20} className="text-gray-600" />
+            <h3 className="font-medium text-gray-700">
+              {t("profile.language")}
+            </h3>
+          </div>
+
+          {/* Buttons */}
+          <div className={`flex gap-2 ${isRTL ? "flex-row" : ""}`}>
+            <Button
+              variant={i18n.language === "ar" ? "default" : "outline"}
+              size="sm"
+              onClick={() => handleLanguageChange("ar")}
+              className="flex items-center gap-2"
+            >
+              العربية
+            </Button>
+
+            <Button
+              variant={i18n.language === "en" ? "default" : "outline"}
+              size="sm"
+              onClick={() => handleLanguageChange("en")}
+              className="flex items-center gap-2"
+            >
+              English
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+        {/* Profile & Commercial Register Side-by-Side */}
+        <div className="col-span-full">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-4 sm:mb-6">
+            {/* Avatar */}
+            <div className="relative flex-shrink-0">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden border-2 sm:border-4 border-white shadow-lg">
+                {avatarPreview ? (
+                  <Image
+                    src={avatarPreview}
+                    alt="Profile Preview"
+                    className="w-full h-full object-cover"
+                    width={128}
+                    height={128}
+                    loading="lazy"
+                  />
+                ) : profile.avatar ? (
+                  <Image
+                    src={profile.avatar}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                    width={128}
+                    height={128}
+                    loading="lazy"
+                  />
+                ) : (
+                  <User
+                    size={24}
+                    className="text-gray-400 sm:w-8 sm:h-8 lg:w-12 lg:h-12"
+                  />
+                )}
+              </div>
+              {isEditing && (
+                <label
+                  className={`absolute rounded-full w-6 h-6 sm:w-8 sm:h-8 p-0 bg-primary text-white flex items-center justify-center cursor-pointer hover:bg-primary/90 shadow-lg transition-all duration-200 ${
+                    isRTL ? "bottom-0 left-0" : "bottom-0 right-0"
+                  }`}
+                >
+                  <Upload size={10} className="sm:w-3 sm:h-3" />
+                  <input
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={(e) => handleFileChange(e, "avatar")}
+                  />
+                </label>
+              )}
+            </div>
+
+            {/* Commercial Register Card */}
+            <div className="relative w-full max-w-xs sm:max-w-sm">
+              <div className="w-full h-24 sm:h-28 lg:h-32 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden border border-gray-200 shadow-sm">
+                {(() => {
+                  const src = profile.commercial_register || "";
+                  const isPdf =
+                    typeof src === "string" &&
+                    src.toLowerCase().endsWith(".pdf");
+                  if (!src) {
+                    return (
+                      <div className="flex flex-col items-center text-gray-400 text-center px-2">
+                        <FileText size={20} className="sm:w-6 sm:h-6" />
+                        <span className="text-xs mt-1 leading-tight">
+                          {t("profile.commercialRegister")}
+                        </span>
+                      </div>
+                    );
+                  }
+                  if (isPdf) {
+                    return (
+                      <a
+                        href={src}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary underline text-xs sm:text-sm text-center px-2"
+                      >
+                        {t("profile.viewFile")}
+                      </a>
+                    );
+                  }
+                  return (
+                    <Image
+                      src={src}
+                      alt="Commercial Register"
+                      className="w-full h-full object-cover"
+                      width={256}
+                      height={160}
+                      loading="lazy"
+                    />
+                  );
+                })()}
+              </div>
+              {/* Editing of commercial register disabled as requested */}
+            </div>
+          </div>
+        </div>
+
+        {/* User Code */}
+        <div className="col-span-full">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            {t("profile.userCode")}
+          </label>
+          <div className="relative">
+            <div className="px-3 py-2 bg-primary-50 text-primary-700 rounded-md font-mono text-center border border-primary-200 text-sm sm:text-base pr-12">
+              {profile.code}
+            </div>
+            <button
+              onClick={handleCopyCode}
+              className={`absolute top-1/2 -translate-y-1/2 right-2 p-1.5 rounded-md transition-all duration-200 ${
+                isCopied
+                  ? "bg-green-100 text-green-600"
+                  : "bg-primary-100 text-primary-600 hover:bg-primary-200"
+              }`}
+              title={
+                isCopied
+                  ? t("profile.copied", "Copied!")
+                  : t("profile.copyCode", "Copy code")
+              }
+            >
+              {isCopied ? (
+                <Check size={16} className="text-green-600" />
+              ) : (
+                <Copy size={16} className="text-primary-600" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Name */}
+        <div className="col-span-full sm:col-span-1">
+          <FormInput
+            label={t("profile.name")}
+            type="text"
+            icon={User}
+            required
+            disabled={!isEditing}
+            value={watch("name")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("name", e.target.value, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            error={errors.name?.message}
+            placeholder={t("profile.name")}
+            translationNamespace="userProfile"
+          />
+        </div>
+
+        {/* Email */}
+        <div className="col-span-full sm:col-span-1">
+          <FormInput
+            label={t("profile.email")}
+            type="email"
+            icon={Mail}
+            disabled={!isEditing}
+            value={watch("email")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("email", e.target.value, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            error={errors.email?.message}
+            placeholder={t(
+              "profile.emailPlaceholder",
+              "Enter email (optional)"
+            )}
+            translationNamespace="userProfile"
+          />
+        </div>
+
+        {/* Phone */}
+        <div className="col-span-full sm:col-span-1">
+          <FormInput
+            label={t("profile.phone")}
+            type="tel"
+            icon={Phone}
+            required
+            disabled={!isEditing}
+            value={watch("phone")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("phone", e.target.value, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            error={errors.phone?.message}
+            placeholder={t("profile.phone")}
+            translationNamespace="userProfile"
+          />
+        </div>
+
+        {/* Type */}
+        <div className="col-span-full sm:col-span-1">
+          <FormInput
+            label={t("profile.type")}
+            type="text"
+            icon={Building}
+            required
+            disabled={true}
+            value={
+              profile.type === "shop"
+                ? t("profile.shop")
+                : t("profile.workshop")
+            }
+            onChange={() => {}} // No-op since it's disabled
+            placeholder={t("profile.type")}
+            translationNamespace="userProfile"
+          />
+        </div>
+
+        {/* Manager Name */}
+        <div className="col-span-full sm:col-span-1">
+          <FormInput
+            label={t("profile.managerName")}
+            type="text"
+            icon={User}
+            required
+            disabled={!isEditing}
+            value={watch("manager_name")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("manager_name", e.target.value, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            error={errors.manager_name?.message}
+            placeholder={t("profile.managerName")}
+            translationNamespace="userProfile"
+          />
+        </div>
+
+        {/* Address */}
+        <div className="col-span-full sm:col-span-1">
+          <FormInput
+            label={t("profile.address")}
+            type="text"
+            icon={MapPin}
+            required
+            disabled={!isEditing}
+            value={watch("address")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("address", e.target.value, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            error={errors.address?.message}
+            placeholder={t("profile.address")}
+            translationNamespace="userProfile"
+          />
+        </div>
+
+        {/* City */}
+        <div className="col-span-full sm:col-span-1">
+          <FormInput
+            label={t("profile.city")}
+            type="text"
+            icon={MapPin}
+            required
+            disabled={!isEditing}
+            value={watch("city")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("city", e.target.value, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            error={errors.city?.message}
+            placeholder={t("profile.city")}
+            translationNamespace="userProfile"
+          />
+        </div>
+
+        {/* State */}
+        <div className="col-span-full sm:col-span-1">
+          <FormInput
+            label={t("profile.state")}
+            type="text"
+            icon={MapPin}
+            required
+            disabled={!isEditing}
+            value={watch("state")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("state", e.target.value, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            error={errors.state?.message}
+            placeholder={t("profile.state")}
+            translationNamespace="userProfile"
+          />
+        </div>
+
+        {/* ZIP */}
+        <div className="col-span-full sm:col-span-1">
+          <FormInput
+            label={t("profile.zip")}
+            type="text"
+            icon={MapPin}
+            required
+            disabled={!isEditing}
+            value={watch("zip")}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValue("zip", e.target.value, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
+            }
+            error={errors.zip?.message}
+            placeholder={t("profile.zip")}
+            translationNamespace="userProfile"
+          />
+        </div>
+
+        {/* Tax Number */}
+        <div className="col-span-full sm:col-span-1">
+          <FormInput
+            label={t("profile.taxNumber")}
+            type="text"
+            icon={FileText}
+            required
+            disabled={true}
+            value={profile.tax_number}
+            onChange={() => {}} // No-op since it's disabled
+            placeholder={t("profile.taxNumber")}
+            translationNamespace="userProfile"
+          />
+        </div>
+
+        {/* Latitude */}
+        {/* <div className="col-span-full sm:col-span-1">
+          <FormInput
+            label={t("profile.latitude")}
+            type="text"
+            icon={Globe}
+            disabled={true}
+            value={isEditing ? watch("latitude") : profile.latitude}
+            onChange={() => {}} // No-op since it's disabled
+            placeholder={t("profile.latitude")}
+          />
+        </div> */}
+
+        {/* Longitude */}
+        {/* <div className="col-span-full sm:col-span-1">
+          <FormInput
+            label={t("profile.longitude")}
+            type="text"
+            icon={Globe}
+            disabled={true}
+            value={isEditing ? watch("longitude") : profile.longitude}
+            onChange={() => {}} // No-op since it's disabled
+            placeholder={t("profile.longitude")}
+          />
+        </div> */}
+      </div>
+
+      {/* Location Picker - visible in edit mode */}
+      {isEditing && (
+        <div className="mt-6">
+          <div className="mb-3 flex items-center gap-2 text-gray-700">
+            <MapPin size={18} />
+            <h3 className="font-medium">
+              {t("profile.selectLocation", "Select Location on Map")}
+              <span className="text-red-500 ml-1">*</span>
+            </h3>
+          </div>
+
+          {/* Check if location is required */}
+          {(() => {
+            const hasExistingLocation =
+              profile?.latitude &&
+              profile?.longitude &&
+              profile.latitude !== "" &&
+              profile.longitude !== "";
+            const hasNewLocation =
+              watch("latitude") &&
+              watch("longitude") &&
+              watch("latitude") !== "" &&
+              watch("longitude") !== "";
+
+            return !hasExistingLocation && !hasNewLocation;
+          })() && (
+            <div className="mb-3 p-3 bg-amber-50 border border-amber-200 rounded-md">
+              <div
+                className={`flex items-center gap-2 text-amber-700 ${
+                  isRTL ? "flex-row" : ""
+                }`}
+              >
+                <MapPin size={16} />
+                <span className="text-sm font-medium">
+                  {t(
+                    "profile.locationRequired",
+                    "Location selection is required"
+                  )}
+                </span>
+              </div>
+              <p
+                className={`text-xs text-amber-600 mt-1 ${
+                  isRTL ? "text-right" : "text-left"
+                }`}
+              >
+                {t(
+                  "profile.locationRequiredHelp",
+                  "Please select your location on the map to continue"
+                )}
+              </p>
+            </div>
+          )}
+
+          <LocationPicker
+            onLocationSelect={handleLocationSelect}
+            initialLocation={{
+              lat: parseFloat(
+                watch("latitude") || profile?.latitude || "24.7136"
+              ),
+              lng: parseFloat(
+                watch("longitude") || profile?.longitude || "46.6753"
+              ),
+            }}
+            className="w-full h-96"
+          />
+          <p className="text-xs text-gray-500 mt-2">
+            {t(
+              "profile.locationHelp",
+              "Pick your exact location; address fields will auto-fill."
+            )}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}

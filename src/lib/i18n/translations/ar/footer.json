@@ -1,0 +1,69 @@
+{
+  "sections": {
+    "mainNavigation": {
+      "title": "التنقل الرئيسي",
+      "links": {
+        "about": "من نحن",
+        "contact": "اتصل بنا",
+        "categories": "الفئات",
+        "brands": "العلامات التجارية",
+        "offers": "العروض"
+      }
+    },
+    "shoppingServices": {
+      "title": "التسوق والخدمات",
+      "links": {
+        "products": "المنتجات",
+        "userPricing": "تسعير المستخدم",
+        "checkout": "إتمام الشراء",
+        "favourites": "المفضلة",
+        "wishlist": "قائمة الرغبات"
+      }
+    },
+    "policies": {
+      "title": "السياسات والشروط",
+      "links": {
+        "returnExchange": "سياسة الاستبدال والاسترجاع",
+        "userAgreement": "اتفاقية المستخدم"
+      }
+    },
+    "autoPartsCategories": {
+      "title": "فئات قطع السيارات",
+      "links": {
+        "spareParts": "قطع الغيار",
+        "accessories": "الاكسسوارات",
+        "oils": "الزيوت والمواد التشحيم",
+        "carCare": "العناية بالسيارة",
+        "tiresBatteries": "الإطارات والبطاريات"
+      }
+    },
+    "contactSupport": {
+      "title": "الاتصال والدعم",
+      "email": "parts@falfuture.com",
+      "phone": "0543777569",
+      "address": "شارع الأمير محمد بن عبد العزيز، حي الفيصلية، جدة"
+    }
+  },
+  "certificates": {
+    "title": "الشهادات التجارية",
+    "commerce": {
+      "title": "شهادة السجل التجاري",
+      "tooltip": "شهادة السجل التجاري"
+    },
+    "vat": {
+      "title": "شهادة ضريبة القيمة المضافة",
+      "tooltip": "شهادة ضريبة القيمة المضافة"
+    },
+    "validate": {
+      "title": "التحقق من الأعمال",
+      "tooltip": "التحقق من الأعمال"
+    },
+    "taxNumber": "رقم السجل التجارى",
+    "bankAccount": "رقم الحساب المصرفي"
+  },
+  "paymentMethods": {
+    "title": "طرق الدفع"
+  },
+  "companyName": "فال بارتس لقطع السيارات",
+  "copyright": "جميع الحقوق محفوظة"
+}

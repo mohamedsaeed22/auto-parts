@@ -8,6 +8,7 @@ export const i18nConfig = {
   locales: ["ar", "en"],
   defaultLocale: "ar",
   prefixDefault: false,
+  localeDetector: false as const, // Disable browser language detection to always use defaultLocale
 };
 
 interface TranslationOptions {
@@ -29,7 +30,7 @@ async function initTranslations(
     i18nInstance.use(
       resourcesToBackend(
         (language: string, namespace: string) =>
-          import(`@/lib/i18n/transalations/${language}/${namespace}.json`)
+          import(`@/lib/i18n/translations/${language}/${namespace}.json`)
       )
     );
   }

@@ -1,0 +1,109 @@
+{
+  "title": "إكمال التسجيل",
+  "description": "يرجى إكمال بيانات التسجيل للوصول إلى جميع الميزات",
+  "userCode": "رمز المستخدم",
+  "basicInfo": "المعلومات الأساسية",
+  "labels": {
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "type": "النوع",
+    "managerName": "اسم المدير",
+    "address": "العنوان",
+    "city": "المدينة",
+    "zip": "الرمز البريدي",
+    "state": "المنطقة",
+    "taxNumber": "الرقم الضريبي",
+    "latitudeStatic": "خط العرض (ثابت)",
+    "longitudeStatic": "خط الطول (ثابت)",
+    "commercialRegister": "السجل التجاري",
+    "avatar": "الصورة الشخصية",
+    "selectLocation": "اختيار الموقع"
+  },
+  "placeholders": {
+    "name": "أدخل اسمك",
+    "email": "أدخل بريدك الإلكتروني (اختياري)",
+    "managerName": "أدخل اسم المدير",
+    "address": "أدخل العنوان",
+    "city": "أدخل المدينة",
+    "zip": "أدخل الرمز البريدي",
+    "state": "أدخل المنطقة",
+    "taxNumber": "أدخل الرقم الضريبي",
+    "latitude": "قيمة خط العرض الثابتة",
+    "longitude": "قيمة خط الطول الثابتة",
+    "selectType": "اختر النوع"
+  },
+  "help": {
+    "fixedLocation": "موقع ثابت: القاهرة، مصر",
+    "uploadNote": "صورة حتى 5 ميجابايت (jpeg, png, jpg)",
+    "locationRequired": "يرجى البحث واختيار موقع عملك الدقيق على الخريطة. سيساعد هذا العملاء في العثور عليك بسهولة."
+  },
+  "typeOptions": {
+    "shop": "متجر",
+    "workshop": "ورشة"
+  },
+  "uploads": {
+    "clickToSelectCR": "اضغط لاختيار السجل التجاري",
+    "clickToSelectAvatar": "اضغط لاختيار الصورة الشخصية",
+    "crPreviewAlt": "معاينة السجل التجاري",
+    "avatarPreviewAlt": "معاينة الصورة الشخصية",
+    "removeFile": "إزالة الملف",
+    "uploadCRHelp": "قم برفع مستند السجل التجاري (jpeg, png, jpg)",
+    "uploadAvatarHelp": "قم برفع صورتك الشخصية (jpeg, png, jpg)"
+  },
+  "validation": {
+    "nameRequired": "الاسم مطلوب",
+    "nameTooLong": "يجب أن يكون الاسم أقل من 100 حرف",
+    "emailInvalid": "يرجى إدخال عنوان بريد إلكتروني صحيح",
+    "managerRequired": "اسم المدير مطلوب",
+    "managerTooLong": "يجب أن يكون اسم المدير أقل من 100 حرف",
+    "addressRequired": "العنوان مطلوب",
+    "addressTooLong": "يجب أن يكون العنوان أقل من 255 حرف",
+    "cityRequired": "المدينة مطلوبة",
+    "cityTooLong": "يجب أن يكون اسم المدينة أقل من 100 حرف",
+    "zipRequired": "الرمز البريدي مطلوب",
+    "zipTooLong": "يجب أن يكون الرمز البريدي أقل من 20 حرف",
+    "stateRequired": "المنطقة مطلوبة",
+    "stateTooLong": "يجب أن يكون اسم المنطقة أقل من 100 حرف",
+    "taxRequired": "الرقم الضريبي مطلوب",
+    "taxTooLong": "يجب أن يكون الرقم الضريبي أقل من 50 حرف",
+    "typeRequired": "يجب اختيار النوع",
+    "locationRequired": "يرجى اختيار موقع على الخريطة للمتابعة",
+    "locationInvalid": "إحداثيات الموقع غير صحيحة",
+    "crRequired": "السجل التجاري مطلوب",
+    "avatarRequired": "الصورة الشخصية مطلوبة",
+    "fileType": "يجب أن يكون الملف من نوع: jpeg, png, jpg, gif, أو svg",
+    "fileSize": "يجب أن يكون حجم الملف أقل من 5 ميجابايت"
+  },
+  "actions": {
+    "submit": "إرسال التسجيل",
+    "submitting": "جاري الإرسال...",
+    "selectLocationFirst": "اختر الموقع أولاً"
+  },
+  "toasts": {
+    "registrationAlreadyCompleted": "تم إكمال التسجيل مسبقًا!",
+    "registrationCompleted": "تم إكمال التسجيل بنجاح!",
+    "registrationFailed": "فشل إكمال التسجيل. يرجى المحاولة مرة أخرى.",
+    "locationSelected": "تم اختيار الموقع بنجاح! يمكنك الآن تعديل تفاصيل العنوان إذا لزم الأمر."
+  },
+  "location": {
+    "simpleInstruction": "يرجى اختيار موقع على الخريطة أعلاه",
+    "dragMarker": "اسحب لاختيار الموقع",
+    "searchPlaceholder": "ابحث عن موقع...",
+    "useCurrentLocation": "استخدم موقعي الحالي",
+    "geolocationNotSupported": "تحديد الموقع الجغرافي غير مدعوم في هذا المتصفح.",
+    "geolocationError": "خطأ في الحصول على موقعك. يرجى المحاولة مرة أخرى.",
+    "permissionDenied": "تم رفض إذن الموقع. قم بتفعيله في إعدادات المتصفح.",
+    "permissionDeniedMobile": "تم رفض الوصول للموقع. لتفعيل الوصول للموقع، اذهب إلى إعدادات المتصفح واسمح بالموقع لهذا الموقع.",
+    "positionUnavailable": "معلومات الموقع غير متاحة. جاري المحاولة مرة أخرى...",
+    "timeout": "انتهت مهلة الحصول على موقعك. حاول مرة أخرى أو ابحث يدوياً.",
+    "insecureContext": "الموقع يتطلب HTTPS. يرجى استخدام اتصال آمن.",
+    "error": "فشل في تحميل الخريطة",
+    "apiKeyInstructions": "يرجى تكوين مفتاح Google Maps API لاستخدام ميزة الخريطة."
+  },
+  "sections": {
+    "basicInfo": "المعلومات الأساسية",
+    "addressInfo": "معلومات العنوان",
+    "documents": "المستندات المطلوبة"
+  },
+  "optional": "اختياري"
+}

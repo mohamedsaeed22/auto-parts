@@ -1,0 +1,27 @@
+{
+  "title": "Shopping Cart",
+  "empty": "Your cart is empty",
+  "continueShopping": "Continue Shopping",
+  "clearCart": "Clear Cart",
+  "subtotal": "Subtotal",
+  "discount": "Discount",
+  "total": "Total",
+  "checkout": "Proceed to Checkout",
+  "currency": "${{value}}",
+  "retry": "Try Again",
+  "errors": {
+    "loadingFailed": "Failed to load cart items",
+    "updateFailed": "Failed to update cart item",
+    "removeFailed": "Failed to remove cart item",
+    "clearFailed": "Failed to clear cart",
+    "syncFailed": "The quantity of the products has been adjusted due to their depletion from stock.",
+    "quantityUpdateFailed": "The quantity of the products has been adjusted due to their depletion from stock.",
+    "stockExceeded": "Cannot add more. Available stock: {{stock}}",
+    "outOfStock": "Out of stock"
+  },
+  "success": {
+    "updated": "Cart updated successfully",
+    "removed": "Item removed from cart",
+    "cleared": "Cart cleared successfully"
+  }
+}

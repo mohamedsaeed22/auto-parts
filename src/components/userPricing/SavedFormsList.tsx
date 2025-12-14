@@ -1,14 +1,18 @@
 import { Button } from "@/components/ui/button";
-import { Send, Package } from "lucide-react";
-import { UserPricingFormData } from "@/lib/validations/userPricingSchema";
+import { Send, Package, AlertCircle, CheckCircle, LogIn } from "lucide-react";
+import { SavedUnifiedFormData } from "@/hooks/useUnifiedPricingForm";
 import { SavedFormItem } from "./SavedFormItem";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/navigation";
+import { useLocale } from "@/hooks/useLocale";
 
 interface SavedFormsListProps {
-  savedForms: (UserPricingFormData & { id: string; submittedAt: Date })[];
+  savedForms: SavedUnifiedFormData[];
   isSendingToBackend: boolean;
   onSendAll: () => void;
   onDeleteForm: (id: string) => void;
+  isAuthenticated: boolean;
+  isRegistrationComplete: boolean;
 }
 
 export function SavedFormsList({
@@ -16,9 +20,21 @@ export function SavedFormsList({
   isSendingToBackend,
   onSendAll,
   onDeleteForm,
+  isAuthenticated,
+  isRegistrationComplete,
 }: SavedFormsListProps) {
   const { t, i18n } = useTranslation("userPricing");
+  const router = useRouter();
+  const { currentLocale } = useLocale();
   const isRTL = i18n.language === "ar";
+
+  const handleLoginClick = () => {
+    router.push(`/`);
+  };
+
+  const handleCompleteRegistrationClick = () => {
+    router.push(`/complete-registration`);
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 h-fit sticky top-16">
@@ -30,6 +46,39 @@ export function SavedFormsList({
           {savedForms.length} {t("savedForms.count")}
         </span>
       </div>
+
+      {/* Authentication Status for Backend Operations */}
+      {savedForms.length > 0 && (
+        <div>
+          {!isAuthenticated ? (
+            <div className="flex items-center gap-2 text-amber-700 bg-amber-50 border-amber-200">
+              <AlertCircle size={16} />
+              <div className="flex-1">
+                <p className="text-sm">
+                  {t("auth.status.backendLoginRequired")}
+                </p>
+              </div>
+              
+            </div>
+          ) : !isRegistrationComplete ? (
+            <div className="flex items-center gap-2 text-orange-700 bg-orange-50 border-orange-200">
+              <AlertCircle size={16} />
+              <div className="flex-1">
+                <p className="text-sm">
+                  {t("auth.status.backendCompleteRegistration")}
+                </p>
+              </div>
+              <Button
+                onClick={handleCompleteRegistrationClick}
+                size="sm"
+                className="bg-orange-600 hover:bg-orange-700 text-white text-xs px-2 py-1"
+              >
+                {t("auth.buttons.completeRegistration")}
+              </Button>
+            </div>
+          ) : null}
+        </div>
+      )}
 
       {savedForms.length === 0 ? (
         <div className="text-center py-12">
@@ -47,8 +96,12 @@ export function SavedFormsList({
           <div className="mb-6">
             <Button
               onClick={onSendAll}
-              disabled={isSendingToBackend}
-              className="w-full bg-logo-gold hover:bg-logo-gold/90 text-white py-3"
+              disabled={
+                isSendingToBackend ||
+                !isAuthenticated ||
+                !isRegistrationComplete
+              }
+              className="w-full bg-logo-gold hover:bg-logo-gold/90 text-white py-3 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSendingToBackend ? (
                 <div className="flex items-center justify-center">
@@ -61,8 +114,17 @@ export function SavedFormsList({
                 </div>
               ) : (
                 <div className="flex items-center justify-center">
-                  {t("savedForms.buttons.sendAll")}
-                  <Send className={isRTL ? "ml-2" : "mr-2"} size={18} />
+                  {isRTL ? (
+                    <>
+                      <Send className={"ml-2"} size={18} />
+                      {t("savedForms.buttons.sendAll")}
+                    </>
+                  ) : (
+                    <>
+                      {t("savedForms.buttons.sendAll")}
+                      <Send className={"ms-2"} size={18} />
+                    </>
+                  )}
                 </div>
               )}
             </Button>

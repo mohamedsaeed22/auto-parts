@@ -7,3 +7,6 @@ export type I18NConfig = {
   defaultLocale: string;
   prefixDefault: boolean;
 };
+
+// Filter types
+export * from "./filters";

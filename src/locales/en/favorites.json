@@ -1,0 +1,23 @@
+{
+  "title": "Favorites",
+  "empty": "Your favorites list is empty",
+  "continueShopping": "Continue Shopping",
+  "clearFavorites": "Clear Favorites",
+  "confirmClear": "Are you sure you want to clear your favorites?",
+  "addToCart": "Add to Cart",
+  "retry": "Retry",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page {{current}} of {{total}}",
+  "errors": {
+    "loadingFailed": "Failed to load favorites",
+    "addFailed": "Failed to add product to favorites",
+    "removeFailed": "Failed to remove product from favorites",
+    "clearFailed": "Failed to clear favorites"
+  },
+  "success": {
+    "added": "Product added to favorites successfully",
+    "removed": "Product removed from favorites successfully",
+    "cleared": "Favorites cleared successfully"
+  }
+}

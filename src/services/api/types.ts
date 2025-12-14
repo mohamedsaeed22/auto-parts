@@ -1,8 +1,8 @@
 // Base API Response Types
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   code: number;
   message: string;
-  errors: any[];
+  errors: Record<string, unknown>[] | string[];
   data: T;
 }
 
@@ -39,6 +39,7 @@ export interface CompleteRegistrationRequest {
   manager_name: string;
   address: string;
   city: string;
+  national_address: string;
   zip: string;
   state: string;
   tax_number: string;
@@ -57,6 +58,8 @@ export interface UpdateProfileRequest {
   city?: string;
   zip?: string;
   state?: string;
+  tax_number?: string;
+  commercial_register?: File;
   avatar?: File;
   latitude?: string;
   longitude?: string;
@@ -99,10 +102,32 @@ export interface User {
 }
 
 export interface AuthResponse {
-  user: User;
+  user: {
+    id: number;
+    code: string;
+    name: string | null;
+    email: string | null;
+    phone: string;
+    type: string | null;
+    manager_name: string | null;
+    address: string | null;
+    city: string | null;
+    state: string | null;
+    zip: string | null;
+    tax_number: string | null;
+    commercial_register: string | null;
+    avatar: string | null;
+    latitude: string | null;
+    longitude: string | null;
+    is_registration_complete: boolean;
+    is_google_user: boolean;
+  };
   token: string;
-  token_type: string;
+  is_registration_complete: boolean;
 }
+
+// Product Types
+// ... existing code ...
 
 // Product Types
 export interface Product {
@@ -111,6 +136,7 @@ export interface Product {
   price: string;
   discount_type: "percentage" | "fixed" | null;
   discount_amount: string | null;
+  stock: number;
   final_price: number;
   discount_info: string;
   brand: Brand | null;
@@ -137,7 +163,13 @@ export interface Product {
   description: string;
   hover_text: string;
   product_identifier: string;
+  weight: number;
+  // Add new fields for favourites and wishlist status
+  in_favorites: boolean | null;
+  in_wishlist: boolean | null;
 }
+
+// ... existing code ...
 
 // Product Details Response
 export interface ProductDetailsResponse {
@@ -181,6 +213,7 @@ export interface Brand {
   name: string;
   image?: string;
   logo?: string; // Keep for backward compatibility
+  number_of_products?: number;
   created_at?: string;
   updated_at?: string;
 }
@@ -201,9 +234,13 @@ export interface CartItem {
 }
 
 export interface Cart {
-  items: CartItem[];
+  cart_items: CartItem[];
+  items?: CartItem[]; // Legacy support
+  cart_total?: number;
+  item_count?: number;
   subtotal: number;
   discount: number;
+  delivery_amount?: number;
   total: number;
   coupon_code?: string;
 }
@@ -213,12 +250,18 @@ export interface AddToCartRequest {
   quantity: number;
 }
 
+export interface AddManyToCartRequest {
+  product_ids: number[];
+  quantities: number[];
+}
+
 export interface UpdateCartRequest {
   quantity: number;
 }
 
 export interface ApplyCouponRequest {
   coupon_code: string;
+  address_id?: number;
 }
 
 // Wishlist & Favourites Types
@@ -239,9 +282,14 @@ export interface Address {
   city: string;
   detailed_address: string;
   postal_code: string;
+  national_address: string;
   is_default: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface AddressesResponse {
+  addresses: Address[];
 }
 
 export interface CreateAddressRequest {
@@ -251,109 +299,17 @@ export interface CreateAddressRequest {
   city: string;
   detailed_address: string;
   postal_code: string;
+  national_address: string;
   is_default: boolean;
 }
 
-export interface UpdateAddressRequest extends CreateAddressRequest {}
+export type UpdateAddressRequest = CreateAddressRequest;
 
-// Order Types
-export interface Order {
-  id: number;
-  order_number: string;
-  status:
-    | "pending"
-    | "paid"
-    | "processing"
-    | "shipped"
-    | "completed"
-    | "cancelled"
-    | "refunded";
-  payment_status: "pending" | "paid" | "failed" | "refunded";
-  payment_method:
-    | "cash"
-    | "credit_card"
-    | "paypal"
-    | "stripe"
-    | "bank_transfer";
-  subtotal: number;
-  discount: number;
-  total: number;
-  notes?: string;
-  address: Address;
-  items: OrderItem[];
-  created_at: string;
-  updated_at: string;
-}
+// Order Types - REMOVED due to conflicts with ordersApi
+// These types are now defined in ordersApi.ts with the correct structure
 
-export interface OrderItem {
-  id: number;
-  product_id: number;
-  quantity: number;
-  price: number;
-  total: number;
-  product: Product;
-}
-
-export interface CreateOrderRequest {
-  payment_method:
-    | "cash"
-    | "credit_card"
-    | "paypal"
-    | "stripe"
-    | "bank_transfer";
-  address_id: number;
-  coupon_code?: string;
-  notes?: string;
-}
-
-export interface OrdersRequest {
-  status?: string;
-  payment_status?: string;
-  date_from?: string;
-  date_to?: string;
-  per_page?: number;
-  page?: number;
-  sort_by?: string;
-  sort_direction?: "asc" | "desc";
-}
-
-export interface OrderStatistics {
-  total_orders: number;
-  pending_orders: number;
-  completed_orders: number;
-  cancelled_orders: number;
-  total_amount: number;
-}
-
-// Request Types (Custom Requests)
-export interface RequestItem {
-  part_name: string;
-  quantity: number;
-  chassis_number: string;
-  part_image_path?: File;
-  order_image_path?: File;
-  form_image_path?: File;
-}
-
-export interface CustomRequest {
-  id: number;
-  status: "draft" | "pending" | "submitted" | "accepted" | "rejected";
-  items: RequestItem[];
-  created_at: string;
-  updated_at: string;
-}
-
-export interface CreateRequestRequest {
-  items: RequestItem[];
-}
-
-export interface RequestsRequest {
-  status?: "draft" | "pending" | "submitted" | "accepted" | "rejected";
-  date_from?: string;
-  date_to?: string;
-  per_page?: number;
-  page?: number;
-}
+// Request Types (Custom Requests) - REMOVED due to conflicts with requestsApi
+// These types are now defined in requestsApi.ts with the correct structure
 
 // Banner & Offer Types
 export interface Banner {
@@ -376,7 +332,7 @@ export interface Section {
   id: number;
   title: string;
   type: string;
-  content: any;
+  content: unknown;
   is_active: boolean;
   order: number;
   created_at: string;
@@ -384,6 +340,61 @@ export interface Section {
 }
 
 // Settings Types
+export interface CompanyInfo {
+  name: string;
+  description: string;
+  logo: string;
+  email: string;
+  phone: string;
+  address: string;
+  website: string | null;
+}
+
+export interface SupportInfo {
+  email: string | null;
+  phone: string | null;
+}
+
+export interface SocialMedia {
+  facebook: string | null;
+  twitter: string | null;
+  instagram: string | null;
+  linkedin: string | null;
+}
+
+export interface CompanySettings {
+  company_info: CompanyInfo;
+  support_info: SupportInfo;
+  social_media: SocialMedia;
+  charge_info: ChargeInfo;
+  points_settings: PointsSettings;
+  delivery_amount: string;
+}
+
+export interface ChargeInfo {
+  company: string | null;
+  city: string | null;
+  address: string | null;
+  phone: string | null;
+}
+
+export interface PointsSettings {
+  exchange_rate: string;
+  request_order_points: number;
+  points_per_currency: number;
+}
+
+export interface LegalPages {
+  terms_of_service: string;
+  privacy_policy: string;
+  refund_policy: string;
+  shipping_policy: string;
+}
+
+export interface LegalPageContent {
+  content: string;
+}
+
 export interface AppSettings {
   app_name: string;
   app_version: string;
@@ -411,4 +422,54 @@ export interface Partner {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+}
+
+// Points Types
+export interface PointTransaction {
+  id: number;
+  points: number;
+  reason: string;
+  formatted_date: string;
+}
+
+export interface PointsResponse {
+  items: PointTransaction[];
+  pagination: {
+    total: number;
+    per_page: number;
+    current_page: number;
+    last_page: number;
+    from: number;
+    to: number;
+  };
+}
+
+// Registration Incomplete Error Response
+export interface RegistrationIncompleteError {
+  code: 403;
+  message: string;
+  errors: string[];
+  data: {
+    is_registration_complete: false;
+    user: {
+      id: number;
+      code: string;
+      name: string | null;
+      email: string | null;
+      phone: string;
+      type: string | null;
+      manager_name: string | null;
+      address: string | null;
+      city: string | null;
+      state: string | null;
+      zip: string | null;
+      tax_number: string | null;
+      commercial_register: string | null;
+      avatar: string | null;
+      latitude: string | null;
+      longitude: string | null;
+      is_registration_complete: false;
+      is_google_user: boolean;
+    };
+  };
 }

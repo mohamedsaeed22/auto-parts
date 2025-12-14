@@ -1,0 +1,81 @@
+{
+  "currency": "{{value}} ر.س",
+  "addToCart": "أضف إلى السلة",
+  "outOfStock": "نفذ من المخزن",
+  "filters": {
+    "title": "التصفية",
+    "searchPlaceholder": "البحث عن المنتجات...",
+    "sortBy": "ترتيب حسب",
+    "sortOptions": {
+      "newest": "الأحدث",
+      "priceAsc": "السعر: من الأقل إلى الأعلى",
+      "priceDesc": "السعر: من الأعلى إلى الأقل",
+      "rating": "التقييم"
+    },
+    "category": "الفئة",
+    "allCategories": "جميع الفئات",
+    "brand": "العلامة التجارية",
+    "allBrands": "جميع العلامات التجارية",
+    "priceRange": "نطاق السعر",
+    "reset": "إعادة تعيين التصفية"
+  },
+  "details": {
+    "specifications": "المواصفات",
+    "description": "الوصف",
+    "reviews": "التقييمات",
+    "relatedProducts": "منتجات ذات صلة",
+    "quantity": "الكمية",
+    "inStock": "متوفر في المخزن",
+    "outOfStock": "نفذ من المخزن",
+    "addToCart": "أضف إلى السلة",
+    "addToWishlist": "أضف إلى قائمة الرغبات",
+    "removeFromWishlist": "إزالة من قائمة الرغبات"
+  },
+  "reviews": {
+    "title": "تقييمات العملاء",
+    "writeReview": "اكتب تقييماً",
+    "rating": "التقييم",
+    "comment": "تقييمك",
+    "submit": "إرسال التقييم",
+    "noReviews": "لا توجد تقييمات حتى الآن",
+    "verified": "شراء موثق",
+    "helpful": "مفيد؟",
+    "reportAbuse": "الإبلاغ عن إساءة"
+  },
+  "categories": {
+    "all": "جميع الفئات",
+    "featured": "الفئات المميزة",
+    "popular": "الفئات الشائعة",
+    "viewAll": "عرض جميع الفئات"
+  },
+  "brands": {
+    "all": "جميع العلامات التجارية",
+    "featured": "العلامات التجارية المميزة",
+    "popular": "العلامات التجارية الشائعة",
+    "viewAll": "عرض جميع العلامات التجارية"
+  },
+  "errors": {
+    "loadingFailed": "فشل تحميل المنتجات",
+    "addToCartFailed": "فشل إضافة المنتج إلى السلة",
+    "toggleFavoriteFailed": "فشل تحديث حالة المفضلة",
+    "toggleWishlistFailed": "فشل تحديث قائمة الرغبات",
+    "reviewSubmitFailed": "فشل إرسال التقييم"
+  },
+  "success": {
+    "addedToCart": "تمت إضافة المنتج إلى السلة",
+    "addedToWishlist": "تمت إضافة المنتج إلى قائمة الرغبات",
+    "removedFromWishlist": "تمت إزالة المنتج من قائمة الرغبات",
+    "reviewSubmitted": "تم إرسال التقييم بنجاح"
+  },
+  "ourProducts": "مجموعتنا المميزة من قطع غيار السيارات",
+  "productsDescription": "استكشف كتالوجنا الواسع من قطع غيار السيارات الأصلية والإكسسوارات والمكونات. جودة مضمونة لجميع ماركات وموديلات المركبات مع أسعار تنافسية وتوصيل سريع.",
+  "noProductsAvailable": "لا توجد منتجات متاحة حالياً. يرجى المحاولة لاحقاً أو الاتصال بنا للمساعدة.",
+  "errorLoadingProducts": "غير قادر على تحميل المنتجات",
+  "errorLoadingProductsDesc": "واجهنا مشكلة أثناء تحميل كتالوج المنتجات. يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى.",
+  "tryAgain": "إعادة المحاولة",
+  "showingResults": "عرض {{start}} إلى {{end}} من {{total}} نتيجة",
+  "shareSuccess": "تم مشاركة المنتج بنجاح!",
+  "linkCopied": "تم نسخ الرابط إلى الحافظة!",
+  "shareError": "فشل في مشاركة أو نسخ الرابط",
+  "priceIncludesVat": "(السعر يشمل ضريبة القيمة المضافة)"
+}

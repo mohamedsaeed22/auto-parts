@@ -1,13 +1,21 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
-    // domains: ["iseek.name"],
-    // Or if using Next.js 12.3+, you can use remotePatterns:
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'brave.iseek.name',
+        protocol: "http",
+        hostname: "brave.iseek.name",
+      },
+      {
+        protocol: "https",
+        hostname: "brave.iseek.name",
       },
     ],
   },

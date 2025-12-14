@@ -9,8 +9,7 @@ const ACCEPTED_IMAGE_TYPES = [
   "image/gif",
 ];
 
-// Common phone number validation pattern
-const phonePattern = /^[0-9+\-\s()]+$/;
+// Phone number validation removed - now optional
 
 // Document image validation schema
 const documentImageSchema = z
@@ -37,12 +36,18 @@ const locationSchema = z.object({
   formattedAddress: z.string().min(1, "validation.location.formattedAddress"),
 });
 
-// Login schema (phone number only)
+// Login schema (phone number: Saudi format - 0550123456, 966501234568, or 0501234568)
 export const loginSchema = z.object({
   phoneNumber: z
-    .string()
-    .min(1, "validation.phone.required")
-    .regex(phonePattern, "validation.phone.invalid"),
+    .string({ message: "validation.phone.required" })
+    .min(10, "validation.phone.length")
+    .max(14, "validation.phone.length")
+    .regex(/^(\+966|00966|966|0)?[5][0-9]{8}$/, "validation.phone.invalid")
+    .refine((val) => {
+      // More specific Saudi phone validation
+      const cleanPhone = val.replace(/^(\+966|00966|966)/, "0");
+      return /^0[5][0-9]{8}$/.test(cleanPhone);
+    }, "validation.phone.invalid"),
 });
 
 // Registration schema
@@ -72,10 +77,7 @@ export const registrationSchema = z.object({
     .regex(/^[0-9]+$/, "validation.taxCardNumber.invalid")
     .min(6, "validation.taxCardNumber.minLength")
     .max(20, "validation.taxCardNumber.maxLength"),
-  phoneNumber: z
-    .string()
-    .min(1, "validation.phone.required")
-    .regex(phonePattern, "validation.phone.invalid"),
+  phoneNumber: z.string().optional(),
   // Google Maps location data
   location: locationSchema,
   documentImage: documentImageSchema,
@@ -85,9 +87,9 @@ export const registrationSchema = z.object({
 export const otpSchema = z.object({
   otp: z
     .string()
-    .min(6, "validation.otp.length")
-    .max(6, "validation.otp.length")
-    .regex(/^[0-9]{6}$/, "validation.otp.invalid"),
+    .min(4, "validation.otp.length")
+    .max(4, "validation.otp.length")
+    .regex(/^[0-9]{4}$/, "validation.otp.invalid"),
 });
 
 // Type exports
@@ -123,13 +125,10 @@ export const registrationDefaultValues: Partial<RegistrationFormData> = {
 };
 
 export const otpDefaultValues: Partial<OtpFormData> = {
-  otp: "",
+  otp: "1000",
 };
 
-// Validation utilities
-export const validatePhoneNumber = (phoneNumber: string): boolean => {
-  return phonePattern.test(phoneNumber) && phoneNumber.length > 0;
-};
+// Validation utilities - removed phone validation since it's optional now
 
 export const validateImageFile = (
   file: File

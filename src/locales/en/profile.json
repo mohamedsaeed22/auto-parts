@@ -1,0 +1,138 @@
+{
+  "title": "Profile",
+  "personalInfo": "Personal Information",
+  "security": "Security",
+  "name": "Name",
+  "email": "Email",
+  "phone": "Phone",
+  "currentPassword": "Current Password",
+  "newPassword": "New Password",
+  "confirmPassword": "Confirm Password",
+  "uploadAvatar": "Upload Avatar",
+  "saveChanges": "Save Changes",
+  "updatePassword": "Update Password",
+  "edit": "Edit",
+  "save": "Save",
+  "cancel": "Cancel",
+  "userCode": "User Code",
+  "noEmail": "No email",
+  "type": "Type",
+  "shop": "Shop",
+  "workshop": "Workshop",
+  "managerName": "Manager Name",
+  "address": "Address",
+  "city": "City",
+  "state": "State",
+  "zip": "ZIP Code",
+  "taxNumber": "Tax Number",
+  "latitude": "Latitude",
+  "longitude": "Longitude",
+  "commercialRegister": "Commercial Register",
+  "selectedFile": "Selected",
+  "currentFile": "Current",
+  "language": "Language",
+  "registrationComplete": "Registration Complete",
+  "registrationIncomplete": "Registration Incomplete",
+  "googleUser": "Google User",
+  "regularUser": "Regular User",
+  "errors": {
+    "loadingFailed": "Failed to load profile",
+    "updateFailed": "Failed to update profile",
+    "passwordUpdateFailed": "Failed to update password",
+    "avatarDeleteFailed": "Failed to delete avatar"
+  },
+  "success": {
+    "updated": "Profile updated successfully",
+    "passwordUpdated": "Password updated successfully",
+    "avatarDeleted": "Avatar deleted successfully"
+  },
+  "validation": {
+    "nameRequired": "Name is required",
+    "nameMin": "Name must be at least 3 characters",
+    "nameMax": "Name must be less than 255 characters",
+    "phoneMin": "Phone must be at least 10 characters",
+    "phoneMax": "Phone must be less than 20 characters",
+    "currentPasswordRequired": "Current password is required",
+    "currentPasswordMin": "Current password must be at least 8 characters",
+    "newPasswordRequired": "New password is required",
+    "newPasswordMin": "New password must be at least 8 characters",
+    "passwordsDoNotMatch": "Passwords do not match"
+  },
+  "sidebar": {
+    "profile": "Profile",
+    "addresses": "Addresses",
+    "orders": "Orders",
+    "requests": "Requests",
+    "settings": "Settings"
+  },
+  "requests": {
+    "title": "Requests",
+    "create": "Create Request",
+    "id": "ID",
+    "createdAt": "Created",
+    "submittedAt": "Submitted",
+    "totalPrice": "Total Price",
+    "workshopCode": "Workshop Code",
+    "status": {
+      "draft": "Draft",
+      "pending": "Pending",
+      "submitted": "Submitted",
+      "accepted": "Accepted",
+      "rejected": "Rejected",
+      "completed": "Completed"
+    },
+    "filters": {
+      "title": "Filters",
+      "status": "Status",
+      "allStatuses": "All Statuses",
+      "dateFrom": "Date From",
+      "dateTo": "Date To",
+      "perPage": "Per Page",
+      "clear": "Clear Filters"
+    },
+    "items": {
+      "title": "Request Items",
+      "itemNumber": "Item",
+      "quantity": "Qty",
+      "unitPrice": "Unit Price",
+      "created": "Created",
+      "chassisNumber": "Chassis Number",
+      "attachments": "Attachments",
+      "partImage": "Part",
+      "orderImage": "Order",
+      "formImage": "Form"
+    },
+    "actions": {
+      "reject": "Reject",
+      "accept": "Accept"
+    },
+    "adminPricing": {
+      "title": "Admin has priced your request",
+      "description": "Please review and accept or reject the pricing"
+    },
+    "priceSummary": {
+      "title": "Price Summary",
+      "description": "Total calculated by admin",
+      "total": "Total Amount"
+    },
+    "registrationRequired": {
+      "title": "Complete Registration Required",
+      "description": "To access your requests, please complete your registration first.",
+      "button": "Complete Registration"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "showing": "Showing {{from}}-{{to}} of {{total}} results"
+    },
+    "error": {
+      "title": "Error Loading Requests",
+      "description": "Failed to load requests. Please try again.",
+      "retry": "Retry"
+    },
+    "empty": {
+      "title": "No Requests Found",
+      "description": "No requests match your current filters."
+    }
+  }
+}

@@ -1,0 +1,500 @@
+"use client";
+
+import React, { useState, use as usePromise } from "react";
+import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
+import Image from "next/image";
+import { useGetCategoriesQuery } from "@/services/api/categoriesApi";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
+import { SEOMetadata } from "@/components/seo/SEOMetadata";
+import { StructuredData } from "@/components/seo/StructuredData";
+import { seoConfig } from "@/lib/seo/config";
+import {
+  ArrowLeft,
+  Package,
+  Search,
+  Grid3X3,
+  List,
+  ChevronRight,
+  Star,
+  Zap,
+  Shield,
+  Clock,
+  Grid,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { LoadingSpinner, ErrorMessage } from "@/components/ui";
+
+// Types
+interface Category {
+  id: number;
+  name: string;
+  image: string;
+  children?: Category[];
+}
+
+// Category Card Component
+const CategoryCard = ({
+  category,
+  isRTL,
+  t,
+  onCategoryClick,
+  viewMode,
+}: {
+  category: Category;
+  isRTL: boolean;
+  t: (key: string) => string;
+  onCategoryClick: (categoryId: number) => void;
+  viewMode: "grid" | "list";
+}) => {
+  const [imageError, setImageError] = React.useState(false);
+  const [retryCount, setRetryCount] = React.useState(0);
+  const maxRetries = 3;
+
+  const handleImageError = () => {
+    if (retryCount < maxRetries) {
+      setRetryCount((prev) => prev + 1);
+      setTimeout(() => {
+        setImageError(false);
+      }, 1000);
+    } else {
+      setImageError(true);
+    }
+  };
+
+  const fallbackImage =
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='16' fill='%236b7280'%3ENo Image%3C/text%3E%3C/svg%3E";
+
+  if (viewMode === "list") {
+    return (
+      <Card
+        className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/30"
+        onClick={() => onCategoryClick(category.id)}
+      >
+        <CardContent className="p-6">
+          <div className="flex items-center gap-6">
+            {/* Category Image */}
+            <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg">
+              <Image
+                src={imageError ? fallbackImage : category.image}
+                alt={category.name}
+                fill
+                className="object-cover group-hover:scale-110 transition-transform duration-300"
+                onError={handleImageError}
+              />
+            </div>
+
+            {/* Category Info */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-xl font-semibold text-gray-900 group-hover:text-primary transition-colors truncate">
+                  {category.name}
+                </h3>
+                <ChevronRight
+                  size={20}
+                  className={`text-gray-400 group-hover:text-primary transition-colors flex-shrink-0 ${
+                    isRTL ? "rotate-180" : ""
+                  }`}
+                />
+              </div>
+
+              {/* Subcategories */}
+              {category.children && category.children.length > 0 && (
+                <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
+                  <Package size={16} className="text-primary" />
+                  <span>
+                    {category.children.length}{" "}
+                    {t("categoryFeatures.subcategories")}
+                  </span>
+                </div>
+              )}
+
+              {/* Features */}
+              <div className="flex items-center gap-4 text-xs text-gray-500">
+                <div className="flex items-center gap-1">
+                  <Star size={12} className="text-yellow-500" />
+                  <span>{t("categoryFeatures.quality")}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Zap size={12} className="text-primary" />
+                  <span>{t("categoryFeatures.fast")}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Shield size={12} className="text-green-500" />
+                  <span>{t("categoryFeatures.reliable")}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card
+      className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/30 overflow-hidden"
+      onClick={() => onCategoryClick(category.id)}
+    >
+      <CardContent className="p-0">
+        <div className="relative">
+          {/* Category Image */}
+          <div className="relative h-48 w-full overflow-hidden">
+            <Image
+              src={imageError ? fallbackImage : category.image}
+              alt={category.name}
+              fill
+              className="object-cover group-hover:scale-110 transition-transform duration-300"
+              onError={handleImageError}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          </div>
+
+          {/* Category Info */}
+          <div className="p-4">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-lg font-semibold text-gray-900 group-hover:text-primary transition-colors">
+                {category.name}
+              </h3>
+              <ChevronRight
+                size={20}
+                className={`text-gray-400 group-hover:text-primary transition-colors ${
+                  isRTL ? "rotate-180" : ""
+                }`}
+              />
+            </div>
+
+            {/* Subcategories Count */}
+            {category.children && category.children.length > 0 && (
+              <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
+                <Package size={16} className="text-primary" />
+                <span>
+                  {category.children.length}{" "}
+                  {t("categoryFeatures.subcategories")}
+                </span>
+              </div>
+            )}
+
+            {/* Features */}
+            <div className="flex items-center gap-4 text-xs text-gray-500">
+              <div className="flex items-center gap-1">
+                <Star size={12} className="text-yellow-500" />
+                <span>{t("categoryFeatures.quality")}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Zap size={12} className="text-primary" />
+                <span>{t("categoryFeatures.fast")}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+// Hero Section Component
+const HeroSection = ({ t }: { t: (key: string) => string }) => (
+  // Replace your hero section categories with this brand-style layout
+
+  <div className="bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-white py-16">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="text-center">
+        <div className="flex items-center justify-center gap-2 md:gap-3 mb-4 flex-wrap">
+          <Package className="h-6 w-6 md:h-8 md:w-8 text-white/70" />
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">
+            {t("hero.title")}
+          </h1>
+          <Grid className="h-6 w-6 md:h-8 md:w-8 text-white/70" />
+        </div>
+        <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/80 max-w-3xl mx-auto mb-6">
+          {t("hero.subtitle")}
+        </p>
+        <div className="flex items-center justify-center gap-3 md:gap-6 text-white/70 flex-wrap">
+          <div className="flex items-center gap-2">
+            <Package className="h-5 w-5" />
+            <span>{t("hero.categories")}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Shield className="h-5 w-5" />
+            <span>{t("hero.quality")}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Clock className="h-5 w-5" />
+            <span>{t("hero.fast")}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// Search and Filter Component
+const SearchAndFilter = ({
+  t,
+  searchQuery,
+  onSearchChange,
+  viewMode,
+  onViewModeChange,
+}: {
+  t: (key: string) => string;
+  searchQuery: string;
+  onSearchChange: (value: string) => void;
+  viewMode: "grid" | "list";
+  onViewModeChange: (mode: "grid" | "list") => void;
+}) => (
+  <div className="bg-white border-b border-gray-200 py-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+        {/* Search */}
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input
+            type="text"
+            placeholder={t("search.placeholder")}
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+
+        {/* View Mode Toggle */}
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-600">{t("viewMode")}:</span>
+          <div className="flex border border-gray-300 rounded-lg overflow-hidden">
+            <button
+              onClick={() => onViewModeChange("grid")}
+              className={`p-2 ${
+                viewMode === "grid"
+                  ? "bg-primary text-white"
+                  : "bg-white text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              <Grid3X3 size={16} />
+            </button>
+            <button
+              onClick={() => onViewModeChange("list")}
+              className={`p-2 ${
+                viewMode === "list"
+                  ? "bg-primary text-white"
+                  : "bg-white text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              <List size={16} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+export default function CategoriesPage({
+  params,
+}: {
+  params: Promise<{ locale: string }> | { locale: string };
+}) {
+  // Unwrap params if it's a Promise (Next.js 15+)
+  const { locale } =
+    typeof (params as any)?.then === "function"
+      ? usePromise(params as Promise<{ locale: string }>)
+      : (params as { locale: string });
+  const router = useRouter();
+  const { t, i18n } = useTranslation("categories");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const isRTL = i18n.language === "ar";
+  const direction = isRTL ? "rtl" : "ltr";
+
+  useScrollToTop();
+
+  const {
+    data: categoriesResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useGetCategoriesQuery({
+    level: 1,
+    perPage: 50,
+    with_children: true,
+  });
+
+  const categories = categoriesResponse?.data?.categories || [];
+
+  // Filter categories based on search query
+  const filteredCategories = categories.filter(
+    (category: Category) =>
+      category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (category.children &&
+        category.children.some((child: Category) =>
+          child.name.toLowerCase().includes(searchQuery.toLowerCase())
+        ))
+  );
+
+  const handleGoBack = () => {
+    router.push("/");
+  };
+
+  const handleCategoryClick = (categoryId: number) => {
+    router.push(`/categories/${categoryId}`);
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+  };
+
+  const handleViewModeChange = (mode: "grid" | "list") => {
+    setViewMode(mode);
+  };
+
+  return (
+    <div dir={direction}>
+      {(() => {
+        const catSEO =
+          seoConfig?.pages?.categories ??
+          ({
+            title: { en: "Categories" },
+            description: { en: "Explore categories" },
+            keywords: { en: "categories" },
+          } as any);
+        const title =
+          catSEO.title?.[locale as keyof typeof catSEO.title] ??
+          catSEO.title?.en ??
+          "Categories";
+        const description =
+          catSEO.description?.[locale as keyof typeof catSEO.description] ??
+          catSEO.description?.en ??
+          "";
+        const keywords =
+          catSEO.keywords?.[locale as keyof typeof catSEO.keywords] ??
+          catSEO.keywords?.en ??
+          "";
+        return (
+          <SEOMetadata
+            title={title}
+            description={description}
+            keywords={keywords}
+            locale={locale}
+            type="website"
+          />
+        );
+      })()}
+      <StructuredData
+        type="category"
+        data={(() => {
+          const catSEO =
+            seoConfig?.pages?.categories ??
+            ({
+              title: { en: "Categories" },
+              description: { en: "Explore categories" },
+            } as any);
+          const name =
+            catSEO.title?.[locale as keyof typeof catSEO.title] ??
+            catSEO.title?.en ??
+            "Categories";
+          const description =
+            catSEO.description?.[locale as keyof typeof catSEO.description] ??
+            catSEO.description?.en ??
+            "";
+          return {
+            name,
+            description,
+            url: `${seoConfig.siteUrl}/${locale}/categories`,
+          };
+        })()}
+        locale={locale}
+      />
+      <HeroSection t={t} />
+
+      <SearchAndFilter
+        t={t}
+        searchQuery={searchQuery}
+        onSearchChange={handleSearchChange}
+        viewMode={viewMode}
+        onViewModeChange={handleViewModeChange}
+      />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Breadcrumb */}
+        <nav
+          className={`flex items-center gap-2 text-sm text-gray-500 mb-8 ${
+            isRTL ? "flex-row" : ""
+          }`}
+        >
+          <button
+            onClick={handleGoBack}
+            className={`flex items-center gap-1 hover:text-gray-700 transition-colors ${
+              isRTL ? "flex-row" : ""
+            }`}
+          >
+            <ArrowLeft
+              size={16}
+              className={isRTL ? "transform rotate-180" : ""}
+            />
+            <span>{t("backButton") || "Back"}</span>
+          </button>
+          <span>/</span>
+          <span className="text-gray-900">{t("categories")}</span>
+        </nav>
+
+        {/* Categories Count */}
+        <div className={`mb-8 ${isRTL ? "text-right" : "text-left"}`}>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            {t("foundCategories")}
+          </h2>
+          <p className="text-gray-600">
+            {t("categoriesCount", { count: filteredCategories.length })}
+          </p>
+        </div>
+
+        {/* Categories Content */}
+        {isLoading ? (
+          <LoadingSpinner
+            message={t("loadingCategories") || "Loading categories..."}
+          />
+        ) : error ? (
+          <ErrorMessage
+            message={t("failedToLoadCategories") || "Failed to load categories"}
+            onRetry={() => refetch()}
+          />
+        ) : filteredCategories.length === 0 ? (
+          <div className="text-center py-12">
+            <Package className="mx-auto h-16 w-16 text-gray-300 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-600 mb-2">
+              {searchQuery ? t("noResults") : t("noCategories")}
+            </h3>
+            <p className="text-gray-500 mb-6">
+              {searchQuery ? t("noResultsDesc") : t("noCategoriesDesc")}
+            </p>
+            {searchQuery && (
+              <Button onClick={() => setSearchQuery("")} variant="outline">
+                {t("clearSearch")}
+              </Button>
+            )}
+          </div>
+        ) : (
+          <div
+            className={
+              viewMode === "grid"
+                ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                : "space-y-4"
+            }
+          >
+            {filteredCategories.map((category: Category) => (
+              <CategoryCard
+                key={category.id}
+                category={category}
+                isRTL={isRTL}
+                t={t}
+                onCategoryClick={handleCategoryClick}
+                viewMode={viewMode}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

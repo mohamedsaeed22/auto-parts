@@ -1,0 +1,976 @@
+"use client";
+
+import { useState, useEffect, useRef, useMemo } from "react";
+import { Button } from "@/components/ui/button";
+import { useCompleteRegistrationMutation } from "@/services/api";
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
+import { useLocale } from "@/hooks/useLocale";
+import { useTranslation } from "react-i18next";
+import { useRegistrationStatus } from "@/hooks/useRegistrationStatus";
+import { showSuccess, showError } from "@/lib/toast";
+import { User, Mail, Building, MapPin, Hash, FileText } from "lucide-react";
+import { storage } from "@/lib/storage";
+import { CartSyncService } from "@/services/cartSyncService";
+import FormInput from "@/components/ui/FormInput";
+import { LoadingSpinner } from "@/components/ui";
+import FormSelect from "@/components/ui/FormSelect";
+import LocationPicker from "@/components/LocationPicker";
+import type { LocationData } from "@/components/LocationPicker";
+import Image from "next/image";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  registrationSchema,
+  type RegistrationFormData,
+} from "@/lib/validations/registrationSchema";
+import { SearchableSelect } from "@/components/ui/SearchableSelect";
+import { useGetCitiesQuery, type City } from "@/services/api/citiesApi";
+
+export default function CompleteRegistrationPage() {
+  // ALL HOOKS MUST BE CALLED FIRST - before any early returns
+  const [completeRegistration, { isLoading }] =
+    useCompleteRegistrationMutation();
+  const { authData } = useAuth();
+  const router = useRouter();
+  const { currentLocale } = useLocale();
+  const { clearRegistrationIncomplete } = useRegistrationStatus();
+  const { t, i18n } = useTranslation("registration");
+  const isRTL = i18n.language === "ar";
+
+  // React Hook Form setup
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    watch,
+    formState: { errors },
+    clearErrors,
+  } = useForm<RegistrationFormData>({
+    resolver: zodResolver(registrationSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      type: undefined,
+      manager_name: "",
+      address: "",
+      city: "",
+      national_address: "",
+      zip: "",
+      state: "",
+      tax_number: "",
+      latitude: "",
+      longitude: "",
+    },
+  });
+
+  // Fetch cities based on current language
+  const { data: citiesResponse } = useGetCitiesQuery(i18n.language);
+
+  // Transform cities to options format
+  const cityOptions = useMemo(() => {
+    const cities = citiesResponse?.data?.cities || [];
+    return cities.map((city: City) => ({
+      value: city.key, // English key for backend
+      label: city.value, // Translated name for display
+      searchText: city.key, // Allow searching by English name too
+    }));
+  }, [citiesResponse]);
+
+  // Watch latitude and longitude to determine if location is selected
+  const latitude = watch("latitude");
+  const longitude = watch("longitude");
+  const isLocationSelected = Boolean(latitude && longitude);
+  const hasLocationError = Boolean(errors.latitude || errors.longitude);
+
+  // State for file uploads and previews
+  const [commercialRegisterPreview, setCommercialRegisterPreview] = useState<
+    string | null
+  >(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
+  // State for API errors
+  const [apiErrors, setApiErrors] = useState<
+    Array<{ key: string; value: string[] }>
+  >([]);
+
+  // Debug: Log apiErrors changes
+  console.log("Current apiErrors state:", apiErrors);
+
+  // Check if user has already completed registration
+  const hasRedirectedRef = useRef(false);
+  const isCompletingRegistrationRef = useRef(false);
+
+  // Handle location selection from the map
+  const handleLocationSelect = (locationData: LocationData) => {
+    // Store coordinates (required)
+    setValue("latitude", locationData.lat.toString());
+    setValue("longitude", locationData.lng.toString());
+
+    // Auto-fill other fields if available, but allow user to edit
+    if (locationData.address) setValue("address", locationData.address);
+    if (locationData.city) setValue("city", locationData.city);
+    if (locationData.state) setValue("state", locationData.state);
+    if (locationData.postal_code) setValue("zip", locationData.postal_code);
+
+    // Clear location-related errors
+    clearErrors(["latitude", "longitude", "address", "city", "state", "zip"]);
+
+    // Show success message
+    const locationMessage = isRTL
+      ? "تم اختيار الموقع بنجاح! يمكنك الآن تعديل تفاصيل العنوان إذا لزم الأمر."
+      : "Location selected successfully! You can now edit the address details if needed.";
+    showSuccess(locationMessage);
+  };
+
+  useEffect(() => {
+    // Check if user is not authenticated at all
+    if (!storage.isAuthenticated() && !hasRedirectedRef.current) {
+      hasRedirectedRef.current = true;
+      router.push(`/`);
+      return;
+    }
+
+    // Check if user has already completed registration
+    // But skip this check if we're currently in the process of completing registration
+    if (
+      authData &&
+      authData.user?.is_registration_complete &&
+      !hasRedirectedRef.current &&
+      !isCompletingRegistrationRef.current
+    ) {
+      hasRedirectedRef.current = true;
+
+      // Show "already completed" message when user tries to access the page again
+      const message = isRTL
+        ? "تم إكمال التسجيل مسبقًا!"
+        : "Registration already completed!";
+      showSuccess(message);
+
+      router.push(`/`);
+      return;
+    }
+  }, [authData, currentLocale, router, t, isRTL]);
+
+  // File validation function
+  const validateFile = (file: File): string | null => {
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/gif",
+      "image/svg+xml",
+    ];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+
+    if (!allowedTypes.includes(file.type)) {
+      return t("validation.fileType");
+    }
+
+    if (file.size > maxSize) {
+      return t("validation.fileSize");
+    }
+
+    return null;
+  };
+
+  // Handle file changes
+  const handleFileChange = (
+    file: File | undefined,
+    fieldName: "commercial_register" | "avatar"
+  ) => {
+    if (fieldName === "commercial_register") {
+      if (file) {
+        // Validate file
+        const validationError = validateFile(file);
+        if (validationError) {
+          return;
+        }
+        setValue("commercial_register", file);
+        // Create preview for image files
+        const reader = new FileReader();
+        reader.onload = (e) =>
+          setCommercialRegisterPreview(e.target?.result as string);
+        reader.readAsDataURL(file);
+      } else {
+        setValue(
+          "commercial_register",
+          undefined as unknown as RegistrationFormData["commercial_register"]
+        );
+        setCommercialRegisterPreview(null);
+      }
+    } else if (fieldName === "avatar") {
+      if (file) {
+        // Validate file
+        const validationError = validateFile(file);
+        if (validationError) {
+          return;
+        }
+        setValue("avatar", file);
+        const reader = new FileReader();
+        reader.onload = (e) => setAvatarPreview(e.target?.result as string);
+        reader.readAsDataURL(file);
+      } else {
+        setValue(
+          "avatar",
+          undefined as unknown as RegistrationFormData["avatar"]
+        );
+        setAvatarPreview(null);
+      }
+    }
+  };
+
+  const handleRemoveFile = (fieldName: "commercial_register" | "avatar") => {
+    if (fieldName === "commercial_register") {
+      setValue(
+        "commercial_register",
+        undefined as unknown as RegistrationFormData["commercial_register"]
+      );
+      setCommercialRegisterPreview(null);
+    } else if (fieldName === "avatar") {
+      setValue(
+        "avatar",
+        undefined as unknown as RegistrationFormData["avatar"]
+      );
+      setAvatarPreview(null);
+    }
+  };
+
+  // Validate location before submission
+  const validateLocationAndSubmit = async (data: RegistrationFormData) => {
+    // Check if location is selected
+    if (!data.latitude || !data.longitude) {
+      const message = isRTL
+        ? "يرجى تحديد موقع على الخريطة"
+        : "Please select a location on the map";
+      showError(message);
+      const locationSection = document.querySelector(".bg-logo-gold\\/5");
+      if (locationSection) {
+        locationSection.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      return;
+    }
+
+    onSubmit(data);
+  };
+
+  // Handle form submission
+  const onSubmit = async (data: RegistrationFormData) => {
+    try {
+      // Mark that we're currently completing registration to prevent the useEffect from triggering
+      isCompletingRegistrationRef.current = true;
+
+      // Clear any previous errors
+      setApiErrors([]);
+
+      // Send the request to the API - the API mutation will handle FormData creation
+      console.log("About to call completeRegistration mutation");
+      const mutationResult = await completeRegistration(data);
+      console.log("Mutation result:", mutationResult);
+
+      // Check if there's an error in the mutation result
+      if ("error" in mutationResult) {
+        console.log("Mutation returned an error:", mutationResult.error);
+        throw mutationResult.error;
+      }
+
+      const result = mutationResult.data;
+
+      if (result && result.data) {
+        // Update only the user data while preserving the existing token
+        const baseUser: Record<string, unknown> =
+          result.data &&
+          typeof result.data.user === "object" &&
+          result.data.user !== null
+            ? (result.data.user as Record<string, unknown>)
+            : {};
+
+        let pointsValue = 0;
+        const maybePoints = baseUser["points"];
+        if (typeof maybePoints === "number") {
+          pointsValue = maybePoints;
+        }
+
+        const updatedUser = Object.assign({}, baseUser, {
+          is_registration_complete: true,
+          points: pointsValue,
+        }) as Record<string, unknown>;
+
+        // Update only the user data, don't replace the entire auth structure
+        // Fall back to existing user object shape if necessary
+        const currentUser = (authData?.user ?? {}) as unknown as Record<
+          string,
+          unknown
+        >;
+        const mergedUser = Object.assign({}, currentUser, updatedUser);
+        storage.updateUser(mergedUser as NonNullable<typeof authData>["user"]);
+
+        // Sync local cart to API now that registration is complete
+        try {
+          await CartSyncService.handleRegistrationComplete();
+          // Optional: let listeners refresh cart state
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent("cartSyncComplete"));
+          }, 100);
+        } catch (syncError) {
+          console.error(
+            "Cart sync after registration completion failed:",
+            syncError
+          );
+        }
+
+        clearRegistrationIncomplete();
+        const successMessage = isRTL
+          ? "تم إكمال التسجيل بنجاح!"
+          : "Registration completed successfully!";
+        showSuccess(successMessage);
+
+        // Get the previous page URL and redirect back
+        const previousPage = storage.getPreviousPage();
+        if (previousPage) {
+          router.push(previousPage);
+        } else {
+          // Fallback to home page if no previous page stored
+          router.push(`/`);
+        }
+      }
+    } catch (error: unknown) {
+      console.error("Error completing registration:", error);
+      console.log("Full error object:", JSON.stringify(error, null, 2));
+
+      // Handle RTK Query error structure
+      let errorData: unknown = null;
+
+      // Check for RTK Query error structure
+      interface ErrorWithData {
+        data?: unknown;
+        status?: number;
+      }
+
+      if (error && typeof error === "object") {
+        if ("data" in error) {
+          errorData = (error as ErrorWithData).data;
+        } else if ("status" in error && typeof error === "object") {
+          const errorObj = error as ErrorWithData;
+          if ("data" in errorObj) {
+            errorData = errorObj.data;
+          }
+        }
+      }
+
+      console.log("Extracted error data:", errorData);
+
+      if (errorData) {
+        const responseData = errorData as {
+          code?: number;
+          message?: string;
+          errors?: Array<{ key: string; value: string[] }>;
+        };
+
+        console.log("Response data:", responseData);
+        console.log("Response data has errors array:", responseData.errors);
+        console.log("Is errors array:", Array.isArray(responseData.errors));
+
+        if (responseData.errors && Array.isArray(responseData.errors)) {
+          console.log("Setting API errors:", responseData.errors);
+          setApiErrors(responseData.errors);
+
+          // Small delay to ensure state is updated before scrolling
+          setTimeout(() => {
+            const errorElement = document.getElementById("api-errors-section");
+            console.log("Error element found:", errorElement);
+            if (errorElement) {
+              errorElement.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+              });
+            } else {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+          }, 100);
+          return;
+        }
+
+        // Show general error message if no specific field errors
+        if (responseData.message) {
+          console.log("Showing general error message:", responseData.message);
+          showError(responseData.message);
+          return;
+        }
+      }
+
+      console.log("Showing fallback error message");
+      const errorMessage = isRTL
+        ? "فشل إكمال التسجيل. يرجى المحاولة مرة أخرى."
+        : "Failed to complete registration. Please try again.";
+      showError(errorMessage);
+    }
+  };
+
+  // NOW we can have conditional rendering - after all hooks are called
+  // Show loading while checking auth status
+  if (!storage.isAuthenticated()) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <LoadingSpinner message={t("loading") || "Loading..."} />
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading while auth data is being fetched
+  if (!authData) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <LoadingSpinner message={t("loading") || "Loading..."} />
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect unauthenticated users
+  if (!authData.token) {
+    router.push(`/`);
+    return null;
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="container mx-auto px-4 max-w-4xl">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-logo-gold/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <User className="text-logo-gold" size={32} />
+          </div>
+          <h1 className="text-3xl font-bold text-logo-black mb-2">
+            {t("title")}
+          </h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">{t("description")}</p>
+          {authData.user?.code && (
+            <div className="mt-4 inline-flex items-center px-4 py-2 bg-logo-gold/10 text-logo-gold rounded-lg border border-logo-gold/20">
+              <Hash className="w-4 h-4 mr-2" />
+              <span className="text-sm font-medium">
+                {t("userCode")}: {authData.user.code}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Registration Form */}
+        <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+          <form
+            onSubmit={handleSubmit(validateLocationAndSubmit)}
+            className="w-full"
+          >
+            {/* Location Selection Section - FIRST STEP */}
+            <div className="bg-logo-gold/5 border-b border-gray-200 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-logo-black flex items-center">
+                  <MapPin className="w-5 h-5 mr-2 text-logo-gold" />
+                  {t("labels.selectLocation")}{" "}
+                  <span className="text-red-500 ml-1">*</span>
+                </h3>
+                {/* {isLocationSelected && (
+                  <div className="flex items-center text-green-600">
+                    <CheckCircle className="w-5 h-5 mr-1" />
+                    <span className="text-sm font-medium">
+                      Location Selected
+                    </span>
+                  </div>
+                )} */}
+              </div>
+
+              {/* <p className="text-sm text-gray-600 mb-4">
+                {t(
+                  "help.locationRequired",
+                  "Please search and select your exact business location on the map. This will help customers find you easily."
+                )}
+              </p> */}
+
+              <div
+                className={
+                  "rounded-lg overflow-hidden " +
+                  (hasLocationError
+                    ? "border border-red-500 ring-2 ring-red-200"
+                    : "border border-gray-200")
+                }
+                aria-invalid={hasLocationError || undefined}
+              >
+                <LocationPicker
+                  onLocationSelect={handleLocationSelect}
+                  initialLocation={
+                    watch("latitude") && watch("longitude")
+                      ? {
+                          lat: parseFloat(watch("latitude")),
+                          lng: parseFloat(watch("longitude")),
+                        }
+                      : {
+                          lat: 24.7136, // Default to Prince Mohammed Bin Abdulaziz St
+                          lng: 46.6753,
+                        }
+                  }
+                  className="w-full h-96"
+                  error={undefined}
+                />
+              </div>
+
+              {hasLocationError && (
+                <p className="text-sm text-red-500 mt-2 font-medium">
+                  {t(
+                    "validation.locationRequired",
+                    isRTL ? "الموقع مطلوب" : "Location is required"
+                  )}
+                </p>
+              )}
+
+              {/* Show simple instruction text when no location is selected */}
+              {!isLocationSelected && (
+                <p className="text-sm text-gray-600 mt-2 text-center">
+                  {t(
+                    "location.simpleInstruction",
+                    "Please select a location on the map above"
+                  )}
+                </p>
+              )}
+
+              {/* {isLocationSelected && locationDetails && (
+                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-sm text-green-800">
+                    <strong>Selected Location:</strong>{" "}
+                    {locationDetails.address}
+                  </p>
+                  <p className="text-xs text-green-600 mt-1">
+                    Coordinates: {locationDetails.lat.toFixed(6)},{" "}
+                    {locationDetails.lng.toFixed(6)}
+                  </p>
+                </div>
+              )} */}
+            </div>
+
+            {/* Form Content */}
+            <div className="p-6 md:p-8">
+              {/* Form Grid Layout */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                {/* Basic Information */}
+                <div className="space-y-3">
+                  <h4 className="text-md font-semibold text-logo-black flex items-center mb-3">
+                    <User className="w-4 h-4 mr-2 text-logo-gold" />
+                    {t("sections.basicInfo", "Basic Information")}
+                  </h4>
+
+                  <FormInput
+                    label={t("labels.name")}
+                    type="text"
+                    id="name"
+                    {...register("name")}
+                    placeholder={t("placeholders.name")}
+                    required
+                    icon={User}
+                    error={errors.name?.message}
+                    translationNamespace="registration"
+                  />
+
+                  <FormInput
+                    label={`${t("labels.email")} (${t(
+                      "optional",
+                      "Optional"
+                    )})`}
+                    type="email"
+                    id="email"
+                    {...register("email")}
+                    placeholder={t("placeholders.email")}
+                    required={false}
+                    icon={Mail}
+                    error={errors.email?.message}
+                    translationNamespace="registration"
+                  />
+
+                  <div className="space-y-1">
+                    <Controller
+                      name="type"
+                      control={control}
+                      render={({ field }) => (
+                        <FormSelect
+                          id="type"
+                          name="type"
+                          label={t("labels.type")}
+                          required
+                          placeholder={t("placeholders.selectType")}
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          options={[
+                            { value: "shop", label: t("typeOptions.shop") },
+                            {
+                              value: "workshop",
+                              label: t("typeOptions.workshop"),
+                            },
+                          ]}
+                          error={errors.type?.message}
+                        />
+                      )}
+                    />
+                  </div>
+
+                  <FormInput
+                    label={t("labels.managerName")}
+                    type="text"
+                    id="manager_name"
+                    {...register("manager_name")}
+                    placeholder={t("placeholders.managerName")}
+                    required
+                    icon={User}
+                    error={errors.manager_name?.message}
+                    translationNamespace="registration"
+                  />
+
+                  <FormInput
+                    label={t("labels.taxNumber")}
+                    type="text"
+                    id="tax_number"
+                    {...register("tax_number")}
+                    placeholder={t("placeholders.taxNumber")}
+                    required
+                    icon={FileText}
+                    error={errors.tax_number?.message}
+                    translationNamespace="registration"
+                  />
+                </div>
+
+                {/* Address Information */}
+                <div className="space-y-3">
+                  <h4 className="text-md font-semibold text-logo-black flex items-center mb-3">
+                    <MapPin className="w-4 h-4 mr-2 text-logo-gold" />
+                    {t("sections.addressInfo", "Address Information")}
+                  </h4>
+
+                  <FormInput
+                    label={t("labels.address")}
+                    type="text"
+                    id="address"
+                    {...register("address")}
+                    placeholder={t("placeholders.address")}
+                    required
+                    icon={MapPin}
+                    error={errors.address?.message}
+                    translationNamespace="registration"
+                  />
+
+                  <div className="space-y-1">
+                    <Controller
+                      name="city"
+                      control={control}
+                      render={({ field }) => (
+                        <SearchableSelect
+                          label={t("labels.city")}
+                          placeholder={t("placeholders.city")}
+                          searchPlaceholder={t("placeholders.searchCity")}
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          options={cityOptions}
+                          required
+                          error={errors.city?.message}
+                          translationNamespace="registration"
+                        />
+                      )}
+                    />
+                  </div>
+
+                  <FormInput
+                    label={t("labels.nationalAddress")}
+                    type="text"
+                    id="national_address"
+                    {...register("national_address")}
+                    placeholder={t("placeholders.nationalAddress")}
+                    required
+                    icon={MapPin}
+                    error={errors.national_address?.message}
+                    translationNamespace="registration"
+                  />
+
+                  <FormInput
+                    label={t("labels.state")}
+                    type="text"
+                    id="state"
+                    {...register("state")}
+                    placeholder={t("placeholders.state")}
+                    required
+                    icon={MapPin}
+                    error={errors.state?.message}
+                    translationNamespace="registration"
+                  />
+
+                  <FormInput
+                    label={t("labels.zip")}
+                    type="text"
+                    id="zip"
+                    {...register("zip")}
+                    placeholder={t("placeholders.zip")}
+                    required
+                    icon={Hash}
+                    error={errors.zip?.message}
+                    translationNamespace="registration"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* File Uploads Section */}
+            <div className="border-t border-gray-200 bg-gray-50/50 p-6 md:p-8">
+              <h4 className="text-md font-semibold text-logo-black mb-6 flex items-center">
+                <FileText className="w-4 h-4 mr-2 text-logo-gold" />
+                {t("sections.documents", "Required Documents")}
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Commercial Register Upload */}
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-logo-black mb-2">
+                    <FileText size={16} color="gray" />
+                    {t("labels.commercialRegister")}{" "}
+                    <span className="text-red-500">*</span>
+                  </label>
+
+                  <input
+                    type="file"
+                    id="commercial_register"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      handleFileChange(file, "commercial_register");
+                    }}
+                    className="hidden"
+                    accept="image/jpeg,image/jpg,image/png,image/gif,image/svg+xml"
+                  />
+
+                  {!commercialRegisterPreview && (
+                    <label
+                      htmlFor="commercial_register"
+                      className="flex items-center justify-center w-full h-32 border-2 border-dashed border-logo-gold/50 rounded-lg cursor-pointer hover:border-logo-gold hover:bg-logo-gold/5 transition-colors"
+                    >
+                      <div className="text-center">
+                        <FileText
+                          className="mx-auto text-logo-gold mb-2"
+                          size={24}
+                        />
+                        <p className="text-sm text-logo-black">
+                          {t("uploads.clickToSelectCR")}
+                        </p>
+                        <p className="text-xs text-logo-black/60">
+                          {t("help.uploadNote")}
+                        </p>
+                      </div>
+                    </label>
+                  )}
+
+                  {commercialRegisterPreview && (
+                    <div className="relative">
+                      <Image
+                        src={commercialRegisterPreview!}
+                        alt={t("uploads.crPreviewAlt")}
+                        className="w-full h-48 object-cover rounded-lg border-2 border-logo-gold"
+                        width={400}
+                        height={192}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveFile("commercial_register")}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        title="Remove file"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
+
+                  <p className="text-xs text-gray-500">
+                    {t("uploads.uploadCRHelp")}
+                  </p>
+                  {errors.commercial_register && (
+                    <p className="text-sm text-red-500">
+                      {errors.commercial_register.message ===
+                      "Input not instance of File"
+                        ? t(
+                            "validation.crRequired",
+                            "Commercial register image is required"
+                          )
+                        : errors.commercial_register.message
+                        ? t(errors.commercial_register.message) ||
+                          errors.commercial_register.message
+                        : ""}
+                    </p>
+                  )}
+                </div>
+
+                {/* Avatar Upload */}
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-logo-black mb-2">
+                    <User size={16} color="gray" />
+                    {t("labels.avatar")} <span className="text-red-500">*</span>
+                  </label>
+
+                  <input
+                    type="file"
+                    id="avatar"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      handleFileChange(file, "avatar");
+                    }}
+                    className="hidden"
+                    accept="image/jpeg,image/jpg,image/png,image/gif,image/svg+xml"
+                  />
+
+                  {!avatarPreview && (
+                    <label
+                      htmlFor="avatar"
+                      className="flex items-center justify-center w-full h-32 border-2 border-dashed border-logo-gold/50 rounded-lg cursor-pointer hover:border-logo-gold hover:bg-logo-gold/5 transition-colors"
+                    >
+                      <div className="text-center">
+                        <User
+                          className="mx-auto text-logo-gold mb-2"
+                          size={24}
+                        />
+                        <p className="text-sm text-logo-black">
+                          {t("uploads.clickToSelectAvatar")}
+                        </p>
+                        <p className="text-xs text-logo-black/60">
+                          {t("help.uploadNote")}
+                        </p>
+                      </div>
+                    </label>
+                  )}
+
+                  {avatarPreview && (
+                    <div className="relative">
+                      <Image
+                        src={avatarPreview!}
+                        alt={t("uploads.avatarPreviewAlt")}
+                        className="w-full h-48 object-cover rounded-lg border-2 border-logo-gold"
+                        width={400}
+                        height={192}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveFile("avatar")}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        title="Remove file"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
+
+                  <p className="text-xs text-gray-500">
+                    {t("uploads.uploadAvatarHelp")}
+                  </p>
+                  {errors.avatar && (
+                    <p className="text-sm text-red-500">
+                      {errors.avatar.message === "Input not instance of File"
+                        ? t(
+                            "validation.avatarRequired",
+                            "Profile image is required"
+                          )
+                        : errors.avatar.message
+                        ? t(errors.avatar.message) || errors.avatar.message
+                        : ""}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* API Error Messages - Above Submit Button */}
+            {/* Debug: Show current apiErrors length */}
+            {console.log("Rendering form, apiErrors.length:", apiErrors.length)}
+            {apiErrors.length > 0 && (
+              <div
+                id="api-errors-section"
+                className="border-t border-gray-200 bg-red-50 p-6 md:p-8"
+              >
+                <div className="max-w-4xl mx-auto">
+                  <div className="flex items-start gap-3 mb-4">
+                    <div className="flex-1">
+                      <div className="space-y-3">
+                        {apiErrors.map((error, index) => (
+                          <div
+                            key={index}
+                            className="bg-white rounded-lg p-4 border border-red-200"
+                          >
+                            <div className="flex items-start gap-3">
+                              <div className="flex-shrink-0 mt-0.5">
+                                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                              </div>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-red-900 mb-1">
+                                  {t(`labels.${error.key}`, error.key)}
+                                </p>
+                                <div className="space-y-1">
+                                  {error.value.map((message, messageIndex) => (
+                                    <p
+                                      key={messageIndex}
+                                      className="text-sm text-red-700 leading-relaxed"
+                                    >
+                                      {message}
+                                    </p>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <div className="border-t border-gray-200 bg-white p-6 md:p-8 text-center">
+              <Button
+                type="submit"
+                disabled={isLoading}
+                variant="gold"
+                size="lg"
+                className="px-8 py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-5 h-5 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    {t("actions.submitting")}
+                  </>
+                ) : (
+                  t("actions.submit")
+                )}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}

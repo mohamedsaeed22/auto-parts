@@ -1,0 +1,79 @@
+{
+  "navigation": {
+    "about": "من نحن",
+    "contact": "اتصل بنا",
+    "categories": "الفئات",
+    "brands": "البراندات",
+    "offers": "اخر العروض",
+    "products": "المنتجات",
+    "userPricing": "طلب تسعير"
+  },
+  "language": {
+    "title": "اللغة",
+    "arabic": "العربية",
+    "english": "English",
+    "changedSuccessfully": "تم تغيير اللغة بنجاح!",
+    "changeFailed": "فشل في تغيير اللغة. يرجى المحاولة مرة أخرى."
+  },
+  "topBar": {
+    "freeShipping": "شحن مجاني للطلبات فوق 200 ر.س",
+    "customerService": "خدمة العملاء 24/7",
+    "trackOrder": "تتبع طلبك",
+    "help": "المساعدة"
+  },
+  "actions": {
+    "login": "تسجيل الدخول / إنشاء حساب",
+    "account": "الحساب",
+    "logout": "تسجيل الخروج",
+    "loggingOut": "جاري تسجيل الخروج...",
+    "notifications": "الإشعارات",
+    "favourites": "المفضلة",
+    "wishlist": "قائمة الأمنيات",
+    "openMainMenu": "فتح القائمة الرئيسية",
+    "search": "بحث",
+    "searchPlaceholder": "ابحث عن المنتجات والقطع..."
+  },
+  "search": {
+    "searching": "جاري البحث...",
+    "noResultsFor": "لا توجد منتجات ل\"{{query}}\""
+  },
+  "cart": {
+    "cart": "السلة"
+  },
+  "bottomNav": {
+    "home": "الرئيسية",
+    "categories": "الفئات",
+    "favourites": "المفضلة",
+    "wishlist": "قائمة الأمنيات",
+    "cart": "السلة",
+    "profile": "الملف الشخصي",
+    "offers": "العروض",
+    "products": "المنتجات"
+  },
+  "menu": {
+    "title": "القائمة",
+    "help": "المساعدة والدعم",
+    "trackOrder": "تتبع طلبك"
+  },
+  "mobileMenu": {
+    "welcome": "مرحباً",
+    "profile": "ملفي الشخصي",
+    "points": "المحفظة",
+    "notifications": "الإشعارات",
+    "shopping": "التسوق",
+    "explore": "استكشاف",
+    "support": "الدعم",
+    "home": "الرئيسية",
+    "categories": "الفئات",
+    "brands": "البراندات",
+    "offers": "اخر العروض",
+    "products": "المنتجات",
+    "favourites": "المفضلة",
+    "wishlist": "قائمة الأمنيات",
+    "cart": "السلة",
+    "trackOrder": "تتبع الطلب",
+    "help": "المساعدة والدعم",
+    "version": "الإصدار 1.0.0",
+    "userPricing": "طلب تسعير"
+  }
+}

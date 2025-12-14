@@ -7,6 +7,7 @@ export const selectCartTotal = (state: RootState) => state.cart.total;
 export const selectCartTotalItems = (state: RootState) => state.cart.totalItems;
 export const selectCartIsOpen = (state: RootState) => state.cart.isOpen;
 export const selectCartLoading = (state: RootState) => state.cart.loading;
+export const selectCartLoadingItems = (state: RootState) => state.cart.loadingItems;
 export const selectCartError = (state: RootState) => state.cart.error;
 
 // Memoized selectors
@@ -29,3 +30,8 @@ export const selectCartIsEmpty = createSelector(
   [selectCartItems],
   (items) => items.length === 0
 );
+
+export const selectIsItemLoading = (id: number) =>
+  createSelector([selectCartLoadingItems], (loadingItems) =>
+    loadingItems.includes(id)
+  );

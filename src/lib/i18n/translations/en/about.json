@@ -1,0 +1,130 @@
+{
+  "backButton": "Back",
+  "about": "About",
+  "hero": {
+    "badge": "Integrated Work System",
+    "title": "Fal Al-Gharbia",
+    "subtitle": "Leading Saudi company specializing in automotive spare parts",
+    "location": "Jeddah",
+    "brands": "Multiple Brands",
+    "quality": "Original & Commercial"
+  },
+  "profile": {
+    "badge": "Company Profile",
+    "title": "Fal Al-Gharbia Company is a Leading Saudi Company",
+    "subtitle": "Fal Al-Gharbia Company is a leading Saudi company specializing in the sale of automotive spare parts, headquartered in Jeddah. The company has extensive experience in supplying and providing genuine and certified spare parts for all types of vehicles, with a focus on product quality and fast delivery to meet our customers' needs.",
+    "experience": {
+      "title": "Extensive Experience",
+      "desc": "Our highly specialized and trained team provides pricing and supply services with the highest quality standards"
+    },
+    "brands": {
+      "title": "Various Brands",
+      "desc": "Capable of handling various local and international brands"
+    },
+    "supplier": {
+      "title": "Major Supplier",
+      "desc": "Fal Al-Gharbia Group is one of the largest suppliers of original and commercial Chinese car spare parts in the Kingdom"
+    },
+    "contact": {
+      "title": "Contact Information",
+      "location": "Location:",
+      "locationValue": "Saudi Arabia - Jeddah",
+      "mobile": "Mobile:",
+      "mobileValue": "0543777569",
+      "email": "Email:",
+      "emailValue": "parts@falfuture.com",
+      "website": "Website:",
+      "websiteValue": "www.falfuture.com"
+    }
+  },
+  "mission": {
+    "title": "Our Vision & Mission",
+    "subtitle": "Towards a better future in the automotive spare parts industry",
+    "vision": {
+      "title": "Our Vision",
+      "desc": "To become the leading Saudi company in spare parts supply in terms of quality and exceptional service, while expanding our presence in the local and Gulf markets."
+    },
+    "mission": {
+      "title": "Our Mission",
+      "desc": "To provide the best spare parts solutions that meet market needs with the highest quality and most competitive prices, while maintaining speed and reliability."
+    }
+  },
+  "services": {
+    "title": "Our Services",
+    "subtitle": "We provide a comprehensive range of specialized services",
+    "genuine": {
+      "title": "Genuine and Certified Parts",
+      "desc": "Supplying genuine and certified spare parts for all types of vehicles"
+    },
+    "global": {
+      "title": "Global Brands",
+      "desc": "Providing spare parts for globally recognized brands for all vehicle types"
+    },
+    "pricing": {
+      "title": "Instant Pricing",
+      "desc": "Offering instant pricing based on customer requirements"
+    },
+    "delivery": {
+      "title": "Fast Delivery",
+      "desc": "Delivering parts in the shortest possible time with guaranteed quality"
+    },
+    "support": {
+      "title": "Technical Support",
+      "desc": "Providing professional technical support and specialized consultations"
+    },
+    "customer": {
+      "title": "Customer Service",
+      "desc": "All our employees are at your service"
+    }
+  },
+  "categories": {
+    "title": "Product Categories",
+    "subtitle": "We provide all automotive spare parts needs",
+    "engine": "Engine Needs",
+    "transmission": "Transmission Needs",
+    "suspension": "Suspension Requirements",
+    "electrical": "Electrical Supplies"
+  },
+  "brands": {
+    "title": "Supported Brands",
+    "subtitle": "We work with the best global brands",
+    "products": "products",
+    "noProducts": "no products",
+    "error": {
+      "title": "Failed to load brands",
+      "desc": "Unable to load brand information. Please try again later.",
+      "retry": "Try Again"
+    },
+    "empty": {
+      "title": "No brands available",
+      "desc": "Check back later for brand information."
+    },
+    "supportedBrands": [
+      "GEELY",
+      "CHANGAN",
+      "BAIC",
+      "CHERY",
+      "FAW",
+      "HYUNDAI",
+      "KIA MOTORS",
+      "JETOUR",
+      "HAVAL"
+    ]
+  },
+  "team": {
+    "title": "Our Team",
+    "subtitle": "Fal Al-Gharbia's team possesses extensive expertise in the spare parts sector, with many years of experience in pricing and supply. We are fully committed to customer service and meeting their requirements with the highest efficiency.",
+    "service": {
+      "title": "All Our Employees Are at Your Service",
+      "desc": "We are committed to providing the best customer service with a specialized team trained to the highest level"
+    }
+  },
+  "cta": {
+    "title": "Ready to Experience Fal Al-Gharbia?",
+    "subtitle": "Join thousands of satisfied customers who trust us for their automotive spare parts needs",
+    "contact": "Contact Us",
+    "learnMore": "Learn More",
+    "contactInfo": "www.falfuture.com | parts@falfuture.com",
+    "location": "0543777569 | Jeddah - Saudi Arabia"
+  }
+}

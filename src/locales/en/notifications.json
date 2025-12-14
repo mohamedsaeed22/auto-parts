@@ -1,0 +1,38 @@
+{
+  "title": "Notifications",
+  "empty": "No notifications",
+  "loading": "Loading...",
+  "error": "Failed to load notifications",
+  "refresh": "Refresh",
+  "showMore": "Show More",
+  "showing": "Showing",
+  "of": "of",
+  "markAsRead": "Mark as Read",
+  "markAllAsRead": "Mark All as Read",
+  "delete": "Delete",
+  "deleteAll": "Delete All",
+  "confirmDeleteAll": "Are you sure you want to delete all notifications?",
+  "retry": "Retry",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page {{current}} of {{total}}",
+  "types": {
+    "order_status": "Order Status",
+    "order_delivery": "Order Delivery",
+    "promotion": "Promotion",
+    "system": "System"
+  },
+  "errors": {
+    "loadingFailed": "Failed to load notifications",
+    "markAsReadFailed": "Failed to mark notification as read",
+    "markAllAsReadFailed": "Failed to mark all notifications as read",
+    "deleteFailed": "Failed to delete notification",
+    "deleteAllFailed": "Failed to delete all notifications"
+  },
+  "success": {
+    "markedAsRead": "Notification marked as read",
+    "allMarkedAsRead": "All notifications marked as read",
+    "deleted": "Notification deleted successfully",
+    "allDeleted": "All notifications deleted successfully"
+  }
+}

@@ -32,36 +32,46 @@ export {
 export {
   useGetProductsMutation,
   useGetProductQuery,
-  useGetCategoriesQuery,
   useGetBrandsQuery,
   useGetBannersQuery,
   useGetOffersQuery,
   useGetOfferQuery,
-  useGetSectionsQuery,
-  useGetSectionQuery,
-  useGetPartnersQuery,
 } from "./api/productsApi";
 
-// Cart & Wishlist Hooks
+// Categories Hooks
+export { useGetCategoriesQuery } from "./api/categoriesApi";
+
+// Sections Hooks
+export { useGetSectionsQuery } from "./api/sectionsApi";
+
+// Cart Hooks
 export {
   useGetCartQuery,
   useAddToCartMutation,
+  useAddManyToCartMutation,
   useUpdateCartItemMutation,
   useClearCartMutation,
   useApplyCouponMutation,
-  useGetWishlistQuery,
-  useToggleWishlistMutation,
-  useGetFavouritesQuery,
-  useToggleFavouriteMutation,
 } from "./api/cartApi";
 
-// Orders Hooks
+// Wishlist Hooks
 export {
-  useGetOrdersQuery,
-  useCreateOrderMutation,
-  useGetOrderQuery,
-  useGetOrderStatisticsQuery,
-} from "./api/ordersApi";
+  useGetWishlistQuery,
+  useAddToWishlistMutation,
+  useRemoveFromWishlistMutation,
+  useToggleWishlistMutation,
+} from "./api/wishlistApi";
+
+// Favourites Hooks
+export {
+  useGetFavouritesQuery,
+  useAddFavouriteMutation,
+  useRemoveFavouriteMutation,
+  useToggleFavouriteMutation,
+} from "./api/favouritesApi";
+
+// Orders Hooks
+export { useGetOrdersQuery } from "./api/ordersApi";
 
 // Addresses Hooks
 export {
@@ -80,8 +90,8 @@ export {
 
 // Settings Hooks
 export {
-  useGetSettingsQuery,
-  useGetLegalContentQuery,
+  useGetCompanySettingsQuery,
+  useGetLegalPagesQuery,
   useGetTermsOfServiceQuery,
   useGetPrivacyPolicyQuery,
   useGetRefundPolicyQuery,
@@ -90,3 +100,6 @@ export {
 
 // Re-export types for convenience
 export type * from "./api/types";
+
+// Partners API
+export { useGetPartnersQuery } from "./api/partnersApi";

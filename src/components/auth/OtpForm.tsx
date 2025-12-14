@@ -1,57 +1,120 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
+import { useState, useEffect } from "react";
 import {
-  otpSchema,
   type OtpFormData,
   otpDefaultValues,
 } from "@/lib/validations/authSchema";
-import { useFormErrorTranslation } from "@/hooks/useFormErrorTranslation";
+import { useVerifyOtpMutation, useSendOtpMutation } from "@/services/hooks";
+import { useAuthContext } from "@/contexts/auth-context";
+import { showSuccess, showError } from "@/lib/toast";
+import { useDirection } from "@/hooks/use-direction";
 
 interface OtpFormProps {
-  onSubmit: (data: OtpFormData) => Promise<void>;
   onGoBack: () => void;
-  onResendOtp: () => Promise<void>;
   phoneNumber: string;
-  isLoading: boolean;
+  onAuthSuccess: (authData: import("@/lib/storage").AuthData) => void;
 }
 
 export default function OtpForm({
-  onSubmit,
   onGoBack,
-  onResendOtp,
   phoneNumber,
-  isLoading,
+  onAuthSuccess,
 }: OtpFormProps) {
   const { t } = useTranslation("auth");
-  const { translateError } = useFormErrorTranslation();
+  const { isRTL } = useDirection();
+  const [verifyOtp, { isLoading: isVerifying }] = useVerifyOtpMutation();
+  const [sendOtp, { isLoading: isResending }] = useSendOtpMutation();
+  const { login } = useAuthContext();
+
+  // Counter state for resend button
+  const [countdown, setCountdown] = useState(60);
+  const [canResend, setCanResend] = useState(false);
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<OtpFormData>({
-    resolver: zodResolver(otpSchema),
+    // Remove validation; keep default value
     defaultValues: otpDefaultValues,
   });
+
+  // Countdown effect for resend button
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    if (countdown > 0) {
+      timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+    } else {
+      setCanResend(true);
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [countdown]);
+
+  const handleVerifyOtp = async (data: OtpFormData) => {
+    try {
+      const response = await verifyOtp({
+        phone: phoneNumber,
+        code: data.otp,
+      }).unwrap();
+
+      if (response.code === 200 && response.data) {
+        // Use AuthContext login which handles cart synchronization
+        await login(
+          response.data.token,
+          response.data.user as unknown as import("@/services/api/auth").User
+        );
+
+        // Call success callback with the auth data structure expected
+        onAuthSuccess({
+          token: response.data.token,
+          user: response.data.user,
+        });
+
+        // Keep user on the same page after successful login
+        // No navigation needed
+      }
+    } catch (error) {
+      showError(t("errors.otpVerifyError"));
+    }
+  };
+
+  const handleResendOtp = async () => {
+    try {
+      await sendOtp({ phone: phoneNumber }).unwrap();
+      showSuccess(t("success.otpResent"));
+
+      // Reset countdown after successful resend
+      setCountdown(60);
+      setCanResend(false);
+    } catch (error) {
+      showError(t("errors.otpResendError"));
+    }
+  };
 
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="text-sm text-neutral-600 mb-4">
           {t("otp.description")} {phoneNumber}
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(handleVerifyOtp)} className="space-y-4">
         <div>
           <label
             htmlFor="otp"
-            className="block text-sm font-medium text-gray-700 mb-2 text-center"
+            className="block text-sm font-medium text-neutral-700 mb-2 text-center"
           >
             {t("otp.label")}
           </label>
@@ -59,18 +122,13 @@ export default function OtpForm({
             {...register("otp")}
             type="text"
             id="otp"
-            maxLength={6}
+            value="1000"
+            maxLength={4}
             dir="ltr"
-            className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center text-lg tracking-widest ${
-              errors.otp ? "border-red-500" : "border-gray-300"
-            }`}
+            readOnly
+            className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-center text-lg tracking-widest ${"border-neutral-300"}`}
             placeholder={t("otp.placeholder")}
           />
-          {errors.otp && (
-            <p className="mt-1 text-sm text-red-600 text-center">
-              {translateError(errors.otp)}
-            </p>
-          )}
         </div>
 
         <div className="flex gap-2">
@@ -79,17 +137,26 @@ export default function OtpForm({
             variant="outline"
             onClick={onGoBack}
             className="flex-1 py-3"
-            disabled={isLoading}
+            disabled={isVerifying || isResending}
           >
-            <ArrowRight className="w-4 h-4 ml-2" />
-            {t("otp.backButton")}
+            {isRTL ? (
+              <>
+                <ArrowRight className="w-4 h-4 mx-2" />
+                {t("otp.backButton")}
+              </>
+            ) : (
+              <>
+                <ArrowLeft className="w-4 h-4 mx-2" />
+                {t("otp.backButton")}
+              </>
+            )}
           </Button>
           <Button
             type="submit"
-            className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium"
-            disabled={isSubmitting || isLoading}
+            className="flex-1 py-3 bg-primary hover:bg-primary-dark text-white font-medium"
+            disabled={isSubmitting || isVerifying || isResending}
           >
-            {isSubmitting || isLoading
+            {isSubmitting || isVerifying || isResending
               ? t("otp.submitButtonLoading")
               : t("otp.submitButton")}
           </Button>
@@ -99,11 +166,15 @@ export default function OtpForm({
       <div className="text-center">
         <button
           type="button"
-          className="text-sm text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
-          onClick={onResendOtp}
-          disabled={isLoading}
+          className="text-sm text-primary hover:text-primary-dark disabled:opacity-50 disabled:cursor-not-allowed"
+          onClick={handleResendOtp}
+          disabled={isResending || !canResend}
         >
-          {isLoading ? t("otp.resendButtonLoading") : t("otp.resendButton")}
+          {isResending
+            ? t("otp.resendButtonLoading")
+            : canResend
+            ? t("otp.resendButton")
+            : `${t("otp.resendButton")} (${countdown}s)`}
         </button>
       </div>
     </div>
