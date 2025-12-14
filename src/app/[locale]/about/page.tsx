@@ -547,22 +547,6 @@ const ContactCTA = ({ t }: { t: (key: string) => string }) => (
       <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
         {t("cta.subtitle")}
       </p>
-      {/* <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <Button
-          size="lg"
-          variant="secondary"
-          className="bg-white text-logo-gold hover:bg-gray-100"
-        >
-          {t("cta.contact")}
-        </Button>
-        <Button
-          size="lg"
-          variant="outline"
-          className="border-white text-white   text-logo-gold"
-        >
-          {t("cta.learnMore")}
-        </Button>
-      </div> */}
       <div className="mt-8 text-white/80">
         <p className="mb-2">{t("cta.contactInfo")}</p>
         <p>{t("cta.location")}</p>
