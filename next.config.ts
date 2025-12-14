@@ -11,11 +11,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "http",
-        hostname: "brave.iseek.name",
+        hostname: "falparts.cloud",
       },
       {
         protocol: "https",
-        hostname: "brave.iseek.name",
+        hostname: "falparts.cloud",
       },
     ],
   },

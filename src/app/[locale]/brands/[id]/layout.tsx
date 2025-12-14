@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { generateBrandPageMetadata } from "@/lib/seo/dynamic-metadata";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "https://brave.iseek.name/api";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://falparts.cloud/api";
 
 // Server-side function to fetch all brands
 async function fetchBrands(locale?: string) {

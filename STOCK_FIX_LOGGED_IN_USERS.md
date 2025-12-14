@@ -12,7 +12,7 @@ When a user is logged in, the stock information from the API response was not be
 
 ### API Response Structure
 
-The API endpoint `https://brave.iseek.name/api/cart?locale=ar` returns:
+The API endpoint `https://falparts.cloud/api/cart?locale=ar` returns:
 
 ```json
 {
@@ -203,7 +203,7 @@ Already had the stock validation in place (lines ~301, ~450):
 2. **API cart fetched**
 
    ```typescript
-   GET https://brave.iseek.name/api/cart?locale=ar
+   GET https://falparts.cloud/api/cart?locale=ar
    Response: {
      cart_items: [
        { product: { id: 78, stock: 7 }, quantity: 7 }

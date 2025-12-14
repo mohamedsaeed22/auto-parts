@@ -382,7 +382,7 @@ export default function OrderDetailsDialog({
                       {/* Product Image */}
                       <div className="relative flex-shrink-0">
                         <Image
-                          src={`https://brave.iseek.name/storage/${product.product_image}`}
+                          src={`https://falparts.cloud/storage/${product.product_image}`}
                           alt={product.product_name}
                           width={80}
                           height={80}
