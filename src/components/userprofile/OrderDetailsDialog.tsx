@@ -382,7 +382,7 @@ export default function OrderDetailsDialog({
                       {/* Product Image */}
                       <div className="relative flex-shrink-0">
                         <Image
-                          src={`https://falparts.cloud/storage/${product.product_image}`}
+                          src={`${process.env.NEXT_PUBLIC_API_BASE_IMAGE}/storage/${product.product_image}`}
                           alt={product.product_name}
                           width={80}
                           height={80}

@@ -11,11 +11,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "http",
-        hostname: "falparts.cloud",
+        hostname: `${process.env.NEXT_PUBLIC_API_BASE_HOSTNAME}`,
       },
       {
         protocol: "https",
-        hostname: "falparts.cloud",
+        hostname: `${process.env.NEXT_PUBLIC_API_BASE_HOSTNAME}`,
       },
     ],
   },

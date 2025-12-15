@@ -2,7 +2,7 @@
 import { seoConfig } from "@/lib/seo/config";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "https://falparts.cloud/api";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api";
 
 // Product API
 export async function fetchProductById(id: string | number, locale?: string) {

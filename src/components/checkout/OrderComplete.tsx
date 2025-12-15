@@ -340,7 +340,7 @@ const OrderComplete: React.FC<OrderCompleteProps> = ({
                               src={
                                 product.product_image.startsWith("http")
                                   ? product.product_image
-                                  : `https://falparts.cloud/storage/${product.product_image}`
+                                  : `${process.env.NEXT_PUBLIC_API_BASE_IMAGE}/storage/${product.product_image}`
                               }
                               alt={product.product_name}
                               width={64}
