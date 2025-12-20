@@ -175,7 +175,7 @@ export default function NotificationDropdown({
                 <button
                   onClick={handleRefresh}
                   disabled={isLoading}
-                  className="p-1 text-neutral-500 hover:text-primary transition-colors disabled:opacity-50"
+                  className="p-1 text-neutral-500 cursor-pointer hover:text-primary transition-colors disabled:opacity-50"
                   title={t("refresh", "Refresh")}
                 >
                   <RefreshCw
@@ -189,7 +189,7 @@ export default function NotificationDropdown({
                   <button
                     onClick={handleDeleteAll}
                     disabled={deleteAllNotificationsMutation.isPending}
-                    className="p-1 text-red-500 hover:text-red-600 transition-colors disabled:opacity-50"
+                    className="p-1 text-red-500 cursor-pointer hover:text-red-600 transition-colors disabled:opacity-50"
                     title={t("deleteAll", "Delete All")}
                   >
                     <Trash2 size={16} />
@@ -199,7 +199,7 @@ export default function NotificationDropdown({
                 {/* Close Button */}
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-1 text-neutral-500 hover:text-neutral-700 transition-colors"
+                  className="p-1 text-neutral-500 cursor-pointer hover:text-neutral-700 transition-colors"
                 >
                   <X size={16} />
                 </button>

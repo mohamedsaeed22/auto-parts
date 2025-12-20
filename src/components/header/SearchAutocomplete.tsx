@@ -310,9 +310,6 @@ export default function SearchAutocomplete({
                         {product.brand && ` • ${product.brand.name}`}
                       </p>
                     </div>
-                    <div className="text-sm font-semibold text-primary">
-                      ${product.final_price}
-                    </div>
                   </div>
                 </button>
               ))}
