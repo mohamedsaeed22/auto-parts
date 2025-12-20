@@ -209,7 +209,7 @@ export default function OtpForm({
             type="button"
             variant="outline"
             onClick={onGoBack}
-            className="flex-1 py-3"
+            className="flex-1 py-3 cursor-pointer"
             disabled={isVerifying || isResending}
           >
             {isRTL ? (
@@ -226,8 +226,13 @@ export default function OtpForm({
           </Button>
           <Button
             type="submit"
-            className="flex-1 py-3 bg-primary hover:bg-primary-dark text-white font-medium"
-            disabled={isSubmitting || isVerifying || isResending}
+            className="flex-1 py-3 bg-primary hover:bg-primary-dark text-white font-medium cursor-pointer"
+            disabled={
+              isSubmitting ||
+              isVerifying ||
+              isResending ||
+              otp.join("").length !== 4
+            }
           >
             {isSubmitting || isVerifying || isResending
               ? t("otp.submitButtonLoading")
@@ -239,7 +244,7 @@ export default function OtpForm({
       <div className="text-center">
         <button
           type="button"
-          className="text-sm text-primary hover:text-primary-dark disabled:opacity-50 disabled:cursor-not-allowed"
+          className="text-sm text-primary hover:text-primary-dark disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           onClick={handleResendOtp}
           disabled={isResending || !canResend}
         >

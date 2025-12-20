@@ -134,7 +134,7 @@ export default function LoginForm({
 
         <Button
           type="submit"
-          className="w-full py-3 text-white font-medium rounded-lg"
+          className="w-full py-3 text-white font-medium rounded-lg cursor-pointer"
           disabled={isSubmitting || isLoading}
         >
           {isSubmitting || isLoading
