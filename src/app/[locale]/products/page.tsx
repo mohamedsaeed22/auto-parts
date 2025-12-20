@@ -605,9 +605,9 @@ export default function ProductsPage({
                     </div>
                     <Button
                       onClick={() => updateSearch("")}
-                      variant="outline"
+                      variant="default"
                       size="sm"
-                      className="text-green-700 border-green-300 hover:bg-green-100 hover:border-green-400"
+                      className="text-white border-green-300"
                     >
                       <CloseIcon className="h-4 w-4 mr-2" />
                       {t("clearSearch") || "Clear Search"}
