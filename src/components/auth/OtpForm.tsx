@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   type OtpFormData,
   otpDefaultValues,
@@ -35,8 +35,11 @@ export default function OtpForm({
   const [countdown, setCountdown] = useState(60);
   const [canResend, setCanResend] = useState(false);
 
+  // OTP input states
+  const [otp, setOtp] = useState(["", "", "", ""]);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
   const {
-    register,
     handleSubmit,
     formState: { isSubmitting },
   } = useForm<OtpFormData>({
@@ -61,11 +64,66 @@ export default function OtpForm({
     };
   }, [countdown]);
 
-  const handleVerifyOtp = async (data: OtpFormData) => {
+  const handleOtpChange = (index: number, value: string) => {
+    // Only allow digits
+    if (value && !/^\d$/.test(value)) {
+      return;
+    }
+
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+
+    // Auto-focus next input
+    if (value && index < 3) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    // Handle backspace
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData("text").slice(0, 4);
+    const digits = pastedData.split("").filter((char) => /^\d$/.test(char));
+
+    const newOtp = [...otp];
+    digits.forEach((digit, index) => {
+      if (index < 4) {
+        newOtp[index] = digit;
+      }
+    });
+    setOtp(newOtp);
+
+    // Focus the next empty input or the last one
+    const nextEmptyIndex = newOtp.findIndex((val) => !val);
+    if (nextEmptyIndex !== -1) {
+      inputRefs.current[nextEmptyIndex]?.focus();
+    } else {
+      inputRefs.current[3]?.focus();
+    }
+  };
+
+  const handleVerifyOtp = async () => {
     try {
+      const otpCode = otp.join("");
+
+      if (otpCode.length !== 4) {
+        showError(t("errors.otpIncomplete"));
+        return;
+      }
+
       const response = await verifyOtp({
         phone: phoneNumber,
-        code: data.otp,
+        code: otpCode,
       }).unwrap();
 
       if (response.code === 200 && response.data) {
@@ -84,8 +142,12 @@ export default function OtpForm({
         // Keep user on the same page after successful login
         // No navigation needed
       }
-    } catch (error) {
-      showError(t("errors.otpVerifyError"));
+    } catch (error: unknown) {
+      // Show API error message if available, otherwise show generic error
+      const errorMessage =
+        (error as { data?: { message?: string } })?.data?.message ||
+        t("errors.otpVerifyError");
+      showError(errorMessage);
     }
   };
 
@@ -94,11 +156,17 @@ export default function OtpForm({
       await sendOtp({ phone: phoneNumber }).unwrap();
       showSuccess(t("success.otpResent"));
 
-      // Reset countdown after successful resend
+      // Reset countdown and OTP inputs after successful resend
       setCountdown(60);
       setCanResend(false);
-    } catch (error) {
-      showError(t("errors.otpResendError"));
+      setOtp(["", "", "", ""]);
+      inputRefs.current[0]?.focus();
+    } catch (error: unknown) {
+      // Show API error message if available, otherwise show generic error
+      const errorMessage =
+        (error as { data?: { message?: string } })?.data?.message ||
+        t("errors.otpResendError");
+      showError(errorMessage);
     }
   };
 
@@ -112,23 +180,28 @@ export default function OtpForm({
 
       <form onSubmit={handleSubmit(handleVerifyOtp)} className="space-y-4">
         <div>
-          <label
-            htmlFor="otp"
-            className="block text-sm font-medium text-neutral-700 mb-2 text-center"
-          >
+          <label className="block text-sm font-medium text-neutral-700 mb-2 text-center">
             {t("otp.label")}
           </label>
-          <input
-            {...register("otp")}
-            type="text"
-            id="otp"
-            value="1000"
-            maxLength={4}
-            dir="ltr"
-            readOnly
-            className={`w-full px-3 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-center text-lg tracking-widest ${"border-neutral-300"}`}
-            placeholder={t("otp.placeholder")}
-          />
+          <div className="flex gap-3 justify-center" dir="ltr">
+            {otp.map((digit, index) => (
+              <input
+                key={index}
+                ref={(el) => {
+                  inputRefs.current[index] = el;
+                }}
+                type="text"
+                inputMode="numeric"
+                maxLength={1}
+                value={digit}
+                onChange={(e) => handleOtpChange(index, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(index, e)}
+                onPaste={handlePaste}
+                className="w-14 h-14 text-center text-2xl font-semibold border border-neutral-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+                disabled={isVerifying || isResending}
+              />
+            ))}
+          </div>
         </div>
 
         <div className="flex gap-2">
