@@ -40,7 +40,7 @@ export default function LanguageSwitch({
           text-sm font-medium transition-all duration-200 ease-in-out
           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
           disabled:opacity-50 disabled:cursor-not-allowed
-          bg-gray-200 text-gray-700 hover:bg-gray-300
+          bg-gray-200 text-gray-700 hover:bg-gray-300 cursor-pointer
         "
         whileHover={{ scale: isChangingLocale ? 1 : 1.05 }}
         whileTap={{ scale: isChangingLocale ? 1 : 0.95 }}

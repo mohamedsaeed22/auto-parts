@@ -101,7 +101,7 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
       {/* User Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 text-neutral-700 hover:text-primary transition-colors"
+        className="p-2 text-neutral-700 hover:text-primary transition-colors cursor-pointer"
         title={user.name || user.phone}
       >
         <div className="relative">
@@ -152,7 +152,7 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
               {/* Account/Profile */}
               <button
                 onClick={handleProfileClick}
-                className="w-full flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                className="w-full flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors cursor-pointer"
               >
                 <Settings size={16} />
                 <span>{t("actions.account") || "Account"}</span>
@@ -162,7 +162,7 @@ export default function UserDropdown({ isRTL }: UserDropdownProps) {
               <button
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50 cursor-pointer"
               >
                 <LogOut size={16} />
                 <span>

@@ -120,7 +120,7 @@ export default function NotificationDropdown({
       {/* Notification Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-neutral-700 hover:text-primary transition-colors"
+        className="relative p-2 text-neutral-700 hover:text-primary transition-colors cursor-pointer"
         title={t("title", "Notifications")}
       >
         <div className="relative">

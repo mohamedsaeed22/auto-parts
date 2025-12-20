@@ -47,7 +47,7 @@ export default function HeaderActions({
         <LoginDialog
           trigger={
             <button
-              className="p-2 text-neutral-700 hover:text-primary transition-colors"
+              className="p-2 text-neutral-700 hover:text-primary transition-colors cursor-pointer"
               title={t("actions.account") || "Account"}
             >
               <User size={20} />
@@ -63,7 +63,7 @@ export default function HeaderActions({
       {isAuthenticated && (
         <button
           onClick={() => router.push("/favourites")}
-          className="p-2 text-neutral-700 hover:text-primary transition-colors"
+          className="p-2 text-neutral-700 hover:text-primary transition-colors cursor-pointer"
           title={t("actions.favourites") || "Favourites"}
         >
           <Heart size={20} />
@@ -74,7 +74,7 @@ export default function HeaderActions({
       {isAuthenticated && (
         <button
           onClick={() => router.push("/wishlist")}
-          className="p-2 text-neutral-700 hover:text-primary transition-colors"
+          className="p-2 text-neutral-700 hover:text-primary transition-colors cursor-pointer"
           title={t("actions.wishlist") || "Wishlist"}
         >
           <Bookmark size={20} />
@@ -84,7 +84,7 @@ export default function HeaderActions({
       {/* Cart */}
       <button
         onClick={onCartClick}
-        className="relative p-2 text-neutral-700 hover:text-primary transition-colors"
+        className="relative p-2 text-neutral-700 hover:text-primary transition-colors cursor-pointer"
         title={t("cart.cart") || "Cart"}
       >
         <div className="relative">

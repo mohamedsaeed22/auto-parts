@@ -139,7 +139,7 @@ export default function Header() {
               {/* Search Toggle */}
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className={`p-2 transition-all duration-150 ${
+                className={`p-2 transition-all duration-150 cursor-pointer ${
                   isSearchOpen
                     ? "text-primary bg-primary-50 rounded-lg"
                     : "text-neutral-700 hover:text-primary hover:bg-neutral-50 rounded-lg"
@@ -154,7 +154,7 @@ export default function Header() {
               {/* Mobile Menu Toggle */}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="p-2 text-neutral-700 hover:text-primary transition-colors"
+                className="p-2 text-neutral-700 hover:text-primary transition-colors cursor-pointer"
               >
                 <Menu size={20} />
               </button>
